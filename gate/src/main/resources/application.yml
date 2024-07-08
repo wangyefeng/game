@@ -1,0 +1,1 @@
+server:  tcp-port: 8888spring:  main:    banner-mode: off
