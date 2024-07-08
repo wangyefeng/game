@@ -27,6 +27,8 @@ public class TcpServer {
 
     public static final int PLAYER_ID_LENGTH = 4; // 玩家ID字节长度
 
+    public static final int MIN_FRAME_LENGTH = PROTOCOL_TYPE_LENGTH + CODE_LENGTH + PLAYER_ID_LENGTH; // 数据字节长度
+
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
 
     private Channel channel;

@@ -5,28 +5,25 @@ import org.wangyefeng.game.gate.protocol.Protocol;
 
 public class LogicMessage<T extends Message> {
 
-    private int playerId;
-
     private int code;
 
     private T message;
 
-    public LogicMessage(int playerId, int code, T message) {
-        this.playerId = playerId;
+    public LogicMessage(int code, T message) {
         this.code = code;
         this.message = message;
     }
 
-    public LogicMessage(int playerId, Protocol protocol, T message) {
-        this(playerId, protocol.getCode(), message);
+    public LogicMessage(Protocol protocol, T message) {
+        this(protocol.getCode(), message);
     }
 
-    public LogicMessage(int playerId, Protocol protocol) {
-        this(playerId, protocol.getCode(), null);
+    public LogicMessage(Protocol protocol) {
+        this(protocol.getCode(), null);
     }
 
-    public LogicMessage(int playerId, int code) {
-        this(playerId, code, null);
+    public LogicMessage(int code) {
+        this(code, null);
     }
 
     public int getCode() {
@@ -35,9 +32,5 @@ public class LogicMessage<T extends Message> {
 
     public T getMessage() {
         return message;
-    }
-
-    public int getPlayerId() {
-        return playerId;
     }
 }

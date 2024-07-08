@@ -1,13 +1,14 @@
 package org.wangyefeng.game.logic.protocol;
 
 import com.google.protobuf.Parser;
+import org.wangyefeng.game.proto.Common;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public enum ClientProtocol implements Protocol {
 
-    ;
+    LOGIN(1, Common.PbInt.parser());
 
     private final int code;
 

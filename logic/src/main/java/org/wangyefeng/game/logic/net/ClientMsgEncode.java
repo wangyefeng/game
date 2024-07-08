@@ -25,7 +25,7 @@ public class ClientMsgEncode extends MessageToByteEncoder<ClientMessage> {
             out.writeInt(msg.getPlayerId());// 玩家ID
             out.setInt(0, out.readableBytes() - TcpServer.FRAME_LENGTH);// 协议长度，写入包体头部
         } else {
-            out.writeInt(TcpServer.PROTOCOL_TYPE_LENGTH + TcpServer.CODE_LENGTH + TcpServer.PLAYER_ID_LENGTH);
+            out.writeInt(TcpServer.MIN_FRAME_LENGTH);
             out.writeByte(0);// 协议类型
             out.writeShort(msg.getCode());// 协议号
             out.writeInt(msg.getPlayerId());// 玩家ID

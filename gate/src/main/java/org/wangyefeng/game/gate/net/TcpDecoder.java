@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.wangyefeng.game.gate.net.client.LogicClient;
-import org.wangyefeng.game.gate.protocol.C2SProtocol;
+import org.wangyefeng.game.gate.protocol.LogicProtocol;
 
 import java.net.SocketException;
 import java.util.List;
@@ -40,11 +40,11 @@ public class TcpDecoder extends ByteToMessageDecoder {
         switch (tag) {
             case GATE -> {
                 int code = msg.readShort();
-                Assert.isTrue(C2SProtocol.match(code), "Invalid code: " + code);
+                Assert.isTrue(LogicProtocol.match(code), "Invalid code: " + code);
                 int length = msg.readableBytes();
                 if (length > 0) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-                    out.add(new GateMessage<>(code, (Message) C2SProtocol.getParser(code).parseFrom(inputStream)));
+                    out.add(new GateMessage<>(code, (Message) LogicProtocol.getParser(code).parseFrom(inputStream)));
                 } else {
                     out.add(new GateMessage<>(code));
                 }

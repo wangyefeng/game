@@ -1,5 +1,6 @@
 package org.wangyefeng.game.gate.net.client;
 
+import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -7,8 +8,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.wangyefeng.game.gate.net.GateMessage;
-import org.wangyefeng.game.gate.protocol.C2SProtocol;
+import org.wangyefeng.game.gate.protocol.LogicProtocol;
 
 import java.util.List;
 
@@ -31,14 +31,14 @@ public class LogicDecoder extends ByteToMessageDecoder {
             }
             case 1 -> { // 网关处理消息
                 int code = in.readShort();
-                Assert.isTrue(C2SProtocol.match(code), "Invalid code: " + code);
+                Assert.isTrue(LogicProtocol.match(code), "Invalid code: " + code);
                 int length = in.readableBytes();
                 if (length > 0) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                    com.google.protobuf.Message message = (com.google.protobuf.Message) C2SProtocol.getParser(code).parseFrom(inputStream);
-                    out.add(new GateMessage<>(code, message));
+                    Message message = (Message) LogicProtocol.getParser(code).parseFrom(inputStream);
+                    out.add(new LogicMessage<>(code, message));
                 } else {
-                    out.add(new GateMessage<>(code));
+                    out.add(new LogicMessage<>(code));
                 }
             }
         }

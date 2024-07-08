@@ -1,31 +1,27 @@
-package org.wangyefeng.game.logic.protocol;
+package org.wangyefeng.game.gate.protocol;
 
 import com.google.protobuf.Parser;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author wangyefeng
- * @date 2024-07-08
- * @description 服务器到客户端协议
- */
-public enum GateProtocol implements Protocol {
+public enum ClientProtocol implements Protocol {
 
     PING(0),
-    LOGIN(1);
+
+    ;
 
     private final int code;
 
     private final Parser parser;
 
-    private static final Map<Integer, GateProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Integer, ClientProtocol> PROTOCOLS = new HashMap<>();
 
-    GateProtocol(int code) {
+    ClientProtocol(int code) {
         this(code, null);
     }
 
-    GateProtocol(int code, Parser parser) {
+    ClientProtocol(int code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -42,7 +38,7 @@ public enum GateProtocol implements Protocol {
     }
 
     static {
-        for (GateProtocol protocol : GateProtocol.values()) {
+        for (ClientProtocol protocol : ClientProtocol.values()) {
             if (PROTOCOLS.containsKey(protocol.getCode())) {
                 throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
             }

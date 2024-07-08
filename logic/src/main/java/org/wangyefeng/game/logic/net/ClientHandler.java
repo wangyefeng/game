@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wangyefeng.game.logic.handler.PlayerHandler;
 
 /**
  * @author wangyefeng
@@ -20,7 +19,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientMessage<?>>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ClientMessage clientMessage) {
-        PlayerHandler<Message> logicHandler = PlayerHandler.getHandler(clientMessage.getCode());
+        org.wangyefeng.game.logic.handler.ClientHandler<Message> logicHandler = org.wangyefeng.game.logic.handler.ClientHandler.getHandler(clientMessage.getCode());
         if (logicHandler == null) {
             log.warn("illegal message code: {}", clientMessage.getCode());
             return;

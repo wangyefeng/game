@@ -1,6 +1,7 @@
 package org.wangyefeng.game.gate.net.client;
 
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
@@ -9,7 +10,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.wangyefeng.game.gate.net.GateHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,7 @@ public class LogicClient extends Client {
 
     @Override
     public void init() {
-        GateHandler handler = new GateHandler();
+        ChannelHandler handler = new LogicHandler();
         EventLoopGroup group = new NioEventLoopGroup(1);
         bootstrap.group(group).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler(this);

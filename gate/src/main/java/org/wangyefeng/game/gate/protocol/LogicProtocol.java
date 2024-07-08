@@ -5,9 +5,9 @@ import com.google.protobuf.Parser;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum C2SProtocol implements Protocol {
+public enum LogicProtocol implements Protocol {
 
-    PING(0),
+    PONG(0),
 
     ;
 
@@ -15,13 +15,13 @@ public enum C2SProtocol implements Protocol {
 
     private final Parser parser;
 
-    private static final Map<Integer, C2SProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Integer, LogicProtocol> PROTOCOLS = new HashMap<>();
 
-    C2SProtocol(int code) {
+    LogicProtocol(int code) {
         this(code, null);
     }
 
-    C2SProtocol(int code, Parser parser) {
+    LogicProtocol(int code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -38,7 +38,7 @@ public enum C2SProtocol implements Protocol {
     }
 
     static {
-        for (C2SProtocol protocol : C2SProtocol.values()) {
+        for (LogicProtocol protocol : LogicProtocol.values()) {
             if (PROTOCOLS.containsKey(protocol.getCode())) {
                 throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
             }

@@ -1,13 +1,11 @@
 package org.wangyefeng.game.gate.protocol;
 
-import org.wangyefeng.game.common.Server;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public enum S2CProtocol implements Protocol {
+public enum ToLogicProtocol implements Protocol {
 
-    PONG(0, Server.GATE),
+    PING(0),
 
     ;
 
@@ -15,26 +13,19 @@ public enum S2CProtocol implements Protocol {
 
     private final int code;
 
-    private final byte server;
-
-    S2CProtocol(int code, Server server) {
+    ToLogicProtocol(int code) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
         this.code = code;
-        this.server = server.getCode();
     }
 
     public int getCode() {
         return code;
     }
 
-    public byte getServer() {
-        return server;
-    }
-
     static {
-        for (S2CProtocol value : S2CProtocol.values()) {
+        for (ToLogicProtocol value : ToLogicProtocol.values()) {
             PROTOCOL_MAP.put(value.code, value);
         }
     }

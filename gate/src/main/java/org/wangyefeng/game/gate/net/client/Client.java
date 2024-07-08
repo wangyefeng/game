@@ -25,16 +25,6 @@ public abstract class Client {
         init();
     }
 
-    /**
-     * 向远程TCP服务器请求连接
-     */
-    public void connect() {
-        bootstrap.connect(host, port);
-        ChannelFuture future = bootstrap.connect(host, port);
-        this.channel = future.channel();
-        future.addListener(new ConnectionListener(this));
-    }
-
     public abstract void init();
 
     public Channel getChannel() {
@@ -78,5 +68,16 @@ public abstract class Client {
                 Thread.sleep(2000);
             }
         }
+    }
+
+    public void reconnect() {
+        Thread thread = new Thread(() -> {
+            try {
+                start();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, "logic reconnect");
+        thread.start();
     }
 }

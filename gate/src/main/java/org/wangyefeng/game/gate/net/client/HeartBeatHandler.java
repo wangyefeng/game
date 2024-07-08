@@ -9,7 +9,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wangyefeng.game.gate.protocol.C2SProtocol;
+import org.wangyefeng.game.gate.protocol.ToLogicProtocol;
 
 @ChannelHandler.Sharable
 public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
@@ -23,7 +23,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
     static {
         PING.writeInt(3);
         PING.writeByte(1);
-        PING.writeShort(C2SProtocol.PING.getCode());
+        PING.writeShort(ToLogicProtocol.PING.getCode());
     }
 
     public HeartBeatHandler(Client client) {
@@ -36,9 +36,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
             IdleState state = event.state();
             if (state == IdleState.READER_IDLE) {
                 log.warn("读空闲，断开连接！！！连接: {}", ctx.channel());
-                ctx.close();
-                client.setRunning(false);
-                client.connect();
+                ctx.channel().close();
             } else if (state == IdleState.WRITER_IDLE) {
                 ctx.channel().writeAndFlush(PING.duplicate());
                 log.info("写空闲，发送心跳包！！！连接: {}", ctx.channel());
