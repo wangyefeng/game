@@ -4,14 +4,23 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.ReadTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
+
+import java.net.SocketException;
 
 @ChannelHandler.Sharable
 public class ClientHandler extends SimpleChannelInboundHandler<ClientMessage<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        log.info("Channel active: {}", ctx.channel());
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ClientMessage message) {
@@ -21,6 +30,18 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientMessage<?>>
             return;
         }
         handler.handle(ctx.channel(), message.getMessage());
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (cause instanceof SocketException) {
+            log.info("Socket exception {} channel: {}", cause.getMessage(), ctx.channel());
+        } else if (cause instanceof ReadTimeoutException) {
+            log.info("Read timeout: {}", ctx.channel());
+        } else {
+            log.error("Exception caught in channel: {}", ctx.channel(), cause);
+            ctx.close();
+        }
     }
 
 }

@@ -3,26 +3,32 @@ package org.wangyefeng.game.gate.net;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.client.LogicClient;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
 
-import java.net.SocketException;
 import java.util.List;
 
-public class TcpDecoder extends ByteToMessageDecoder {
+public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
 
-    private static final Logger log = LoggerFactory.getLogger(TcpDecoder.class);
-
+    private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        log.info("Channel active: {}", ctx.channel());
+    protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
+        if (msg.getMessage() != null) {
+            out.writeInt(0);
+            out.writeShort(msg.getCode());
+            ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
+            msg.getMessage().writeTo(outputStream);
+            out.setInt(0, out.readableBytes() - 4);
+        } else {
+            out.writeInt(4);
+            out.writeShort(msg.getCode());
+        }
     }
 
     @Override
@@ -45,18 +51,6 @@ public class TcpDecoder extends ByteToMessageDecoder {
             } else {
                 log.error("Logic client not running, discard message: {}", in);
             }
-        }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof SocketException) {
-            log.info("Socket exception {} channel: {}", cause.getMessage(), ctx.channel());
-        } else if (cause instanceof ReadTimeoutException) {
-            log.info("Read timeout: {}", ctx.channel());
-        } else {
-            log.error("Exception caught in channel: {}", ctx.channel(), cause);
-            ctx.close();
         }
     }
 }

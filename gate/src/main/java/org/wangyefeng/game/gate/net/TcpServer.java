@@ -35,8 +35,6 @@ public class TcpServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于处理客户端连接
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            ProtobufEncode protobufEncode = new ProtobufEncode();
-            LogicHandler handler = new LogicHandler();
             ClientHandler clientHandler = new ClientHandler();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
@@ -44,9 +42,7 @@ public class TcpServer {
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, 4, 0, 4));
-                    pipeline.addLast(new TcpDecoder());
-                    pipeline.addLast(protobufEncode);
-                    pipeline.addLast(handler);
+                    pipeline.addLast(new TcpCodec());
                     pipeline.addLast(clientHandler);
                 }
             });
