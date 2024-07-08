@@ -12,20 +12,20 @@ import java.util.Map;
  */
 public enum GateProtocol implements Protocol {
 
-    PING(0),
-    LOGIN(1);
+    PING((short) 0),
+    LOGIN((short) 1);
 
-    private final int code;
+    private final short code;
 
     private final Parser parser;
 
-    private static final Map<Integer, GateProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Short, GateProtocol> PROTOCOLS = new HashMap<>();
 
-    GateProtocol(int code) {
+    GateProtocol(short code) {
         this(code, null);
     }
 
-    GateProtocol(int code, Parser parser) {
+    GateProtocol(short code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -33,7 +33,7 @@ public enum GateProtocol implements Protocol {
         this.parser = parser;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 
@@ -50,11 +50,11 @@ public enum GateProtocol implements Protocol {
         }
     }
 
-    public static boolean match(int code) {
+    public static boolean match(short code) {
         return PROTOCOLS.containsKey(code);
     }
 
-    public static Parser getParser(int code) {
+    public static Parser getParser(short code) {
         return PROTOCOLS.get(code).getParser();
     }
 

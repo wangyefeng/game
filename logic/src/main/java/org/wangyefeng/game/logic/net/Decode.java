@@ -36,7 +36,7 @@ public class Decode extends ByteToMessageDecoder {
      * @throws Exception
      */
     private void decodeClient(ByteBuf in, List<Object> out) throws Exception {
-        int code = in.readShort();
+        short code = in.readShort();
         Assert.isTrue(GateProtocol.match(code), "Invalid client code: " + code);
         int length = in.readableBytes();
         if (length > PLAYER_ID_LENGTH) {
@@ -55,7 +55,7 @@ public class Decode extends ByteToMessageDecoder {
      * @throws Exception
      */
     private void decodeGate(ByteBuf in, List<Object> out) throws Exception {
-        int code = in.readShort();
+        short code = in.readShort();
         Assert.isTrue(GateProtocol.match(code), "Invalid gate code: " + code);
         int length = in.readableBytes();
         if (length > 0) {

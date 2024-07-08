@@ -3,30 +3,30 @@ package org.wangyefeng.game.gate.net;
 import com.google.protobuf.Message;
 import org.wangyefeng.game.gate.protocol.Protocol;
 
-public class GateMessage<T extends Message> {
+public class LogicMessage<T extends Message> {
 
-    private int code;
+    private short code;
 
     private T message;
 
-    public GateMessage(Protocol protocol) {
+    public LogicMessage(Protocol protocol) {
         this(protocol.getCode());
     }
 
-    public GateMessage(Protocol protocol, T message) {
+    public LogicMessage(Protocol protocol, T message) {
         this(protocol.getCode(), message);
     }
 
-    public GateMessage(int code) {
+    public LogicMessage(short code) {
         this(code, null);
     }
 
-    public GateMessage(int code, T message) {
+    public LogicMessage(short code, T message) {
         this.code = code;
         this.message = message;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 

@@ -30,7 +30,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
 //                ctx.channel().writeAndFlush(msg.readerIndex(msg.readableBytes() - 4).retain());
             }
             case 1 -> { // 网关处理消息
-                int code = in.readShort();
+                short code = in.readShort();
                 Assert.isTrue(LogicProtocol.match(code), "Invalid code: " + code);
                 int length = in.readableBytes();
                 if (length > 0) {

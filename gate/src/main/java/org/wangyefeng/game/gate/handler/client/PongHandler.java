@@ -1,14 +1,15 @@
-package org.wangyefeng.game.gate.handler;
+package org.wangyefeng.game.gate.handler.client;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.wangyefeng.game.gate.handler.logic.LogicMsgHandler;
 import org.wangyefeng.game.gate.protocol.LogicProtocol;
 
 @Component
-public class PongHandler implements LogicHandler<Message> {
+public class PongHandler implements LogicMsgHandler<Message> {
 
     private static final Logger log = LoggerFactory.getLogger(PongHandler.class);
 

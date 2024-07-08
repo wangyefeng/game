@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface GateHandler<T extends Message> {
 
-    Map<Integer, GateHandler<Message>> handlers = new HashMap<>();
+    Map<Short, GateHandler<Message>> handlers = new HashMap<>();
 
     static void register(GateHandler<? extends Message> handler) {
         if (handlers.containsKey(handler.getProtocol().getCode())) {
@@ -18,7 +18,7 @@ public interface GateHandler<T extends Message> {
         handlers.put(handler.getProtocol().getCode(), (GateHandler<Message>) handler);
     }
 
-    static GateHandler<Message> getHandler(int code) {
+    static GateHandler<Message> getHandler(short code) {
         return handlers.get(code);
     }
 

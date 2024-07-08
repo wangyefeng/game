@@ -5,22 +5,22 @@ import java.util.Map;
 
 public enum ToClientProtocol implements Protocol {
 
-    PONG(0),
+    PONG((short) 0),
 
     ;
 
-    private static final Map<Integer, Protocol> PROTOCOL_MAP = new HashMap<>();
+    private static final Map<Short, Protocol> PROTOCOL_MAP = new HashMap<>();
 
-    private final int code;
+    private final short code;
 
-    ToClientProtocol(int code) {
+    ToClientProtocol(short code) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
         this.code = code;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 

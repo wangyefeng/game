@@ -1,4 +1,4 @@
-package org.wangyefeng.game.gate.net.client;
+package org.wangyefeng.game.gate.net;
 
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
@@ -13,9 +13,6 @@ public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
-    public LogicHandler() {
-    }
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LogicMessage message) {
         LogicMsgHandler<Message> logicMsgHandler = LogicMsgHandler.getHandler(message.getCode());
@@ -26,10 +23,4 @@ public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
         logicMsgHandler.handle(ctx.channel(), message.getMessage());
     }
 
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
-        LogicClient.getInstance().setRunning(false);
-        LogicClient.getInstance().reconnect();
-    }
 }

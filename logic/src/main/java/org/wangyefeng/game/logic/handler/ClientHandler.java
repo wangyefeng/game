@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ClientHandler<T extends Message> {
 
-    Map<Integer, ClientHandler<Message>> handlers = new HashMap<>();
+    Map<Short, ClientHandler<Message>> handlers = new HashMap<>();
 
     static void register(ClientHandler<? extends Message> handler) {
         if (handlers.containsKey(handler.getProtocol().getCode())) {

@@ -36,7 +36,8 @@ public class TcpServer {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             ProtobufEncode protobufEncode = new ProtobufEncode();
-            GateHandler handler = new GateHandler();
+            LogicHandler handler = new LogicHandler();
+            ClientHandler clientHandler = new ClientHandler();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
@@ -46,6 +47,7 @@ public class TcpServer {
                     pipeline.addLast(new TcpDecoder());
                     pipeline.addLast(protobufEncode);
                     pipeline.addLast(handler);
+                    pipeline.addLast(clientHandler);
                 }
             });
             bootstrap.option(ChannelOption.SO_BACKLOG, 200);

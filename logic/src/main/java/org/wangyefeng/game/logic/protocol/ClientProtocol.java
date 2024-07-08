@@ -8,19 +8,19 @@ import java.util.Map;
 
 public enum ClientProtocol implements Protocol {
 
-    LOGIN(1, Common.PbInt.parser());
+    LOGIN((short) 1, Common.PbInt.parser());
 
-    private final int code;
+    private final short code;
 
     private final Parser parser;
 
-    private static final Map<Integer, ClientProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Short, ClientProtocol> PROTOCOLS = new HashMap<>();
 
-    ClientProtocol(int code) {
+    ClientProtocol(short code) {
         this(code, null);
     }
 
-    ClientProtocol(int code, Parser parser) {
+    ClientProtocol(short code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -28,7 +28,7 @@ public enum ClientProtocol implements Protocol {
         this.parser = parser;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 

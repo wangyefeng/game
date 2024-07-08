@@ -8,9 +8,8 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import org.wangyefeng.game.gate.net.client.LogicClient;
-import org.wangyefeng.game.gate.protocol.LogicProtocol;
+import org.wangyefeng.game.gate.protocol.ClientProtocol;
 
 import java.net.SocketException;
 import java.util.List;
@@ -20,14 +19,6 @@ public class TcpDecoder extends ByteToMessageDecoder {
     private static final Logger log = LoggerFactory.getLogger(TcpDecoder.class);
 
 
-    private static final byte GATE = (byte) 1;
-
-
-    private static final byte LOGIC = (byte) 2;
-
-
-    private static final byte CROSS = (byte) 3;
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
@@ -35,34 +26,25 @@ public class TcpDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        byte tag = msg.readByte();// 发送服务器tag
-        switch (tag) {
-            case GATE -> {
-                int code = msg.readShort();
-                Assert.isTrue(LogicProtocol.match(code), "Invalid code: " + code);
-                int length = msg.readableBytes();
-                if (length > 0) {
-                    ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-                    out.add(new GateMessage<>(code, (Message) LogicProtocol.getParser(code).parseFrom(inputStream)));
-                } else {
-                    out.add(new GateMessage<>(code));
-                }
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        short code = in.readShort();
+        if (ClientProtocol.match(code)) { // 客户端发送gate处理的消息
+            int length = in.readableBytes();
+            if (length > 0) {
+                ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
+                out.add(new ClientMessage<>(code, message));
+            } else {
+                out.add(new ClientMessage<>(code));
             }
-            case LOGIC -> {
-                LogicClient client = LogicClient.getInstance();
-                if (client.isRunning()) {
-                    msg.writeInt(1);
-                    client.getChannel().writeAndFlush(msg.retain());
-                } else {
-                    log.error("Logic client not running, discard message: {}", msg);
-                }
+        } else {
+            LogicClient client = LogicClient.getInstance();
+            if (client.isRunning()) {
+                in.writeInt(1);
+                client.getChannel().writeAndFlush(in.retain());
+            } else {
+                log.error("Logic client not running, discard message: {}", in);
             }
-            case CROSS -> {
-                // TODO: 处理跨服消息
-                log.warn("Cross server message not implemented yet: {}", msg);
-            }
-            default -> log.warn("Unknown tag: {}", tag);
         }
     }
 
@@ -76,11 +58,5 @@ public class TcpDecoder extends ByteToMessageDecoder {
             log.error("Exception caught in channel: {}", ctx.channel(), cause);
             ctx.close();
         }
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
-        log.info("Channel inactive: {}", ctx.channel());
     }
 }

@@ -5,11 +5,11 @@ import org.wangyefeng.game.logic.protocol.Protocol;
 
 public class GateMessage<T extends Message> {
 
-    private int code;
+    private short code;
 
     private T message;
 
-    public GateMessage(int code, T message) {
+    public GateMessage(short code, T message) {
         this.code = code;
         this.message = message;
     }
@@ -22,11 +22,11 @@ public class GateMessage<T extends Message> {
         this(protocol.getCode(), null);
     }
 
-    public GateMessage(int code) {
+    public GateMessage(short code) {
         this(code, null);
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 

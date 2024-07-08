@@ -13,10 +13,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
  *
  */
 @ChannelHandler.Sharable
-public class ProtobufEncode extends MessageToByteEncoder<GateMessage> {
+public class ProtobufEncode extends MessageToByteEncoder<LogicMessage> {
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, GateMessage msg, ByteBuf out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, LogicMessage msg, ByteBuf out) throws Exception {
 		if (msg.getMessage() != null) {
 			out.writeInt(0);
 			out.writeInt(msg.getCode());

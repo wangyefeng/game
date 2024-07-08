@@ -8,7 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.wangyefeng.game.gate.config.GlobalConfig;
-import org.wangyefeng.game.gate.handler.LogicHandler;
+import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
+import org.wangyefeng.game.gate.handler.logic.LogicMsgHandler;
 import org.wangyefeng.game.gate.net.TcpServer;
 import org.wangyefeng.game.gate.net.client.LogicClient;
 
@@ -31,7 +32,10 @@ public class Gate implements CommandLineRunner {
     private GlobalConfig config;
 
     @Autowired
-    private Collection<LogicHandler<?>> logicHandlers;
+    private Collection<LogicMsgHandler<?>> logicMsgHandlers;
+
+    @Autowired
+    private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     private void start() throws Exception {
         registerHandler();
@@ -56,7 +60,8 @@ public class Gate implements CommandLineRunner {
 
     private void registerHandler() {
         log.info("handler registering...");
-        logicHandlers.forEach(logicHandler -> LogicHandler.register(logicHandler));
+        logicMsgHandlers.forEach(logicHandler -> LogicMsgHandler.register(logicHandler));
+        clientMsgHandlers.forEach(clientMsgHandler -> ClientMsgHandler.register(clientMsgHandler));
         log.info("handler register end");
     }
 
