@@ -14,12 +14,12 @@ import org.wangyefeng.game.logic.handler.Handler;
  * @description 处理消息的handler
  */
 @ChannelHandler.Sharable
-public class Gate2ServerHandler extends SimpleChannelInboundHandler<Gate2ServerMessage<?>> {
+public class GateHandler extends SimpleChannelInboundHandler<GateMessage<?>> {
 
-    private static final Logger log = LoggerFactory.getLogger(Gate2ServerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GateHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Gate2ServerMessage client2ServerMessage) {
+    protected void channelRead0(ChannelHandlerContext ctx, GateMessage client2ServerMessage) {
         Handler<Message> logicHandler = Handler.getHandler(client2ServerMessage.getCode());
         if (logicHandler == null) {
             log.warn("illegal message code: {}", client2ServerMessage.getCode());

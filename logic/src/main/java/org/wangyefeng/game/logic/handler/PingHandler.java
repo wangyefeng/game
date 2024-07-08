@@ -6,20 +6,21 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.wangyefeng.game.logic.protocol.Gate2LogicProtocol;
+import org.wangyefeng.game.logic.net.ProtocolType;
+import org.wangyefeng.game.logic.protocol.GateProtocol;
+import org.wangyefeng.game.logic.protocol.ToGateProtocol;
 
 @Component
 public class PingHandler extends AbstractNoMessageHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 
-
     private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(7));
 
     static {
         PONG.writeInt(3);
-        PONG.writeByte(1);
-        PONG.writeShort(Gate2LogicProtocol.PING.getCode());
+        PONG.writeByte(ProtocolType.LOGIC_GATE.getValue());
+        PONG.writeShort(ToGateProtocol.PONG.getCode());
     }
 
     @Override
@@ -29,7 +30,7 @@ public class PingHandler extends AbstractNoMessageHandler {
     }
 
     @Override
-    public Gate2LogicProtocol getProtocol() {
-        return Gate2LogicProtocol.PING;
+    public GateProtocol getProtocol() {
+        return GateProtocol.PING;
     }
 }

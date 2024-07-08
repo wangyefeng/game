@@ -5,9 +5,7 @@ import com.google.protobuf.Parser;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Client2LogicProtocol implements Protocol {
-
-    PING(0),
+public enum ClientProtocol implements Protocol {
 
     ;
 
@@ -15,13 +13,13 @@ public enum Client2LogicProtocol implements Protocol {
 
     private final Parser parser;
 
-    private static final Map<Integer, Client2LogicProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Integer, ClientProtocol> PROTOCOLS = new HashMap<>();
 
-    Client2LogicProtocol(int code) {
+    ClientProtocol(int code) {
         this(code, null);
     }
 
-    Client2LogicProtocol(int code, Parser parser) {
+    ClientProtocol(int code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -38,7 +36,7 @@ public enum Client2LogicProtocol implements Protocol {
     }
 
     static {
-        for (Client2LogicProtocol protocol : Client2LogicProtocol.values()) {
+        for (ClientProtocol protocol : ClientProtocol.values()) {
             if (PROTOCOLS.containsKey(protocol.getCode())) {
                 throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
             }

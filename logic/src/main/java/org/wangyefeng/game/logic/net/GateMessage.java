@@ -3,26 +3,26 @@ package org.wangyefeng.game.logic.net;
 import com.google.protobuf.Message;
 import org.wangyefeng.game.logic.protocol.Protocol;
 
-public class Gate2ServerMessage<T extends Message> {
+public class GateMessage<T extends Message> {
 
     private int code;
 
     private T message;
 
-    public Gate2ServerMessage(int code, T message) {
+    public GateMessage(int code, T message) {
         this.code = code;
         this.message = message;
     }
 
-    public Gate2ServerMessage(Protocol protocol, T message) {
+    public GateMessage(Protocol protocol, T message) {
         this(protocol.getCode(), message);
     }
 
-    public Gate2ServerMessage(Protocol protocol) {
+    public GateMessage(Protocol protocol) {
         this(protocol.getCode(), null);
     }
 
-    public Gate2ServerMessage(int code) {
+    public GateMessage(int code) {
         this(code, null);
     }
 

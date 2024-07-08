@@ -3,7 +3,7 @@ package org.wangyefeng.game.logic.net;
 import com.google.protobuf.Message;
 import org.wangyefeng.game.logic.protocol.Protocol;
 
-public class Client2ServerMessage<T extends Message> {
+public class ClientMessage<T extends Message> {
 
     private int playerId;
 
@@ -11,21 +11,21 @@ public class Client2ServerMessage<T extends Message> {
 
     private T message;
 
-    public Client2ServerMessage(int playerId, int code, T message) {
+    public ClientMessage(int playerId, int code, T message) {
         this.playerId = playerId;
         this.code = code;
         this.message = message;
     }
 
-    public Client2ServerMessage(int playerId, Protocol protocol, T message) {
+    public ClientMessage(int playerId, Protocol protocol, T message) {
         this(playerId, protocol.getCode(), message);
     }
 
-    public Client2ServerMessage(int playerId, Protocol protocol) {
+    public ClientMessage(int playerId, Protocol protocol) {
         this(playerId, protocol.getCode(), null);
     }
 
-    public Client2ServerMessage(int playerId, int code) {
+    public ClientMessage(int playerId, int code) {
         this(playerId, code, null);
     }
 

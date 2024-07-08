@@ -5,23 +5,27 @@ import com.google.protobuf.Parser;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Gate2LogicProtocol implements Protocol {
+/**
+ * @author wangyefeng
+ * @date 2024-07-08
+ * @description 服务器到客户端协议
+ */
+public enum GateProtocol implements Protocol {
 
     PING(0),
-
     ;
 
     private final int code;
 
     private final Parser parser;
 
-    private static final Map<Integer, Gate2LogicProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Integer, GateProtocol> PROTOCOLS = new HashMap<>();
 
-    Gate2LogicProtocol(int code) {
+    GateProtocol(int code) {
         this(code, null);
     }
 
-    Gate2LogicProtocol(int code, Parser parser) {
+    GateProtocol(int code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -38,7 +42,7 @@ public enum Gate2LogicProtocol implements Protocol {
     }
 
     static {
-        for (Gate2LogicProtocol protocol : Gate2LogicProtocol.values()) {
+        for (GateProtocol protocol : GateProtocol.values()) {
             if (PROTOCOLS.containsKey(protocol.getCode())) {
                 throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
             }

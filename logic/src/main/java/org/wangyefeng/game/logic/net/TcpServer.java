@@ -19,6 +19,16 @@ public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
+    public static final int FRAME_LENGTH = 4; // 帧长度字节长度
+
+    public static final int PROTOCOL_TYPE_LENGTH = 1; // 协议体类型字节长度
+
+    public static final int CODE_LENGTH = 2; // 消息号字节长度
+
+    public static final int PLAYER_ID_LENGTH = 4; // 玩家ID字节长度
+
+    public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
+
     private Channel channel;
 
     private boolean isRunning = false;
@@ -35,17 +45,19 @@ public class TcpServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于处理客户端连接
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            Client2ServerHandler client2ServerHandler = new Client2ServerHandler();
-            Gate2ServerHandler gate2ServerHandler = new Gate2ServerHandler();
+            ClientHandler clientHandler = new ClientHandler();
+            ClientMsgEncode clientMsgEncode = new ClientMsgEncode();
+            GateHandler gateHandler = new GateHandler();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new ReadTimeoutHandler(20));
-                    pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, 4, 0, 4));
-                    pipeline.addLast(new Codec());
-                    pipeline.addLast(client2ServerHandler);
-                    pipeline.addLast(gate2ServerHandler);
+                    pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
+                    pipeline.addLast(new Decode());
+                    pipeline.addLast(clientMsgEncode);
+                    pipeline.addLast(clientHandler);
+                    pipeline.addLast(gateHandler);
                 }
             });
             bootstrap.option(ChannelOption.SO_BACKLOG, 200);

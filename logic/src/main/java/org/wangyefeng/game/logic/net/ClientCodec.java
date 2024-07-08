@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.springframework.util.Assert;
-import org.wangyefeng.game.logic.protocol.Gate2LogicProtocol;
+import org.wangyefeng.game.logic.protocol.GateProtocol;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import java.util.List;
  * @date 2024-07-08
  * @description 编解码器
  */
-public class ClientCodec extends ByteToMessageCodec<Client2ServerMessage> {
+public class ClientCodec extends ByteToMessageCodec<ClientMessage> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Client2ServerMessage msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);// 协议长度占位
             out.writeByte(0);// 协议类型
@@ -52,29 +52,29 @@ public class ClientCodec extends ByteToMessageCodec<Client2ServerMessage> {
 
     private void decode0(ByteBuf in, List<Object> out) throws Exception {
         int code = in.readShort();
-        Assert.isTrue(Gate2LogicProtocol.match(code), "Invalid code: " + code);
+        Assert.isTrue(GateProtocol.match(code), "Invalid code: " + code);
         int length = in.readableBytes();
         if (length > 4) {
             ByteBufInputStream inputStream = new ByteBufInputStream(in, length - 4);
-            com.google.protobuf.Message message = (com.google.protobuf.Message) Gate2LogicProtocol.getParser(code).parseFrom(inputStream);
+            com.google.protobuf.Message message = (com.google.protobuf.Message) GateProtocol.getParser(code).parseFrom(inputStream);
             int playerId = in.readInt();
-            out.add(new Client2ServerMessage<>(playerId, code, message));
+            out.add(new ClientMessage<>(playerId, code, message));
         } else {
             int playerId = in.readInt();
-            out.add(new Client2ServerMessage<>(playerId, code));
+            out.add(new ClientMessage<>(playerId, code));
         }
     }
 
     private void decode1(ByteBuf in, List<Object> out) throws Exception {
         int code = in.readShort();
-        Assert.isTrue(Gate2LogicProtocol.match(code), "Invalid code: " + code);
+        Assert.isTrue(GateProtocol.match(code), "Invalid code: " + code);
         int length = in.readableBytes();
         if (length > 4) {
             ByteBufInputStream inputStream = new ByteBufInputStream(in);
-            com.google.protobuf.Message message = (com.google.protobuf.Message) Gate2LogicProtocol.getParser(code).parseFrom(inputStream);
-            out.add(new Gate2ServerMessage<>(code, message));
+            com.google.protobuf.Message message = (com.google.protobuf.Message) GateProtocol.getParser(code).parseFrom(inputStream);
+            out.add(new GateMessage<>(code, message));
         } else {
-            out.add(new Gate2ServerMessage<>(code));
+            out.add(new GateMessage<>(code));
         }
     }
 }
