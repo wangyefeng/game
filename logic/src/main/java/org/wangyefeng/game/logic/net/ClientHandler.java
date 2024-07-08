@@ -19,6 +19,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientMessage<?>>
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        log.info("client channel active: {}", ctx.channel());
+    }
+
+    @Override
     protected void channelRead0(ChannelHandlerContext ctx, ClientMessage clientMessage) {
         ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(clientMessage.getCode());
         if (logicHandler == null) {
