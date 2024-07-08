@@ -18,7 +18,7 @@ public interface ClientHandler<T extends Message> {
         handlers.put(handler.getProtocol().getCode(), (ClientHandler<Message>) handler);
     }
 
-    static ClientHandler<Message> getHandler(int code) {
+    static ClientHandler<Message> getHandler(short code) {
         return handlers.get(code);
     }
 

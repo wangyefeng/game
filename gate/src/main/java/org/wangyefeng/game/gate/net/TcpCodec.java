@@ -1,9 +1,7 @@
 package org.wangyefeng.game.gate.net;
 
 import com.google.protobuf.Message;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
@@ -26,7 +24,7 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
             msg.getMessage().writeTo(outputStream);
             out.setInt(0, out.readableBytes() - 4);
         } else {
-            out.writeInt(4);
+            out.writeInt(2);
             out.writeShort(msg.getCode());
         }
     }
@@ -46,8 +44,16 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
         } else {
             LogicClient client = LogicClient.getInstance();
             if (client.isRunning()) {
-                in.writeInt(1);
-                client.getChannel().writeAndFlush(in.retain());
+                int readableBytes = in.readableBytes();
+                byte[] bytes = new byte[readableBytes];
+                in.readBytes(bytes);
+                ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11);
+                buffer.writeInt(readableBytes + 7);
+                buffer.writeByte(0);
+                buffer.writeShort(code);
+                buffer.writeBytes(bytes);
+                buffer.writeInt(102);
+                client.getChannel().writeAndFlush(buffer);
             } else {
                 log.error("Logic client not running, discard message: {}", in);
             }

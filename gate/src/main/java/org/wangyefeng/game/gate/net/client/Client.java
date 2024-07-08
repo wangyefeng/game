@@ -61,6 +61,7 @@ public abstract class Client {
         while (true) {
             try {
                 channel = bootstrap.connect(host, port).sync().channel();
+                running = true;
                 log.info("服务器连接成功！{}", channel);
                 break;
             } catch (Exception e) {

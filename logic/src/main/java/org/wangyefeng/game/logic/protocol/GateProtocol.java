@@ -1,6 +1,7 @@
 package org.wangyefeng.game.logic.protocol;
 
 import com.google.protobuf.Parser;
+import org.wangyefeng.game.proto.Common;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 public enum GateProtocol implements Protocol {
 
     PING((short) 0),
-    LOGIN((short) 1);
+    LOGIN((short) 1, Common.PbInt.parser());
 
     private final short code;
 

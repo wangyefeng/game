@@ -7,11 +7,11 @@ public class ClientMessage<T extends Message> {
 
     private int playerId;
 
-    private int code;
+    private short code;
 
     private T message;
 
-    public ClientMessage(int playerId, int code, T message) {
+    public ClientMessage(int playerId, short code, T message) {
         this.playerId = playerId;
         this.code = code;
         this.message = message;
@@ -25,11 +25,11 @@ public class ClientMessage<T extends Message> {
         this(playerId, protocol.getCode(), null);
     }
 
-    public ClientMessage(int playerId, int code) {
+    public ClientMessage(int playerId, short code) {
         this(playerId, code, null);
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 
