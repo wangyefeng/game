@@ -13,7 +13,7 @@ import org.wangyefeng.game.logic.protocol.GateProtocol;
 import org.wangyefeng.game.logic.protocol.ToGateProtocol;
 
 @Component
-public class PingHandler implements GateHandler<Message> {
+public class PingHandler implements GateMsgHandler<Message> {
 
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 

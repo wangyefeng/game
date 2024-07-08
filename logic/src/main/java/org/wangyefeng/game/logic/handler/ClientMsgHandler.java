@@ -7,18 +7,18 @@ import org.wangyefeng.game.logic.protocol.ClientProtocol;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface ClientHandler<T extends Message> {
+public interface ClientMsgHandler<T extends Message> {
 
-    Map<Short, ClientHandler<Message>> handlers = new HashMap<>();
+    Map<Short, ClientMsgHandler<Message>> handlers = new HashMap<>();
 
-    static void register(ClientHandler<? extends Message> handler) {
+    static void register(ClientMsgHandler<? extends Message> handler) {
         if (handlers.containsKey(handler.getProtocol().getCode())) {
             throw new IllegalArgumentException("Duplicate protocol:" + handler.getProtocol());
         }
-        handlers.put(handler.getProtocol().getCode(), (ClientHandler<Message>) handler);
+        handlers.put(handler.getProtocol().getCode(), (ClientMsgHandler<Message>) handler);
     }
 
-    static ClientHandler<Message> getHandler(short code) {
+    static ClientMsgHandler<Message> getHandler(short code) {
         return handlers.get(code);
     }
 

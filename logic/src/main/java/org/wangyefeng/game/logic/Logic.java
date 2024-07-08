@@ -8,8 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.wangyefeng.game.logic.config.GlobalConfig;
-import org.wangyefeng.game.logic.handler.ClientHandler;
-import org.wangyefeng.game.logic.handler.GateHandler;
+import org.wangyefeng.game.logic.handler.ClientMsgHandler;
+import org.wangyefeng.game.logic.handler.GateMsgHandler;
 import org.wangyefeng.game.logic.net.TcpServer;
 
 import java.util.Collection;
@@ -26,10 +26,10 @@ public class Logic implements CommandLineRunner {
     private GlobalConfig config;
 
     @Autowired
-    private Collection<GateHandler<?>> gateHandlers;
+    private Collection<GateMsgHandler<?>> gateMsgHandlers;
 
     @Autowired
-    private Collection<ClientHandler<?>> clientHandlers;
+    private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     private void start() throws Exception {
         registerHandler();
@@ -53,8 +53,8 @@ public class Logic implements CommandLineRunner {
 
     private void registerHandler() {
         log.info("handler registering...");
-        gateHandlers.forEach(handler -> GateHandler.register(handler));// 注册gate handler
-        clientHandlers.forEach(handler -> ClientHandler.register(handler));// 注册client handler
+        gateMsgHandlers.forEach(handler -> GateMsgHandler.register(handler));// 注册gate handler
+        clientMsgHandlers.forEach(handler -> ClientMsgHandler.register(handler));// 注册client handler
         log.info("handler register end");
     }
 

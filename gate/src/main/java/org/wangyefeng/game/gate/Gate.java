@@ -60,7 +60,7 @@ public class Gate implements CommandLineRunner {
 
     private void registerHandler() {
         log.info("handler registering...");
-        logicMsgHandlers.forEach(logicHandler -> LogicMsgHandler.register(logicHandler));
+        logicMsgHandlers.forEach(logicMsgHandler -> LogicMsgHandler.register(logicMsgHandler));
         clientMsgHandlers.forEach(clientMsgHandler -> ClientMsgHandler.register(clientMsgHandler));
         log.info("handler register end");
     }

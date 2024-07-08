@@ -4,12 +4,12 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.wangyefeng.game.logic.handler.ClientHandler;
+import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.protocol.ClientProtocol;
 import org.wangyefeng.game.proto.Common;
 
 @Component
-public class LoginHandler implements ClientHandler<Common.PbInt> {
+public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
 
 
     private static final Logger log = LoggerFactory.getLogger(LoginHandler.class);

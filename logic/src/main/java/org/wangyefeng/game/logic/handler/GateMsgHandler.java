@@ -7,18 +7,18 @@ import org.wangyefeng.game.logic.protocol.GateProtocol;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface GateHandler<T extends Message> {
+public interface GateMsgHandler<T extends Message> {
 
-    Map<Short, GateHandler<Message>> handlers = new HashMap<>();
+    Map<Short, GateMsgHandler<Message>> handlers = new HashMap<>();
 
-    static void register(GateHandler<? extends Message> handler) {
+    static void register(GateMsgHandler<? extends Message> handler) {
         if (handlers.containsKey(handler.getProtocol().getCode())) {
             throw new IllegalArgumentException("Duplicate protocol:" + handler.getProtocol());
         }
-        handlers.put(handler.getProtocol().getCode(), (GateHandler<Message>) handler);
+        handlers.put(handler.getProtocol().getCode(), (GateMsgHandler<Message>) handler);
     }
 
-    static GateHandler<Message> getHandler(short code) {
+    static GateMsgHandler<Message> getHandler(short code) {
         return handlers.get(code);
     }
 

@@ -4,9 +4,9 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wangyefeng.game.logic.handler.ClientHandler;
+import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 
-public abstract class AbstractPlayerHandler<T extends Message> implements ClientHandler<T> {
+public abstract class AbstractPlayerHandler<T extends Message> implements ClientMsgHandler<T> {
 
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPlayerHandler.class);
