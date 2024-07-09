@@ -9,6 +9,8 @@ public enum ClientProtocol implements Protocol {
 
     PING((short) 0),
 
+    TOKEN_VALIDATE((short) 1),
+
     ;
 
     private final short code;

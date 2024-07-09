@@ -31,32 +31,39 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        short code = in.readShort();
-        if (ClientProtocol.match(code)) { // 客户端发送gate处理的消息
-            int length = in.readableBytes();
-            if (length > 0) {
-                ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
-                out.add(new ClientMessage<>(code, message));
+        try {
+            short code = in.readShort();
+            if (ClientProtocol.match(code)) { // 客户端发送gate处理的消息
+                int length = in.readableBytes();
+                if (length > 0) {
+                    ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                    Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
+                    out.add(new ClientMessage<>(code, message));
+                } else {
+                    out.add(new ClientMessage<>(code));
+                }
             } else {
-                out.add(new ClientMessage<>(code));
+                LogicClient client = LogicClient.getInstance();
+                if (client.isRunning()) {
+                    int readableBytes = in.readableBytes();
+                    byte[] bytes = new byte[readableBytes];
+                    in.readBytes(bytes);
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11);
+                    buffer.writeInt(readableBytes + 7);
+                    buffer.writeByte(0);
+                    buffer.writeShort(code);
+                    buffer.writeBytes(bytes);
+                    buffer.writeInt(102);
+                    client.getChannel().writeAndFlush(buffer);
+                } else {
+                    in.skipBytes(in.readableBytes());
+                    log.error("handle message error, Logic server is not running, code: {}", code);
+                }
             }
-        } else {
-            LogicClient client = LogicClient.getInstance();
-            if (client.isRunning()) {
-                int readableBytes = in.readableBytes();
-                byte[] bytes = new byte[readableBytes];
-                in.readBytes(bytes);
-                ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11);
-                buffer.writeInt(readableBytes + 7);
-                buffer.writeByte(0);
-                buffer.writeShort(code);
-                buffer.writeBytes(bytes);
-                buffer.writeInt(102);
-                client.getChannel().writeAndFlush(buffer);
-            } else {
-                log.error("Logic client not running, discard message: {}", in);
-            }
+        } catch (Exception e) {
+            log.error("decode error", e);
+        } finally {
+            in.skipBytes(in.readableBytes());
         }
     }
 }

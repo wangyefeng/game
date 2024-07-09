@@ -6,3 +6,7 @@ package org.wangyefeng.game.proto;
 message PbInt {
 	int32 val = 1;
 }
+
+message PbString {
+	string val = 1;
+}
