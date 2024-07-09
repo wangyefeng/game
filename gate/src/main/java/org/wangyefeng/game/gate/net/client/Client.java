@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
+
     private final String host;
 
     private final int port;

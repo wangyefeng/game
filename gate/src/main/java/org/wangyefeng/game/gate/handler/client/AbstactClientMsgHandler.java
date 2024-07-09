@@ -13,13 +13,12 @@ public abstract class AbstactClientMsgHandler<T extends Message> implements Clie
 
     @Override
     public void handle(Channel channel, T message) {
-        // TODO 临时简单处理，后续需要优化逻辑线程
-        Player player = channel.attr(AttributeKeys.PLAYER_ID).get();
+        Player player = channel.attr(AttributeKeys.PLAYER).get();
         if (player == null) {
             log.warn("func={}, msg=playerId is null, channel={}", getClass().getSimpleName(), channel);
             return;
         }
-        handle(channel, message, player);
+        player.getExecutor().execute(() -> handle(channel, message, player));
     }
 
     protected abstract void handle(Channel channel, T message, Player player);

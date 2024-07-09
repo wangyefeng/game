@@ -7,6 +7,10 @@ public enum ToClientProtocol implements Protocol {
 
     PONG((short) 0),
 
+    TOKEN_VALIDATE((short) 1),
+
+    KICK_OUT((short) 2),
+
     ;
 
     private static final Map<Short, Protocol> PROTOCOL_MAP = new HashMap<>();

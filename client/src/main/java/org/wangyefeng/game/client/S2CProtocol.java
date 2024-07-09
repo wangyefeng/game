@@ -1,27 +1,31 @@
-package org.wangyefeng.game.gate.protocol;
+package org.wangyefeng.game.client;
 
 import com.google.protobuf.Parser;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum LogicProtocol implements Protocol {
+public enum S2CProtocol implements Protocol {
 
-    PONG((short) 0),
+    PING((short) 0),
+
+    TOKEN_VALIDATE((short) 1),
+
+    TEST((short) 2),
 
     ;
 
     private final short code;
 
-    private final Parser<?> parser;
+    private final Parser parser;
 
-    private static final Map<Short, LogicProtocol> PROTOCOLS = new HashMap<>();
+    private static final Map<Short, S2CProtocol> PROTOCOLS = new HashMap<>();
 
-    LogicProtocol(short code) {
+    S2CProtocol(short code) {
         this(code, null);
     }
 
-    LogicProtocol(short code, Parser<?> parser) {
+    S2CProtocol(short code, Parser parser) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
@@ -38,7 +42,7 @@ public enum LogicProtocol implements Protocol {
     }
 
     static {
-        for (LogicProtocol protocol : LogicProtocol.values()) {
+        for (S2CProtocol protocol : S2CProtocol.values()) {
             if (PROTOCOLS.containsKey(protocol.getCode())) {
                 throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
             }
@@ -53,5 +57,4 @@ public enum LogicProtocol implements Protocol {
     public static Parser getParser(short code) {
         return PROTOCOLS.get(code).getParser();
     }
-
 }

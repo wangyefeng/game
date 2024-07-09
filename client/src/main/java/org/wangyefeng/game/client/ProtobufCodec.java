@@ -36,11 +36,11 @@ public class ProtobufCodec extends ByteToMessageCodec<ProtoBufMessage> {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf msg, List<Object> out) throws Exception {
         short code = msg.readShort();
-        Assert.isTrue(C2SProtocol.match(code), "Invalid code: " + code);
+        Assert.isTrue(S2CProtocol.match(code), "Invalid code: " + code);
         int length = msg.readableBytes();
 		if (length > 0) {
 			ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-			out.add(new ProtoBufMessage<>(code, (Message) C2SProtocol.getParser(code).parseFrom(inputStream)));
+			out.add(new ProtoBufMessage<>(code, (Message) S2CProtocol.getParser(code).parseFrom(inputStream)));
 		} else {
 			out.add(new ProtoBufMessage<>(code));
 		}

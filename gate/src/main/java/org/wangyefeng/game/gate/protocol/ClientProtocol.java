@@ -1,6 +1,7 @@
 package org.wangyefeng.game.gate.protocol;
 
 import com.google.protobuf.Parser;
+import org.wangyefeng.game.proto.Common;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +10,9 @@ public enum ClientProtocol implements Protocol {
 
     PING((short) 0),
 
-    TOKEN_VALIDATE((short) 1),
+    TOKEN_VALIDATE((short) 1, Common.PbInt.parser()),
 
-    ;
+    TEST((short) 2);
 
     private final short code;
 
