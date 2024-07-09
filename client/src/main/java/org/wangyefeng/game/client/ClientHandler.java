@@ -14,6 +14,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ProtoBufMessage<?
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         ctx.channel().writeAndFlush(new ProtoBufMessage<>(C2SProtocol.TOKEN_VALIDATE, Common.PbInt.newBuilder().setVal(100).build()));
+        ctx.channel().writeAndFlush(new ProtoBufMessage<>(C2SProtocol.LOGIN, Common.PbInt.newBuilder().setVal(12).build()));
         ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new ProtoBufMessage<>(C2SProtocol.PING)), 5, 5, TimeUnit.SECONDS);
         ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new ProtoBufMessage<>(C2SProtocol.TEST)), 3, 3, TimeUnit.SECONDS);
     }

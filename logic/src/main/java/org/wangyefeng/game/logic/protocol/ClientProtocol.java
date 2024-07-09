@@ -8,7 +8,7 @@ import java.util.Map;
 
 public enum ClientProtocol implements Protocol {
 
-    LOGIN((short) 1, Common.PbInt.parser());
+    LOGIN((short) 3, Common.PbInt.parser());
 
     private final short code;
 
@@ -45,11 +45,11 @@ public enum ClientProtocol implements Protocol {
         }
     }
 
-    public static boolean match(int code) {
+    public static boolean match(short code) {
         return PROTOCOLS.containsKey(code);
     }
 
-    public static Parser getParser(int code) {
+    public static Parser getParser(short code) {
         return PROTOCOLS.get(code).getParser();
     }
 

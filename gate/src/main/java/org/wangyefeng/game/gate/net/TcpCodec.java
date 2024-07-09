@@ -43,21 +43,21 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
                     out.add(new ClientMessage<>(code));
                 }
             } else {
-                LogicClient client = LogicClient.getInstance();
-                if (client.isRunning()) {
-                    int readableBytes = in.readableBytes();
-                    byte[] bytes = new byte[readableBytes];
-                    in.readBytes(bytes);
-                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11);
-                    buffer.writeInt(readableBytes + 7);
-                    buffer.writeByte(0);
-                    buffer.writeShort(code);
-                    buffer.writeBytes(bytes);
-                    buffer.writeInt(102);
-                    client.getChannel().writeAndFlush(buffer);
-                } else {
-                    in.skipBytes(in.readableBytes());
-                    log.error("handle message error, Logic server is not running, code: {}", code);
+                if (ctx.channel().hasAttr(AttributeKeys.PLAYER)) {
+                    LogicClient client = LogicClient.getInstance();
+                    if (client.isRunning()) {
+                        int readableBytes = in.readableBytes();
+                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11, readableBytes + 11);
+                        buffer.writeInt(readableBytes + 7);
+                        buffer.writeByte(0);
+                        buffer.writeShort(code);
+                        buffer.writeInt(ctx.channel().attr(AttributeKeys.PLAYER).get().getId());
+                        buffer.writeBytes(in);
+                        client.getChannel().writeAndFlush(buffer);
+                    } else {
+                        in.skipBytes(in.readableBytes());
+                        log.error("handle message error, Logic server is not running, code: {}", code);
+                    }
                 }
             }
         } catch (Exception e) {

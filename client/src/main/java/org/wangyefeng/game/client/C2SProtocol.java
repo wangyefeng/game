@@ -8,6 +8,8 @@ public enum C2SProtocol implements Protocol {
 
     TEST((short) 2),
 
+    LOGIN((short) 3),
+
     ;
 
     private final short code;
