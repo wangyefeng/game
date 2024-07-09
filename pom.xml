@@ -18,7 +18,8 @@
         <module>gate</module> <!-- 网关模块 -->
         <module>proto</module> <!-- 协议模块 -->
         <module>logic</module> <!-- 逻辑模块 -->
-        <module>common</module> <!-- 公共模块 -->
+        <module>common</module>
+        <module>client</module> <!-- 公共模块 -->
     </modules>
 
     <dependencies>
