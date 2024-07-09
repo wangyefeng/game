@@ -62,7 +62,6 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
             }
         } catch (Exception e) {
             log.error("decode error", e);
-        } finally {
             in.skipBytes(in.readableBytes());
         }
     }
