@@ -29,6 +29,10 @@ import java.util.concurrent.TimeUnit;
 @Validated
 public class LogicClient extends Client {
 
+    public LogicClient() {
+        super();
+        this.name = "logic";
+    }
 
     @Override
     public void init() {

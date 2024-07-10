@@ -13,6 +13,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.net.client.LogicClient;
 
@@ -25,13 +26,16 @@ public class TcpServer {
 
     private boolean isRunning = false;
 
+    @Value("${server.tcp-port:8888}")
+    private int port;
+
     @Autowired
     private LogicClient logicClient;
 
     TcpServer() {
     }
 
-    public void start(int port) {
+    public void start() {
         log.info("tcp server is starting...");
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
@@ -77,5 +81,4 @@ public class TcpServer {
             throw new RuntimeException(e);
         }
     }
-
 }
