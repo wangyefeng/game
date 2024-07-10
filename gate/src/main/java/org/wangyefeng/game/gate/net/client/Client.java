@@ -91,7 +91,7 @@ public abstract class Client {
     }
 
     public void reconnect() {
-        Thread thread = new Thread(this::start, "reconnect");
+        Thread thread = new Thread(this::connect, "reconnect");
         thread.start();
     }
 

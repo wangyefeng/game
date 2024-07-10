@@ -20,7 +20,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(TcpServer.MIN_FRAME_LENGTH));
 
     static {
-        PONG.writeInt(3);
+        PONG.writeInt(TcpServer.PROTOCOL_TYPE_LENGTH + TcpServer.CODE_LENGTH);
         PONG.writeByte(ProtocolType.LOGIC_GATE.getValue());
         PONG.writeShort(ToGateProtocol.PONG.getCode());
     }

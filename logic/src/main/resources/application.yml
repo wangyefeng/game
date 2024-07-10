@@ -1,1 +1,1 @@
-server:  tcp-port: 9999spring:  main:    banner-mode: off
+tcp:  port: 9999spring:  main:    banner-mode: off

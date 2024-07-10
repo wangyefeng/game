@@ -10,11 +10,17 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
+@ConfigurationProperties(prefix = "tcp")
+@Validated
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -31,6 +37,10 @@ public class TcpServer {
 
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
 
+    @Min(1025)
+    @Max(65535)
+    private int port;
+
     private Channel channel;
 
     private boolean isRunning = false;
@@ -38,7 +48,7 @@ public class TcpServer {
     TcpServer() {
     }
 
-    public void start(int port) {
+    public void start() {
         log.info("tcp server is starting...");
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
@@ -89,4 +99,11 @@ public class TcpServer {
         }
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
 }
