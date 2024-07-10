@@ -10,7 +10,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,11 +24,10 @@ import java.util.concurrent.TimeUnit;
  * @description 逻辑服务器的客户端
  */
 @Component
+@ConfigurationProperties(prefix = "client.logic")
+@Validated
 public class LogicClient extends Client {
 
-    public LogicClient(String host, int port) {
-        super(host, port, "logic");
-    }
 
     @Override
     public void init() {
@@ -45,5 +48,27 @@ public class LogicClient extends Client {
         });
     }
 
+    @Override
+    public void setPort(int port) {
+        super.setPort(port);
+    }
 
+    @Override
+    public void setHost(String host) {
+        super.setHost(host);
+    }
+
+    @Override
+    public String getHost() {
+        return super.getHost();
+    }
+
+    @Min(1025)
+    @Max(65535)
+    @Override
+    public int getPort() {
+        return super.getPort();
+    }
 }
+
+

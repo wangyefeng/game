@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 public abstract class Client {
 
@@ -22,7 +23,11 @@ public abstract class Client {
 
     protected String name;
 
+    protected Client() {
+    }
+
     public Client(String host, int port, String name) {
+        Assert.hasLength(host, "host不能为空!");
         this.host = host;
         this.port = port;
         this.name = name;
@@ -86,12 +91,20 @@ public abstract class Client {
     }
 
     public void reconnect() {
-        Thread thread = new Thread(() -> start(), "reconnect");
+        Thread thread = new Thread(this::start, "reconnect");
         thread.start();
     }
 
     @Override
     public String toString() {
         return "{host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
+    }
+
+    protected void setHost(String host) {
+        this.host = host;
+    }
+
+    protected void setPort(int port) {
+        this.port = port;
     }
 }

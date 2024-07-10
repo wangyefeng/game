@@ -43,6 +43,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- log4j2 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -60,4 +65,20 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
+
+    <!-- 配置编译插件 -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- 设置编译器的JDK版本 -->
+                <configuration>
+                    <source>22</source>
+                    <target>22</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
