@@ -10,20 +10,22 @@ public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
 
-    private final String host;
+    protected String host;
 
-    private final int port;
+    protected int port;
 
-    private Channel channel;
+    protected Channel channel;
 
     protected Bootstrap bootstrap = new Bootstrap();
 
-    private boolean running;
+    protected boolean running;
 
-    public Client(String host, int port) {
+    protected String name;
+
+    public Client(String host, int port, String name) {
         this.host = host;
         this.port = port;
-        init();
+        this.name = name;
     }
 
     public abstract void init();
@@ -41,10 +43,11 @@ public abstract class Client {
     }
 
     public void close() {
-        running = false;
         ChannelFuture channelFuture = channel.close();
         try {
             channelFuture.sync();
+            running = false;
+            log.info("断开服务器连接！ {}", this);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -58,28 +61,37 @@ public abstract class Client {
         this.running = running;
     }
 
-    public void start() throws InterruptedException {
+    public void connect() {
         while (true) {
             try {
-                channel = bootstrap.connect(host, port).sync().channel();
+                ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+                channel = channelFuture.channel();
                 running = true;
-                log.info("服务器连接成功！{}", channel);
+                log.info("服务器连接成功！连接到服务器 {}", this);
                 break;
             } catch (Exception e) {
                 log.error("连接失败，msg: {} 正在重试...", e.getMessage());
-                Thread.sleep(2000);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
 
+    public void start() {
+        init();
+        connect();
+    }
+
     public void reconnect() {
-        Thread thread = new Thread(() -> {
-            try {
-                start();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }, "logic reconnect");
+        Thread thread = new Thread(() -> start(), "reconnect");
         thread.start();
+    }
+
+    @Override
+    public String toString() {
+        return "{host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
     }
 }

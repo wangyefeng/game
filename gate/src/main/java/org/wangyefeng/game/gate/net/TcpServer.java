@@ -12,7 +12,9 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.wangyefeng.game.gate.net.client.LogicClient;
 
 @Component
 public class TcpServer {
@@ -22,6 +24,9 @@ public class TcpServer {
     private Channel channel;
 
     private boolean isRunning = false;
+
+    @Autowired
+    private LogicClient logicClient;
 
     TcpServer() {
     }
@@ -42,7 +47,7 @@ public class TcpServer {
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, 4, 0, 4));
-                    pipeline.addLast(new TcpCodec());
+                    pipeline.addLast(new TcpCodec(logicClient));
                     pipeline.addLast(clientHandler);
                 }
             });

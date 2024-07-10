@@ -15,6 +15,12 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
 
     private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
 
+    private LogicClient logicClient;
+
+    public TcpCodec(LogicClient logicClient) {
+        this.logicClient = logicClient;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
@@ -44,8 +50,7 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
                 }
             } else {
                 if (ctx.channel().hasAttr(AttributeKeys.PLAYER)) {
-                    LogicClient client = LogicClient.getInstance();
-                    if (client.isRunning()) {
+                    if (logicClient.isRunning()) {
                         int readableBytes = in.readableBytes();
                         ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11, readableBytes + 11);
                         buffer.writeInt(readableBytes + 7);
@@ -53,7 +58,7 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
                         buffer.writeShort(code);
                         buffer.writeInt(ctx.channel().attr(AttributeKeys.PLAYER).get().getId());
                         buffer.writeBytes(in);
-                        client.getChannel().writeAndFlush(buffer);
+                        logicClient.getChannel().writeAndFlush(buffer);
                     } else {
                         in.skipBytes(in.readableBytes());
                         log.error("handle message error, Logic server is not running, code: {}", code);

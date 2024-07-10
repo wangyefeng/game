@@ -13,7 +13,10 @@ public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
-    public LogicHandler() {
+    private LogicClient logicClient;
+
+    public LogicHandler(LogicClient logicClient) {
+        this.logicClient = logicClient;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        LogicClient.getInstance().setRunning(false);
-        LogicClient.getInstance().reconnect();
+        logicClient.setRunning(false);
+        logicClient.reconnect();
     }
 }

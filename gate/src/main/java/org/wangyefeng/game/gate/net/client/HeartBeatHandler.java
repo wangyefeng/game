@@ -35,11 +35,11 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent event) {
             IdleState state = event.state();
             if (state == IdleState.READER_IDLE) {
-                log.warn("读空闲，断开连接！！！连接: {}", ctx.channel());
+                log.warn("读空闲，断开连接！！！连接: {}", client);
                 ctx.channel().close();
             } else if (state == IdleState.WRITER_IDLE) {
                 ctx.channel().writeAndFlush(PING.duplicate());
-                log.info("写空闲，发送心跳包！！！连接: {}", ctx.channel());
+                log.debug("写空闲，发送心跳包！！！连接: {}", client);
             }
         } else {
             super.userEventTriggered(ctx, evt);

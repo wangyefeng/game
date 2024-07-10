@@ -29,6 +29,9 @@ public class Gate implements CommandLineRunner {
     private TcpServer tcpServer;
 
     @Autowired
+    private LogicClient logicClient;
+
+    @Autowired
     private GlobalConfig config;
 
     @Autowired
@@ -39,7 +42,7 @@ public class Gate implements CommandLineRunner {
 
     private void start() throws Exception {
         registerHandler();
-        LogicClient.getInstance().start();
+        logicClient.start();
         tcpServer.start(config.getTcpPort());
     }
 

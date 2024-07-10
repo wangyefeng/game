@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,21 +19,16 @@ import java.util.concurrent.TimeUnit;
  * @date 2024-07-05
  * @description 逻辑服务器的客户端
  */
+@Component
 public class LogicClient extends Client {
 
-    private static final LogicClient instance = new LogicClient("127.0.0.1", 9999);
-
-    public static LogicClient getInstance() {
-        return instance;
-    }
-
     public LogicClient(String host, int port) {
-        super(host, port);
+        super(host, port, "logic");
     }
 
     @Override
     public void init() {
-        ChannelHandler handler = new LogicHandler();
+        ChannelHandler handler = new LogicHandler(this);
         EventLoopGroup group = new NioEventLoopGroup(1);
         bootstrap.group(group).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler(this);
@@ -48,4 +44,6 @@ public class LogicClient extends Client {
             }
         });
     }
+
+
 }
