@@ -1,1 +1,1 @@
-server:  tcp-port: 8888spring:  main:    banner-mode: offclient:  logic:    url: 127.0.0.1:9999
+server:  tcp-port: 8888spring:  main:    banner-mode: offclient:  logic:    url: 127.0.0.1:9999  cross:    url: 127.0.0.1:10000

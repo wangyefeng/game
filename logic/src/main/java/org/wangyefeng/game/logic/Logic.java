@@ -4,10 +4,10 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.wangyefeng.game.logic.config.GlobalConfig;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.handler.GateMsgHandler;
 import org.wangyefeng.game.logic.net.TcpServer;
@@ -22,8 +22,8 @@ public class Logic implements CommandLineRunner {
     @Autowired
     private TcpServer tcpServer;
 
-    @Autowired
-    private GlobalConfig config;
+    @Value("${server.tcp-port:8888}")
+    private int tcpPort;
 
     @Autowired
     private Collection<GateMsgHandler<?>> gateMsgHandlers;
@@ -33,7 +33,7 @@ public class Logic implements CommandLineRunner {
 
     private void start() throws Exception {
         registerHandler();
-        tcpServer.start(config.getTcpPort());
+        tcpServer.start(tcpPort);
     }
 
     @PreDestroy
