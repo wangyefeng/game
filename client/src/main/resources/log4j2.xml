@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <properties>
+        <property name="LOG_HOME">logs</property>
+        <property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</property>
+    </properties>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- DEBUG -->
+        <RollingFile name="DEBUG" fileName="${LOG_HOME}/debug/debug.log" filePattern="${LOG_HOME}/debug/%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_HOME}/info/" maxDepth="2">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="1d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- INFO -->
+        <RollingFile name="INFO" fileName="${LOG_HOME}/info/info.log" filePattern="${LOG_HOME}/info/%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_HOME}/info/" maxDepth="2">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="5d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- WARN -->
+        <RollingFile name="WARN" fileName="${LOG_HOME}/warn/warn.log" filePattern="${LOG_HOME}/warn/%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_HOME}/warn/" maxDepth="2">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="10d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- ERROR -->
+        <RollingFile name="ERROR" fileName="${LOG_HOME}/error/error.log" filePattern="${LOG_HOME}/error/%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_HOME}/error/" maxDepth="2">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="20d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="DEBUG"/>
+            <AppenderRef ref="INFO"/>
+            <AppenderRef ref="WARN"/>
+            <AppenderRef ref="ERROR"/>
+        </Root>
+    </Loggers>
+</Configuration>
