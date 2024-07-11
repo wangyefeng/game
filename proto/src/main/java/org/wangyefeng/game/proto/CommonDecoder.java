@@ -23,6 +23,9 @@ public class CommonDecoder extends ByteToMessageDecoder {
     }
 
     public void registerDecoder(Decoder<?> decoder) {
+        if (decoders.containsKey(decoder.getType().getCode())) {
+            throw new IllegalArgumentException("Duplicate message type: " + decoder.getType().getCode());
+        }
         decoders.put(decoder.getType().getCode(), decoder);
     }
 }
