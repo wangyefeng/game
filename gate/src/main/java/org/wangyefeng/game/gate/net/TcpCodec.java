@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.client.LogicClient;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
+import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                         int readableBytes = in.readableBytes();
                         ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11, readableBytes + 11);
                         buffer.writeInt(readableBytes + 7);
-                        buffer.writeByte(0);
+                        buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
                         buffer.writeShort(code);
                         buffer.writeInt(ctx.channel().attr(AttributeKeys.PLAYER).get().getId());
                         buffer.writeBytes(in);
