@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.protocol.ClientProtocol;
-import org.wangyefeng.game.proto.Common;
+import org.wangyefeng.game.proto.struct.Common;
 
 @Component
 public class LoginHandler implements ClientMsgHandler<Common.PbInt> {

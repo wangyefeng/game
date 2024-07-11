@@ -1,12 +1,13 @@
 package org.wangyefeng.game.gate.protocol;
 
 import com.google.protobuf.Parser;
-import org.wangyefeng.game.proto.Common;
+import org.wangyefeng.game.proto.InProtocol;
+import org.wangyefeng.game.proto.struct.Common;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ClientProtocol implements Protocol {
+public enum ClientProtocol implements InProtocol {
 
     PING((short) 0),
 

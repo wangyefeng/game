@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.springframework.util.Assert;
+import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
 
@@ -16,11 +17,11 @@ import java.util.List;
  * @author 王叶峰
  * @date 2021年6月25日
  */
-public class ProtobufCodec extends ByteToMessageCodec<ProtoBufMessage> {
+public class ProtobufCodec extends ByteToMessageCodec<MessageCode> {
 
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ProtoBufMessage msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
             out.writeShort(msg.getCode());
@@ -38,12 +39,12 @@ public class ProtobufCodec extends ByteToMessageCodec<ProtoBufMessage> {
         short code = msg.readShort();
         Assert.isTrue(S2CProtocol.match(code), "Invalid code: " + code);
         int length = msg.readableBytes();
-		if (length > 0) {
-			ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-			out.add(new ProtoBufMessage<>(code, (Message) S2CProtocol.getParser(code).parseFrom(inputStream)));
-		} else {
-			out.add(new ProtoBufMessage<>(code));
-		}
+        if (length > 0) {
+            ByteBufInputStream inputStream = new ByteBufInputStream(msg);
+            out.add(new MessageCode<>(code, (Message) S2CProtocol.getParser(code).parseFrom(inputStream)));
+        } else {
+            out.add(new MessageCode<>(code));
+        }
     }
 
 }

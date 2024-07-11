@@ -1,28 +1,27 @@
-package org.wangyefeng.game.gate.net.client;
+package org.wangyefeng.game.proto;
 
 import com.google.protobuf.Message;
-import org.wangyefeng.game.gate.protocol.Protocol;
 
-public class LogicMessage<T extends Message> {
+public class MessageCode<T extends Message> {
 
     private short code;
 
     private T message;
 
-    public LogicMessage(short code, T message) {
+    public MessageCode(short code, T message) {
         this.code = code;
         this.message = message;
     }
 
-    public LogicMessage(Protocol protocol, T message) {
+    public MessageCode(Protocol protocol, T message) {
         this(protocol.getCode(), message);
     }
 
-    public LogicMessage(Protocol protocol) {
+    public MessageCode(Protocol protocol) {
         this(protocol.getCode(), null);
     }
 
-    public LogicMessage(short code) {
+    public MessageCode(short code) {
         this(code, null);
     }
 

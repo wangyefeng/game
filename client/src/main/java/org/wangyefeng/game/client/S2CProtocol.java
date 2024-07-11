@@ -1,6 +1,7 @@
 package org.wangyefeng.game.client;
 
 import com.google.protobuf.Parser;
+import org.wangyefeng.game.proto.Protocol;
 
 import java.util.HashMap;
 import java.util.Map;

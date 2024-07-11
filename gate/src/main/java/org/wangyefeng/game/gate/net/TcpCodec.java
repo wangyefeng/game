@@ -1,17 +1,21 @@
 package org.wangyefeng.game.gate.net;
 
 import com.google.protobuf.Message;
-import io.netty.buffer.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.client.LogicClient;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
+import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
 
-public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
+public class TcpCodec extends ByteToMessageCodec<MessageCode> {
 
     private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
 
@@ -22,7 +26,7 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
             out.writeShort(msg.getCode());
@@ -44,9 +48,9 @@ public class TcpCodec extends ByteToMessageCodec<ClientMessage> {
                 if (length > 0) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
                     Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
-                    out.add(new ClientMessage<>(code, message));
+                    out.add(new MessageCode<>(code, message));
                 } else {
-                    out.add(new ClientMessage<>(code));
+                    out.add(new MessageCode<>(code));
                 }
             } else {
                 if (ctx.channel().hasAttr(AttributeKeys.PLAYER)) {

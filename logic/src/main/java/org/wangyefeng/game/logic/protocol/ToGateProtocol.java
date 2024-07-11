@@ -17,5 +17,4 @@ public enum ToGateProtocol {
     public int getCode() {
         return code;
     }
-
 }

@@ -5,13 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.net.AttributeKeys;
-import org.wangyefeng.game.gate.net.client.LogicMessage;
 import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.player.Players;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
 import org.wangyefeng.game.gate.protocol.ToClientProtocol;
 import org.wangyefeng.game.gate.thread.ThreadPool;
-import org.wangyefeng.game.proto.Common;
+import org.wangyefeng.game.proto.MessageCode;
+import org.wangyefeng.game.proto.struct.Common;
 
 @Component
 public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
@@ -38,7 +38,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
                 channel.attr(AttributeKeys.PLAYER).set(player);
                 oldCh.eventLoop().execute(() -> {
                     if (oldCh.isActive()) {
-                        oldCh.writeAndFlush(new LogicMessage<>(ToClientProtocol.KICK_OUT, Common.PbInt.newBuilder().setVal(1).build()));
+                        oldCh.writeAndFlush(new MessageCode<>(ToClientProtocol.KICK_OUT, Common.PbInt.newBuilder().setVal(1).build()));
                         oldCh.close();
                     }
                 });

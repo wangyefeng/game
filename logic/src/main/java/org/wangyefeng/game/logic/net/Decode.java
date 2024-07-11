@@ -8,6 +8,8 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.springframework.util.Assert;
 import org.wangyefeng.game.logic.protocol.ClientProtocol;
 import org.wangyefeng.game.logic.protocol.GateProtocol;
+import org.wangyefeng.game.proto.MessageCode;
+import org.wangyefeng.game.proto.MessagePlayer;
 
 import java.util.List;
 
@@ -46,9 +48,9 @@ public class Decode extends ByteToMessageDecoder {
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(in);
             Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
-            out.add(new ClientMessage<>(playerId, code, message));
+            out.add(new MessagePlayer<>(playerId, code, message));
         } else {
-            out.add(new ClientMessage<>(playerId, code));
+            out.add(new MessagePlayer<>(playerId, code));
         }
     }
 
@@ -63,9 +65,9 @@ public class Decode extends ByteToMessageDecoder {
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(in);
             Message message = (Message) GateProtocol.getParser(code).parseFrom(inputStream);
-            out.add(new GateMessage<>(code, message));
+            out.add(new MessageCode<>(code, message));
         } else {
-            out.add(new GateMessage<>(code));
+            out.add(new MessageCode<>(code));
         }
     }
 }

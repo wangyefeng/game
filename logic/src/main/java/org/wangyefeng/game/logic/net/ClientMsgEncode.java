@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.wangyefeng.game.proto.MessagePlayer;
 
 /**
  * @author wangyefeng
@@ -12,10 +13,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @description 客户端消息编码器
  */
 @ChannelHandler.Sharable
-public class ClientMsgEncode extends MessageToByteEncoder<ClientMessage> {
+public class ClientMsgEncode extends MessageToByteEncoder<MessagePlayer> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessagePlayer msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);// 协议长度占位
             out.writeByte(ProtocolType.LOGIC_CLIENT.getValue());// 协议类型

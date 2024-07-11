@@ -1,11 +1,12 @@
 package org.wangyefeng.game.gate.protocol;
 
 import com.google.protobuf.Parser;
+import org.wangyefeng.game.proto.InProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum LogicProtocol implements Protocol {
+public enum LogicProtocol implements InProtocol {
 
     PONG((short) 0),
 

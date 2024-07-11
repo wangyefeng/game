@@ -7,9 +7,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.handler.logic.LogicMsgHandler;
+import org.wangyefeng.game.proto.MessageCode;
 
 @ChannelHandler.Sharable
-public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
+public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
@@ -20,7 +21,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<LogicMessage<?>> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LogicMessage message) {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
         LogicMsgHandler<Message> logicMsgHandler = LogicMsgHandler.getHandler(message.getCode());
         if (logicMsgHandler == null) {
             log.warn("illegal message code: {}", message.getCode());

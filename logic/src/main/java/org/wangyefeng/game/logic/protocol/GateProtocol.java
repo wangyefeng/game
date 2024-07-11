@@ -1,7 +1,8 @@
 package org.wangyefeng.game.logic.protocol;
 
 import com.google.protobuf.Parser;
-import org.wangyefeng.game.proto.Common;
+import org.wangyefeng.game.proto.InProtocol;
+import org.wangyefeng.game.proto.struct.Common;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
  * @date 2024-07-08
  * @description 服务器到客户端协议
  */
-public enum GateProtocol implements Protocol {
+public enum GateProtocol implements InProtocol {
 
     PING((short) 0),
     LOGIN((short) 1, Common.PbInt.parser());

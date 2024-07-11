@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.wangyefeng.game.gate.protocol.LogicProtocol;
+import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 if (length > 0) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
                     Message message = (Message) LogicProtocol.getParser(code).parseFrom(inputStream);
-                    out.add(new LogicMessage<>(code, message));
+                    out.add(new MessageCode<>(code, message));
                 } else {
-                    out.add(new LogicMessage<>(code));
+                    out.add(new MessageCode<>(code));
                 }
             }
         }

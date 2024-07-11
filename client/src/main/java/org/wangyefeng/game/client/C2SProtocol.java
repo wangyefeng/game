@@ -1,5 +1,7 @@
 package org.wangyefeng.game.client;
 
+import org.wangyefeng.game.proto.Protocol;
+
 public enum C2SProtocol implements Protocol {
 
     PING((short) 0),

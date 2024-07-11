@@ -1,9 +1,12 @@
 package org.wangyefeng.game.gate.protocol;
 
+import org.wangyefeng.game.proto.Protocol;
+import org.wangyefeng.game.proto.OutProtocol;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ToClientProtocol implements Protocol {
+public enum ToClientProtocol implements OutProtocol {
 
     PONG((short) 0),
 
