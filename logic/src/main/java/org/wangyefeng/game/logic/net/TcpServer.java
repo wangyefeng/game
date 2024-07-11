@@ -14,9 +14,15 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.wangyefeng.game.logic.protocol.ClientProtocolMatcher;
+import org.wangyefeng.game.logic.protocol.GateProtocolMatcher;
+import org.wangyefeng.game.proto.CommonDecoder;
+import org.wangyefeng.game.proto.MessageCodeDecoder;
+import org.wangyefeng.game.proto.MessagePlayerDecoder;
 
 @Component
 @ConfigurationProperties(prefix = "tcp")
@@ -45,6 +51,12 @@ public class TcpServer {
 
     private boolean isRunning = false;
 
+    @Autowired
+    private ClientProtocolMatcher clientProtocolMatcher;
+
+    @Autowired
+    private GateProtocolMatcher gateProtocolMatcher;
+
     TcpServer() {
     }
 
@@ -64,9 +76,12 @@ public class TcpServer {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new ReadTimeoutHandler(20));
+                    pipeline.addLast(new ReadTimeoutHandler(20));// 设置读超时时间为20秒
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
-                    pipeline.addLast(new Decode());
+                    CommonDecoder commonDecoder = new CommonDecoder();
+                    commonDecoder.registerDecoder(new MessageCodeDecoder(gateProtocolMatcher));
+                    commonDecoder.registerDecoder(new MessagePlayerDecoder(clientProtocolMatcher));
+                    pipeline.addLast(commonDecoder);
                     pipeline.addLast(clientMsgEncode);
                     pipeline.addLast(clientHandler);
                     pipeline.addLast(gateHandler);
@@ -105,5 +120,15 @@ public class TcpServer {
 
     public int getPort() {
         return port;
+    }
+
+    public void close(boolean isSync) throws InterruptedException {
+        if (isRunning) {
+            if (isSync) {
+                channel.close().sync();
+            } else {
+                channel.close();
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
 import org.wangyefeng.game.gate.protocol.ToClientProtocol;
+import org.wangyefeng.game.proto.DecoderType;
 
 @Component
 public class PingHandler implements ClientMsgHandler<Message> {
@@ -20,7 +21,8 @@ public class PingHandler implements ClientMsgHandler<Message> {
 
 
     static {
-        PONG.writeInt(2);
+        PONG.writeInt(3);
+        PONG.writeByte(DecoderType.MESSAGE_CODE.getCode());
         PONG.writeShort(ToClientProtocol.PONG.getCode());
     }
 

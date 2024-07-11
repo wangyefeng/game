@@ -14,6 +14,8 @@ public enum S2CProtocol implements Protocol {
 
     TEST((short) 2),
 
+    LOGIN((short) 3),
+
     ;
 
     private final short code;

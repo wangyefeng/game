@@ -37,7 +37,7 @@ public enum ClientProtocol implements InProtocol {
         return code;
     }
 
-    public Parser<?> getParser() {
+    public Parser<?> parser() {
         return parser;
     }
 
@@ -55,7 +55,7 @@ public enum ClientProtocol implements InProtocol {
     }
 
     public static Parser getParser(short code) {
-        return PROTOCOLS.get(code).getParser();
+        return PROTOCOLS.get(code).parser();
     }
 
 }

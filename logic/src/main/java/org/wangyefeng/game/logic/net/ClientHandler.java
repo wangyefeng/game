@@ -26,13 +26,13 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer messagePlayer) {
-        ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(messagePlayer.getCode());
+    protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer message) {
+        ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(message.getCode());
         if (logicHandler == null) {
-            log.warn("illegal message code: {}", messagePlayer.getCode());
+            log.warn("illegal message code: {}", message.getCode());
             return;
         }
-        logicHandler.handle(ctx.channel(), messagePlayer.getPlayerId(), messagePlayer.getMessage());
+        logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage());
     }
 
 }

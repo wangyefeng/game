@@ -55,11 +55,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         log.info("Channel inactive: {}", c);
         if (c.hasAttr(AttributeKeys.PLAYER)) {
             Player player = c.attr(AttributeKeys.PLAYER).get();
-            Players.lock.lock();
+            Players.lock.writeLock().lock();
             try {
                 Players.removePlayer(player.getId());
             } finally {
-                Players.lock.unlock();
+                Players.lock.writeLock().unlock();
             }
         }
     }

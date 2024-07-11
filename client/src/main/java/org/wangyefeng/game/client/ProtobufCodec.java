@@ -36,6 +36,7 @@ public class ProtobufCodec extends ByteToMessageCodec<MessageCode> {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf msg, List<Object> out) throws Exception {
+        byte type = msg.readByte();
         short code = msg.readShort();
         Assert.isTrue(S2CProtocol.match(code), "Invalid code: " + code);
         int length = msg.readableBytes();

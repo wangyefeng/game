@@ -1,20 +1,22 @@
 package org.wangyefeng.game.logic.protocol;
 
-public enum ToGateProtocol {
+import org.wangyefeng.game.proto.OutProtocol;
 
-    PONG(0),
+public enum ToGateProtocol implements OutProtocol {
+
+    PONG((short) 0),
     ;
 
-    private final int code;
+    private final short code;
 
-    ToGateProtocol(int code) {
+    ToGateProtocol(short code) {
         if (code < 0) {
             throw new IllegalArgumentException("code must be non-negative");
         }
         this.code = code;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 }

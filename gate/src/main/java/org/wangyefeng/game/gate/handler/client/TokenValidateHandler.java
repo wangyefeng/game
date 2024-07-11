@@ -25,7 +25,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
             return;
         }
         int playerId = msg.getVal();
-        Players.lock.lock();
+        Players.lock.writeLock().lock();
         try {
             Player player = Players.getPlayer(playerId);
             if (player == null) {
@@ -44,7 +44,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
                 });
             }
         } finally {
-            Players.lock.unlock();
+            Players.lock.writeLock().unlock();
         }
     }
 

@@ -15,5 +15,5 @@ public interface InProtocol extends Protocol {
      *
      * @return 解析器
      */
-    Parser<?> getParser();
+    Parser<?> parser();
 }

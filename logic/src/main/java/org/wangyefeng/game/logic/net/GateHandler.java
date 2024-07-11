@@ -20,13 +20,13 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     private static final Logger log = LoggerFactory.getLogger(GateHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode client2ServerMessage) {
-        GateMsgHandler<Message> logicHandler = GateMsgHandler.getHandler(client2ServerMessage.getCode());
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
+        GateMsgHandler<Message> logicHandler = GateMsgHandler.getHandler(message.getCode());
         if (logicHandler == null) {
-            log.warn("illegal message code: {}", client2ServerMessage.getCode());
+            log.warn("illegal message code: {}", message.getCode());
             return;
         }
-        logicHandler.handle(ctx.channel(), client2ServerMessage.getMessage());
+        logicHandler.handle(ctx.channel(), message.getMessage());
     }
 
 }

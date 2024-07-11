@@ -9,11 +9,20 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class Client {
+@SpringBootApplication
+public class Client implements CommandLineRunner {
 
     private final String host;
     private final int port;
+
+    public Client() {
+        this.host = "localhost";
+        this.port = 8888;
+    }
 
     public Client(String host, int port) {
         this.host = host;
@@ -49,7 +58,13 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        new Client("127.0.0.1", 8888).run();
+
+    public static void main(String[] args) {
+        SpringApplication.run(Client.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        run();
     }
 }

@@ -4,9 +4,6 @@ import com.google.protobuf.Parser;
 import org.wangyefeng.game.proto.InProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author wangyefeng
  * @date 2024-07-08
@@ -20,8 +17,6 @@ public enum GateProtocol implements InProtocol {
     private final short code;
 
     private final Parser parser;
-
-    private static final Map<Short, GateProtocol> PROTOCOLS = new HashMap<>();
 
     GateProtocol(short code) {
         this(code, null);
@@ -39,25 +34,7 @@ public enum GateProtocol implements InProtocol {
         return code;
     }
 
-    public Parser<?> getParser() {
+    public Parser<?> parser() {
         return parser;
     }
-
-    static {
-        for (GateProtocol protocol : GateProtocol.values()) {
-            if (PROTOCOLS.containsKey(protocol.getCode())) {
-                throw new IllegalStateException("duplicate code: " + protocol.getCode() + " for " + protocol + " and " + PROTOCOLS.get(protocol.getCode()));
-            }
-            PROTOCOLS.put(protocol.getCode(), protocol);
-        }
-    }
-
-    public static boolean match(short code) {
-        return PROTOCOLS.containsKey(code);
-    }
-
-    public static Parser getParser(short code) {
-        return PROTOCOLS.get(code).getParser();
-    }
-
 }
