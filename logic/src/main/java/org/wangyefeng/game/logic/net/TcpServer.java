@@ -18,6 +18,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.wangyefeng.game.proto.CommonDecoder;
+import org.wangyefeng.game.proto.MessageCodeDecoder;
+import org.wangyefeng.game.proto.MessagePlayerDecoder;
 
 @Component
 @ConfigurationProperties(prefix = "tcp")
@@ -60,8 +62,8 @@ public class TcpServer {
                     pipeline.addLast(new ReadTimeoutHandler(20));// 设置读超时时间为20秒
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
                     CommonDecoder commonDecoder = new CommonDecoder();
-                    commonDecoder.registerDecoder(new ClientDecoder());
-                    commonDecoder.registerDecoder(new GateDecoder());
+                    commonDecoder.registerDecoder(new MessageCodeDecoder());
+                    commonDecoder.registerDecoder(new MessagePlayerDecoder());
                     pipeline.addLast(commonDecoder);
                     pipeline.addLast(clientMsgEncode);
                     pipeline.addLast(clientHandler);

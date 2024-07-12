@@ -1,4 +1,4 @@
-package org.wangyefeng.game.gate.handler.logic;
+package org.wangyefeng.game.gate.handler.client;
 
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
@@ -7,7 +7,6 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
 import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.Topic;
 import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
