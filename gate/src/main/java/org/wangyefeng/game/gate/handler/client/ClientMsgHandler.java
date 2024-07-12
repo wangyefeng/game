@@ -22,7 +22,7 @@ public interface ClientMsgHandler<T extends Message> {
         return handlers.get(code);
     }
 
-    void handle(Channel channel, T msg);
+    void handle(Channel channel, T msg) throws Exception;
 
     ClientProtocol getProtocol();
 

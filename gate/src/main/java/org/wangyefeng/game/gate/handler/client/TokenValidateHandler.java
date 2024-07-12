@@ -13,39 +13,37 @@ import org.wangyefeng.game.gate.thread.ThreadPool;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.struct.Common;
 
+import java.util.concurrent.ExecutorService;
+
 @Component
 public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
 
     private static final Logger log = LoggerFactory.getLogger(TokenValidateHandler.class);
 
     @Override
-    public void handle(Channel channel, Common.PbInt msg) {
+    public void handle(Channel channel, Common.PbInt msg) throws Exception {
         if (channel.hasAttr(AttributeKeys.PLAYER)) {
             log.warn("Player {} has already logged in.", channel.attr(AttributeKeys.PLAYER).get());
             return;
         }
         int playerId = msg.getVal();
-        Players.lock.writeLock().lock();
-        try {
-            Player player = Players.getPlayer(playerId);
-            if (player == null) {
-                player = new Player(playerId, channel, ThreadPool.next());
-                channel.attr(AttributeKeys.PLAYER).set(player);
-                Players.addPlayer(player);
-            } else {
-                Channel oldCh = player.getChannel();
+        ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
+        playerExecutor.submit(() -> {
+            Player player = null;
+            boolean containsPlayer = Players.containsPlayer(playerId);
+            if (containsPlayer) {
+                player = Players.getPlayer(playerId);
+                Channel oldChannel = player.getChannel();
+                oldChannel.attr(AttributeKeys.PLAYER).set(null);
+                oldChannel.writeAndFlush(new MessageCode<>(ToClientProtocol.KICK_OUT));
+                oldChannel.close();
                 player.setChannel(channel);
-                channel.attr(AttributeKeys.PLAYER).set(player);
-                oldCh.eventLoop().execute(() -> {
-                    if (oldCh.isActive()) {
-                        oldCh.writeAndFlush(new MessageCode<>(ToClientProtocol.KICK_OUT, Common.PbInt.newBuilder().setVal(1).build()));
-                        oldCh.close();
-                    }
-                });
+            } else {
+                player = new Player(playerId, channel, playerExecutor);
+                Players.addPlayer(player);
             }
-        } finally {
-            Players.lock.writeLock().unlock();
-        }
+            channel.attr(AttributeKeys.PLAYER).set(player);
+        }).get();
     }
 
     @Override

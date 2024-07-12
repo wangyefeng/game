@@ -1,18 +1,14 @@
 package org.wangyefeng.game.gate.player;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Players {
 
-    private static final Map<Integer, Player> players = new HashMap<>();
+    private static final Map<Integer, Player> players = new ConcurrentHashMap<>();
 
-    public static final ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    public static boolean addPlayer(Player player) {
-        return player == players.putIfAbsent(player.getId(), player);
+    public static void addPlayer(Player player) {
+        players.put(player.getId(), player);
     }
 
     public static Player getPlayer(int id) {

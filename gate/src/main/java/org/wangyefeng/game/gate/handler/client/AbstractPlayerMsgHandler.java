@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.AttributeKeys;
 import org.wangyefeng.game.gate.player.Player;
 
-public abstract class AbstactClientMsgHandler<T extends Message> implements ClientMsgHandler<T> {
+public abstract class AbstractPlayerMsgHandler<T extends Message> implements ClientMsgHandler<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstactClientMsgHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractPlayerMsgHandler.class);
 
     @Override
     public void handle(Channel channel, T message) {
@@ -18,7 +18,12 @@ public abstract class AbstactClientMsgHandler<T extends Message> implements Clie
             log.warn("func={}, msg=playerId is null, channel={}", getClass().getSimpleName(), channel);
             return;
         }
-        player.getExecutor().execute(() -> handle(channel, message, player));
+        player.getExecutor().execute(() -> {
+            Player player2 = channel.attr(AttributeKeys.PLAYER).get();
+            if (player2 != null) {
+                handle(channel, message, player2);
+            }
+        });
     }
 
     protected abstract void handle(Channel channel, T message, Player player);

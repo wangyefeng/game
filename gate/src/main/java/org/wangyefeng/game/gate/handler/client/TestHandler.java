@@ -9,7 +9,7 @@ import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.protocol.ClientProtocol;
 
 @Component
-public class TestHandler extends AbstactClientMsgHandler<Message> {
+public class TestHandler extends AbstractPlayerMsgHandler<Message> {
 
     private static final Logger log = LoggerFactory.getLogger(TestHandler.class);
 

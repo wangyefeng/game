@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.player.Players;
 import org.wangyefeng.game.gate.protocol.LogicProtocol;
+import org.wangyefeng.game.gate.thread.ThreadPool;
 import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
@@ -28,8 +29,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             case 0 -> {
                 log.info("转发消息协议");
                 int playerId = in.readInt(); // 玩家id
-                Players.lock.readLock().lock();
-                try {
+                ThreadPool.getPlayerExecutor(playerId).execute(() -> {
                     Player player = Players.getPlayer(playerId);
                     if (player != null) {
                         int readableBytes = in.readableBytes();
@@ -40,11 +40,9 @@ public class LogicDecoder extends ByteToMessageDecoder {
                         buffer.writeBytes(in);
                         player.getChannel().writeAndFlush(buffer);
                     } else {
-                        log.error("转发消息失败， 玩家{}已经离线", playerId);
+                        log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
                     }
-                } finally {
-                    Players.lock.readLock().unlock();
-                }
+                });
 
             }
             case 1 -> { // 网关处理消息

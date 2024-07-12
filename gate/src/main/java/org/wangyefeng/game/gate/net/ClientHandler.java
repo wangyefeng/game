@@ -27,7 +27,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
         ClientMsgHandler<Message> handler = ClientMsgHandler.getHandler(message.getCode());
         if (handler == null) {
             log.warn("illegal message code: {}", message.getCode());
@@ -53,14 +53,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel c = ctx.channel();
         log.info("Channel inactive: {}", c);
-        if (c.hasAttr(AttributeKeys.PLAYER)) {
-            Player player = c.attr(AttributeKeys.PLAYER).get();
-            Players.lock.writeLock().lock();
-            try {
-                Players.removePlayer(player.getId());
-            } finally {
-                Players.lock.writeLock().unlock();
-            }
+        Player player = c.attr(AttributeKeys.PLAYER).get();
+        if (player != null) {
+            player.getExecutor().submit(() -> {
+                Player player2 = c.attr(AttributeKeys.PLAYER).get();
+                if (player2 != null) {
+                    Players.removePlayer(player.getId());
+                }
+            }).get();
         }
     }
 

@@ -9,8 +9,6 @@ public abstract class ThreadPool {
 
     public static final ExecutorService[] executor = new ExecutorService[EXECUTOR_SIZE];
 
-    public static int CLIENT_EXECUTOR_INDEX = 0;
-
     static {
         for (int i = 0; i < EXECUTOR_SIZE; i++) {
             int finalI = i;
@@ -18,7 +16,7 @@ public abstract class ThreadPool {
         }
     }
 
-    public static ExecutorService next() {
-        return executor[CLIENT_EXECUTOR_INDEX++ % EXECUTOR_SIZE];
+    public static ExecutorService getPlayerExecutor(int playerId) {
+        return executor[playerId % EXECUTOR_SIZE];
     }
 }
