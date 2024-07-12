@@ -19,8 +19,10 @@ import java.util.List;
  */
 public class MessageCodeCodec extends ByteToMessageCodec<MessageCode<?>> {
 
+    private byte to;
 
-    public MessageCodeCodec() {
+    public MessageCodeCodec(byte to) {
+        this.to = to;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class MessageCodeCodec extends ByteToMessageCodec<MessageCode<?>> {
         try {
             byte from = in.readByte();
             short code = in.readShort();
-            Protocol protocol = ProtocolUtils.getProtocol(from, code);
+            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
             int length = in.readableBytes();
             if (length > 0) {
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);

@@ -2,12 +2,13 @@ package org.wangyefeng.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.struct.Common;
 
 public enum ClientToGateProtocol implements Protocol {
 
     PING((short) 0),
 
-    TOKEN_VALIDATE((short) 1),
+    TOKEN_VALIDATE((short) 1, Common.PbInt.parser()),
 
     TEST((short) 2);
 

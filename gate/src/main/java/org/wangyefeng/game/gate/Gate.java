@@ -11,6 +11,7 @@ import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
 import org.wangyefeng.game.gate.handler.logic.LogicMsgHandler;
 import org.wangyefeng.game.gate.net.TcpServer;
 import org.wangyefeng.game.gate.net.client.LogicClient;
+import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 import java.util.Collection;
 
@@ -38,6 +39,7 @@ public class Gate implements CommandLineRunner {
 
     private void start() throws Exception {
         registerHandler();
+        ProtocolUtils.init();
         logicClient.start();
         tcpServer.start();
     }

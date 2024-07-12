@@ -10,7 +10,7 @@ import org.wangyefeng.game.gate.player.Players;
 import org.wangyefeng.game.gate.thread.ThreadPool;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
-import org.wangyefeng.game.proto.protocol.GateToLogicProtocol;
+import org.wangyefeng.game.proto.protocol.GateToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
 import java.util.concurrent.ExecutorService;
@@ -34,7 +34,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
             if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
                 Channel oldChannel = player.getChannel();
-                oldChannel.writeAndFlush(new MessageCode<>(GateToLogicProtocol.KICK_OUT));
+                oldChannel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
                 oldChannel.attr(AttributeKeys.PLAYER).set(null);
                 oldChannel.close();
                 player.setChannel(channel);

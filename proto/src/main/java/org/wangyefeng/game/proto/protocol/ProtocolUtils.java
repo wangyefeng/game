@@ -5,9 +5,10 @@ import java.util.Map;
 
 public abstract class ProtocolUtils {
 
-    private static final Map<Byte, Map<Short, Protocol>> protocolMap = new HashMap<>();
+    private static final Map<Byte, Map<Byte, Map<Short, Protocol>>> protocolMap = new HashMap<>();
 
-    static {
+    // Initialize protocol map
+    public static void init() {
         addProtocols(ClientToGateProtocol.values());
         addProtocols(ClientToLogicProtocol.values());
         addProtocols(GateToClientProtocol.values());
@@ -19,14 +20,18 @@ public abstract class ProtocolUtils {
     private static void addProtocols(Protocol[] protocols) {
         for (Protocol protocol : protocols) {
             protocolMap.putIfAbsent(protocol.from().getCode(), new HashMap<>());
-            protocolMap.get(protocol.from().getCode()).put(protocol.getCode(), protocol);
+            protocolMap.get(protocol.from().getCode()).putIfAbsent(protocol.to().getCode(), new HashMap<>());
+            protocolMap.get(protocol.from().getCode()).get(protocol.to().getCode()).put(protocol.getCode(), protocol);
         }
     }
 
-    public static Protocol getProtocol(byte from, short code) {
+    public static Protocol getProtocol(byte from, byte to, short code) {
         if (protocolMap.containsKey(from)) {
-            Map<Short, Protocol> shortProtocolMap = protocolMap.get(from);
-            return shortProtocolMap.get(code);
+            Map<Byte, Map<Short, Protocol>> shortProtocolMap = protocolMap.get(from);
+            if (shortProtocolMap.containsKey(to)) {
+                return shortProtocolMap.get(to).get(code);
+            }
+            return null;
         }
         return null;
     }

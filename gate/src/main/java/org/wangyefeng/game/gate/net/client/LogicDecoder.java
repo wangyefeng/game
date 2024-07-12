@@ -28,7 +28,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
         byte type = in.readByte();// 协议类型
         byte to = in.readByte();
         short code = in.readShort();
-        Protocol protocol = ProtocolUtils.getProtocol(from, code);
+        Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
         if (protocol == null || protocol.to().getCode() != to) {
             log.warn("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
             in.skipBytes(in.readableBytes());

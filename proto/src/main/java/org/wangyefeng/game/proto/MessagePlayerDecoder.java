@@ -11,8 +11,10 @@ import org.wangyefeng.game.proto.protocol.ProtocolUtils;
  */
 public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
 
+    private final byte to;
 
-    public MessagePlayerDecoder() {
+    public MessagePlayerDecoder(byte to) {
+        this.to = to;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
         short code = msg.readShort();
         int playerId = msg.readInt();
         int length = msg.readableBytes();
-        Protocol protocol = ProtocolUtils.getProtocol(from, code);
+        Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);

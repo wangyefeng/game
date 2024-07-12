@@ -32,12 +32,16 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
     protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
+            out.writeByte(msg.getProtocol().from().getCode());
+            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
             out.writeShort(msg.getProtocol().getCode());
             ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
             msg.getMessage().writeTo(outputStream);
             out.setInt(0, out.readableBytes() - 4);
         } else {
-            out.writeInt(2);
+            out.writeInt(4);
+            out.writeByte(msg.getProtocol().from().getCode());
+            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
             out.writeShort(msg.getProtocol().getCode());
         }
     }
@@ -47,10 +51,11 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
         try {
             byte from = Topic.CLIENT.getCode();
             byte to = in.readByte();
+            byte type = in.readByte();
             short code = in.readShort();
-            Protocol protocol = ProtocolUtils.getProtocol(from, code);
+            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
-                log.error("decode error, protocol not found or to topic not match, from: {}, to: {}, code: {}", from, to, code);
+                log.error("decode error, protocol not found or to topic not match, from: {}, to: {}, code: {}", from, type, code);
                 in.skipBytes(in.readableBytes());
                 return;
             }

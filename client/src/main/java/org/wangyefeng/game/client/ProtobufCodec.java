@@ -1,12 +1,10 @@
 package org.wangyefeng.game.client;
 
-import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import org.springframework.util.Assert;
+import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 
 import java.util.List;
@@ -24,12 +22,16 @@ public class ProtobufCodec extends ByteToMessageCodec<MessageCode> {
     protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
+            out.writeByte(msg.getProtocol().to().getCode());
+            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
             out.writeShort(msg.getCode());
             ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
             msg.getMessage().writeTo(outputStream);
             out.setInt(0, out.readableBytes() - 4);
         } else {
-            out.writeInt(2);
+            out.writeInt(4);
+            out.writeByte(msg.getProtocol().to().getCode());
+            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
             out.writeShort(msg.getCode());
         }
     }

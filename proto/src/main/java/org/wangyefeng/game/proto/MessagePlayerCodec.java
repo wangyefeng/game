@@ -19,7 +19,10 @@ import java.util.List;
  */
 public class MessagePlayerCodec extends ByteToMessageCodec<MessagePlayer<?>> {
 
-    public MessagePlayerCodec() {
+    private final byte to;
+
+    public MessagePlayerCodec(byte to) {
+        this.to = to;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class MessagePlayerCodec extends ByteToMessageCodec<MessagePlayer<?>> {
             short code = in.readShort();
             int playerId = in.readInt();
             int length = in.readableBytes();
-            Protocol protocol = ProtocolUtils.getProtocol(from, code);
+            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
             if (length > 0) {
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);
                 Message message = (Message) protocol.parser().parseFrom(inputStream);

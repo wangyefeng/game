@@ -6,7 +6,9 @@ import org.wangyefeng.game.proto.Topic;
 public enum GateToClientProtocol implements Protocol {
     PONG((short) 0),
 
-    TOKEN_VALIDATE((short) 1);
+    TOKEN_VALIDATE((short) 1),
+
+    KICK_OUT((short) 2);
 
 
     private final short code;

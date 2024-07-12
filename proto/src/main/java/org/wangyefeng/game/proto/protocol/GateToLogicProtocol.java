@@ -4,7 +4,8 @@ import com.google.protobuf.Parser;
 import org.wangyefeng.game.proto.Topic;
 
 public enum GateToLogicProtocol implements Protocol {
-    PING((short) 0), KICK_OUT((short) 1),
+    PING((short) 0),
+
     ;
 
 

@@ -12,6 +12,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 @SpringBootApplication
 public class Client implements CommandLineRunner {
@@ -65,6 +66,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        ProtocolUtils.init();
         run();
     }
 }
