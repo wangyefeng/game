@@ -14,7 +14,6 @@ import org.wangyefeng.game.gate.player.Players;
 import org.wangyefeng.game.proto.MessageCode;
 
 import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
 
 @ChannelHandler.Sharable
 public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
@@ -56,7 +55,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         log.info("Channel inactive: {}", c);
         Player player = c.attr(AttributeKeys.PLAYER).get();
         if (player != null) {
-            player.getExecutor().submit(() -> Players.removePlayer(player.getId())).get(5, TimeUnit.SECONDS);
+            player.getExecutor().execute(() -> {
+                Player player2 = c.attr(AttributeKeys.PLAYER).get();
+                Players.removePlayer(player2.getId());
+            });
         }
     }
 

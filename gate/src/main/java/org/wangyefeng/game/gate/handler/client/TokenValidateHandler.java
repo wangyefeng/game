@@ -28,26 +28,22 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
         }
         int playerId = msg.getVal();
         ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
-        playerExecutor.submit(() -> {
+        playerExecutor.execute(() -> {
             Player player = null;
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
                 Channel oldChannel = player.getChannel();
-                oldChannel.attr(AttributeKeys.PLAYER).set(null);
                 oldChannel.writeAndFlush(new MessageCode<>(ToClientProtocol.KICK_OUT));
-                try {
-                    oldChannel.close().sync();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                oldChannel.attr(AttributeKeys.PLAYER).set(null);
+                oldChannel.close();
                 player.setChannel(channel);
             } else {
                 player = new Player(playerId, channel, playerExecutor);
                 Players.addPlayer(player);
             }
             channel.attr(AttributeKeys.PLAYER).set(player);
-        }).get();
+        });
     }
 
     @Override
