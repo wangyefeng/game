@@ -31,12 +31,16 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
         playerExecutor.submit(() -> {
             Player player = null;
             boolean containsPlayer = Players.containsPlayer(playerId);
-            if (containsPlayer) {
+            if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
                 Channel oldChannel = player.getChannel();
                 oldChannel.attr(AttributeKeys.PLAYER).set(null);
                 oldChannel.writeAndFlush(new MessageCode<>(ToClientProtocol.KICK_OUT));
-                oldChannel.close();
+                try {
+                    oldChannel.close().sync();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 player.setChannel(channel);
             } else {
                 player = new Player(playerId, channel, playerExecutor);

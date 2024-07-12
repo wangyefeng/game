@@ -18,12 +18,7 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Cli
             log.warn("func={}, msg=playerId is null, channel={}", getClass().getSimpleName(), channel);
             return;
         }
-        player.getExecutor().execute(() -> {
-            Player player2 = channel.attr(AttributeKeys.PLAYER).get();
-            if (player2 != null) {
-                handle(channel, message, player2);
-            }
-        });
+        player.getExecutor().execute(() -> handle(channel, message, player));
     }
 
     protected abstract void handle(Channel channel, T message, Player player);
