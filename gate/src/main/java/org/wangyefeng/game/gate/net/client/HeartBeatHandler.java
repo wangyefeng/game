@@ -9,21 +9,24 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wangyefeng.game.gate.protocol.ToLogicProtocol;
+import org.wangyefeng.game.proto.DecoderType;
+import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.protocol.GateToLogicProtocol;
 
 @ChannelHandler.Sharable
 public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(HeartBeatHandler.class);
 
-    private static final ByteBuf PING = Unpooled.unreleasableBuffer(Unpooled.directBuffer(7));
+    private static final ByteBuf PING = Unpooled.unreleasableBuffer(Unpooled.directBuffer(8));
 
     private final Client client;
 
     static {
-        PING.writeInt(3);
-        PING.writeByte(1);
-        PING.writeShort(ToLogicProtocol.PING.getCode());
+        PING.writeInt(4);
+        PING.writeByte(Topic.GATE.getCode());
+        PING.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        PING.writeShort(GateToLogicProtocol.PING.getCode());
     }
 
     public HeartBeatHandler(Client client) {

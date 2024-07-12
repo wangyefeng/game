@@ -1,35 +1,33 @@
 package org.wangyefeng.game.proto;
 
 import com.google.protobuf.Message;
+import org.wangyefeng.game.proto.protocol.Protocol;
 
 public class MessageCode<T extends Message> {
 
-    private short code;
+    private Protocol protocol;
 
     private T message;
 
-    public MessageCode(short code, T message) {
-        this.code = code;
+
+    public MessageCode(Protocol protocol, T message) {
+        this.protocol = protocol;
         this.message = message;
     }
 
-    public MessageCode(Protocol protocol, T message) {
-        this(protocol.getCode(), message);
-    }
-
     public MessageCode(Protocol protocol) {
-        this(protocol.getCode(), null);
-    }
-
-    public MessageCode(short code) {
-        this(code, null);
-    }
-
-    public short getCode() {
-        return code;
+        this(protocol, null);
     }
 
     public T getMessage() {
         return message;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public short getCode() {
+        return protocol.getCode();
     }
 }

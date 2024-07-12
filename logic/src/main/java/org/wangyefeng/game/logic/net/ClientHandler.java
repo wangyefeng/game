@@ -7,7 +7,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
-import org.wangyefeng.game.proto.MessagePlayer;
 
 /**
  * @author wangyefeng
@@ -15,7 +14,7 @@ import org.wangyefeng.game.proto.MessagePlayer;
  * @description 处理消息的handler
  */
 @ChannelHandler.Sharable
-public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>> {
+public class ClientHandler extends SimpleChannelInboundHandler<ClientMsg<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
@@ -26,7 +25,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer message) {
+    protected void channelRead0(ChannelHandlerContext ctx, ClientMsg<?> message) {
         ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(message.getCode());
         if (logicHandler == null) {
             log.warn("illegal message code: {}", message.getCode());

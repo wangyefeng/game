@@ -2,7 +2,7 @@ package org.wangyefeng.game.logic.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.wangyefeng.game.logic.protocol.ClientProtocol;
+import org.wangyefeng.game.proto.protocol.ClientToLogicProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,5 +24,5 @@ public interface ClientMsgHandler<T extends Message> {
 
     void handle(Channel channel, int playerId, T message);
 
-    ClientProtocol getProtocol();
+    ClientToLogicProtocol getProtocol();
 }

@@ -6,7 +6,8 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import org.springframework.util.Assert;
+import org.wangyefeng.game.proto.protocol.Protocol;
+import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 import java.util.List;
 
@@ -18,10 +19,7 @@ import java.util.List;
  */
 public class MessagePlayerCodec extends ByteToMessageCodec<MessagePlayer<?>> {
 
-    private final ProtocolInMatcher matcher;
-
-    public MessagePlayerCodec(ProtocolInMatcher matcher) {
-        this.matcher = matcher;
+    public MessagePlayerCodec() {
     }
 
     @Override
@@ -43,16 +41,17 @@ public class MessagePlayerCodec extends ByteToMessageCodec<MessagePlayer<?>> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         try {
+            byte from = in.readByte();
             short code = in.readShort();
-            Assert.isTrue(matcher.match(code), "Invalid code: " + code);
             int playerId = in.readInt();
             int length = in.readableBytes();
+            Protocol protocol = ProtocolUtils.getProtocol(from, code);
             if (length > 0) {
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                Message message = (Message) matcher.parser(code).parseFrom(inputStream);
-                out.add(new MessagePlayer<>(playerId, code, message));
+                Message message = (Message) protocol.parser().parseFrom(inputStream);
+                out.add(new MessagePlayer<>(playerId, protocol, message));
             } else {
-                out.add(new MessagePlayer<>(playerId, code));
+                out.add(new MessagePlayer<>(playerId, protocol));
             }
         } finally {
             in.skipBytes(in.readableBytes());

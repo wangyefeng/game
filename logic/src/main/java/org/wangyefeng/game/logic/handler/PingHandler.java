@@ -7,22 +7,23 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.wangyefeng.game.logic.net.TcpServer;
-import org.wangyefeng.game.logic.protocol.GateProtocol;
-import org.wangyefeng.game.logic.protocol.ToGateProtocol;
 import org.wangyefeng.game.proto.DecoderType;
+import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.protocol.GateToLogicProtocol;
+import org.wangyefeng.game.proto.protocol.LogicToGateProtocol;
 
 @Component
 public class PingHandler implements GateMsgHandler<Message> {
 
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 
-    private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(TcpServer.MIN_FRAME_LENGTH));
+    private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(8));
 
     static {
-        PONG.writeInt(TcpServer.PROTOCOL_TYPE_LENGTH + TcpServer.CODE_LENGTH);
+        PONG.writeInt(4);
+        PONG.writeByte(Topic.CLIENT.getCode());
         PONG.writeByte(DecoderType.MESSAGE_CODE.getCode());
-        PONG.writeShort(ToGateProtocol.PONG.getCode());
+        PONG.writeShort(LogicToGateProtocol.PONG.getCode());
     }
 
     @Override
@@ -32,7 +33,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     }
 
     @Override
-    public GateProtocol getProtocol() {
-        return GateProtocol.PING;
+    public GateToLogicProtocol getProtocol() {
+        return GateToLogicProtocol.PING;
     }
 }

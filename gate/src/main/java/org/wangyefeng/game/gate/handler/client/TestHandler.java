@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.player.Player;
-import org.wangyefeng.game.gate.protocol.ClientProtocol;
+import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
 
 @Component
 public class TestHandler extends AbstractPlayerMsgHandler<Message> {
@@ -19,7 +19,7 @@ public class TestHandler extends AbstractPlayerMsgHandler<Message> {
     }
 
     @Override
-    public ClientProtocol getProtocol() {
-        return ClientProtocol.TEST;
+    public ClientToGateProtocol getProtocol() {
+        return ClientToGateProtocol.TEST;
     }
 }

@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.handler.logic.LogicMsgHandler;
-import org.wangyefeng.game.gate.protocol.LogicProtocol;
+import org.wangyefeng.game.proto.protocol.GateToClientProtocol;
+import org.wangyefeng.game.proto.protocol.Protocol;
 
 @Component
 public class PongHandler implements LogicMsgHandler<Message> {
@@ -15,11 +16,11 @@ public class PongHandler implements LogicMsgHandler<Message> {
 
     @Override
     public void handle(Channel channel, Message message) {
-        log.debug("Received a pong message from logic.");
+        log.info("Received a pong message from logic.");
     }
 
     @Override
-    public LogicProtocol getProtocol() {
-        return LogicProtocol.PONG;
+    public Protocol getProtocol() {
+        return GateToClientProtocol.PONG;
     }
 }

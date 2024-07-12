@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
-import org.wangyefeng.game.logic.protocol.ClientProtocol;
-import org.wangyefeng.game.logic.protocol.ToClientProtocol;
 import org.wangyefeng.game.proto.MessagePlayer;
+import org.wangyefeng.game.proto.protocol.ClientToLogicProtocol;
+import org.wangyefeng.game.proto.protocol.LogicToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
 @Component
@@ -19,11 +19,11 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
     @Override
     public void handle(Channel channel, int playerId, Common.PbInt message) {
         log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
-        channel.writeAndFlush(new MessagePlayer<>(playerId, ToClientProtocol.LOGIN));
+        channel.writeAndFlush(new MessagePlayer<>(playerId, LogicToClientProtocol.LOGIN));
     }
 
     @Override
-    public ClientProtocol getProtocol() {
-        return ClientProtocol.LOGIN;
+    public ClientToLogicProtocol getProtocol() {
+        return ClientToLogicProtocol.LOGIN;
     }
 }

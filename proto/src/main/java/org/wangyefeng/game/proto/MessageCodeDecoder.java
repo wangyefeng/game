@@ -3,7 +3,8 @@ package org.wangyefeng.game.proto;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
-import org.springframework.util.Assert;
+import org.wangyefeng.game.proto.protocol.Protocol;
+import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 /**
  * 消息码解码器
@@ -11,23 +12,21 @@ import org.springframework.util.Assert;
 public class MessageCodeDecoder implements Decoder<MessageCode<?>> {
 
 
-    private final ProtocolInMatcher matcher;
-
-    public MessageCodeDecoder(ProtocolInMatcher matcher) {
-        this.matcher = matcher;
+    public MessageCodeDecoder() {
     }
 
     @Override
     public MessageCode<?> decode(ByteBuf msg) throws Exception {
+        byte from = msg.readByte();
         short code = msg.readShort();
-        Assert.isTrue(matcher.match(code), "Invalid code: " + code);
         int length = msg.readableBytes();
+        Protocol protocol = ProtocolUtils.getProtocol(from, code);
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-            Message message = (Message) matcher.parser(code).parseFrom(inputStream);
-            return new MessageCode<>(code, message);
+            Message message = (Message) protocol.parser().parseFrom(inputStream);
+            return new MessageCode<>(protocol, message);
         } else {
-            return new MessageCode<>(code);
+            return new MessageCode<>(protocol);
         }
     }
 

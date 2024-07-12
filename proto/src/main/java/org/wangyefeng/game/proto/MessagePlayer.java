@@ -1,35 +1,28 @@
 package org.wangyefeng.game.proto;
 
 import com.google.protobuf.Message;
+import org.wangyefeng.game.proto.protocol.Protocol;
 
 public class MessagePlayer<T extends Message> {
 
     private int playerId;
 
-    private short code;
+    private Protocol protocol;
 
     private T message;
 
-    public MessagePlayer(int playerId, short code, T message) {
+    public MessagePlayer(int playerId, Protocol protocol, T message) {
         this.playerId = playerId;
-        this.code = code;
+        this.protocol = protocol;
         this.message = message;
     }
 
-    public MessagePlayer(int playerId, Protocol protocol, T message) {
-        this(playerId, protocol.getCode(), message);
-    }
-
     public MessagePlayer(int playerId, Protocol protocol) {
-        this(playerId, protocol.getCode(), null);
-    }
-
-    public MessagePlayer(int playerId, short code) {
-        this(playerId, code, null);
+        this(playerId, protocol, null);
     }
 
     public short getCode() {
-        return code;
+        return protocol.getCode();
     }
 
     public T getMessage() {

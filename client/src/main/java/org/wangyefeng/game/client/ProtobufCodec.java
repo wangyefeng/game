@@ -38,14 +38,14 @@ public class ProtobufCodec extends ByteToMessageCodec<MessageCode> {
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf msg, List<Object> out) throws Exception {
         byte type = msg.readByte();
         short code = msg.readShort();
-        Assert.isTrue(S2CProtocol.match(code), "Invalid code: " + code);
-        int length = msg.readableBytes();
-        if (length > 0) {
-            ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-            out.add(new MessageCode<>(code, (Message) S2CProtocol.getParser(code).parseFrom(inputStream)));
-        } else {
-            out.add(new MessageCode<>(code));
-        }
+//        Assert.isTrue(S2CProtocol.match(code), "Invalid code: " + code);
+//        int length = msg.readableBytes();
+//        if (length > 0) {
+//            ByteBufInputStream inputStream = new ByteBufInputStream(msg);
+//            out.add(new MessageCode<>(code, (Message) S2CProtocol.getParser(code).parseFrom(inputStream)));
+//        } else {
+//            out.add(new MessageCode<>(code));
+//        }
     }
 
 }

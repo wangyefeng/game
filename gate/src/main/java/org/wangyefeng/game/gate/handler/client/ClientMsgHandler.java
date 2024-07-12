@@ -2,7 +2,7 @@ package org.wangyefeng.game.gate.handler.client;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.wangyefeng.game.gate.protocol.ClientProtocol;
+import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,6 @@ public interface ClientMsgHandler<T extends Message> {
 
     void handle(Channel channel, T msg) throws Exception;
 
-    ClientProtocol getProtocol();
+    ClientToGateProtocol getProtocol();
 
 }

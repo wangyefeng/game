@@ -10,9 +10,11 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.client.LogicClient;
-import org.wangyefeng.game.gate.protocol.ClientProtocol;
 import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
+import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.protocol.Protocol;
+import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 import java.util.List;
 
@@ -30,36 +32,45 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
     protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
-            out.writeShort(msg.getCode());
+            out.writeShort(msg.getProtocol().getCode());
             ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
             msg.getMessage().writeTo(outputStream);
             out.setInt(0, out.readableBytes() - 4);
         } else {
             out.writeInt(2);
-            out.writeShort(msg.getCode());
+            out.writeShort(msg.getProtocol().getCode());
         }
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         try {
+            byte from = Topic.CLIENT.getCode();
+            byte to = in.readByte();
             short code = in.readShort();
-            if (ClientProtocol.match(code)) { // 客户端发送gate处理的消息
+            Protocol protocol = ProtocolUtils.getProtocol(from, code);
+            if (protocol == null || protocol.to().getCode() != to) {
+                log.error("decode error, protocol not found or to topic not match, from: {}, to: {}, code: {}", from, to, code);
+                in.skipBytes(in.readableBytes());
+                return;
+            }
+            if (to == Topic.GATE.getCode()) { // 客户端发送gate处理的消息
                 int length = in.readableBytes();
                 if (length > 0) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                    Message message = (Message) ClientProtocol.getParser(code).parseFrom(inputStream);
-                    out.add(new MessageCode<>(code, message));
+                    Message message = (Message) protocol.parser().parseFrom(inputStream);
+                    out.add(new MessageCode<>(protocol, message));
                 } else {
-                    out.add(new MessageCode<>(code));
+                    out.add(new MessageCode<>(protocol));
                 }
             } else {
                 if (ctx.channel().hasAttr(AttributeKeys.PLAYER)) {
                     if (logicClient.isRunning()) {
                         int readableBytes = in.readableBytes();
-                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 11, readableBytes + 11);
-                        buffer.writeInt(readableBytes + 7);
+                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 12, readableBytes + 12);
+                        buffer.writeInt(readableBytes + 8);
                         buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
+                        buffer.writeByte(from);
                         buffer.writeShort(code);
                         buffer.writeInt(ctx.channel().attr(AttributeKeys.PLAYER).get().getId());
                         buffer.writeBytes(in);

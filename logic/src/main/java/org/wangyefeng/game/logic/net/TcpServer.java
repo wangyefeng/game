@@ -14,15 +14,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import org.wangyefeng.game.logic.protocol.ClientProtocolMatcher;
-import org.wangyefeng.game.logic.protocol.GateProtocolMatcher;
 import org.wangyefeng.game.proto.CommonDecoder;
-import org.wangyefeng.game.proto.MessageCodeDecoder;
-import org.wangyefeng.game.proto.MessagePlayerDecoder;
 
 @Component
 @ConfigurationProperties(prefix = "tcp")
@@ -33,14 +28,6 @@ public class TcpServer {
 
     public static final int FRAME_LENGTH = 4; // 帧长度字节长度
 
-    public static final int PROTOCOL_TYPE_LENGTH = 1; // 协议体类型字节长度
-
-    public static final int CODE_LENGTH = 2; // 消息号字节长度
-
-    public static final int PLAYER_ID_LENGTH = 4; // 玩家ID字节长度
-
-    public static final int MIN_FRAME_LENGTH = PROTOCOL_TYPE_LENGTH + CODE_LENGTH + PLAYER_ID_LENGTH; // 数据字节长度
-
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
 
     @Min(1025)
@@ -50,12 +37,6 @@ public class TcpServer {
     private Channel channel;
 
     private boolean isRunning = false;
-
-    @Autowired
-    private ClientProtocolMatcher clientProtocolMatcher;
-
-    @Autowired
-    private GateProtocolMatcher gateProtocolMatcher;
 
     TcpServer() {
     }
@@ -79,8 +60,8 @@ public class TcpServer {
                     pipeline.addLast(new ReadTimeoutHandler(20));// 设置读超时时间为20秒
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
                     CommonDecoder commonDecoder = new CommonDecoder();
-                    commonDecoder.registerDecoder(new MessageCodeDecoder(gateProtocolMatcher));
-                    commonDecoder.registerDecoder(new MessagePlayerDecoder(clientProtocolMatcher));
+                    commonDecoder.registerDecoder(new ClientDecoder());
+                    commonDecoder.registerDecoder(new GateDecoder());
                     pipeline.addLast(commonDecoder);
                     pipeline.addLast(clientMsgEncode);
                     pipeline.addLast(clientHandler);

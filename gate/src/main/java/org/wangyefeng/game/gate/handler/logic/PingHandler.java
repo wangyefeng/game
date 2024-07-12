@@ -8,22 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
-import org.wangyefeng.game.gate.protocol.ClientProtocol;
-import org.wangyefeng.game.gate.protocol.ToClientProtocol;
 import org.wangyefeng.game.proto.DecoderType;
+import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
+import org.wangyefeng.game.proto.protocol.GateToClientProtocol;
 
 @Component
 public class PingHandler implements ClientMsgHandler<Message> {
 
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 
-    private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(6));
+    private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(8, 8));
 
 
     static {
-        PONG.writeInt(3);
+        PONG.writeInt(4);
+        PONG.writeByte(Topic.GATE.getCode());
         PONG.writeByte(DecoderType.MESSAGE_CODE.getCode());
-        PONG.writeShort(ToClientProtocol.PONG.getCode());
+        PONG.writeShort(GateToClientProtocol.PONG.getCode());
     }
 
     @Override
@@ -33,7 +35,7 @@ public class PingHandler implements ClientMsgHandler<Message> {
     }
 
     @Override
-    public ClientProtocol getProtocol() {
-        return ClientProtocol.PING;
+    public ClientToGateProtocol getProtocol() {
+        return ClientToGateProtocol.PING;
     }
 }
