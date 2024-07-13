@@ -19,7 +19,7 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
     @Override
     public void handle(Channel channel, int playerId, Common.PbInt message) {
         log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
-        channel.writeAndFlush(new MessagePlayer<>(playerId, LogicToClientProtocol.LOGIN));
+        channel.writeAndFlush(new MessagePlayer<>(playerId, LogicToClientProtocol.LOGIN, message));
     }
 
     @Override

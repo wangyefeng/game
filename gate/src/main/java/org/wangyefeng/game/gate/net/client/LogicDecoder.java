@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.player.Players;
-import org.wangyefeng.game.gate.thread.ThreadPool;
 import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.Topic;
@@ -60,23 +59,21 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 return;
             }
             if (to == Topic.CLIENT.getCode()) {
-                log.info("转发logic协议给client 协议名：{}", protocol);
                 int playerId = in.readInt(); // 玩家id
-                ThreadPool.getPlayerExecutor(playerId).execute(() -> {
-                    Player player = Players.getPlayer(playerId);
-                    if (player != null) {
-                        int readableBytes = in.readableBytes();
-                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 8, readableBytes + 8);
-                        buffer.writeInt(readableBytes + 4);
-                        buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
-                        buffer.writeByte(from);
-                        buffer.writeShort(code);
-                        buffer.writeBytes(in);
-                        player.getChannel().writeAndFlush(buffer);
-                    } else {
-                        log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
-                    }
-                });
+                int readableBytes = in.readableBytes();
+                Player player = Players.getPlayer(playerId);
+                if (player != null) {
+                    log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, readableBytes);
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 8, readableBytes + 8);
+                    buffer.writeInt(readableBytes + 4);
+                    buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
+                    buffer.writeByte(from);
+                    buffer.writeShort(code);
+                    buffer.writeBytes(in);
+                    player.getChannel().writeAndFlush(buffer);
+                } else {
+                    log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
+                }
             } else {
                 error(from, to, code);
                 in.skipBytes(in.readableBytes());

@@ -10,6 +10,7 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.net.client.LogicClient;
+import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.Topic;
@@ -46,16 +47,17 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
         }
     }
 
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        try {
-            byte from = Topic.CLIENT.getCode();
-            byte type = in.readByte();
+        byte from = Topic.CLIENT.getCode();
+        byte type = in.readByte();
+        if (type == DecoderType.MESSAGE_CODE.getCode()) {
             byte to = in.readByte();
             short code = in.readShort();
             Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
-                log.error("decode error, protocol not found or to topic not match, from: {}, to: {}, code: {}", from, type, code);
+                log.error("decode error, protocol not found, from: {}, to: {}, code: {}", from, to, code);
                 in.skipBytes(in.readableBytes());
                 return;
             }
@@ -69,28 +71,24 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                     out.add(new MessageCode<>(protocol));
                 }
             } else {
-                if (ctx.channel().hasAttr(AttributeKeys.PLAYER)) {
-                    if (logicClient.isRunning()) {
-                        int readableBytes = in.readableBytes();
-                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 12, readableBytes + 12);
-                        buffer.writeInt(readableBytes + 8);
-                        buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
-                        buffer.writeByte(from);
-                        buffer.writeShort(code);
-                        buffer.writeInt(ctx.channel().attr(AttributeKeys.PLAYER).get().getId());
-                        buffer.writeBytes(in);
-                        logicClient.getChannel().writeAndFlush(buffer);
-                    } else {
-                        in.skipBytes(in.readableBytes());
-                        log.error("handle message error, Logic server is not running, code: {}", code);
-                    }
+                Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
+                if (player != null && logicClient.isRunning()) {
+                    int readableBytes = in.readableBytes();
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 12, readableBytes + 12);
+                    buffer.writeInt(readableBytes + 8);
+                    buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
+                    buffer.writeByte(from);
+                    buffer.writeShort(code);
+                    buffer.writeInt(player.getId());
+                    buffer.writeBytes(in);
+                    logicClient.getChannel().writeAndFlush(buffer);
                 } else {
-                    in.skipBytes(in.readableBytes());
                     log.error("handle message error, player not found, code: {}", code);
+                    in.skipBytes(in.readableBytes());
                 }
             }
-        } catch (Exception e) {
-            log.error("decode error", e);
+        } else {
+            log.error("decode error, illegal decoder type: {}", type);
             in.skipBytes(in.readableBytes());
         }
     }

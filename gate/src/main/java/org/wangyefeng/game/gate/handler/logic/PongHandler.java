@@ -15,7 +15,7 @@ public class PongHandler implements LogicMsgHandler<Message> {
 
     @Override
     public void handle(Channel channel, Message message) {
-        log.info("Received a pong message from logic.");
+        log.debug("Received a pong message from logic.");
     }
 
     @Override
