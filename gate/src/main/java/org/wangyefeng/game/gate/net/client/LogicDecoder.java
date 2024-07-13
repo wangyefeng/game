@@ -65,11 +65,16 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 if (player != null) {
                     log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, readableBytes);
                     ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 8, readableBytes + 8);
-                    buffer.writeInt(readableBytes + 4);
-                    buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
-                    buffer.writeByte(from);
-                    buffer.writeShort(code);
-                    buffer.writeBytes(in);
+                    try {
+                        buffer.writeInt(readableBytes + 4);
+                        buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
+                        buffer.writeByte(from);
+                        buffer.writeShort(code);
+                        buffer.writeBytes(in);
+                    } catch (Exception e) {
+                        buffer.release();
+                        throw e;
+                    }
                     player.getChannel().writeAndFlush(buffer);
                 } else {
                     log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);

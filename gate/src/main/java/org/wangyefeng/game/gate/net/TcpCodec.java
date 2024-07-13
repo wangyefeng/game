@@ -1,10 +1,7 @@
 package org.wangyefeng.game.gate.net;
 
 import com.google.protobuf.Message;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
@@ -74,14 +71,20 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
                 if (player != null && logicClient.isRunning()) {
                     int readableBytes = in.readableBytes();
-                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 12, readableBytes + 12);
-                    buffer.writeInt(readableBytes + 8);
-                    buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
-                    buffer.writeByte(from);
-                    buffer.writeShort(code);
-                    buffer.writeInt(player.getId());
-                    buffer.writeBytes(in);
-                    logicClient.getChannel().writeAndFlush(buffer);
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(12, 12);
+                    try {
+                        buffer.writeInt(readableBytes + 8);
+                        buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
+                        buffer.writeByte(from);
+                        buffer.writeShort(code);
+                        buffer.writeInt(player.getId());
+                    } catch (Exception e) {
+                        buffer.release();
+                        throw e;
+                    }
+                    logicClient.getChannel().write(buffer);
+                    logicClient.getChannel().writeAndFlush(in.retainedDuplicate());
+                    in.skipBytes(in.readableBytes());
                 } else {
                     log.error("handle message error, player not found, code: {}", code);
                     in.skipBytes(in.readableBytes());
