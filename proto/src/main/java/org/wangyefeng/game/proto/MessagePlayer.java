@@ -32,4 +32,8 @@ public class MessagePlayer<T extends Message> {
     public int getPlayerId() {
         return playerId;
     }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
 }

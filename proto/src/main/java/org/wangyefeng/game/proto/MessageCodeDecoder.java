@@ -3,6 +3,7 @@ package org.wangyefeng.game.proto;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import org.springframework.util.Assert;
 import org.wangyefeng.game.proto.protocol.Protocol;
 import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
@@ -11,18 +12,16 @@ import org.wangyefeng.game.proto.protocol.ProtocolUtils;
  */
 public class MessageCodeDecoder implements Decoder<MessageCode<?>> {
 
-    private final byte to;
-
-    public MessageCodeDecoder(byte to) {
-        this.to = to;
+    public MessageCodeDecoder() {
     }
 
     @Override
-    public MessageCode<?> decode(ByteBuf msg) throws Exception {
+    public MessageCode<?> decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
         short code = msg.readShort();
         int length = msg.readableBytes();
         Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+        Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);

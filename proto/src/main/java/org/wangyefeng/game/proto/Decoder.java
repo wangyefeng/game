@@ -14,7 +14,7 @@ public interface Decoder<T> {
      * decode
      * @param msg
      */
-    T decode(ByteBuf msg) throws Exception;
+    T decode(ByteBuf msg, byte to) throws Exception;
 
     /**
      * type

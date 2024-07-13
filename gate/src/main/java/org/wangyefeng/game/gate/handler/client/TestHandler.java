@@ -15,7 +15,7 @@ public class TestHandler extends AbstractPlayerMsgHandler<Message> {
 
     @Override
     protected void handle(Channel channel, Message message, Player player) {
-        log.info("test handler player: {}", player);
+        log.info("test handler player: {}", player.getId());
     }
 
     @Override

@@ -28,7 +28,8 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
         }
         int playerId = msg.getVal();
         ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
-        playerExecutor.execute(() -> {
+        playerExecutor.submit(() -> {
+            log.info("Player {} is logging in.", playerId);
             Player player = null;
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号
@@ -43,7 +44,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
                 Players.addPlayer(player);
             }
             channel.attr(AttributeKeys.PLAYER).set(player);
-        });
+        }).get();
     }
 
     @Override

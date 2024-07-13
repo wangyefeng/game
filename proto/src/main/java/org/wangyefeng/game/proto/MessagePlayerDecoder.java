@@ -11,14 +11,11 @@ import org.wangyefeng.game.proto.protocol.ProtocolUtils;
  */
 public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
 
-    private final byte to;
-
-    public MessagePlayerDecoder(byte to) {
-        this.to = to;
+    public MessagePlayerDecoder() {
     }
 
     @Override
-    public MessagePlayer<?> decode(ByteBuf msg) throws Exception {
+    public MessagePlayer<?> decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
         short code = msg.readShort();
         int playerId = msg.readInt();

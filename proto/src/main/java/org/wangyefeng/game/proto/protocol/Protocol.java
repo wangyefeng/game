@@ -10,6 +10,11 @@ public interface Protocol {
 
 
     /**
+     * 协议头部长度
+     */
+    int FRAME_LENGTH = 4;
+
+    /**
      * 获取协议的来源
      *
      * @return 来源

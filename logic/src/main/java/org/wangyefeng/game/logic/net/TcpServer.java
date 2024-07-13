@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,10 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import org.wangyefeng.game.proto.CommonDecoder;
-import org.wangyefeng.game.proto.MessageCodeDecoder;
-import org.wangyefeng.game.proto.MessagePlayerDecoder;
-import org.wangyefeng.game.proto.Topic;
+import org.wangyefeng.game.proto.*;
 
 @Component
 @ConfigurationProperties(prefix = "tcp")
@@ -54,7 +52,7 @@ public class TcpServer {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             ClientHandler clientHandler = new ClientHandler();
-            ClientMsgEncode clientMsgEncode = new ClientMsgEncode();
+            MessageToByteEncoder playerMsgEncode = new PlayerMsgEncode();
             GateHandler gateHandler = new GateHandler();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
@@ -62,11 +60,11 @@ public class TcpServer {
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new ReadTimeoutHandler(20));// 设置读超时时间为20秒
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
-                    CommonDecoder commonDecoder = new CommonDecoder();
-                    commonDecoder.registerDecoder(new MessageCodeDecoder(Topic.LOGIC.getCode()));
-                    commonDecoder.registerDecoder(new MessagePlayerDecoder(Topic.LOGIC.getCode()));
+                    CommonDecoder commonDecoder = new CommonDecoder(Topic.LOGIC.getCode());
+                    commonDecoder.registerDecoder(new MessageCodeDecoder());
+                    commonDecoder.registerDecoder(new MessagePlayerDecoder());
                     pipeline.addLast(commonDecoder);
-                    pipeline.addLast(clientMsgEncode);
+                    pipeline.addLast(playerMsgEncode);
                     pipeline.addLast(clientHandler);
                     pipeline.addLast(gateHandler);
                 }

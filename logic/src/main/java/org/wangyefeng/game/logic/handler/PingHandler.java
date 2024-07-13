@@ -21,8 +21,8 @@ public class PingHandler implements GateMsgHandler<Message> {
 
     static {
         PONG.writeInt(4);
-        PONG.writeByte(Topic.CLIENT.getCode());
         PONG.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        PONG.writeByte(Topic.GATE.getCode());
         PONG.writeShort(LogicToGateProtocol.PONG.getCode());
     }
 

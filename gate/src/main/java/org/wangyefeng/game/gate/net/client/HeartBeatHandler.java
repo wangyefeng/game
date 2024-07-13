@@ -24,8 +24,8 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
 
     static {
         PING.writeInt(4);
-        PING.writeByte(Topic.GATE.getCode());
         PING.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        PING.writeByte(Topic.GATE.getCode());
         PING.writeShort(GateToLogicProtocol.PING.getCode());
     }
 

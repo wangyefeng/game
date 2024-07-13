@@ -32,16 +32,16 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
     protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
         if (msg.getMessage() != null) {
             out.writeInt(0);
-            out.writeByte(msg.getProtocol().from().getCode());
             out.writeByte(DecoderType.MESSAGE_CODE.getCode());
+            out.writeByte(msg.getProtocol().from().getCode());
             out.writeShort(msg.getProtocol().getCode());
             ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
             msg.getMessage().writeTo(outputStream);
             out.setInt(0, out.readableBytes() - 4);
         } else {
             out.writeInt(4);
-            out.writeByte(msg.getProtocol().from().getCode());
             out.writeByte(DecoderType.MESSAGE_CODE.getCode());
+            out.writeByte(msg.getProtocol().from().getCode());
             out.writeShort(msg.getProtocol().getCode());
         }
     }
@@ -50,8 +50,8 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         try {
             byte from = Topic.CLIENT.getCode();
-            byte to = in.readByte();
             byte type = in.readByte();
+            byte to = in.readByte();
             short code = in.readShort();
             Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
@@ -84,6 +84,9 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                         in.skipBytes(in.readableBytes());
                         log.error("handle message error, Logic server is not running, code: {}", code);
                     }
+                } else {
+                    in.skipBytes(in.readableBytes());
+                    log.error("handle message error, player not found, code: {}", code);
                 }
             }
         } catch (Exception e) {
