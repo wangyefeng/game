@@ -1,17 +1,32 @@
 package org.wangyefeng.game.proto;
 
+/**
+ * 消息解码器类型枚举
+ *
+ * @author wangyefeng
+ * @date 2024-07-13
+ * @see Topic
+ * @see org.wangyefeng.game.proto.protocol.Protocol
+ */
 public enum DecoderType {
 
     /**
-     * 消息类型：玩家消息
-     * [协议长度]4+[协议类型]1+[协议号]1+[playerId]4+[protobuf数据]协议长度-6
-     * [4][1][1][2][4][protobuf数据]
+     * 消息类型：玩家ID消息
+     * +--------+------------+------------+---------------+------------+------------+
+     * | Length | DecoderType| From Topic | Protocol Code | player ID  |  protobuf  |
+     * +--------+------------+------------+---------------+------------+------------+
+     * | 4 bytes| 1 byte     | 1 byte     | 2 bytes       | 4 bytes    | remaining  |
+     * +--------+------------+------------+---------------+------------+------------+
      */
     MESSAGE_PLAYER((byte) 0),
 
     /**
-     * 消息类型：协议号消息
-     * [协议长度]4+[类型]1+[协议号]1+[protobuf数据]协议长度-2
+     * 消息类型：玩家ID消息
+     * +--------+------------+------------+---------------+------------+
+     * | Length | DecoderType| From Topic | Protocol Code |  protobuf  |
+     * +--------+------------+------------+---------------+------------+
+     * | 4 bytes| 1 byte     | 1 byte     | 2 bytes       | remaining  |
+     * +--------+------------+------------+---------------+------------+
      */
     MESSAGE_CODE((byte) 1),
     ;
