@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.player.Players;
+import org.wangyefeng.game.gate.thread.ThreadPool;
 import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.Topic;
@@ -60,25 +61,36 @@ public class LogicDecoder extends ByteToMessageDecoder {
             }
             if (to == Topic.CLIENT.getCode()) {
                 int playerId = in.readInt(); // 玩家id
-                int readableBytes = in.readableBytes();
-                Player player = Players.getPlayer(playerId);
-                if (player != null) {
-                    log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, readableBytes);
-                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(readableBytes + 8, readableBytes + 8);
+                ByteBuf duplicate = in.retainedDuplicate();
+                ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+                    Player player = Players.getPlayer(playerId);
                     try {
-                        buffer.writeInt(readableBytes + 4);
-                        buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
-                        buffer.writeByte(from);
-                        buffer.writeShort(code);
-                        buffer.writeBytes(in);
+                        if (player == null) {
+                            duplicate.release();
+                            log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
+                            return;
+                        }
+
+                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(8, 8);
+                        try {
+                            log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, duplicate.readableBytes());
+                            buffer.writeInt(duplicate.readableBytes() + 4);
+                            buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
+                            buffer.writeByte(from);
+                            buffer.writeShort(code);
+                        } catch (Exception e) {
+                            buffer.release();
+                            duplicate.release();
+                            throw e;
+                        }
+                        player.getChannel().write(buffer);
                     } catch (Exception e) {
-                        buffer.release();
+                        duplicate.release();
                         throw e;
                     }
-                    player.getChannel().writeAndFlush(buffer);
-                } else {
-                    log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
-                }
+                    player.getChannel().writeAndFlush(duplicate);
+                });
+                in.skipBytes(in.readableBytes());
             } else {
                 error(from, to, code);
                 in.skipBytes(in.readableBytes());

@@ -1,6 +1,8 @@
 package org.wangyefeng.game.gate;
 
+import io.netty.util.ResourceLeakDetector;
 import jakarta.annotation.PreDestroy;
+import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +40,21 @@ public class Gate implements CommandLineRunner {
     private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     private void start() throws Exception {
+        globalSetting();
         registerHandler();
         ProtocolUtils.init();
         logicClient.start();
         tcpServer.start();
+    }
+
+    private void globalSetting() {
+        // 设置netty的资源泄露检测
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        // 设置netty日志级别
+        System.setProperty("io.netty.logging.level", "INFO");
+        // 设置log4j异步日志
+        System.setProperty("log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        log.info("是否为异步日志：{}", AsyncLoggerContextSelector.isSelected());
     }
 
     @PreDestroy

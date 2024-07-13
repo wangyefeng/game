@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf;
  */
 public interface Decoder<T> {
 
-
     /**
      * decode
      * @param msg

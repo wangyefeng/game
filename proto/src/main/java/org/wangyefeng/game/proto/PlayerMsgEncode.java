@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.wangyefeng.game.proto.protocol.Protocol;
 
 /**
  * @author wangyefeng
@@ -13,11 +14,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 @ChannelHandler.Sharable
 public class PlayerMsgEncode extends MessageToByteEncoder<MessagePlayer> {
-
-    /**
-     * 协议头部长度
-     */
-    private static final int FRAME_LENGTH = 4;
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessagePlayer msg, ByteBuf out) throws Exception {
@@ -29,7 +25,7 @@ public class PlayerMsgEncode extends MessageToByteEncoder<MessagePlayer> {
             out.writeInt(msg.getPlayerId());// 玩家ID
             ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
             msg.getMessage().writeTo(outputStream);// protobuf
-            out.setInt(0, out.readableBytes() - FRAME_LENGTH);// 协议长度，写入包体头部
+            out.setInt(0, out.readableBytes() - Protocol.FRAME_LENGTH);// 协议长度，写入包体头部
         } else {
             out.writeInt(8);
             out.writeByte(DecoderType.MESSAGE_PLAYER.getCode());// 协议类型
