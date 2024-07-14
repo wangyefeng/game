@@ -9,8 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +22,6 @@ import org.wangyefeng.game.proto.protocol.Protocol;
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
-
-    private Channel channel;
 
     private boolean isRunning = false;
 
@@ -52,7 +48,6 @@ public class TcpServer {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new LoggingHandler(LogLevel.WARN));
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                     pipeline.addLast(new TcpCodec(logicClient));
@@ -70,7 +65,7 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
             ChannelFuture future = bootstrap.bind(port).sync();
-            channel = future.channel();
+            Channel channel = future.channel();
             isRunning = true;
             log.info("tcp server started and listening on port {}", port);
             channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
@@ -84,5 +79,9 @@ public class TcpServer {
             workerGroup.shutdownGracefully();
             throw new RuntimeException(e);
         }
+    }
+
+    public int getPort() {
+        return port;
     }
 }
