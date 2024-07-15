@@ -19,9 +19,8 @@ public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
         byte from = msg.readByte();
         int playerId = msg.readInt();
         short code = msg.readShort();
-        int length = msg.readableBytes();
         Protocol protocol = Protocols.getProtocol(from, to, code);
-        if (length > 0) {
+        if (protocol.parser() != null) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);
             return new MessagePlayer<>(playerId, protocol, message);

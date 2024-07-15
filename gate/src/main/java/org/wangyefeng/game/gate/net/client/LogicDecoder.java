@@ -37,8 +37,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 return;
             }
             if (to == Topic.GATE.getCode()) {
-                int length = in.readableBytes();
-                if (length > 0) {
+                if (protocol.parser() != null) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
                     Message message = (Message) protocol.parser().parseFrom(inputStream);
                     out.add(new MessageCode<>(protocol, message));

@@ -19,10 +19,9 @@ public class MessageCodeDecoder implements Decoder<MessageCode<?>> {
     public MessageCode<?> decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
         short code = msg.readShort();
-        int length = msg.readableBytes();
         Protocol protocol = Protocols.getProtocol(from, to, code);
         Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
-        if (length > 0) {
+        if (protocol.parser() != null) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);
             return new MessageCode<>(protocol, message);

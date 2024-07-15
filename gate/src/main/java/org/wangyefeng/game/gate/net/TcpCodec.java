@@ -68,8 +68,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 return;
             }
             if (to == Topic.GATE.getCode()) { // 客户端发送gate处理的消息
-                int length = in.readableBytes();
-                if (length > 0) {
+                if (protocol.parser() != null) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
                     Message message = (Message) protocol.parser().parseFrom(inputStream);
                     out.add(new MessageCode<>(protocol, message));
