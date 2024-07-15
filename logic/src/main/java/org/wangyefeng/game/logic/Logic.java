@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.handler.GateMsgHandler;
 import org.wangyefeng.game.logic.net.TcpServer;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 import java.util.Collection;
 
@@ -30,7 +29,6 @@ public class Logic implements CommandLineRunner {
 
     private void start() throws Exception {
         registerHandler();
-        ProtocolUtils.init();
         tcpServer.start();
     }
 

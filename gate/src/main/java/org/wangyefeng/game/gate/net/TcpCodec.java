@@ -12,7 +12,7 @@ import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.Topic;
 import org.wangyefeng.game.proto.protocol.Protocol;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
+import org.wangyefeng.game.proto.protocol.Protocols;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
         if (type == DecoderType.MESSAGE_CODE.getCode()) {
             byte to = in.readByte();
             short code = in.readShort();
-            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+            Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
                 log.error("decode error, protocol not found, from: {}, to: {}, code: {}", from, to, code);
                 in.skipBytes(in.readableBytes());

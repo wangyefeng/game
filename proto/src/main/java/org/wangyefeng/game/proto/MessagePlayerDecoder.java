@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import org.wangyefeng.game.proto.protocol.Protocol;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
+import org.wangyefeng.game.proto.protocol.Protocols;
 
 /**
  * 消息码解码器
@@ -20,7 +20,7 @@ public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
         short code = msg.readShort();
         int playerId = msg.readInt();
         int length = msg.readableBytes();
-        Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+        Protocol protocol = Protocols.getProtocol(from, to, code);
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);

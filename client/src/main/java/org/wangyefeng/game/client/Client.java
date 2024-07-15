@@ -15,7 +15,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.wangyefeng.game.proto.*;
 import org.wangyefeng.game.proto.protocol.Protocol;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
 
 @SpringBootApplication
 public class Client implements CommandLineRunner {
@@ -74,7 +73,6 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        ProtocolUtils.init();
         run();
     }
 }

@@ -3,12 +3,11 @@ package org.wangyefeng.game.proto.protocol;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ProtocolUtils {
+public abstract class Protocols {
 
     private static final Map<Byte, Map<Byte, Map<Short, Protocol>>> protocolMap = new HashMap<>();
 
-    // Initialize protocol map
-    public static void init() {
+    static {
         addProtocols(ClientToGateProtocol.values());
         addProtocols(ClientToLogicProtocol.values());
         addProtocols(GateToClientProtocol.values());

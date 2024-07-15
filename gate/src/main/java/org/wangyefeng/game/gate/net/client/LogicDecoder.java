@@ -15,7 +15,7 @@ import org.wangyefeng.game.proto.DecoderType;
 import org.wangyefeng.game.proto.MessageCode;
 import org.wangyefeng.game.proto.Topic;
 import org.wangyefeng.game.proto.protocol.Protocol;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
+import org.wangyefeng.game.proto.protocol.Protocols;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             byte from = Topic.LOGIC.getCode();
             byte to = in.readByte();
             short code = in.readShort();
-            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+            Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
                 error(from, to, code);
                 in.skipBytes(in.readableBytes());
@@ -53,7 +53,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             byte from = Topic.LOGIC.getCode();
             byte to = in.readByte();
             short code = in.readShort();
-            Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+            Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
                 error(from, to, code);
                 in.skipBytes(in.readableBytes());

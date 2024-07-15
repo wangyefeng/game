@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import org.springframework.util.Assert;
 import org.wangyefeng.game.proto.protocol.Protocol;
-import org.wangyefeng.game.proto.protocol.ProtocolUtils;
+import org.wangyefeng.game.proto.protocol.Protocols;
 
 /**
  * 消息码解码器
@@ -20,7 +20,7 @@ public class MessageCodeDecoder implements Decoder<MessageCode<?>> {
         byte from = msg.readByte();
         short code = msg.readShort();
         int length = msg.readableBytes();
-        Protocol protocol = ProtocolUtils.getProtocol(from, to, code);
+        Protocol protocol = Protocols.getProtocol(from, to, code);
         Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
         if (length > 0) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
