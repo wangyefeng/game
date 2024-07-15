@@ -29,7 +29,7 @@ public class PingHandler implements ClientMsgHandler<Message> {
 
     @Override
     public void handle(Channel channel, Message message) {
-        log.info("Received a ping message from client.");
+        log.debug("Received a ping message from client.");
         channel.writeAndFlush(PONG.duplicate());
     }
 
