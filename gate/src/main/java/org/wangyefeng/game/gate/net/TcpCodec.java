@@ -51,7 +51,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (!leakyBucket.addRequest()) {
             if (ctx.channel().isOpen()) {
-                log.warn("触发限流，关闭连接，channel: {}", ctx.channel());
+                log.warn("触发限流，channel: {}", ctx.channel());
                 ctx.close();
             }
             return;
