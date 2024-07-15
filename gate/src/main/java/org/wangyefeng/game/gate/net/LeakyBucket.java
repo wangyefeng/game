@@ -1,5 +1,8 @@
 package org.wangyefeng.game.gate.net;
 
+/**
+ * 漏桶算法实现
+ */
 public class LeakyBucket {
     private final long capacity;          // 桶的容量
     private final long leakRate;          // 漏出速率（单位时间内处理的请求数）
@@ -29,8 +32,13 @@ public class LeakyBucket {
         // 计算漏出的水量
         long leaked = elapsed * leakRate / 1000; // 每秒处理 leakRate 个请求
         if (leaked > 0) {
-            water = Math.max(0, water - leaked);
-            lastLeakTime = now;
+            if (water - leaked > 0) {
+                water -= leaked;
+                lastLeakTime += leaked * 1000;
+            } else {
+                water = 0;
+                lastLeakTime = now;
+            }
         }
     }
 }
