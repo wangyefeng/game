@@ -32,11 +32,11 @@ public class Client implements CommandLineRunner {
         this.port = port;
     }
 
-    public void run() throws Exception {
+    public void run(int playerId) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
-            ClientHandler handler = new ClientHandler();
+            ClientHandler handler = new ClientHandler(playerId);
             MessageToByteEncoder encode = new CodeMsgEncode();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
@@ -59,8 +59,11 @@ public class Client implements CommandLineRunner {
             System.out.println("Connected to server " + host + ":" + port);
 
             // 等待连接关闭
-            future.channel().closeFuture().sync();
-        } finally {
+            future.channel().closeFuture().addListener(future1 -> {
+                // 关闭 EventLoopGroup，释放所有资源
+                group.shutdownGracefully();
+            });
+        } catch (Exception e) {
             // 关闭 EventLoopGroup，释放所有资源
             group.shutdownGracefully();
         }
@@ -73,6 +76,8 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        run();
+        for (int i = 0; i < 10; i++) {
+            run(i);
+        }
     }
 }
