@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wangyefeng.game.logic.data.Player;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 
 public abstract class AbstractPlayerHandler<T extends Message> implements ClientMsgHandler<T> {
@@ -15,7 +16,7 @@ public abstract class AbstractPlayerHandler<T extends Message> implements Client
     public void handle(Channel channel, int playerId, T message) {
         try {
             long start = System.currentTimeMillis();
-            handle(new Player(playerId), message);
+            handle(new Player(playerId, "test"), message);
             long end = System.currentTimeMillis();
             if (end - start > 10) {// 超过10ms就打印日志
                 log.warn("处理消息成功 玩家id:{} 消息号:{} 协议体：{} 耗时:{}ms", playerId, getProtocol(), message, end - start);
