@@ -14,8 +14,9 @@ public class TestHandler extends AbstractPlayerMsgHandler<Message> {
     private static final Logger log = LoggerFactory.getLogger(TestHandler.class);
 
     @Override
-    protected void handle(Channel channel, Message message, Player player) {
+    protected void handle(Channel channel, Message message, Player player) throws Exception {
         log.info("test handler player: {}", player.getId());
+//        Thread.sleep(150);
     }
 
     @Override

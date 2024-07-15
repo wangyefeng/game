@@ -14,6 +14,7 @@ import org.wangyefeng.game.proto.protocol.GateToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
@@ -27,7 +28,7 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
             return;
         }
         int playerId = msg.getVal();
-        ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
+        ThreadPoolExecutor playerExecutor = ThreadPool.getPlayerExecutor(playerId);
         playerExecutor.submit(() -> {
             log.info("Player {} is logging in.", playerId);
             Player player = null;

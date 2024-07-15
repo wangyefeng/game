@@ -2,7 +2,7 @@ package org.wangyefeng.game.gate.player;
 
 import io.netty.channel.Channel;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 玩家对象
@@ -20,9 +20,9 @@ public class Player {
     /**
      * 绑定的业务线程
      */
-    private ExecutorService executor;
+    private ThreadPoolExecutor executor;
 
-    public Player(int id, Channel channel, ExecutorService executor) {
+    public Player(int id, Channel channel, ThreadPoolExecutor executor) {
         this.id = id;
         this.channel = channel;
         this.executor = executor;
@@ -48,7 +48,7 @@ public class Player {
         this.lastLoginTime = lastLoginTime;
     }
 
-    public ExecutorService getExecutor() {
+    public ThreadPoolExecutor getExecutor() {
         return executor;
     }
 

@@ -23,7 +23,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.TOKEN_VALIDATE, Common.PbInt.newBuilder().setVal(100).build()));
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(12).build()));
         ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING)), 5, 5, TimeUnit.SECONDS);
-        ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.TEST)), 3, 3, TimeUnit.SECONDS);
+        ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.TEST)), 100, 100, TimeUnit.MILLISECONDS);
     }
 
     @Override
