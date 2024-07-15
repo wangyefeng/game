@@ -76,8 +76,8 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                         buffer.writeInt(readableBytes + 8);
                         buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
                         buffer.writeByte(from);
-                        buffer.writeShort(code);
                         buffer.writeInt(player.getId());
+                        buffer.writeShort(code);
                     } catch (Exception e) {
                         buffer.release();
                         throw e;

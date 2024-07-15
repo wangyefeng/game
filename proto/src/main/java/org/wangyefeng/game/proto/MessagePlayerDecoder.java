@@ -17,8 +17,8 @@ public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
     @Override
     public MessagePlayer<?> decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
-        short code = msg.readShort();
         int playerId = msg.readInt();
+        short code = msg.readShort();
         int length = msg.readableBytes();
         Protocol protocol = Protocols.getProtocol(from, to, code);
         if (length > 0) {
