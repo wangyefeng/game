@@ -22,6 +22,8 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
 
     private LogicClient logicClient;
 
+    private LeakyBucket leakyBucket = new LeakyBucket(100, 5);
+
     public TcpCodec(LogicClient logicClient) {
         this.logicClient = logicClient;
     }
@@ -47,6 +49,13 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        if (!leakyBucket.addRequest()) {
+            if (ctx.channel().isOpen()) {
+                log.warn("触发限流，关闭连接，channel: {}", ctx.channel());
+                ctx.close();
+            }
+            return;
+        }
         byte from = Topic.CLIENT.getCode();
         byte type = in.readByte();
         if (type == DecoderType.MESSAGE_CODE.getCode()) {
