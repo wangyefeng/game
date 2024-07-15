@@ -22,7 +22,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
 
     private LogicClient logicClient;
 
-    private LeakyBucket leakyBucket = new LeakyBucket(100, 5);
+    private LeakyBucket leakyBucket = new LeakyBucket(20, 10);
 
     public TcpCodec(LogicClient logicClient) {
         this.logicClient = logicClient;
