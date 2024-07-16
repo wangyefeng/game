@@ -3,6 +3,7 @@ package org.wangyefeng.game.gate.net.client;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -63,31 +64,25 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 ByteBuf duplicate = in.retainedDuplicate();
                 ThreadPool.getPlayerExecutor(playerId).execute(() -> {
                     Player player = Players.getPlayer(playerId);
+                    if (player == null) {
+                        duplicate.release();
+                        log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
+                        return;
+                    }
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(8, 8);
                     try {
-                        if (player == null) {
-                            duplicate.release();
-                            log.info("转发消息失败，玩家已经离线code:{}, playerId:{}", code, playerId);
-                            return;
-                        }
-
-                        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(8, 8);
-                        try {
-                            log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, duplicate.readableBytes());
-                            buffer.writeInt(duplicate.readableBytes() + 4);
-                            buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
-                            buffer.writeByte(from);
-                            buffer.writeShort(code);
-                        } catch (Exception e) {
-                            buffer.release();
-                            duplicate.release();
-                            throw e;
-                        }
-                        player.getChannel().write(buffer);
+                        log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, duplicate.readableBytes());
+                        buffer.writeInt(duplicate.readableBytes() + 4);
+                        buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
+                        buffer.writeByte(from);
+                        buffer.writeShort(code);
                     } catch (Exception e) {
+                        buffer.release();
                         duplicate.release();
                         throw e;
                     }
-                    player.getChannel().writeAndFlush(duplicate);
+                    ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, duplicate);
+                    player.getChannel().writeAndFlush(byteBuf);
                 });
                 in.skipBytes(in.readableBytes());
             } else {

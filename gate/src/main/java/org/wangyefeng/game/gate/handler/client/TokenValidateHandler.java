@@ -13,7 +13,6 @@ import org.wangyefeng.game.proto.protocol.ClientToGateProtocol;
 import org.wangyefeng.game.proto.protocol.GateToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component

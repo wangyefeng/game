@@ -90,8 +90,8 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                         buffer.release();
                         throw e;
                     }
-                    logicClient.getChannel().write(buffer);
-                    logicClient.getChannel().writeAndFlush(in.retainedDuplicate());
+                    ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, in.retainedDuplicate());
+                    logicClient.getChannel().writeAndFlush(byteBuf);
                     in.skipBytes(in.readableBytes());
                 } else {
                     log.error("handle message error, player not found, code: {}", code);
