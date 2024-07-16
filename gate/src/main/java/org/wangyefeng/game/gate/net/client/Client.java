@@ -23,9 +23,6 @@ public abstract class Client {
 
     protected String name;
 
-    protected Client() {
-    }
-
     public Client(String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
         this.host = host;

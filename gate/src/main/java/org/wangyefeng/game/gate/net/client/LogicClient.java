@@ -13,9 +13,10 @@ import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.wangyefeng.game.proto.protocol.Protocol;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,13 +26,27 @@ import java.util.concurrent.TimeUnit;
  * @description 逻辑服务器的客户端
  */
 @Component
-@ConfigurationProperties(prefix = "client.logic")
 @Validated
 public class LogicClient extends Client {
 
-    public LogicClient() {
-        super();
-        this.name = "logic";
+
+    /**
+     * 读超时时间
+     * 单位：秒
+     * 默认：20
+     */
+    private static final int READER_IDLE_TIME = 20;
+
+    /**
+     * 写超时时间
+     * 单位：秒
+     * 默认：5
+     */
+    private static final int WRITER_IDLE_TIME = 5;
+
+
+    public LogicClient(@Value("${client.logic.host}") String host, @Value("${client.logic.port}") int port) {
+        super(host, port, "logic");
     }
 
     @Override
@@ -41,26 +56,17 @@ public class LogicClient extends Client {
         bootstrap.group(group).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler(this);
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline cp = ch.pipeline();
-                cp.addLast(new IdleStateHandler(20, 5, 0, TimeUnit.SECONDS));
+                cp.addLast(new IdleStateHandler(READER_IDLE_TIME, WRITER_IDLE_TIME, 0, TimeUnit.SECONDS));
                 cp.addLast(heartBeatHandler);
-                cp.addLast(new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 4, 0, 4));
+                cp.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                 cp.addLast(new LogicDecoder());
                 cp.addLast(handler);
             }
         });
-    }
-
-    @Override
-    public void setPort(int port) {
-        super.setPort(port);
-    }
-
-    @Override
-    public void setHost(String host) {
-        super.setHost(host);
     }
 
     @NotBlank
