@@ -1,10 +1,12 @@
-package org.wangyefeng.game.gate.thread;
+package org.wangyefeng.game.logic.thread;
 
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ThreadPool {
 
-    public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors() * 2 + 1;
+    public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors();
 
     public static final ThreadPoolExecutor[] executor = new ThreadPoolExecutor[EXECUTOR_SIZE];
 

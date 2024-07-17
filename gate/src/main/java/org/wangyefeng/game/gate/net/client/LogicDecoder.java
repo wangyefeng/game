@@ -72,7 +72,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
                     ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(8, 8);
                     try {
                         log.debug("转发消息给客户端 playerId:{}, 协议名:{}, 协议长度:{}", playerId, protocol, duplicate.readableBytes());
-                        buffer.writeInt(duplicate.readableBytes() + 2);
+                        buffer.writeInt(duplicate.readableBytes() + 4);
                         buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
                         buffer.writeByte(from);
                         buffer.writeShort(code);

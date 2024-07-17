@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
+import org.wangyefeng.game.logic.thread.ThreadPool;
 import org.wangyefeng.game.proto.MessagePlayer;
 
 /**
@@ -29,10 +30,17 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
     protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer<?> message) {
         ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(message.getCode());
         if (logicHandler == null) {
-            log.warn("illegal message code: {}", message.getCode());
+            log.error("illegal message code: {}", message.getCode());
             return;
         }
-        logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage());
+        // 交给业务线程接管
+        ThreadPool.getPlayerExecutor(message.getPlayerId()).execute(() -> {
+            try {
+                logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage());
+            } catch (Exception e) {
+                log.error("handle message error", e);
+            }
+        });
     }
 
 }
