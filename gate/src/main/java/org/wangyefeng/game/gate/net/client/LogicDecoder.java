@@ -53,7 +53,6 @@ public class LogicDecoder extends ByteToMessageDecoder {
             byte from = Topic.LOGIC.getCode();
             byte to = in.readByte();
             int playerId = in.readInt();
-            in.markReaderIndex();
             short code = in.readShort();
             Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
@@ -62,7 +61,6 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 return;
             }
             if (to == Topic.CLIENT.getCode()) {
-                in.resetReaderIndex();
                 ByteBuf duplicate = in.retainedDuplicate();
                 ThreadPool.getPlayerExecutor(playerId).execute(() -> {
                     Player player = Players.getPlayer(playerId);
@@ -77,6 +75,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
                         buffer.writeInt(duplicate.readableBytes() + 2);
                         buffer.writeByte(DecoderType.MESSAGE_CODE.getCode());
                         buffer.writeByte(from);
+                        buffer.writeShort(code);
                         ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, duplicate);
                         player.getChannel().writeAndFlush(byteBuf);
                     } catch (Exception e) {
