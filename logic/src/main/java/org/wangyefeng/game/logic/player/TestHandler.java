@@ -8,7 +8,7 @@ import org.wangyefeng.game.proto.protocol.ClientToLogicProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
 @Component
-public class TestHandler extends AbstractPlayerHandler<Common.PbInt> {
+public class TestHandler extends PlayerHandler<Common.PbInt> {
 
     private static final Logger log = LoggerFactory.getLogger(TestHandler.class);
 

@@ -27,7 +27,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     }
 
     @Override
-    public void handle(Channel channel, Message message) {
+    public void handle(Channel channel, Message msg) {
         log.debug("Received a ping message from gate.");
         channel.writeAndFlush(PONG.duplicate());// 回应PONG消息
     }

@@ -8,17 +8,26 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.wangyefeng.game.gate.handler.client.ClientMsgHandler;
+import org.wangyefeng.game.gate.net.client.LogicClient;
 import org.wangyefeng.game.gate.player.Player;
 import org.wangyefeng.game.gate.player.Players;
 import org.wangyefeng.game.proto.MessageCode;
+import org.wangyefeng.game.proto.protocol.GateToLogicProtocol;
+import org.wangyefeng.game.proto.struct.Common;
 
 import java.net.SocketException;
 
 @ChannelHandler.Sharable
+@Component
 public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
+
+    @Autowired
+    private LogicClient logicClient;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -58,6 +67,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             player.getExecutor().submit(() -> {
                 Player player2 = c.attr(AttributeKeys.PLAYER).get();
                 Players.removePlayer(player2.getId());
+                if (logicClient.isRunning()) {
+                    logicClient.getChannel().writeAndFlush(new MessageCode<>(GateToLogicProtocol.LOGOUT, Common.PbInt.newBuilder().setVal(player2.getId()).build()));
+                }
             }).get();
         }
     }

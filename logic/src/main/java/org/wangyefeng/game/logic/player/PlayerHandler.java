@@ -7,10 +7,17 @@ import org.slf4j.LoggerFactory;
 import org.wangyefeng.game.logic.data.Player;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 
-public abstract class AbstractPlayerHandler<T extends Message> implements ClientMsgHandler<T> {
+/**
+ * 抽象玩家业务处理器
+ *
+ * @param <T> 协议体结构
+ * @author wangyefeng
+ * @date 2024-07-17
+ */
+public abstract class PlayerHandler<T extends Message> implements ClientMsgHandler<T> {
 
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractPlayerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(PlayerHandler.class);
 
     @Override
     public void handle(Channel channel, int playerId, T message) {
@@ -37,5 +44,11 @@ public abstract class AbstractPlayerHandler<T extends Message> implements Client
         }
     }
 
+    /**
+     * 业务处理方法
+     *
+     * @param player  玩家对象
+     * @param message 消息体内容
+     */
     protected abstract void handle(Player player, T message);
 }

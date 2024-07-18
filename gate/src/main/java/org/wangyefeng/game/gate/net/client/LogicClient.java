@@ -64,6 +64,7 @@ public class LogicClient extends Client {
                 cp.addLast(heartBeatHandler);
                 cp.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                 cp.addLast(new LogicDecoder());
+                cp.addLast(new GateClientEncode());
                 cp.addLast(handler);
             }
         });

@@ -22,7 +22,7 @@ public interface GateMsgHandler<T extends Message> {
         return handlers.get(code);
     }
 
-    void handle(Channel channel, T message);
+    void handle(Channel channel, T msg);
 
     GateToLogicProtocol getProtocol();
 

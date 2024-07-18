@@ -9,6 +9,7 @@ public enum ClientToLogicProtocol implements Protocol {
     LOGIN((short) 1, Common.PbInt.parser()),
 
     TEST((short) 2, Common.PbInt.parser()),
+
     ;
     private final short code;
 
