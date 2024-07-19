@@ -1,0 +1,1 @@
+server:  port: 80  servlet:    context-path: /loginspring:  main:    banner-mode: off  data:    mongodb:      uri: mongodb://localhost:27017/test
