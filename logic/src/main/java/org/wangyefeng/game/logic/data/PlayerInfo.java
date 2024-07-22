@@ -3,7 +3,9 @@ package org.wangyefeng.game.logic.data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "players")
+import java.util.List;
+
+@Document(collection = "player_info")
 public class PlayerInfo {
 
     @Id
@@ -11,7 +13,13 @@ public class PlayerInfo {
 
     private String name;
 
-    private Bag bag;
+    private List<Item> items;
+
+    public PlayerInfo(int id, String name, List<Item> items) {
+        this.id = id;
+        this.name = name;
+        this.items = items;
+    }
 
     public int getId() {
         return id;
@@ -29,11 +37,11 @@ public class PlayerInfo {
         this.name = name;
     }
 
-    public Bag getBag() {
-        return bag;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setBag(Bag bag) {
-        this.bag = bag;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 }

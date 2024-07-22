@@ -27,7 +27,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.TOKEN_VALIDATE, Common.PbInt.newBuilder().setVal(playerId).build()));
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(10).build()));
+        ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(11).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("ping");
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));

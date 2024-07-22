@@ -13,6 +13,9 @@ import org.wangyefeng.game.proto.protocol.ClientToLogicProtocol;
 import org.wangyefeng.game.proto.protocol.LogicToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 @Component
 public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
 
@@ -27,9 +30,9 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
         log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
         Player player = Players.getPlayer(playerId);
         if (player == null) {
-            PlayerInfo playerInfo = playerRepository.findById(playerId).get();
-            if (playerInfo == null) {
-                playerInfo = new PlayerInfo();
+            Optional<PlayerInfo> optional = playerRepository.findById(playerId);
+            PlayerInfo playerInfo = optional.orElse(new PlayerInfo(playerId, "test", new ArrayList<>()));
+            if (!optional.isPresent()) {
                 playerRepository.insert(playerInfo);
             }
             player = new Player(playerInfo, channel);

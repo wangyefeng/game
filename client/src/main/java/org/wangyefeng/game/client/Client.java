@@ -76,7 +76,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 1; i < 2; i++) {
+        for (int i = 2; i < 3; i++) {
             run(i);
         }
     }
