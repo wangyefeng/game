@@ -4,7 +4,6 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wangyefeng.game.logic.data.Player;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 
 /**
@@ -28,7 +27,7 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
         }
         try {
             long start = System.currentTimeMillis();
-            handle(player, message);
+            handle(player, message, channel);
             long end = System.currentTimeMillis();
             long costTime = end - start;
             // 打印日志
@@ -50,5 +49,5 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
      * @param player  玩家对象
      * @param message 消息体内容
      */
-    protected abstract void handle(Player player, T message);
+    protected abstract void handle(Player player, T message, Channel channel);
 }

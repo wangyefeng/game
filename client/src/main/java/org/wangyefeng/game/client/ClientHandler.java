@@ -28,8 +28,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         super.channelActive(ctx);
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.TOKEN_VALIDATE, Common.PbInt.newBuilder().setVal(playerId).build()));
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(10).build()));
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.TEST, Common.PbInt.newBuilder().setVal(2).build()));
-        ctx.executor().scheduleAtFixedRate(() -> ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING)), 5, 5, TimeUnit.SECONDS);
+        ctx.executor().scheduleAtFixedRate(() -> {
+            log.info("ping");
+            ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));
+        }, 5, 5, TimeUnit.SECONDS);
+        ctx.executor().scheduleAtFixedRate(() -> {
+            log.info("TEST");
+            ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.TEST, Common.PbInt.newBuilder().setVal(2).build()));
+        }, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override

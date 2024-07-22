@@ -1,7 +1,6 @@
 package org.wangyefeng.game.logic.player;
 
 import org.springframework.stereotype.Service;
-import org.wangyefeng.game.logic.data.Player;
 
 @Service
 public class PlayerService {

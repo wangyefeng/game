@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "players")
-public class Player {
+public class PlayerInfo {
 
     @Id
     private int id;
@@ -13,16 +13,6 @@ public class Player {
 
     private Bag bag;
 
-    public Player() {
-    }
-
-    public Player(int id, String name) {
-        this.id = id;
-        this.name = name;
-        bag = new Bag();
-    }
-
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -41,5 +31,9 @@ public class Player {
 
     public Bag getBag() {
         return bag;
+    }
+
+    public void setBag(Bag bag) {
+        this.bag = bag;
     }
 }

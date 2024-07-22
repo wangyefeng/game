@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.wangyefeng.game.logic.data.Player;
+import org.wangyefeng.game.logic.data.PlayerInfo;
 import org.wangyefeng.game.logic.data.PlayerRepository;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.proto.MessagePlayer;
@@ -25,12 +25,18 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
     @Override
     public void handle(Channel channel, int playerId, Common.PbInt message) {
         log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
-        Player player = playerRepository.findById(playerId).get();
+        Player player = Players.getPlayer(playerId);
         if (player == null) {
-            player = new Player(playerId, "default name");
-            playerRepository.insert(player);
+            PlayerInfo playerInfo = playerRepository.findById(playerId).get();
+            if (playerInfo == null) {
+                playerInfo = new PlayerInfo();
+                playerRepository.insert(playerInfo);
+            }
+            player = new Player(playerInfo, channel);
+            Players.addPlayer(player);
+        } else {
+            player.setChannel(channel);
         }
-        Players.addPlayer(player);
         channel.writeAndFlush(new MessagePlayer<>(playerId, LogicToClientProtocol.LOGIN, message));
     }
 

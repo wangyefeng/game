@@ -1,7 +1,5 @@
 package org.wangyefeng.game.logic.player;
 
-import org.wangyefeng.game.logic.data.Player;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
