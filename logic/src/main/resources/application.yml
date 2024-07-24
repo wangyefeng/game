@@ -1,1 +1,1 @@
-tcp:  port: 9999spring:  main:    banner-mode: off  data:    mongodb:      uri: mongodb://localhost:27017/test
+tcp:  port: 9999spring:  main:    banner-mode: off  data:    mongodb:      uri: mongodb://localhost:27017/testzookeeper:  address: localhost:2181  timeout: 4000

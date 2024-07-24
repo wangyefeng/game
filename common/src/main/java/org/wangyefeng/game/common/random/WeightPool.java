@@ -109,13 +109,27 @@ public class WeightPool<E> {
 		return null;
 	}
 
-	private class EWeight extends Weight {
+	private class EWeight implements IWeight {
+
+		/**
+		 * 权重
+		 */
+		private final int weight;
+
 		// 元素
 		E e;
 
 		public EWeight(E e, int weight) {
-			super(weight);
+			if (weight <= 0) {
+				throw new IllegalArgumentException("Weight must be a positive integer");
+			}
+			this.weight = weight;
 			this.e = Objects.requireNonNull(e);
+		}
+
+		@Override
+		public int getWeight() {
+			return weight;
 		}
 	}
 

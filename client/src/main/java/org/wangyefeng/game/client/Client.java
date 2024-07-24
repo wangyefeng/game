@@ -33,7 +33,7 @@ public class Client implements CommandLineRunner {
     }
 
     public void run(int playerId) throws Exception {
-        EventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap bootstrap = new Bootstrap();
             ClientHandler handler = new ClientHandler(playerId);

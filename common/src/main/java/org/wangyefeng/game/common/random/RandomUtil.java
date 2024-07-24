@@ -1,10 +1,9 @@
 package org.wangyefeng.game.common.random;
 
 
-import org.springframework.util.Assert;
+import org.wangyefeng.game.common.util.Assert;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,71 +19,68 @@ public class RandomUtil {
     /**
      * 伪随机两个值之间的数
      *
-     * @param bound1 边界值1
-     * @param bound2 边界值2
-     * @return [bound1, bound2]的某个数
-     * @throws IllegalArgumentException 当bound1 == bound2时
+     * @param min 边界值1
+     * @param max 边界值2
+     * @return [min, max]的某个数
+     * @throws IllegalArgumentException 当min == max时
      */
-    public static int random(int bound1, int bound2) {
-        Assert.isTrue(bound2 >= bound1, "非法随机参数：bound1：" + bound1 + " bound2:" + bound2);
-        if (bound2 == bound1) {
-            return bound1;
+    public static int random(int min, int max) {
+        Assert.isTrue(max >= min, "非法随机参数：min：" + min + " max:" + max);
+        if (max == min) {
+            return min;
         }
-        int bound = Math.abs(bound1 - bound2) + 1;
+        int bound = Math.abs(min - max) + 1;
         int num = ThreadLocalRandom.current().nextInt(bound);
-        return bound1 + num;
+        return min + num;
     }
 
     /**
      * 伪随机两个值之间的数
      *
-     * @param bound1 边界值1
-     * @param bound2 边界值2
-     * @return [bound1, bound2]的某个数
-     * @throws IllegalArgumentException 当bound1 == bound2时
+     * @param min 边界值1
+     * @param max 边界值2
+     * @return [min, max]的某个数
+     * @throws IllegalArgumentException 当min == max时
      */
-    public static long random(long bound1, long bound2) {
-        Assert.isTrue(bound2 >= bound1, "非法随机参数：bound1：" + bound1 + " bound2:" + bound2);
-        if (bound2 == bound1) {
-            return bound1;
+    public static long random(long min, long max) {
+        Assert.isTrue(max >= min, "非法随机参数：min：" + min + " max:" + max);
+        if (max == min) {
+            return min;
         }
-        long bound = Math.abs(bound1 - bound2) + 1;
+        long bound = Math.abs(min - max) + 1;
         long num = ThreadLocalRandom.current().nextLong(bound);
-        return bound1 + num;
+        return min + num;
     }
 
     /**
      * 伪随机两个值之间的数
      *
-     * @param bound1 边界值1
-     * @param bound2 边界值2
-     * @return [bound1, bound2)的某个数
+     * @param min 边界值1
+     * @param max 边界值2
+     * @return [min, max)的某个数
      */
-    public static double random(double bound1, double bound2) {
-        double samll = Math.min(bound1, bound2);
-        double large = Math.max(bound1, bound2);
+    public static double random(double min, double max) {
+        Assert.isTrue(max >= min, "非法随机参数：min：" + min + " max:" + max);
+        if (max == min) {
+            return min;
+        }
         double r = RandomUtil.nextDouble();
-        return r * (large - samll) + samll;
+        return r * (max - min) + min;
     }
 
     /**
      * 伪随机出集合中某个元素
      *
-     * @param c 随机库
+     * @param pool 随机池
      * @return 返回库中的某个元素
      * @throws NullPointerException     当c为null时
      * @throws IllegalArgumentException 当c没有元素时
      */
-    public static <T> T random(Collection<T> c) {
-        if (c.isEmpty()) {
-            throw new IllegalArgumentException("随机库元素数量不能为0");
-        }
-        int size = c.size();
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new Object[size];
-        c.toArray(ts);
+    public static <T> T random(List<T> pool) {
+        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
+        int size = pool.size();
         int index = random(0, size - 1);
-        return ts[index];
+        return pool.get(index);
     }
 
     /**
@@ -114,9 +110,7 @@ public class RandomUtil {
      */
     public static int random(int[] a) {
         int length = a.length;
-        if (length == 0) {
-            throw new IllegalArgumentException("随机数组长度必须大于0");
-        }
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
         int index = random(0, length - 1);
         return a[index];
     }
@@ -131,9 +125,7 @@ public class RandomUtil {
      */
     public static char random(char[] a) {
         int length = a.length;
-        if (length == 0) {
-            throw new IllegalArgumentException("随机数组长度必须大于0");
-        }
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
         int index = random(0, length - 1);
         return a[index];
     }
@@ -149,41 +141,12 @@ public class RandomUtil {
         int sum = 0;
         for (T t : c) {
             int weight = weightCalculator.weight(t);
-            if (weight < 0) {
-                throw new IllegalArgumentException("权重不能为负数：" + weight);
-            }
+            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
             sum += weight;
         }
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : c) {
             int weight = weightCalculator.weight(t);
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        throw new RuntimeException();
-    }
-
-    /**
-     * 伪随机权重加参数的集合
-     *
-     * @param c                随机库集合
-     * @param weightCalculator 权重计算器
-     * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
-     */
-    public static <T> T randomByWeightAddParam(WeightCalculator<T> weightCalculator, Collection<T> c, int param) {
-        int sum = 0;
-        for (T t : c) {
-            int weight = weightCalculator.weight(t) + param;
-            if (weight < 0) {
-                throw new IllegalArgumentException("权重不能为负数：" + weight);
-            }
-            sum += weight;
-        }
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : c) {
-            int weight = weightCalculator.weight(t) + param;
             if (randVal < weight) {
                 return t;
             }
@@ -200,7 +163,21 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T randomByWeight(WeightCalculator<T> weightCalculator, T[] a) {
-        return randomByWeight(weightCalculator, Arrays.asList(a));
+        int sum = 0;
+        for (T t : a) {
+            int weight = weightCalculator.weight(t);
+            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
+            sum += weight;
+        }
+        int randVal = ThreadLocalRandom.current().nextInt(sum);
+        for (T t : a) {
+            int weight = weightCalculator.weight(t);
+            if (randVal < weight) {
+                return t;
+            }
+            randVal -= weight;
+        }
+        throw new RuntimeException();
     }
 
     /**
@@ -226,8 +203,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当a中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T[] randomArrayByWeight(WeightCalculator<T> weightCalculator, T[] a, int count) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new Object[count];
+        @SuppressWarnings("unchecked") T[] ts = (T[]) new Object[count];
         for (int i = 0; i < count; i++) {
             ts[i] = randomByWeight(weightCalculator, a);
         }
@@ -237,16 +213,21 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param a 随机数组
+     * @param a 随机数组  注意：数组会被修改
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
     public static <T> T[] randomArrayNotRepeat(T[] a, T[] result) {
-        for (int i = 0; i < result.length; i++) {
-            int last = a.length - i - 1;
-            int index = random(0, last);
-            T m = a[last];
-            result[i] = a[last] = a[index];
-            a[index] = m;
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                T m = a[last];
+                result[i] = a[last] = a[index];
+                a[index] = m;
+            }
         }
         return result;
     }
@@ -256,10 +237,12 @@ public class RandomUtil {
      *
      * @throws IllegalArgumentException 当c长度为0时
      */
-    public static <T> List<T> randomList(Collection<T> c, int count) {
+    public static <T> List<T> randomList(List<T> pool, int count) {
+        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
+        Assert.isTrue(count > 0, "随机数量必须大于0!! count：" + count);
         List<T> result = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            T t = random(c);
+            T t = random(pool);
             result.add(t);
         }
         return result;
@@ -272,8 +255,8 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当a长度为0时
      */
     public static <T> T[] randomArray(T[] a, int count) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new Object[count];
+        Assert.isTrue(count > 0, "随机数量必须大于0!! count：" + count);
+        @SuppressWarnings("unchecked") T[] ts = (T[]) new Object[count];
         for (int i = 0; i < count; i++) {
             ts[i] = random(a);
         }
@@ -289,21 +272,14 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight小于0时
      */
     public static <T> T randomByWeight(int totalWeight, WeightCalculator<T> weightCalculator, Collection<T> c) {
-        if (totalWeight <= 0) {
-            throw new IllegalArgumentException("总权重不能小于0！");
-        }
+        Assert.isTrue(totalWeight > 0, "总权重不能小于0！!! totalWeight：" + totalWeight);
         int sum = 0;
         for (T t : c) {
             int weight = weightCalculator.weight(t);
-            if (weight < 0) {
-                throw new IllegalArgumentException("权重不能为负数：" + weight);
-            }
+            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
             sum += weight;
         }
-        if (totalWeight < sum) {
-            throw new IllegalArgumentException("总权重不能小于集合的权重之和！");
-        }
-
+        Assert.isTrue(totalWeight >= sum, "总权重不能小于集合的权重之和！");
         int randVal = ThreadLocalRandom.current().nextInt(totalWeight);
         for (T t : c) {
             int weight = weightCalculator.weight(t);
@@ -322,9 +298,23 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight小于0时
      */
     public static <T extends IWeight> T randomByWeight(Collection<T> c) {
-        @SuppressWarnings(value = "unchecked")
-        T[] ts = (T[]) new IWeight[c.size()];
-        return randomByWeight(c.toArray(ts));
+        Assert.isTrue(c.size() > 0, "随机数组长度不能为0！");
+        int sum = 0;
+        for (T t : c) {
+            int weight = t.getWeight();
+            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
+            sum += weight;
+        }
+
+        int randVal = ThreadLocalRandom.current().nextInt(sum);
+        for (T t : c) {
+            int weight = t.getWeight();
+            if (randVal < weight) {
+                return t;
+            }
+            randVal -= weight;
+        }
+        throw new RuntimeException("随机出错！");
     }
 
     /**
@@ -335,15 +325,11 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当数组长度为0时
      */
     public static <T extends IWeight> T randomByWeight(T[] c) {
-        if (c.length == 0) {
-            throw new IllegalArgumentException("随机数组长度不能为0！");
-        }
+        Assert.isTrue(c.length > 0, "随机数组长度不能为0！");
         int sum = 0;
         for (T t : c) {
             int weight = t.getWeight();
-            if (weight < 0) {
-                throw new IllegalArgumentException("权重不能为负数：" + weight);
-            }
+            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
 
@@ -379,8 +365,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当数组长度为0时
      */
     public static <T extends IWeight> T[] randomArrayByWeight(T[] a, int count) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new IWeight[count];
+        @SuppressWarnings("unchecked") T[] ts = (T[]) new IWeight[count];
         for (int i = 0; i < count; i++) {
             ts[i] = randomByWeight(a);
         }
@@ -398,24 +383,15 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight小于所有元素权重之和
      */
     public static <T extends IWeight> T randomByWeight(T[] a, int totalWeight) {
-        if (a.length == 0) {
-            throw new IllegalArgumentException("随机数组长度不能为0！");
-        }
-        if (totalWeight <= 0) {
-            throw new IllegalArgumentException("总权重不能为非正数！");
-        }
+        Assert.isTrue(a.length > 0, "随机数组长度不能为0！");
+        Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
         int sum = 0;
         for (T t : a) {
             int weight = t.getWeight();
-            if (weight < 0) {
-                throw new IllegalArgumentException("权重不能小于0！");
-            }
+            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
-        if (sum > totalWeight) {
-            throw new IllegalArgumentException("总权重不能小于所有元素权重之和！");
-        }
-
+        Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : a) {
             int weight = t.getWeight();
@@ -438,9 +414,24 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight大于所有元素权重之和
      */
     public static <T extends IWeight> T randomByWeight(Collection<T> c, int totalWeight) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new IWeight[c.size()];
-        return randomByWeight(ts, totalWeight);
+        Assert.isTrue(c.size() > 0, "随机池长度不能为0！");
+        Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
+        int sum = 0;
+        for (T t : c) {
+            int weight = t.getWeight();
+            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
+            sum += weight;
+        }
+        Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
+        int randVal = ThreadLocalRandom.current().nextInt(sum);
+        for (T t : c) {
+            int weight = t.getWeight();
+            if (randVal < weight) {
+                return t;
+            }
+            randVal -= weight;
+        }
+        return null;
     }
 
     /**
@@ -454,37 +445,25 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight小于所有元素权重之和
      */
     public static <T extends IWeight> T[] randomArrayByWeight(T[] a, int totalWeight, int count) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new IWeight[count];
+        @SuppressWarnings("unchecked") T[] ts = (T[]) new IWeight[count];
         for (int i = 0; i < count; i++) {
             ts[i] = randomByWeight(a, totalWeight);
         }
         return ts;
     }
 
-    /**
-     * 伪随机集合中某个元素
-     *
-     * @param c 随机集合
-     * @throws IllegalArgumentException 当数组长度为0时
-     * @throws IllegalArgumentException 当totalWeight小于等于0时
-     * @throws IllegalArgumentException 当元素某个权重为负数时
-     * @throws IllegalArgumentException 当totalWeight大于所有元素权重之和
-     */
-    public static <T extends IWeight> List<T> randomListByWeight(Collection<T> c, int totalWeight, int count) {
-        @SuppressWarnings("unchecked")
-        T[] ts = (T[]) new IWeight[c.size()];
-        T[] ts2 = randomArrayByWeight(c.toArray(ts), totalWeight, count);
-        return new ArrayList<>(Arrays.asList(ts2));
-    }
-
     public static int[] randomArrayNotRepeat(int[] a, int[] result) {
-        for (int i = 0; i < result.length; i++) {
-            int last = a.length - i - 1;
-            int index = random(0, last);
-            int m = a[last];
-            result[i] = a[last] = a[index];
-            a[index] = m;
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                int m = a[last];
+                result[i] = a[last] = a[index];
+                a[index] = m;
+            }
         }
         return result;
     }

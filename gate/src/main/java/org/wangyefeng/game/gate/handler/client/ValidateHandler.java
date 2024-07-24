@@ -16,9 +16,9 @@ import org.wangyefeng.game.proto.struct.Common;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
-public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
+public final class ValidateHandler implements ClientMsgHandler<Common.PbInt> {
 
-    private static final Logger log = LoggerFactory.getLogger(TokenValidateHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidateHandler.class);
 
     @Override
     public void handle(Channel channel, Common.PbInt msg) throws Exception {
@@ -49,6 +49,6 @@ public class TokenValidateHandler implements ClientMsgHandler<Common.PbInt> {
 
     @Override
     public ClientToGateProtocol getProtocol() {
-        return ClientToGateProtocol.TOKEN_VALIDATE;
+        return ClientToGateProtocol.VALIDATE;
     }
 }

@@ -6,11 +6,12 @@ import org.wangyefeng.game.proto.struct.Common;
 
 public enum ClientToGateProtocol implements Protocol {
 
+    // 心跳
     PING((short) 0),
 
-    TOKEN_VALIDATE((short) 1, Common.PbInt.parser()),
-
-    TEST((short) 2);
+    // 账号验证
+    VALIDATE((short) 1, Common.PbInt.parser()),
+    ;
 
 
     private final short code;

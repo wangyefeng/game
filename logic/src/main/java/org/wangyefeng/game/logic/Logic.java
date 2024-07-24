@@ -1,6 +1,7 @@
 package org.wangyefeng.game.logic;
 
 import jakarta.annotation.PreDestroy;
+import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class Logic implements CommandLineRunner {
 
     @Autowired
     private Collection<ClientMsgHandler<?>> clientMsgHandlers;
+
+    @Autowired
+    private ZooKeeper zkClient;
 
     private void start() throws Exception {
         registerHandler();
