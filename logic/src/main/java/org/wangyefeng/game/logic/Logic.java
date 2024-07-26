@@ -1,6 +1,9 @@
 package org.wangyefeng.game.logic;
 
 import jakarta.annotation.PreDestroy;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.handler.GateMsgHandler;
 import org.wangyefeng.game.logic.net.TcpServer;
 
+import java.net.UnknownHostException;
 import java.util.Collection;
 
 @SpringBootApplication
@@ -29,11 +33,23 @@ public class Logic implements CommandLineRunner {
     private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     @Autowired
-    private ZooKeeper zkClient;
+    private ZooKeeper zooKeeper;
+
+    private static final String SERVICE_ROOT = "/logic";
 
     private void start() throws Exception {
         registerHandler();
         tcpServer.start();
+        registryServices();
+    }
+
+    private void registryServices() throws KeeperException, InterruptedException, UnknownHostException {
+        if (zooKeeper.exists(SERVICE_ROOT, false) == null) {
+            zooKeeper.create(SERVICE_ROOT, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        }
+        String servicePath = SERVICE_ROOT + "/" + tcpServer.getHost() + ":" + tcpServer.getPort();
+        String path = zooKeeper.create(servicePath, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        log.info("registry service success, path: {}", path);
     }
 
     @PreDestroy
@@ -45,9 +61,9 @@ public class Logic implements CommandLineRunner {
     public void run(String... args) {
         try {
             start();
+            log.info("logic server start success");
         } catch (Exception e) {
-            log.error("logic start error", e);
-            System.exit(1);
+            throw new IllegalStateException("logic start error", e);
         }
     }
 

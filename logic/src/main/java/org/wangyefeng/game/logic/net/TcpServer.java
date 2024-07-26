@@ -20,6 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.wangyefeng.game.proto.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @Component
 @ConfigurationProperties(prefix = "tcp")
 @Validated
@@ -30,6 +33,8 @@ public class TcpServer {
     public static final int FRAME_LENGTH = 4; // 帧长度字节长度
 
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
+
+    private String host;
 
     @Min(1025)
     @Max(65535)
@@ -42,10 +47,13 @@ public class TcpServer {
     TcpServer() {
     }
 
-    public void start() {
-        log.info("tcp server is starting...");
+    public void start() throws UnknownHostException {
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
+        }
+        if (host == null) {
+            InetAddress localhost = InetAddress.getLocalHost();
+            host = localhost.getHostAddress();
         }
         EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 用于接收客户端连接
         EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于处理客户端连接
@@ -102,6 +110,14 @@ public class TcpServer {
 
     public int getPort() {
         return port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public void close(boolean isSync) throws InterruptedException {
