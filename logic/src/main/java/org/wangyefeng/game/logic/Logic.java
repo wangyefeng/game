@@ -40,16 +40,16 @@ public class Logic implements CommandLineRunner {
     private void start() throws Exception {
         registerHandler();
         tcpServer.start();
-        registryServices();
+        registerService();
     }
 
-    private void registryServices() throws KeeperException, InterruptedException, UnknownHostException {
+    private void registerService() throws KeeperException, InterruptedException, UnknownHostException {
         if (zooKeeper.exists(SERVICE_ROOT, false) == null) {
             zooKeeper.create(SERVICE_ROOT, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
         String servicePath = SERVICE_ROOT + "/" + tcpServer.getHost() + ":" + tcpServer.getPort();
         String path = zooKeeper.create(servicePath, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-        log.info("registry service success, path: {}", path);
+        log.info("zookeeper registry service success, path: {}", path);
     }
 
     @PreDestroy
@@ -61,7 +61,7 @@ public class Logic implements CommandLineRunner {
     public void run(String... args) {
         try {
             start();
-            log.info("logic server start success");
+            log.info("逻辑服务器启动成功！");
         } catch (Exception e) {
             throw new IllegalStateException("logic start error", e);
         }

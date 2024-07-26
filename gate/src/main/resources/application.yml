@@ -1,1 +1,1 @@
-server:  tcp-port: 8888spring:  main:    banner-mode: offclient:  logic:    host: 127.0.0.1    port: 9999
+server:  tcp-port: 8888spring:  main:    banner-mode: offzookeeper:  address: localhost:2181  timeout: 4000

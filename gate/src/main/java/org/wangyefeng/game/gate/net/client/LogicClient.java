@@ -13,7 +13,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.wangyefeng.game.proto.protocol.Protocol;
@@ -45,7 +44,7 @@ public class LogicClient extends Client {
     private static final int WRITER_IDLE_TIME = 5;
 
 
-    public LogicClient(@Value("${client.logic.host}") String host, @Value("${client.logic.port}") int port) {
+    public LogicClient(String host, int port) {
         super(host, port, "logic");
     }
 
