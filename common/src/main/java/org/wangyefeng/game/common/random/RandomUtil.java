@@ -3,7 +3,6 @@ package org.wangyefeng.game.common.random;
 
 import org.wangyefeng.game.common.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -69,6 +68,22 @@ public class RandomUtil {
     }
 
     /**
+     * 伪随机两个值之间的数
+     *
+     * @param min 边界值1
+     * @param max 边界值2
+     * @return [min, max]的某个数
+     */
+    public static float random(float min, float max) {
+        Assert.isTrue(max >= min, "非法随机参数：min：" + min + " max:" + max);
+        if (max == min) {
+            return min;
+        }
+        float r = ThreadLocalRandom.current().nextFloat();
+        return r * (max - min) + min;
+    }
+
+    /**
      * 伪随机出集合中某个元素
      *
      * @param pool 随机池
@@ -93,9 +108,7 @@ public class RandomUtil {
      */
     public static <T> T random(T[] a) {
         int length = a.length;
-        if (length == 0) {
-            throw new IllegalArgumentException("随机数组长度必须大于0");
-        }
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
         int index = random(0, length - 1);
         return a[index];
     }
@@ -109,6 +122,51 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当a长度为0时
      */
     public static int random(int[] a) {
+        int length = a.length;
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
+        int index = random(0, length - 1);
+        return a[index];
+    }
+
+    /**
+     * 伪随机出数组中某个元素
+     *
+     * @param a 随机数组
+     * @return 返回数组中的某个对象
+     * @throws NullPointerException     当a为null时
+     * @throws IllegalArgumentException 当a长度为0时
+     */
+    public static long random(long[] a) {
+        int length = a.length;
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
+        int index = random(0, length - 1);
+        return a[index];
+    }
+
+    /**
+     * 伪随机出数组中某个元素
+     *
+     * @param a 随机数组
+     * @return 返回数组中的某个对象
+     * @throws NullPointerException     当a为null时
+     * @throws IllegalArgumentException 当a长度为0时
+     */
+    public static double random(double[] a) {
+        int length = a.length;
+        Assert.isTrue(length > 0, "随机数组长度必须大于0");
+        int index = random(0, length - 1);
+        return a[index];
+    }
+
+    /**
+     * 伪随机出数组中某个元素
+     *
+     * @param a 随机数组
+     * @return 返回数组中的某个对象
+     * @throws NullPointerException     当a为null时
+     * @throws IllegalArgumentException 当a长度为0时
+     */
+    public static float random(float[] a) {
         int length = a.length;
         Assert.isTrue(length > 0, "随机数组长度必须大于0");
         int index = random(0, length - 1);
@@ -152,6 +210,7 @@ public class RandomUtil {
             }
             randVal -= weight;
         }
+        // 永远不会执行到这里
         throw new RuntimeException();
     }
 
@@ -177,22 +236,8 @@ public class RandomUtil {
             }
             randVal -= weight;
         }
+        // 永远不会执行到这里
         throw new RuntimeException();
-    }
-
-    /**
-     * 伪随机带权重的数组
-     *
-     * @param weightCalculator 权重计算器
-     * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
-     */
-    public static <T> List<T> randomListByWeight(WeightCalculator<T> weightCalculator, Collection<T> c, int count) {
-        List<T> result = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            T t = randomByWeight(weightCalculator, c);
-            result.add(t);
-        }
-        return result;
     }
 
     /**
@@ -203,6 +248,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当a中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T[] randomArrayByWeight(WeightCalculator<T> weightCalculator, T[] a, int count) {
+        Assert.isTrue(a.length >= count, "随机数组长度必须大于等于结果数组长度");
         @SuppressWarnings("unchecked") T[] ts = (T[]) new Object[count];
         for (int i = 0; i < count; i++) {
             ts[i] = randomByWeight(weightCalculator, a);
@@ -213,14 +259,14 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param a 随机数组  注意：数组会被修改
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
     public static <T> T[] randomArrayNotRepeat(T[] a, T[] result) {
         Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
         if (a.length == result.length) {
             System.arraycopy(a, 0, result, 0, a.length);
-        } else {
+        } else if (result.length > 0) {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
@@ -228,22 +274,6 @@ public class RandomUtil {
                 result[i] = a[last] = a[index];
                 a[index] = m;
             }
-        }
-        return result;
-    }
-
-    /**
-     * 伪随机数组
-     *
-     * @throws IllegalArgumentException 当c长度为0时
-     */
-    public static <T> List<T> randomList(List<T> pool, int count) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
-        Assert.isTrue(count > 0, "随机数量必须大于0!! count：" + count);
-        List<T> result = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            T t = random(pool);
-            result.add(t);
         }
         return result;
     }
@@ -342,20 +372,6 @@ public class RandomUtil {
             randVal -= weight;
         }
         throw new RuntimeException("随机出错！");
-    }
-
-    /**
-     * 伪随机集合中一组元素
-     *
-     * @param c 随机库集合
-     * @throws IllegalArgumentException 当集合长度为0时
-     */
-    public static <T extends IWeight> List<T> randomListByWeight(Collection<T> c, int count) {
-        List<T> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            result.add(randomByWeight(c));
-        }
-        return result;
     }
 
     /**
@@ -461,6 +477,54 @@ public class RandomUtil {
                 int last = a.length - i - 1;
                 int index = random(0, last);
                 int m = a[last];
+                result[i] = a[last] = a[index];
+                a[index] = m;
+            }
+        }
+        return result;
+    }
+
+    public static long[] randomArrayNotRepeat(long[] a, long[] result) {
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                long m = a[last];
+                result[i] = a[last] = a[index];
+                a[index] = m;
+            }
+        }
+        return result;
+    }
+
+    public static double[] randomArrayNotRepeat(double[] a, double[] result) {
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                double m = a[last];
+                result[i] = a[last] = a[index];
+                a[index] = m;
+            }
+        }
+        return result;
+    }
+
+    public static float[] randomArrayNotRepeat(float[] a, float[] result) {
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                float m = a[last];
                 result[i] = a[last] = a[index];
                 a[index] = m;
             }
