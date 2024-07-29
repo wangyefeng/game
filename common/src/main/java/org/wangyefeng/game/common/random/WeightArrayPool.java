@@ -121,13 +121,14 @@ public class WeightArrayPool<E> {
      *
      * @return 元素数组
      */
-    public E[] randomUniqueArray(int count) {
+    public E[] randomUniqueArray(E[] result) {
         checkEmptyPool();
-        Assert.isTrue(count > 0, "count必须大于0！");
-        Assert.isTrue(count <= randomPool.length, "count必须小于等于随机池数量！");
-        @SuppressWarnings("unchecked") E[] result = (E[]) new Object[count];
-        if (count == randomPool.length) {
-            System.arraycopy(randomPool, 0, result, 0, count);
+        Assert.isTrue(result.length > 0, "count必须大于0！");
+        Assert.isTrue(result.length <= randomPool.length, "count必须小于等于随机池数量！");
+        if (result.length == randomPool.length) {
+            for (int i = 0; i < result.length; i++) {
+                result[i] = randomPool[i].e;
+            }
         } else {
             for (int i = 0; i < result.length; i++) {
                 int last = randomPool.length - i - 1;

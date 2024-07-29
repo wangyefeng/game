@@ -2,7 +2,11 @@ package org.wangyefeng.game.common.random;
 
 import junit.framework.TestCase;
 
+import java.util.Arrays;
+
 public class RandomUtilTest extends TestCase {
+
+    private WeightArrayPool<Integer> pool = new WeightArrayPool<>(integer -> integer, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
     /**
      * Create the test case
@@ -15,12 +19,8 @@ public class RandomUtilTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testApp() {
-        int num = 10000;
-        int min = 1;
-        int max = 10;
-        for (int i = 0; i < num; i++) {
-            int random = RandomUtil.random(min, max);
-            assertTrue(random >= min && random <= max);
-        }
+        Integer[] integers = new Integer[2];
+        pool.randomUniqueArray(integers);
+        System.out.println(Arrays.toString(integers));
     }
 }

@@ -241,22 +241,6 @@ public class RandomUtil {
     }
 
     /**
-     * 伪随机带权重的数组
-     *
-     * @param a                随机数组
-     * @param weightCalculator 权重计算器
-     * @throws IllegalArgumentException 当a中元素通过权重计算器得到的权重为负数时
-     */
-    public static <T> T[] randomArrayByWeight(WeightCalculator<T> weightCalculator, T[] a, int count) {
-        Assert.isTrue(a.length >= count, "随机数组长度必须大于等于结果数组长度");
-        @SuppressWarnings("unchecked") T[] ts = (T[]) new Object[count];
-        for (int i = 0; i < count; i++) {
-            ts[i] = randomByWeight(weightCalculator, a);
-        }
-        return ts;
-    }
-
-    /**
      * 伪随机数组
      *
      * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
@@ -276,21 +260,6 @@ public class RandomUtil {
             }
         }
         return result;
-    }
-
-    /**
-     * 伪随机数组
-     *
-     * @param a 随机数组
-     * @throws IllegalArgumentException 当a长度为0时
-     */
-    public static <T> T[] randomArray(T[] a, int count) {
-        Assert.isTrue(count > 0, "随机数量必须大于0!! count：" + count);
-        @SuppressWarnings("unchecked") T[] ts = (T[]) new Object[count];
-        for (int i = 0; i < count; i++) {
-            ts[i] = random(a);
-        }
-        return ts;
     }
 
     /**
@@ -375,20 +344,6 @@ public class RandomUtil {
     }
 
     /**
-     * 伪随机数组中一组元素
-     *
-     * @param a 随机数组
-     * @throws IllegalArgumentException 当数组长度为0时
-     */
-    public static <T extends IWeight> T[] randomArrayByWeight(T[] a, int count) {
-        @SuppressWarnings("unchecked") T[] ts = (T[]) new IWeight[count];
-        for (int i = 0; i < count; i++) {
-            ts[i] = randomByWeight(a);
-        }
-        return ts;
-    }
-
-    /**
      * 伪随机数组中某个元素
      *
      * @param a           随机数组
@@ -448,24 +403,6 @@ public class RandomUtil {
             randVal -= weight;
         }
         return null;
-    }
-
-    /**
-     * 伪随机数组中一组元素
-     *
-     * @param a           随机数组
-     * @param totalWeight 总权重
-     * @throws IllegalArgumentException 当数组长度为0时
-     * @throws IllegalArgumentException 当totalWeight小于等于0时
-     * @throws IllegalArgumentException 当元素某个权重为负数时
-     * @throws IllegalArgumentException 当totalWeight小于所有元素权重之和
-     */
-    public static <T extends IWeight> T[] randomArrayByWeight(T[] a, int totalWeight, int count) {
-        @SuppressWarnings("unchecked") T[] ts = (T[]) new IWeight[count];
-        for (int i = 0; i < count; i++) {
-            ts[i] = randomByWeight(a, totalWeight);
-        }
-        return ts;
     }
 
     public static int[] randomArrayNotRepeat(int[] a, int[] result) {
