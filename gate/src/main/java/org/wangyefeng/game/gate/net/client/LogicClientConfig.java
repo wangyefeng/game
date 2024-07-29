@@ -26,6 +26,6 @@ public class LogicClientConfig {
             LogicClient logicClient = new LogicClient(address[0], Integer.parseInt(address[1]));
             return logicClient;
         }
-        throw new RuntimeException();
+        throw new RuntimeException("No available logic server found");
     }
 }

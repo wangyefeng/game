@@ -11,12 +11,12 @@ import java.util.*;
  * @author 王叶峰
  * @date 2024-07-27
  */
-public class WeightPool<E> {
+public class WeightListPool<E> {
 
     /**
      * 随机池
      */
-    private final ArrayList<EWeight> randomPool = new ArrayList<>();
+    private final ArrayList<EWeight<E>> randomPool = new ArrayList<>();
 
     /**
      * 总权重
@@ -50,7 +50,10 @@ public class WeightPool<E> {
         return randomEWeightOne().e;
     }
 
-    private EWeight randomEWeightOne() {
+    private EWeight<E> randomEWeightOne() {
+        if (randomPool.size() == 1) {
+            return randomPool.get(0);
+        }
         int randVal = RandomUtil.random(0, sumWeight - 1);
         for (EWeight eWeight : randomPool) {
             int weight = eWeight.getWeight();
@@ -87,32 +90,13 @@ public class WeightPool<E> {
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
-        for (EWeight eWeight : randomPool) {
+        for (EWeight<E> eWeight : randomPool) {
             if (randVal < eWeight.getWeight()) {
                 return eWeight.e;
             }
             randVal -= eWeight.weight;
         }
         return null;
-    }
-
-    private class EWeight implements IWeight {
-        // 元素
-        final E e;
-        // 权重
-        final int weight;
-
-        public EWeight(E e, int weight) {
-            if (weight <= 0) {
-                throw new IllegalArgumentException("错误权重：" + weight);
-            }
-            this.e = Objects.requireNonNull(e);
-            this.weight = weight;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
     }
 
     /**
@@ -139,7 +123,7 @@ public class WeightPool<E> {
      * @return 是否成功
      */
     public boolean removePool(E e) {
-        Iterator<EWeight> iterator = randomPool.iterator();
+        Iterator<EWeight<E>> iterator = randomPool.iterator();
         while (iterator.hasNext()) {
             EWeight eWeight = iterator.next();
             if (eWeight.e.equals(e)) {

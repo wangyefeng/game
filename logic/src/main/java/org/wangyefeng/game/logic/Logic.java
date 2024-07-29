@@ -15,7 +15,6 @@ import org.wangyefeng.game.logic.handler.ClientMsgHandler;
 import org.wangyefeng.game.logic.handler.GateMsgHandler;
 import org.wangyefeng.game.logic.net.TcpServer;
 
-import java.net.UnknownHostException;
 import java.util.Collection;
 
 @SpringBootApplication
@@ -43,7 +42,7 @@ public class Logic implements CommandLineRunner {
         registerService();
     }
 
-    private void registerService() throws KeeperException, InterruptedException, UnknownHostException {
+    private void registerService() throws KeeperException, InterruptedException {
         if (zooKeeper.exists(SERVICE_ROOT, false) == null) {
             zooKeeper.create(SERVICE_ROOT, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
