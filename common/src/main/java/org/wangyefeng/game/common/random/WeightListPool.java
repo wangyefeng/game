@@ -1,5 +1,6 @@
 package org.wangyefeng.game.common.random;
 
+import org.wangyefeng.game.common.util.ArrayUtil;
 import org.wangyefeng.game.common.util.Assert;
 
 import java.util.*;
@@ -16,7 +17,7 @@ public class WeightListPool<E> {
     /**
      * 随机池
      */
-    private final ArrayList<EWeight<E>> randomPool = new ArrayList<>();
+    private final List<EWeight<E>> randomPool = new ArrayList<>();
 
     /**
      * 总权重
@@ -70,12 +71,37 @@ public class WeightListPool<E> {
      *
      * @return 随机一组元素
      */
-    public E[] randomArray(int count) {
+    public E[] randomArray(E[] result) {
+        int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
         checkEmptyPool();
-        @SuppressWarnings("unchecked") E[] result = (E[]) new Object[count];
         for (int i = 0; i < count; i++) {
             result[i] = randomOneNotCheck();
+        }
+        return result;
+    }
+
+    /**
+     * 随机出一组不重复的元素
+     *
+     * @return 元素数组
+     */
+    public E[] randomUniqueArray(E[] result) {
+        int length = result.length;
+        checkEmptyPool();
+        Assert.isTrue(length > 0, "count必须大于0！");
+        Assert.isTrue(length <= randomPool.size(), "count必须小于等于随机池数量！");
+        if (length == randomPool.size()) {
+            for (int i = 0; i < length; i++) {
+                result[i] = randomPool.get(i).e;
+            }
+        } else {
+            for (int i = 0; i < length; i++) {
+                int last = randomPool.size() - i - 1;
+                int index = RandomUtil.random(0, last);
+                ArrayUtil.swap(randomPool, index, last);
+                result[i] = randomPool.get(last).e;
+            }
         }
         return result;
     }
@@ -97,15 +123,6 @@ public class WeightListPool<E> {
             randVal -= eWeight.weight;
         }
         return null;
-    }
-
-    /**
-     * 获取随机池数量
-     *
-     * @return 随机池数量
-     */
-    public int getPoolSize() {
-        return randomPool.size();
     }
 
     /**
@@ -136,15 +153,6 @@ public class WeightListPool<E> {
     }
 
     /**
-     * 总权重
-     *
-     * @return 总权重
-     */
-    public int sumWeight() {
-        return sumWeight;
-    }
-
-    /**
      * 空池判断
      *
      * @return true：空池；false：非空池
@@ -152,4 +160,5 @@ public class WeightListPool<E> {
     public boolean poolIsEmpty() {
         return randomPool.isEmpty();
     }
+
 }

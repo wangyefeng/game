@@ -1,6 +1,7 @@
 package org.wangyefeng.game.common.random;
 
 
+import org.wangyefeng.game.common.util.ArrayUtil;
 import org.wangyefeng.game.common.util.Assert;
 
 import java.util.Collection;
@@ -254,9 +255,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
-                T m = a[last];
-                result[i] = a[last] = a[index];
-                a[index] = m;
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
             }
         }
         return result;
@@ -413,9 +413,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
-                int m = a[last];
-                result[i] = a[last] = a[index];
-                a[index] = m;
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
             }
         }
         return result;
@@ -429,9 +428,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
-                long m = a[last];
-                result[i] = a[last] = a[index];
-                a[index] = m;
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
             }
         }
         return result;
@@ -445,9 +443,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
-                double m = a[last];
-                result[i] = a[last] = a[index];
-                a[index] = m;
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
             }
         }
         return result;
@@ -461,9 +458,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = a.length - i - 1;
                 int index = random(0, last);
-                float m = a[last];
-                result[i] = a[last] = a[index];
-                a[index] = m;
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
             }
         }
         return result;

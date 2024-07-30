@@ -10,8 +10,20 @@ public class ArrayUtil {
         arr[j] = temp;
     }
 
+    public static void swap(long[] arr, int i, int j) {
+        long temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
     public static void swap(double[] arr, int i, int j) {
         double temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public static void swap(float[] arr, int i, int j) {
+        float temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
     }
@@ -22,8 +34,8 @@ public class ArrayUtil {
         arr[j] = temp;
     }
 
-    public static void swap(List<Object> arr, int i, int j) {
-        Object temp = arr.get(i);
+    public static <T> void swap(List<T> arr, int i, int j) {
+        T temp = arr.get(i);
         arr.set(i, arr.get(j));
         arr.set(j, temp);
     }

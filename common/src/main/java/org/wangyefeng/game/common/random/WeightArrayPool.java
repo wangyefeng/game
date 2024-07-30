@@ -48,7 +48,7 @@ public class WeightArrayPool<E> {
         this.totalWeight = totalWeight;
     }
 
-    public WeightArrayPool(List<E> elements, WeightCalculator<E> calculator) {
+    public WeightArrayPool(WeightCalculator<E> calculator, List<E> elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];
         int totalWeight = 0;
@@ -106,10 +106,10 @@ public class WeightArrayPool<E> {
      *
      * @return 随机一组元素
      */
-    public E[] randomArray(int count) {
+    public E[] randomArray(E[] result) {
+        int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
         checkEmptyPool();
-        @SuppressWarnings("unchecked") E[] result = (E[]) new Object[count];
         for (int i = 0; i < count; i++) {
             result[i] = randomOneNotCheck();
         }
@@ -158,14 +158,5 @@ public class WeightArrayPool<E> {
             randVal -= eWeight.weight;
         }
         return null;
-    }
-
-    /**
-     * 获取随机池数量
-     *
-     * @return 随机池数量
-     */
-    public int getPoolSize() {
-        return randomPool.length;
     }
 }

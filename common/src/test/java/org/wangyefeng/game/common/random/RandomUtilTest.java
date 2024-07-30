@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class RandomUtilTest extends TestCase {
 
-    private WeightArrayPool<Integer> pool = new WeightArrayPool<>(integer -> integer, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    private WeightListPool<Integer> pool = new WeightListPool<>();
 
     /**
      * Create the test case
@@ -15,12 +15,20 @@ public class RandomUtilTest extends TestCase {
         super("RandomUtil");
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        pool.addPool(1, 1);
+        pool.addPool(2, 2);
+        pool.addPool(3, 3);
+        pool.addPool(4, 4);
+    }
+
     /**
      * Rigourous Test :-)
      */
     public void testApp() {
-        Integer[] integers = new Integer[2];
-        pool.randomUniqueArray(integers);
+        Integer[] integers = pool.randomUniqueArray(new Integer[3]);
         System.out.println(Arrays.toString(integers));
     }
 }
