@@ -30,8 +30,8 @@ public class WeightArrayPool<E> {
         int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements.get(i);
-            randomPool[i] = new EWeight(element, element.getWeight());
-            totalWeight += element.getWeight();
+            randomPool[i] = new EWeight(element, element.weight());
+            totalWeight += element.weight();
         }
         this.totalWeight = totalWeight;
     }
@@ -42,8 +42,8 @@ public class WeightArrayPool<E> {
         int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements[i];
-            randomPool[i] = new EWeight(element, element.getWeight());
-            totalWeight += element.getWeight();
+            randomPool[i] = new EWeight(element, element.weight());
+            totalWeight += element.weight();
         }
         this.totalWeight = totalWeight;
     }
@@ -83,7 +83,7 @@ public class WeightArrayPool<E> {
     }
 
     private E randomOneNotCheck() {
-        return randomEWeightOne().e;
+        return randomEWeightOne().e();
     }
 
     private EWeight<E> randomEWeightOne() {
@@ -92,7 +92,7 @@ public class WeightArrayPool<E> {
         }
         int randVal = RandomUtil.random(0, totalWeight - 1);
         for (EWeight<E> eWeight : randomPool) {
-            int weight = eWeight.getWeight();
+            int weight = eWeight.weight();
             if (randVal < weight) {
                 return eWeight;
             }
@@ -127,14 +127,14 @@ public class WeightArrayPool<E> {
         Assert.isTrue(result.length <= randomPool.length, "count必须小于等于随机池数量！");
         if (result.length == randomPool.length) {
             for (int i = 0; i < result.length; i++) {
-                result[i] = randomPool[i].e;
+                result[i] = randomPool[i].e();
             }
         } else {
             for (int i = 0; i < result.length; i++) {
                 int last = randomPool.length - i - 1;
                 int index = RandomUtil.random(0, last);
                 ArrayUtil.swap(randomPool, index, last);
-                result[i] = randomPool[last].e;
+                result[i] = randomPool[last].e();
             }
         }
         return result;
@@ -152,10 +152,10 @@ public class WeightArrayPool<E> {
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
         for (EWeight<E> eWeight : randomPool) {
-            if (randVal < eWeight.getWeight()) {
-                return eWeight.e;
+            if (randVal < eWeight.weight()) {
+                return eWeight.e();
             }
-            randVal -= eWeight.weight;
+            randVal -= eWeight.weight();
         }
         return null;
     }

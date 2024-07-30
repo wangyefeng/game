@@ -300,14 +300,14 @@ public class RandomUtil {
         Assert.isTrue(c.size() > 0, "随机数组长度不能为0！");
         int sum = 0;
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
 
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             if (randVal < weight) {
                 return t;
             }
@@ -327,14 +327,14 @@ public class RandomUtil {
         Assert.isTrue(c.length > 0, "随机数组长度不能为0！");
         int sum = 0;
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
 
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             if (randVal < weight) {
                 return t;
             }
@@ -358,14 +358,14 @@ public class RandomUtil {
         Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
         int sum = 0;
         for (T t : a) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
         Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : a) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             if (randVal < weight) {
                 return t;
             }
@@ -389,14 +389,14 @@ public class RandomUtil {
         Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
         int sum = 0;
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
             sum += weight;
         }
         Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
         int randVal = ThreadLocalRandom.current().nextInt(sum);
         for (T t : c) {
-            int weight = t.getWeight();
+            int weight = t.weight();
             if (randVal < weight) {
                 return t;
             }

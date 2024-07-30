@@ -5,5 +5,5 @@ package org.wangyefeng.game.common.random;
  */
 public interface IWeight {
 
-	int getWeight();
+	int weight();
 }

@@ -48,7 +48,7 @@ public class WeightListPool<E> {
     }
 
     private E randomOneNotCheck() {
-        return randomEWeightOne().e;
+        return randomEWeightOne().e();
     }
 
     private EWeight<E> randomEWeightOne() {
@@ -57,7 +57,7 @@ public class WeightListPool<E> {
         }
         int randVal = RandomUtil.random(0, sumWeight - 1);
         for (EWeight eWeight : randomPool) {
-            int weight = eWeight.getWeight();
+            int weight = eWeight.weight();
             if (randVal < weight) {
                 return eWeight;
             }
@@ -93,14 +93,14 @@ public class WeightListPool<E> {
         Assert.isTrue(length <= randomPool.size(), "count必须小于等于随机池数量！");
         if (length == randomPool.size()) {
             for (int i = 0; i < length; i++) {
-                result[i] = randomPool.get(i).e;
+                result[i] = randomPool.get(i).e();
             }
         } else {
             for (int i = 0; i < length; i++) {
                 int last = randomPool.size() - i - 1;
                 int index = RandomUtil.random(0, last);
                 ArrayUtil.swap(randomPool, index, last);
-                result[i] = randomPool.get(last).e;
+                result[i] = randomPool.get(last).e();
             }
         }
         return result;
@@ -117,10 +117,10 @@ public class WeightListPool<E> {
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
         for (EWeight<E> eWeight : randomPool) {
-            if (randVal < eWeight.getWeight()) {
-                return eWeight.e;
+            if (randVal < eWeight.weight()) {
+                return eWeight.e();
             }
-            randVal -= eWeight.weight;
+            randVal -= eWeight.weight();
         }
         return null;
     }
@@ -143,9 +143,9 @@ public class WeightListPool<E> {
         Iterator<EWeight<E>> iterator = randomPool.iterator();
         while (iterator.hasNext()) {
             EWeight eWeight = iterator.next();
-            if (eWeight.e.equals(e)) {
+            if (eWeight.e().equals(e)) {
                 iterator.remove();
-                sumWeight -= eWeight.weight;
+                sumWeight -= eWeight.weight();
                 return true;
             }
         }

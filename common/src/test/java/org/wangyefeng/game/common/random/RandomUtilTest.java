@@ -2,8 +2,6 @@ package org.wangyefeng.game.common.random;
 
 import junit.framework.TestCase;
 
-import java.util.Arrays;
-
 public class RandomUtilTest extends TestCase {
 
     private WeightListPool<Integer> pool = new WeightListPool<>();
@@ -28,7 +26,8 @@ public class RandomUtilTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testApp() {
-        Integer[] integers = pool.randomUniqueArray(new Integer[3]);
-        System.out.println(Arrays.toString(integers));
+        EWeight weight = new EWeight(1, 2);
+        EWeight weight2 = new EWeight(1, 1);
+        System.out.println(weight.equals(weight2));
     }
 }
