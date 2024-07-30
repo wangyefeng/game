@@ -19,9 +19,9 @@ import java.net.NetworkInterface;
  * 加起来刚好64位，为一个Long型。<br>
  * SnowFlake的优点是，整体上按照时间自增排序，并且整个分布式系统内不会产生ID碰撞(由数据中心ID和机器ID作区分)，并且效率较高，经测试，SnowFlake每秒能够产生26万ID左右。
  */
-public abstract class SnowflakeUtils {
+public abstract class SnowflakeUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(SnowflakeUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(SnowflakeUtil.class);
 
     // ==============================Fields===========================================
     /**
@@ -98,7 +98,7 @@ public abstract class SnowflakeUtils {
     /**
      * 构造函数
      */
-    public SnowflakeUtils() {
+    public SnowflakeUtil() {
     }
 
     // ==============================Methods==========================================
@@ -113,9 +113,9 @@ public abstract class SnowflakeUtils {
      * @date 2021/3/5
      */
     public static long getSnowId() {
-        SnowflakeUtils.datacenterId = getDatacenterId(maxDatacenterId);
-        SnowflakeUtils.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
-        if (SnowflakeUtils.workerId > maxWorkerId || SnowflakeUtils.workerId < 0) {
+        SnowflakeUtil.datacenterId = getDatacenterId(maxDatacenterId);
+        SnowflakeUtil.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+        if (SnowflakeUtil.workerId > maxWorkerId || SnowflakeUtil.workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
         if (datacenterId > maxDatacenterId || datacenterId < 0) {
