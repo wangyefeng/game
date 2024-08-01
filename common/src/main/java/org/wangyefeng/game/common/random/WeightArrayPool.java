@@ -140,6 +140,28 @@ public class WeightArrayPool<E> {
         return result;
     }
 
+    /**
+     * 随机出一组不重复的元素
+     *
+     * @return 元素数组
+     */
+    public void randomUniqueList(int count, List<E> container) {
+        checkEmptyPool();
+        Assert.isTrue(count > 0 && count <= randomPool.length, "count必须是小于或者到随机池数量的正整数！count=" + count);
+        if (count == randomPool.length) {
+            for (int i = 0; i < count; i++) {
+                container.add(randomPool[i].e());
+            }
+        } else {
+            for (int i = 0; i < count; i++) {
+                int last = randomPool.length - i - 1;
+                int index = RandomUtil.random(0, last);
+                ArrayUtil.swap(randomPool, index, last);
+                container.add(randomPool[last].e());
+            }
+        }
+    }
+
 
     /**
      * 按照给定的总权重随机出一个元素
