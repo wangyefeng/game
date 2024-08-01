@@ -241,26 +241,6 @@ public class RandomUtil {
         throw new RuntimeException();
     }
 
-    /**
-     * 伪随机数组
-     *
-     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
-     * @throws IllegalArgumentException 当随机集合元素数量小于count
-     */
-    public static <T> T[] randomArrayNotRepeat(T[] a, T[] result) {
-        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (a.length == result.length) {
-            System.arraycopy(a, 0, result, 0, a.length);
-        } else if (result.length > 0) {
-            for (int i = 0; i < result.length; i++) {
-                int last = a.length - i - 1;
-                int index = random(0, last);
-                ArrayUtil.swap(a, index, last);
-                result[i] = a[last];
-            }
-        }
-        return result;
-    }
 
     /**
      * 伪随机集合中某个元素
@@ -405,6 +385,34 @@ public class RandomUtil {
         return null;
     }
 
+
+    /**
+     * 伪随机数组
+     *
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @throws IllegalArgumentException 当随机集合元素数量小于count
+     */
+    public static <T> T[] randomArrayNotRepeat(T[] a, T[] result) {
+        Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (a.length == result.length) {
+            System.arraycopy(a, 0, result, 0, a.length);
+        } else if (result.length > 0) {
+            for (int i = 0; i < result.length; i++) {
+                int last = a.length - i - 1;
+                int index = random(0, last);
+                ArrayUtil.swap(a, index, last);
+                result[i] = a[last];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 伪随机数组
+     *
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @throws IllegalArgumentException 当随机集合元素数量小于count
+     */
     public static int[] randomArrayNotRepeat(int[] a, int[] result) {
         Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
         if (a.length == result.length) {
@@ -420,6 +428,12 @@ public class RandomUtil {
         return result;
     }
 
+    /**
+     * 伪随机数组
+     *
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @throws IllegalArgumentException 当随机集合元素数量小于count
+     */
     public static long[] randomArrayNotRepeat(long[] a, long[] result) {
         Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
         if (a.length == result.length) {
@@ -435,6 +449,12 @@ public class RandomUtil {
         return result;
     }
 
+    /**
+     * 伪随机数组
+     *
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @throws IllegalArgumentException 当随机集合元素数量小于count
+     */
     public static double[] randomArrayNotRepeat(double[] a, double[] result) {
         Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
         if (a.length == result.length) {
@@ -450,6 +470,12 @@ public class RandomUtil {
         return result;
     }
 
+    /**
+     * 伪随机数组
+     *
+     * @param a 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @throws IllegalArgumentException 当随机集合元素数量小于count
+     */
     public static float[] randomArrayNotRepeat(float[] a, float[] result) {
         Assert.isTrue(a.length >= result.length, "随机数组长度必须大于等于结果数组长度");
         if (a.length == result.length) {
