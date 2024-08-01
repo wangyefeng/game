@@ -96,12 +96,4 @@ public abstract class Client {
     public String toString() {
         return "{host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
     }
-
-    protected void setHost(String host) {
-        this.host = host;
-    }
-
-    protected void setPort(int port) {
-        this.port = port;
-    }
 }
