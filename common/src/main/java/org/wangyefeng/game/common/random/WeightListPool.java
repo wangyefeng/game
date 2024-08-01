@@ -43,7 +43,7 @@ public class WeightListPool<E> {
     // 检查空池
     private void checkEmptyPool() {
         if (randomPool.isEmpty()) {
-            throw new RandomPoolNotEnoughException("随机池为空");
+            throw new EmptyPoolException();
         }
     }
 

@@ -78,7 +78,7 @@ public class WeightArrayPool<E> {
     // 检查空池
     private void checkEmptyPool() {
         if (randomPool.length == 0) {
-            throw new RandomPoolNotEnoughException("随机池不能为空");
+            throw new EmptyPoolException();
         }
     }
 
