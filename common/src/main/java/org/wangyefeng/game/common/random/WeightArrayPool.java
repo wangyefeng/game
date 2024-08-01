@@ -6,7 +6,7 @@ import org.wangyefeng.game.common.util.Assert;
 import java.util.List;
 
 /**
- * 权重随机类
+ * 按权重随机的随机池，随机池不可变，底层是数组实现的。
  *
  * @param <E> 元素类型
  * @author 王叶峰

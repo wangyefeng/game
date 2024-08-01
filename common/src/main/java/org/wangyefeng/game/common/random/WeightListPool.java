@@ -6,7 +6,7 @@ import org.wangyefeng.game.common.util.Assert;
 import java.util.*;
 
 /**
- * 权重随机类
+ * 可变长的按权重随机的随机池，底层数据是ArrayList
  *
  * @param <E> 元素类型
  * @author 王叶峰
