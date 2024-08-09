@@ -27,7 +27,7 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
         }
         try {
             long start = System.currentTimeMillis();
-            handle(player, message, channel);
+            handle(player, message);
             long end = System.currentTimeMillis();
             long costTime = end - start;
             // 打印日志
@@ -49,5 +49,5 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
      * @param player  玩家对象
      * @param message 消息体内容
      */
-    protected abstract void handle(Player player, T message, Channel channel);
+    protected abstract void handle(Player player, T message);
 }

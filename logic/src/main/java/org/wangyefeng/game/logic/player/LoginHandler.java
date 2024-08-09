@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.wangyefeng.game.logic.data.PlayerInfo;
 import org.wangyefeng.game.logic.data.PlayerRepository;
 import org.wangyefeng.game.logic.handler.ClientMsgHandler;
-import org.wangyefeng.game.proto.MessagePlayer;
 import org.wangyefeng.game.proto.protocol.ClientToLogicProtocol;
 import org.wangyefeng.game.proto.protocol.LogicToClientProtocol;
 import org.wangyefeng.game.proto.struct.Common;
@@ -31,8 +30,11 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
         Player player = Players.getPlayer(playerId);
         if (player == null) {
             Optional<PlayerInfo> optional = playerRepository.findById(playerId);
-            PlayerInfo playerInfo = optional.orElse(new PlayerInfo(playerId, "test", new ArrayList<>()));
-            if (!optional.isPresent()) {
+            PlayerInfo playerInfo;
+            if (optional.isPresent()) {
+                playerInfo = optional.get();
+            } else {
+                playerInfo = new PlayerInfo(playerId, "test", new ArrayList<>());
                 playerRepository.insert(playerInfo);
             }
             player = new Player(playerInfo, channel);
@@ -40,7 +42,7 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
         } else {
             player.setChannel(channel);
         }
-        channel.writeAndFlush(new MessagePlayer<>(playerId, LogicToClientProtocol.LOGIN, message));
+        player.sendToClient(LogicToClientProtocol.LOGIN, message);
     }
 
     @Override
