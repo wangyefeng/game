@@ -10,9 +10,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.wangyefeng.game.proto.protocol.Protocol;
@@ -69,14 +66,11 @@ public class LogicClient extends Client {
         });
     }
 
-    @NotBlank
     @Override
     public String getHost() {
         return super.getHost();
     }
 
-    @Min(1025)
-    @Max(65535)
     @Override
     public int getPort() {
         return super.getPort();
