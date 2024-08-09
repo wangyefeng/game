@@ -40,6 +40,8 @@ public class Gate implements CommandLineRunner {
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        // 设置log4j全量异步日志
+        System.setProperty("log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     }
 
     private void start() throws Exception {
