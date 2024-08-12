@@ -1,7 +1,7 @@
 // 通用协议结构
 syntax = "proto3";
 
-package org.wangyefeng.game.proto.struct;
+package org.game.proto.struct;
 
 message PbInt {
 	int32 val = 1;

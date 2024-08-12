@@ -23,6 +23,11 @@
         <module>login</module> <!-- 公共模块 -->
     </modules>
 
+    <properties>
+        <java.version>22</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <!-- 测试依赖 -->
         <dependency>
@@ -70,8 +75,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <!-- 设置编译器的JDK版本 -->
                 <configuration>
-                    <source>22</source>
-                    <target>22</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>
