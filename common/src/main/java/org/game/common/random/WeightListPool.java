@@ -111,7 +111,7 @@ public class WeightListPool<E> {
      *
      * @return 元素数组
      */
-    public void randomUniqueList(int count, List<E> container) {
+    public void randomUniqueList(int count, Collection<E> container) {
         checkEmptyPool();
         int poolSize = randomPool.size();
         Assert.isTrue(count > 0 && count <= poolSize, "count必须是小于或者到随机池数量的正整数！count=" + count);

@@ -3,6 +3,7 @@ package org.game.common.random;
 import org.game.common.util.ArrayUtil;
 import org.game.common.util.Assert;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -145,7 +146,7 @@ public class WeightArrayPool<E> {
      *
      * @return 元素数组
      */
-    public void randomUniqueList(int count, List<E> container) {
+    public void randomUniqueList(int count, Collection<E> container) {
         checkEmptyPool();
         Assert.isTrue(count > 0 && count <= randomPool.length, "count必须是小于或者到随机池数量的正整数！count=" + count);
         if (count == randomPool.length) {
