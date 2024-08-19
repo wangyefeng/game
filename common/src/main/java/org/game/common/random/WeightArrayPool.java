@@ -121,6 +121,16 @@ public class WeightArrayPool<E> {
     }
 
     /**
+     * 随机元素
+     *
+     * @return 随机元素
+     */
+    public E random() {
+        checkEmptyPool();
+        return randomOneNotCheck();
+    }
+
+    /**
      * 随机出一组不重复的元素
      *
      * @return 元素数组

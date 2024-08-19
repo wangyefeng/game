@@ -62,6 +62,16 @@ public class WeightListPool<E> {
         return binarySearch(randVal);
     }
 
+    /**
+     * 随机元素
+     *
+     * @return 随机元素
+     */
+    public E random() {
+        checkEmptyPool();
+        return randomOneNotCheck();
+    }
+
     private int binarySearch(int k) {
         int mid, L = 0, R = randomPool.size() - 1;
         int res = R + 1;
