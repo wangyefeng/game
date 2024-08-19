@@ -23,56 +23,48 @@ public class WeightArrayPool<E> {
     /**
      * 总权重
      */
-    private final int totalWeight;
+    private int totalWeight;
 
     public WeightArrayPool(List<? extends IWeight> elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];
-        int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements.get(i);
-            randomPool[i] = new EWeight(element, element.weight());
             totalWeight += element.weight();
+            randomPool[i] = new EWeight(element, element.weight(), totalWeight);
         }
-        this.totalWeight = totalWeight;
     }
 
     public WeightArrayPool(IWeight... elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.length];
-        int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements[i];
-            randomPool[i] = new EWeight(element, element.weight());
             totalWeight += element.weight();
+            randomPool[i] = new EWeight(element, element.weight(), totalWeight);
         }
-        this.totalWeight = totalWeight;
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, List<E> elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];
-        int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements.get(i);
             int weight = calculator.weight(element);
-            randomPool[i] = new EWeight(element, weight);
             totalWeight += weight;
+            randomPool[i] = new EWeight(element, weight, totalWeight);
         }
-        this.totalWeight = totalWeight;
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, E... elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.length];
-        int totalWeight = 0;
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements[i];
             int weight = calculator.weight(element);
-            randomPool[i] = new EWeight(element, weight);
             totalWeight += weight;
+            randomPool[i] = new EWeight(element, weight, totalWeight);
         }
-        this.totalWeight = totalWeight;
     }
 
 
@@ -84,22 +76,33 @@ public class WeightArrayPool<E> {
     }
 
     private E randomOneNotCheck() {
-        return randomEWeightOne().e();
+        return randomPool[randomEWeightOne()].getE();
     }
 
-    private EWeight<E> randomEWeightOne() {
+    private int randomEWeightOne() {
         if (randomPool.length == 1) {
-            return randomPool[0];
+            return 0;
         }
         int randVal = RandomUtil.random(0, totalWeight - 1);
-        for (EWeight<E> eWeight : randomPool) {
-            int weight = eWeight.weight();
-            if (randVal < weight) {
-                return eWeight;
+        return binarySearch(randVal);
+    }
+
+    private int binarySearch(int k) {
+        int mid, L = 0, R = randomPool.length - 1;
+        int res = R + 1; //也可以定义为 R，区别在于整个数组均比k小的返回值
+        while (L <= R) {
+            mid = L + (R - L) / 2; //避免溢出
+            if (randomPool[mid].getSumWeight() > k) {
+                R = mid - 1;
+                res = mid;
+            } else if (randomPool[mid].getSumWeight() < k) {
+                L = mid + 1;
+            } else {
+                res = mid;
+                break;
             }
-            randVal -= weight;
         }
-        throw new RuntimeException("随机逻辑出错！");
+        return res;
     }
 
     /**
@@ -124,18 +127,42 @@ public class WeightArrayPool<E> {
      */
     public E[] randomUniqueArray(E[] result) {
         checkEmptyPool();
-        Assert.isTrue(result.length > 0, "count必须大于0！");
-        Assert.isTrue(result.length <= randomPool.length, "count必须小于等于随机池数量！");
-        if (result.length == randomPool.length) {
-            for (int i = 0; i < result.length; i++) {
-                result[i] = randomPool[i].e();
+        int resultLength = result.length;
+        int poolLength = randomPool.length;
+        Assert.isTrue(resultLength > 0, "count必须大于0！");
+        Assert.isTrue(resultLength <= poolLength, "count必须小于等于随机池数量！");
+        if (resultLength == poolLength) {
+            for (int i = 0; i < resultLength; i++) {
+                result[i] = randomPool[i].getE();
             }
+        } else if (resultLength == 1) {
+            result[0] = randomOneNotCheck();
+            return result;
         } else {
-            for (int i = 0; i < result.length; i++) {
-                int last = randomPool.length - i - 1;
-                int index = RandomUtil.random(0, last);
-                ArrayUtil.swap(randomPool, index, last);
-                result[i] = randomPool[last].e();
+            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
+            for (int i = 0; i < resultLength; i++) {
+                int randVal = RandomUtil.random(0, totalWeight - 1);
+                for (int j = 0; j < poolLength; j++) {
+                    EWeight<E> eWeight = randomPool[j];
+                    int weight = eWeight.weight();
+                    if (randVal < weight) {
+                        result[i] = eWeight.getE();
+                        if (i < resultLength - 1) {
+                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
+                            ArrayUtil.swap(randomPool, j, poolLength - 1 - i);
+                            totalWeight -= eWeight.weight();
+                        }
+                        break;
+                    }
+                    randVal -= weight;
+                }
+            }
+            // 重新计算数据的权重范围
+            totalWeight = 0;
+            for (int i = 0; i < poolLength; i++) {
+                EWeight<E> e = randomPool[i];
+                totalWeight += e.weight();
+                e.setSumWeight(totalWeight);
             }
         }
         return result;
@@ -151,14 +178,14 @@ public class WeightArrayPool<E> {
         Assert.isTrue(count > 0 && count <= randomPool.length, "count必须是小于或者到随机池数量的正整数！count=" + count);
         if (count == randomPool.length) {
             for (int i = 0; i < count; i++) {
-                container.add(randomPool[i].e());
+                container.add(randomPool[i].getE());
             }
         } else {
             for (int i = 0; i < count; i++) {
                 int last = randomPool.length - i - 1;
                 int index = RandomUtil.random(0, last);
                 ArrayUtil.swap(randomPool, index, last);
-                container.add(randomPool[last].e());
+                container.add(randomPool[last].getE());
             }
         }
     }
@@ -176,7 +203,7 @@ public class WeightArrayPool<E> {
         int randVal = RandomUtil.random(0, weight - 1);
         for (EWeight<E> eWeight : randomPool) {
             if (randVal < eWeight.weight()) {
-                return eWeight.e();
+                return eWeight.getE();
             }
             randVal -= eWeight.weight();
         }

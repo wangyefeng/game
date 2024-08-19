@@ -1,9 +1,12 @@
 package org.game.common.random;
 
-import org.game.common.util.ArrayUtil;
 import org.game.common.util.Assert;
+import org.game.common.util.ListUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 可变长的按权重随机的随机池，底层数据是ArrayList
@@ -35,8 +38,8 @@ public class WeightListPool<E> {
             throw new IllegalArgumentException("权重不能为负数");
         }
         if (weight > 0) {
-            randomPool.add(new EWeight(e, weight));
             sumWeight += weight;
+            randomPool.add(new EWeight(e, weight, sumWeight));
         }
     }
 
@@ -48,22 +51,33 @@ public class WeightListPool<E> {
     }
 
     private E randomOneNotCheck() {
-        return randomEWeightOne().e();
+        return randomPool.get(randomEWeightOne()).getE();
     }
 
-    private EWeight<E> randomEWeightOne() {
+    private int randomEWeightOne() {
         if (randomPool.size() == 1) {
-            return randomPool.get(0);
+            return 0;
         }
         int randVal = RandomUtil.random(0, sumWeight - 1);
-        for (EWeight eWeight : randomPool) {
-            int weight = eWeight.weight();
-            if (randVal < weight) {
-                return eWeight;
+        return binarySearch(randVal);
+    }
+
+    private int binarySearch(int k) {
+        int mid, L = 0, R = randomPool.size() - 1;
+        int res = R + 1;
+        while (L <= R) {
+            mid = L + (R - L) / 2; //避免溢出
+            if (randomPool.get(mid).getSumWeight() > k) {
+                R = mid - 1;
+                res = mid;
+            } else if (randomPool.get(mid).getSumWeight() < k) {
+                L = mid + 1;
+            } else {
+                res = mid;
+                break;
             }
-            randVal -= weight;
         }
-        throw new RuntimeException("随机逻辑出错！");
+        return res;
     }
 
     /**
@@ -87,21 +101,39 @@ public class WeightListPool<E> {
      * @return 元素数组
      */
     public E[] randomUniqueArray(E[] result) {
-        int length = result.length;
         checkEmptyPool();
+        int length = result.length;
+        int poolLength = randomPool.size();
         Assert.isTrue(length > 0, "count必须大于0！");
         Assert.isTrue(length <= randomPool.size(), "count必须小于等于随机池数量！");
         if (length == randomPool.size()) {
             for (int i = 0; i < length; i++) {
-                result[i] = randomPool.get(i).e();
+                result[i] = randomPool.get(i).getE();
             }
+        } else if (length == 1) {
+            result[0] = randomOneNotCheck();
+            return result;
         } else {
+            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
             for (int i = 0; i < length; i++) {
-                int last = randomPool.size() - i - 1;
-                int index = RandomUtil.random(0, last);
-                ArrayUtil.swap(randomPool, index, last);
-                result[i] = randomPool.get(last).e();
+                int randVal = RandomUtil.random(0, sumWeight - 1);
+                for (int j = 0; j < poolLength; j++) {
+                    EWeight<E> eWeight = randomPool.get(j);
+                    int weight = eWeight.weight();
+                    if (randVal < weight) {
+                        result[i] = eWeight.getE();
+                        if (i < length - 1) {
+                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
+                            ListUtil.swap(randomPool, j, poolLength - 1 - i);
+                            sumWeight -= eWeight.weight();
+                        }
+                        break;
+                    }
+                    randVal -= weight;
+                }
             }
+            // 重新计算数据的权重范围
+            recalculate();
         }
         return result;
     }
@@ -113,19 +145,44 @@ public class WeightListPool<E> {
      */
     public void randomUniqueList(int count, Collection<E> container) {
         checkEmptyPool();
-        int poolSize = randomPool.size();
-        Assert.isTrue(count > 0 && count <= poolSize, "count必须是小于或者到随机池数量的正整数！count=" + count);
-        if (count == poolSize) {
+        int poolLength = randomPool.size();
+        Assert.isTrue(count > 0 && count <= poolLength, "count必须是小于或者到随机池数量的正整数！count=" + count);
+        if (count == poolLength) {
             for (int i = 0; i < count; i++) {
-                container.add(randomPool.get(i).e());
+                container.add(randomPool.get(i).getE());
             }
+        } else if (count == 1) {
+            container.add(randomOneNotCheck());
         } else {
-            for (int i = 0; i < count; i++) {
-                int last = poolSize - i - 1;
-                int index = RandomUtil.random(0, last);
-                ArrayUtil.swap(randomPool, index, last);
-                container.add(randomPool.get(last).e());
+            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
+            for (int i = 0; i < poolLength; i++) {
+                int randVal = RandomUtil.random(0, sumWeight - 1);
+                for (int j = 0; j < poolLength; j++) {
+                    EWeight<E> eWeight = randomPool.get(j);
+                    int weight = eWeight.weight();
+                    if (randVal < weight) {
+                        container.add(eWeight.getE());
+                        if (i < poolLength - 1) {
+                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
+                            ListUtil.swap(randomPool, j, poolLength - 1 - i);
+                            sumWeight -= eWeight.weight();
+                        }
+                        break;
+                    }
+                    randVal -= weight;
+                }
             }
+            recalculate();
+        }
+    }
+
+    // 重新计算权重
+    private void recalculate() {
+        sumWeight = 0;
+        for (int i = 0; i < randomPool.size(); i++) {
+            EWeight<E> e = randomPool.get(i);
+            sumWeight += e.weight();
+            e.setSumWeight(sumWeight);
         }
     }
 
@@ -141,7 +198,7 @@ public class WeightListPool<E> {
         int randVal = RandomUtil.random(0, weight - 1);
         for (EWeight<E> eWeight : randomPool) {
             if (randVal < eWeight.weight()) {
-                return eWeight.e();
+                return eWeight.getE();
             }
             randVal -= eWeight.weight();
         }
@@ -166,7 +223,7 @@ public class WeightListPool<E> {
         Iterator<EWeight<E>> iterator = randomPool.iterator();
         while (iterator.hasNext()) {
             EWeight eWeight = iterator.next();
-            if (eWeight.e().equals(e)) {
+            if (eWeight.getE().equals(e)) {
                 iterator.remove();
                 sumWeight -= eWeight.weight();
                 return true;

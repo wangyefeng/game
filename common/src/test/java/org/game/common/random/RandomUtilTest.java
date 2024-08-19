@@ -2,9 +2,11 @@ package org.game.common.random;
 
 import junit.framework.TestCase;
 
+import java.util.Arrays;
+
 public class RandomUtilTest extends TestCase {
 
-    private WeightListPool<Integer> pool = new WeightListPool<>();
+    private WeightArrayPool<IWeightImpl> pool;
 
     /**
      * Create the test case
@@ -16,18 +18,42 @@ public class RandomUtilTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        pool.addPool(1, 1);
-        pool.addPool(2, 2);
-        pool.addPool(3, 3);
-        pool.addPool(4, 4);
+        IWeightImpl[] arr = new IWeightImpl[5];
+        arr[0] = new IWeightImpl(1, 10);
+        arr[1] = new IWeightImpl(2, 20);
+        arr[2] = new IWeightImpl(3, 30);
+        arr[3] = new IWeightImpl(4, 20);
+        arr[4] = new IWeightImpl(5, 1000);
+        pool = new WeightArrayPool<>(arr);
     }
 
     /**
      * Rigourous Test :-)
      */
     public void testApp() {
-        EWeight weight = new EWeight(1, 2);
-        EWeight weight2 = new EWeight(1, 1);
-        System.out.println(weight.equals(weight2));
+        IWeightImpl[] ss = pool.randomArray(new IWeightImpl[4]);
+        System.out.println(Arrays.toString(ss));
+    }
+
+    private static class IWeightImpl implements IWeight {
+
+        private int id;
+
+        private int weight;
+
+        public IWeightImpl(int id, int weight) {
+            this.id = id;
+            this.weight = weight;
+        }
+
+        @Override
+        public int weight() {
+            return weight;
+        }
+
+        @Override
+        public String toString() {
+            return id + "";
+        }
     }
 }
