@@ -53,11 +53,7 @@ public class WeightArrayPool<E> {
         }
     }
 
-    private E randomOneNotCheck() {
-        return randomPool[randomEWeightOne()].getE();
-    }
-
-    private int randomEWeightOne() {
+    private int randomIndex() {
         if (randomPool.length == 1) {
             return 0;
         }
@@ -65,21 +61,27 @@ public class WeightArrayPool<E> {
         return binarySearch(randVal);
     }
 
-    private int binarySearch(int k) {
-        int mid, L = 0, R = randomPool.length - 1;
-        if (k >= randomPool[R].getSumWeight()) {
+    /**
+     * 二分查找小于等于k的最大值的索引
+     *
+     * @param k 目标值
+     * @return 索引 当k大于所有元素的总权重时，返回-1
+     */
+    int binarySearch(int k) {
+        if (k >= sumWeight) {
             return -1;
         }
-        int res = R + 1; //也可以定义为 R，区别在于整个数组均比k小的返回值
+        int mid, L = 0, R = randomPool.length - 1;
+        int res = R + 1;
         while (L <= R) {
-            mid = L + (R - L) / 2; //避免溢出
+            mid = L + (R - L) / 2;
             if (randomPool[mid].getSumWeight() > k) {
                 R = mid - 1;
                 res = mid;
             } else if (randomPool[mid].getSumWeight() < k) {
                 L = mid + 1;
             } else {
-                res = mid;
+                res = mid + 1;
                 break;
             }
         }
@@ -95,7 +97,7 @@ public class WeightArrayPool<E> {
         int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
         for (int i = 0; i < count; i++) {
-            result[i] = randomOneNotCheck();
+            result[i] = random();
         }
         return result;
     }
@@ -106,7 +108,7 @@ public class WeightArrayPool<E> {
     public void random(List<E> container, int count) {
         Assert.isTrue(count > 0, "count必须大于0！");
         for (int i = 0; i < count; i++) {
-            container.add(randomOneNotCheck());
+            container.add(random());
         }
     }
 
@@ -116,7 +118,7 @@ public class WeightArrayPool<E> {
      * @return 随机元素
      */
     public E random() {
-        return randomOneNotCheck();
+        return randomPool[randomIndex()].getE();
     }
 
     /**
@@ -134,7 +136,7 @@ public class WeightArrayPool<E> {
                 result[i] = randomPool[i].getE();
             }
         } else if (resultLength == 1) {
-            result[0] = randomOneNotCheck();
+            result[0] = random();
             return result;
         } else {
             // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
@@ -182,7 +184,7 @@ public class WeightArrayPool<E> {
                 container.add(randomPool[i].getE());
             }
         } else if (count == 1) {
-            container.add(randomOneNotCheck());
+            container.add(random());
         } else {
             // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
             for (int i = 0; i < count; i++) {
