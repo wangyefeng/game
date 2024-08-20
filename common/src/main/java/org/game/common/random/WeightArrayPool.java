@@ -23,15 +23,15 @@ public class WeightArrayPool<E> {
     /**
      * 总权重
      */
-    private int totalWeight;
+    private int sumWeight;
 
     public WeightArrayPool(List<? extends IWeight> elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements.get(i);
-            totalWeight += element.weight();
-            randomPool[i] = new EWeight(element, element.weight(), totalWeight);
+            sumWeight += element.weight();
+            randomPool[i] = new EWeight(element, element.weight(), sumWeight);
         }
     }
 
@@ -40,8 +40,8 @@ public class WeightArrayPool<E> {
         this.randomPool = new EWeight[elements.length];
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements[i];
-            totalWeight += element.weight();
-            randomPool[i] = new EWeight(element, element.weight(), totalWeight);
+            sumWeight += element.weight();
+            randomPool[i] = new EWeight(element, element.weight(), sumWeight);
         }
     }
 
@@ -51,8 +51,8 @@ public class WeightArrayPool<E> {
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements.get(i);
             int weight = calculator.weight(element);
-            totalWeight += weight;
-            randomPool[i] = new EWeight(element, weight, totalWeight);
+            sumWeight += weight;
+            randomPool[i] = new EWeight(element, weight, sumWeight);
         }
     }
 
@@ -62,8 +62,8 @@ public class WeightArrayPool<E> {
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements[i];
             int weight = calculator.weight(element);
-            totalWeight += weight;
-            randomPool[i] = new EWeight(element, weight, totalWeight);
+            sumWeight += weight;
+            randomPool[i] = new EWeight(element, weight, sumWeight);
         }
     }
 
@@ -83,7 +83,7 @@ public class WeightArrayPool<E> {
         if (randomPool.length == 1) {
             return 0;
         }
-        int randVal = RandomUtil.random(0, totalWeight - 1);
+        int randVal = RandomUtil.random(0, sumWeight - 1);
         return binarySearch(randVal);
     }
 
@@ -154,7 +154,7 @@ public class WeightArrayPool<E> {
         } else {
             // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
             for (int i = 0; i < resultLength; i++) {
-                int randVal = RandomUtil.random(0, totalWeight - 1);
+                int randVal = RandomUtil.random(0, sumWeight - 1);
                 for (int j = 0; j < poolLength; j++) {
                     EWeight<E> eWeight = randomPool[j];
                     int weight = eWeight.weight();
@@ -163,7 +163,7 @@ public class WeightArrayPool<E> {
                         if (i < resultLength - 1) {
                             // 交换随机到的元素和最后的元素的位置，并减少总权重值
                             ArrayUtil.swap(randomPool, j, poolLength - 1 - i);
-                            totalWeight -= eWeight.weight();
+                            sumWeight -= eWeight.weight();
                         }
                         break;
                     }
@@ -177,12 +177,12 @@ public class WeightArrayPool<E> {
     }
 
     private void recalculate() {
-        totalWeight = 0;
+        sumWeight = 0;
         int poolLength = randomPool.length;
         for (int i = 0; i < poolLength; i++) {
             EWeight<E> e = randomPool[i];
-            totalWeight += e.weight();
-            e.setSumWeight(totalWeight);
+            sumWeight += e.weight();
+            e.setSumWeight(sumWeight);
         }
     }
 
@@ -204,7 +204,7 @@ public class WeightArrayPool<E> {
         } else {
             // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
             for (int i = 0; i < count; i++) {
-                int randVal = RandomUtil.random(0, totalWeight - 1);
+                int randVal = RandomUtil.random(0, sumWeight - 1);
                 for (int j = 0; j < poolLength; j++) {
                     EWeight<E> eWeight = randomPool[j];
                     int weight = eWeight.weight();
@@ -213,7 +213,7 @@ public class WeightArrayPool<E> {
                         if (i < count - 1) {
                             // 交换随机到的元素和最后的元素的位置，并减少总权重值
                             ArrayUtil.swap(randomPool, j, poolLength - 1 - i);
-                            totalWeight -= eWeight.weight();
+                            sumWeight -= eWeight.weight();
                         }
                         break;
                     }
@@ -233,7 +233,7 @@ public class WeightArrayPool<E> {
      * @return 随机池的一个元素或者null
      */
     public E randomBySumWeight(int weight) {
-        Assert.isTrue(weight >= totalWeight, "权重必须大于当前总权重！");
+        Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
         int index = binarySearch(randVal);
