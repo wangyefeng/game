@@ -89,6 +89,9 @@ public class WeightArrayPool<E> {
 
     private int binarySearch(int k) {
         int mid, L = 0, R = randomPool.length - 1;
+        if (k >= randomPool[R].getSumWeight()) {
+            return -1;
+        }
         int res = R + 1; //也可以定义为 R，区别在于整个数组均比k小的返回值
         while (L <= R) {
             mid = L + (R - L) / 2; //避免溢出
@@ -110,7 +113,7 @@ public class WeightArrayPool<E> {
      *
      * @return 随机一组元素
      */
-    public E[] randomArray(E[] result) {
+    public E[] random(E[] result) {
         int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
         checkEmptyPool();
@@ -135,7 +138,7 @@ public class WeightArrayPool<E> {
      *
      * @return 元素数组
      */
-    public E[] randomUniqueArray(E[] result) {
+    public E[] randomUnique(E[] result) {
         checkEmptyPool();
         int resultLength = result.length;
         int poolLength = randomPool.length;
@@ -168,14 +171,19 @@ public class WeightArrayPool<E> {
                 }
             }
             // 重新计算数据的权重范围
-            totalWeight = 0;
-            for (int i = 0; i < poolLength; i++) {
-                EWeight<E> e = randomPool[i];
-                totalWeight += e.weight();
-                e.setSumWeight(totalWeight);
-            }
+            recalculate();
         }
         return result;
+    }
+
+    private void recalculate() {
+        totalWeight = 0;
+        int poolLength = randomPool.length;
+        for (int i = 0; i < poolLength; i++) {
+            EWeight<E> e = randomPool[i];
+            totalWeight += e.weight();
+            e.setSumWeight(totalWeight);
+        }
     }
 
     /**
@@ -183,20 +191,37 @@ public class WeightArrayPool<E> {
      *
      * @return 元素数组
      */
-    public void randomUniqueList(int count, Collection<E> container) {
+    public void randomUnique(Collection<E> container, int count) {
         checkEmptyPool();
-        Assert.isTrue(count > 0 && count <= randomPool.length, "count必须是小于或者到随机池数量的正整数！count=" + count);
-        if (count == randomPool.length) {
+        int poolLength = randomPool.length;
+        Assert.isTrue(count > 0 && count <= poolLength, "count必须是小于或者到随机池数量的正整数！count=" + count);
+        if (count == poolLength) {
             for (int i = 0; i < count; i++) {
                 container.add(randomPool[i].getE());
             }
+        } else if (count == 1) {
+            container.add(randomOneNotCheck());
         } else {
+            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
             for (int i = 0; i < count; i++) {
-                int last = randomPool.length - i - 1;
-                int index = RandomUtil.random(0, last);
-                ArrayUtil.swap(randomPool, index, last);
-                container.add(randomPool[last].getE());
+                int randVal = RandomUtil.random(0, totalWeight - 1);
+                for (int j = 0; j < poolLength; j++) {
+                    EWeight<E> eWeight = randomPool[j];
+                    int weight = eWeight.weight();
+                    if (randVal < weight) {
+                        container.add(eWeight.getE());
+                        if (i < count - 1) {
+                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
+                            ArrayUtil.swap(randomPool, j, poolLength - 1 - i);
+                            totalWeight -= eWeight.weight();
+                        }
+                        break;
+                    }
+                    randVal -= weight;
+                }
             }
+            // 重新计算数据的权重范围
+            recalculate();
         }
     }
 
@@ -211,12 +236,7 @@ public class WeightArrayPool<E> {
         Assert.isTrue(weight >= totalWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
-        for (EWeight<E> eWeight : randomPool) {
-            if (randVal < eWeight.weight()) {
-                return eWeight.getE();
-            }
-            randVal -= eWeight.weight();
-        }
-        return null;
+        int index = binarySearch(randVal);
+        return index >= 0 ? randomPool[index].getE() : null;
     }
 }

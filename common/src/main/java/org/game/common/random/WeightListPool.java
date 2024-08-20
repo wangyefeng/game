@@ -74,6 +74,9 @@ public class WeightListPool<E> {
 
     private int binarySearch(int k) {
         int mid, L = 0, R = randomPool.size() - 1;
+        if (k >= randomPool.get(R).getSumWeight()) {
+            return -1;
+        }
         int res = R + 1;
         while (L <= R) {
             mid = L + (R - L) / 2; //避免溢出
@@ -110,7 +113,7 @@ public class WeightListPool<E> {
      *
      * @return 元素数组
      */
-    public E[] randomUniqueArray(E[] result) {
+    public E[] randomUnique(E[] result) {
         checkEmptyPool();
         int length = result.length;
         int poolLength = randomPool.size();
@@ -153,7 +156,7 @@ public class WeightListPool<E> {
      *
      * @return 元素数组
      */
-    public void randomUniqueList(int count, Collection<E> container) {
+    public void randomUnique(Collection<E> container, int count) {
         checkEmptyPool();
         int poolLength = randomPool.size();
         Assert.isTrue(count > 0 && count <= poolLength, "count必须是小于或者到随机池数量的正整数！count=" + count);
@@ -206,13 +209,10 @@ public class WeightListPool<E> {
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
-        for (EWeight<E> eWeight : randomPool) {
-            if (randVal < eWeight.weight()) {
-                return eWeight.getE();
-            }
-            randVal -= eWeight.weight();
-        }
-        return null;
+        Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
+        checkEmptyPool();
+        int index = binarySearch(randVal);
+        return index >= 0 ? randomPool.get(index).getE() : null;
     }
 
     /**
