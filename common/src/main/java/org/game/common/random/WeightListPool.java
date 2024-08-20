@@ -98,7 +98,7 @@ public class WeightListPool<E> {
      *
      * @return 随机一组元素
      */
-    public E[] randomArray(E[] result) {
+    public E[] random(E[] result) {
         int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
         checkEmptyPool();
@@ -106,6 +106,17 @@ public class WeightListPool<E> {
             result[i] = randomOneNotCheck();
         }
         return result;
+    }
+
+    /**
+     * 随机出一组元素
+     */
+    public void random(List<E> container, int count) {
+        Assert.isTrue(count > 0, "count必须大于0！");
+        checkEmptyPool();
+        for (int i = 0; i < count; i++) {
+            container.add(randomOneNotCheck());
+        }
     }
 
     /**
@@ -153,8 +164,6 @@ public class WeightListPool<E> {
 
     /**
      * 随机出一组不重复的元素
-     *
-     * @return 元素数组
      */
     public void randomUnique(Collection<E> container, int count) {
         checkEmptyPool();

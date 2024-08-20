@@ -134,6 +134,17 @@ public class WeightArrayPool<E> {
     }
 
     /**
+     * 随机出一组元素
+     */
+    public void random(List<E> container, int count) {
+        Assert.isTrue(count > 0, "count必须大于0！");
+        checkEmptyPool();
+        for (int i = 0; i < count; i++) {
+            container.add(randomOneNotCheck());
+        }
+    }
+
+    /**
      * 随机元素
      *
      * @return 随机元素
@@ -198,8 +209,6 @@ public class WeightArrayPool<E> {
 
     /**
      * 随机出一组不重复的元素
-     *
-     * @return 元素数组
      */
     public void randomUnique(Collection<E> container, int count) {
         checkEmptyPool();
