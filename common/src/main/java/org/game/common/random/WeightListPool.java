@@ -74,7 +74,7 @@ public class WeightListPool<E> {
 
     private int binarySearch(int k) {
         int mid, L = 0, R = randomPool.size() - 1;
-        if (k >= randomPool.get(R).getSumWeight()) {
+        if (k >= sumWeight) {
             return -1;
         }
         int res = R + 1;
@@ -86,7 +86,7 @@ public class WeightListPool<E> {
             } else if (randomPool.get(mid).getSumWeight() < k) {
                 L = mid + 1;
             } else {
-                res = mid;
+                res = mid + 1;
                 break;
             }
         }
