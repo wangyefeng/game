@@ -2,8 +2,6 @@ package org.game.common.random;
 
 import junit.framework.TestCase;
 
-import java.util.Arrays;
-
 public class RandomUtilTest extends TestCase {
 
     private WeightArrayPool<IWeightImpl> pool;
@@ -31,8 +29,8 @@ public class RandomUtilTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testApp() {
-        IWeightImpl[] ss = pool.randomArray(new IWeightImpl[4]);
-        System.out.println(Arrays.toString(ss));
+        IWeightImpl ss = pool.randomBySumWeight(2000);
+        System.out.println(ss);
     }
 
     private static class IWeightImpl implements IWeight {
