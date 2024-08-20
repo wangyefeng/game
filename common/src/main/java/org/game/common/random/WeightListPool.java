@@ -230,16 +230,20 @@ public class WeightListPool<E> {
      * @return 是否成功
      */
     public boolean removePool(E e) {
+        boolean isRemoved = false;
         Iterator<EWeight<E>> iterator = randomPool.iterator();
         while (iterator.hasNext()) {
             EWeight eWeight = iterator.next();
             if (eWeight.getE().equals(e)) {
                 iterator.remove();
-                sumWeight -= eWeight.weight();
-                return true;
+                isRemoved = true;
+                break;
             }
         }
-        return false;
+        if (isRemoved) {
+            recalculate();
+        }
+        return isRemoved;
     }
 
     /**
