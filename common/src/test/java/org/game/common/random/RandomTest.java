@@ -3,14 +3,14 @@ package org.game.common.random;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
-public class RandomUtilTest extends TestCase {
+public class RandomTest extends TestCase {
 
     private WeightArrayPool<IWeightImpl> pool;
 
     /**
      * Create the test case
      */
-    public RandomUtilTest() {
+    public RandomTest() {
         super("RandomUtil");
     }
 
