@@ -30,8 +30,11 @@ public class WeightArrayPool<E> {
         this.randomPool = new EWeight[elements.size()];
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements.get(i);
-            sumWeight += element.weight();
-            randomPool[i] = new EWeight(element, element.weight(), sumWeight);
+            int weight = element.weight();
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i] = new EWeight(element, weight, sumWeight);
+            }
         }
     }
 
@@ -40,8 +43,11 @@ public class WeightArrayPool<E> {
         this.randomPool = new EWeight[elements.length];
         for (int i = 0; i < randomPool.length; i++) {
             IWeight element = elements[i];
-            sumWeight += element.weight();
-            randomPool[i] = new EWeight(element, element.weight(), sumWeight);
+            int weight = element.weight();
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i] = new EWeight(element, weight, sumWeight);
+            }
         }
     }
 
@@ -51,8 +57,10 @@ public class WeightArrayPool<E> {
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements.get(i);
             int weight = calculator.weight(element);
-            sumWeight += weight;
-            randomPool[i] = new EWeight(element, weight, sumWeight);
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i] = new EWeight(element, weight, sumWeight);
+            }
         }
     }
 
@@ -62,8 +70,10 @@ public class WeightArrayPool<E> {
         for (int i = 0; i < randomPool.length; i++) {
             E element = elements[i];
             int weight = calculator.weight(element);
-            sumWeight += weight;
-            randomPool[i] = new EWeight(element, weight, sumWeight);
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i] = new EWeight(element, weight, sumWeight);
+            }
         }
     }
 
