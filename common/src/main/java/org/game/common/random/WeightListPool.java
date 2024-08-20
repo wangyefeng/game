@@ -1,10 +1,8 @@
 package org.game.common.random;
 
 import org.game.common.util.Assert;
-import org.game.common.util.ListUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -116,85 +114,6 @@ public class WeightListPool<E> {
         checkEmptyPool();
         for (int i = 0; i < count; i++) {
             container.add(randomOneNotCheck());
-        }
-    }
-
-    /**
-     * 随机出一组不重复的元素
-     *
-     * @return 元素数组
-     */
-    public E[] randomUnique(E[] result) {
-        checkEmptyPool();
-        int length = result.length;
-        int poolLength = randomPool.size();
-        Assert.isTrue(length > 0, "count必须大于0！");
-        Assert.isTrue(length <= randomPool.size(), "count必须小于等于随机池数量！");
-        if (length == randomPool.size()) {
-            for (int i = 0; i < length; i++) {
-                result[i] = randomPool.get(i).getE();
-            }
-        } else if (length == 1) {
-            result[0] = randomOneNotCheck();
-            return result;
-        } else {
-            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
-            for (int i = 0; i < length; i++) {
-                int randVal = RandomUtil.random(0, sumWeight - 1);
-                for (int j = 0; j < poolLength; j++) {
-                    EWeight<E> eWeight = randomPool.get(j);
-                    int weight = eWeight.weight();
-                    if (randVal < weight) {
-                        result[i] = eWeight.getE();
-                        if (i < length - 1) {
-                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
-                            ListUtil.swap(randomPool, j, poolLength - 1 - i);
-                            sumWeight -= eWeight.weight();
-                        }
-                        break;
-                    }
-                    randVal -= weight;
-                }
-            }
-            // 重新计算数据的权重范围
-            recalculate();
-        }
-        return result;
-    }
-
-    /**
-     * 随机出一组不重复的元素
-     */
-    public void randomUnique(Collection<E> container, int count) {
-        checkEmptyPool();
-        int poolLength = randomPool.size();
-        Assert.isTrue(count > 0 && count <= poolLength, "count必须是小于或者到随机池数量的正整数！count=" + count);
-        if (count == poolLength) {
-            for (int i = 0; i < count; i++) {
-                container.add(randomPool.get(i).getE());
-            }
-        } else if (count == 1) {
-            container.add(randomOneNotCheck());
-        } else {
-            // 此处随机算法会破坏之前的数组顺序，需要重新计算数据的权重范围
-            for (int i = 0; i < poolLength; i++) {
-                int randVal = RandomUtil.random(0, sumWeight - 1);
-                for (int j = 0; j < poolLength; j++) {
-                    EWeight<E> eWeight = randomPool.get(j);
-                    int weight = eWeight.weight();
-                    if (randVal < weight) {
-                        container.add(eWeight.getE());
-                        if (i < poolLength - 1) {
-                            // 交换随机到的元素和最后的元素的位置，并减少总权重值
-                            ListUtil.swap(randomPool, j, poolLength - 1 - i);
-                            sumWeight -= eWeight.weight();
-                        }
-                        break;
-                    }
-                    randVal -= weight;
-                }
-            }
-            recalculate();
         }
     }
 
