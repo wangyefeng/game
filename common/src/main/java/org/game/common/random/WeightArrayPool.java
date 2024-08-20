@@ -25,28 +25,34 @@ public class WeightArrayPool<E> {
      */
     private int sumWeight;
 
-    public WeightArrayPool(List<? extends IWeight> elements) {
+    public WeightArrayPool(List<E> elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];
         for (int i = 0; i < randomPool.length; i++) {
-            IWeight element = elements.get(i);
+            E e = elements.get(i);
+            if (!(e instanceof IWeight element)) {
+                throw new IllegalArgumentException("元素" + e + "必须实现IWeight接口！");
+            }
             int weight = element.weight();
             if (weight > 0) {
                 sumWeight += weight;
-                randomPool[i] = new EWeight(element, weight, sumWeight);
+                randomPool[i] = new EWeight<>(e, weight, sumWeight);
             }
         }
     }
 
-    public WeightArrayPool(IWeight... elements) {
+    public WeightArrayPool(E... elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.length];
         for (int i = 0; i < randomPool.length; i++) {
-            IWeight element = elements[i];
+            E e = elements[i];
+            if (!(e instanceof IWeight element)) {
+                throw new IllegalArgumentException("元素" + e + "必须实现IWeight接口！");
+            }
             int weight = element.weight();
             if (weight > 0) {
                 sumWeight += weight;
-                randomPool[i] = new EWeight(element, weight, sumWeight);
+                randomPool[i] = new EWeight<>(e, weight, sumWeight);
             }
         }
     }
@@ -59,7 +65,7 @@ public class WeightArrayPool<E> {
             int weight = calculator.weight(element);
             if (weight > 0) {
                 sumWeight += weight;
-                randomPool[i] = new EWeight(element, weight, sumWeight);
+                randomPool[i] = new EWeight<>(element, weight, sumWeight);
             }
         }
     }
@@ -72,7 +78,7 @@ public class WeightArrayPool<E> {
             int weight = calculator.weight(element);
             if (weight > 0) {
                 sumWeight += weight;
-                randomPool[i] = new EWeight(element, weight, sumWeight);
+                randomPool[i] = new EWeight<>(element, weight, sumWeight);
             }
         }
     }

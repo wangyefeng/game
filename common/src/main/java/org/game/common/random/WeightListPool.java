@@ -39,7 +39,7 @@ public class WeightListPool<E> {
         }
         if (weight > 0) {
             sumWeight += weight;
-            randomPool.add(new EWeight(e, weight, sumWeight));
+            randomPool.add(new EWeight<>(e, weight, sumWeight));
         }
     }
 
