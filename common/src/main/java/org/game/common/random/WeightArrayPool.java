@@ -34,7 +34,19 @@ public class WeightArrayPool<E> {
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, E... elements) {
-        this(calculator, List.of(elements));
+        Assert.notEmpty(elements, "随机池不能为空！");
+        this.randomPool = new EWeight[elements.length];
+        int i = 0;
+        for (E e : elements) {
+            int weight = calculator.weight(e);
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i++] = new EWeight<>(e, weight, sumWeight);
+            }
+        }
+        if (sumWeight == 0) {
+            throw new IllegalArgumentException("总权重值必须大于0！");
+        }
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, Collection<E> elements) {
