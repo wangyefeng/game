@@ -11,16 +11,14 @@ import java.util.Objects;
  * @author wangyefeng
  * @date 2014-07-29
  */
-public class EWeight<E> implements IWeight {
+public class EWeight<E> {
 
     private final E e;
-    private final int weight;
     private int sumWeight;
 
-    public EWeight(E e, int weight, int sumWeight) {
-        Assert.isTrue(weight > 0 && sumWeight > 0, "权重必须大于0");
+    public EWeight(E e, int sumWeight) {
+        Assert.isTrue(sumWeight > 0, "权重必须大于0");
         this.e = Objects.requireNonNull(e);
-        this.weight = weight;
         this.sumWeight = sumWeight;
     }
 
@@ -34,10 +32,5 @@ public class EWeight<E> implements IWeight {
 
     public void setSumWeight(int sumWeight) {
         this.sumWeight = sumWeight;
-    }
-
-    @Override
-    public int weight() {
-        return weight;
     }
 }
