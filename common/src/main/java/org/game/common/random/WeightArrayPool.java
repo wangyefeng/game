@@ -3,7 +3,6 @@ package org.game.common.random;
 import org.game.common.util.Assert;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 按权重随机的随机池，随机池不可变，底层是数组实现的。
@@ -113,7 +112,7 @@ public class WeightArrayPool<E> {
     /**
      * 随机出一组元素
      */
-    public void random(List<E> container, int count) {
+    public void random(Collection<E> container, int count) {
         Assert.isTrue(count > 0, "count必须大于0！");
         for (int i = 0; i < count; i++) {
             container.add(random());

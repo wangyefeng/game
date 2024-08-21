@@ -3,6 +3,7 @@ package org.game.common.random;
 import org.game.common.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class WeightListPool<E> {
     /**
      * 随机出一组元素
      */
-    public void random(List<E> container, int count) {
+    public void random(Collection<E> container, int count) {
         Assert.isTrue(count > 0, "count必须大于0！");
         checkEmptyPool();
         for (int i = 0; i < count; i++) {
@@ -138,8 +139,6 @@ public class WeightListPool<E> {
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
-        Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
-        checkEmptyPool();
         return binarySearch(randVal);
     }
 
