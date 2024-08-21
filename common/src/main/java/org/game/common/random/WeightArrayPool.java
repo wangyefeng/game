@@ -68,39 +68,32 @@ public class WeightArrayPool<E> {
         this.sumWeight = s;
     }
 
-    private int randomIndex() {
-        if (randomPool.length == 1) {
-            return 0;
-        }
-        int randVal = RandomUtil.random(0, sumWeight - 1);
-        return binarySearch(randVal);
-    }
-
     /**
      * 二分查找小于等于k的最大值的索引
      *
      * @param k 目标值
      * @return 索引 当k大于所有元素的总权重时，返回-1
      */
-    int binarySearch(int k) {
+    E binarySearch(int k) {
         if (k >= sumWeight) {
-            return -1;
+            return null;
         }
         int mid, L = 0, R = randomPool.length - 1;
-        int res = R + 1;
+        E result = null;
         while (L <= R) {
-            mid = L + (R - L) / 2;
-            if (randomPool[mid].getSumWeight() > k) {
+            mid = L + (R - L) / 2; //避免溢出
+            EWeight<E> m = randomPool[mid];
+            if (m.getSumWeight() > k) {
                 R = mid - 1;
-                res = mid;
-            } else if (randomPool[mid].getSumWeight() < k) {
+                result = m.getE();
+            } else if (m.getSumWeight() < k) {
                 L = mid + 1;
             } else {
-                res = mid + 1;
+                result = randomPool[mid + 1].getE();
                 break;
             }
         }
-        return res;
+        return result;
     }
 
     /**
@@ -133,7 +126,11 @@ public class WeightArrayPool<E> {
      * @return 随机元素
      */
     public E random() {
-        return randomPool[randomIndex()].getE();
+        if (randomPool.length == 1) {
+            return randomPool[0].getE();
+        }
+        int randVal = RandomUtil.random(0, sumWeight - 1);
+        return binarySearch(randVal);
     }
 
 
@@ -146,7 +143,6 @@ public class WeightArrayPool<E> {
     public E randomBySumWeight(int weight) {
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         int randVal = RandomUtil.random(0, weight - 1);
-        int index = binarySearch(randVal);
-        return index >= 0 ? randomPool[index].getE() : null;
+        return binarySearch(randVal);
     }
 }

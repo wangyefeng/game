@@ -49,12 +49,12 @@ public class WeightListPool<E> {
     }
 
     private E randomOneNotCheck() {
-        return randomPool.get(randomEWeightOne()).getE();
+        return randomEWeightOne();
     }
 
-    private int randomEWeightOne() {
+    private E randomEWeightOne() {
         if (randomPool.size() == 1) {
-            return 0;
+            return randomPool.get(0).getE();
         }
         int randVal = RandomUtil.random(0, sumWeight - 1);
         return binarySearch(randVal);
@@ -70,25 +70,26 @@ public class WeightListPool<E> {
         return randomOneNotCheck();
     }
 
-    private int binarySearch(int k) {
-        int mid, L = 0, R = randomPool.size() - 1;
+    private E binarySearch(int k) {
         if (k >= sumWeight) {
-            return -1;
+            return null;
         }
-        int res = R + 1;
+        int mid, L = 0, R = randomPool.size() - 1;
+        E result = null;
         while (L <= R) {
             mid = L + (R - L) / 2; //避免溢出
-            if (randomPool.get(mid).getSumWeight() > k) {
+            EWeight<E> m = randomPool.get(mid);
+            if (m.getSumWeight() > k) {
                 R = mid - 1;
-                res = mid;
-            } else if (randomPool.get(mid).getSumWeight() < k) {
+                result = m.getE();
+            } else if (m.getSumWeight() < k) {
                 L = mid + 1;
             } else {
-                res = mid + 1;
+                result = randomPool.get(mid + 1).getE();
                 break;
             }
         }
-        return res;
+        return result;
     }
 
     /**
@@ -139,8 +140,7 @@ public class WeightListPool<E> {
         int randVal = RandomUtil.random(0, weight - 1);
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
         checkEmptyPool();
-        int index = binarySearch(randVal);
-        return index >= 0 ? randomPool.get(index).getE() : null;
+        return binarySearch(randVal);
     }
 
     /**

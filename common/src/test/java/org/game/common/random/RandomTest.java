@@ -18,11 +18,11 @@ public class RandomTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         IWeightImpl[] arr = new IWeightImpl[5];
-        arr[0] = new IWeightImpl(1, 10);
-        arr[1] = new IWeightImpl(2, 20);
-        arr[2] = new IWeightImpl(3, 30);
-        arr[3] = new IWeightImpl(4, 20);
-        arr[4] = new IWeightImpl(5, 50);
+        arr[0] = new IWeightImpl(1, 10);// 0-9
+        arr[1] = new IWeightImpl(2, 20);// 10-29
+        arr[2] = new IWeightImpl(3, 30);// 30-59
+        arr[3] = new IWeightImpl(4, 20);// 60-79
+        arr[4] = new IWeightImpl(5, 50);// 80-129
         pool = new WeightArrayPool<>(arr);
     }
 
@@ -30,12 +30,16 @@ public class RandomTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testApp() {
-        Assert.assertEquals(0, pool.binarySearch(0));
-        Assert.assertEquals(1, pool.binarySearch(10));
-        Assert.assertEquals(2, pool.binarySearch(30));
-        Assert.assertEquals(2, pool.binarySearch(31));
-        Assert.assertEquals(4, pool.binarySearch(129));
-        Assert.assertEquals(-1, pool.binarySearch(130));
+        Assert.assertEquals(1, pool.binarySearch(0).id);
+        Assert.assertEquals(1, pool.binarySearch(9).id);
+        Assert.assertEquals(2, pool.binarySearch(10).id);
+        Assert.assertEquals(2, pool.binarySearch(29).id);
+        Assert.assertEquals(3, pool.binarySearch(30).id);
+        Assert.assertEquals(3, pool.binarySearch(31).id);
+        Assert.assertEquals(4, pool.binarySearch(60).id);
+        Assert.assertEquals(5, pool.binarySearch(129).id);
+
+        Assert.assertEquals(null, pool.binarySearch(130));
     }
 
     private static class IWeightImpl implements IWeight {
