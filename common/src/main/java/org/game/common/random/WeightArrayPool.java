@@ -2,9 +2,7 @@ package org.game.common.random;
 
 import org.game.common.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 按权重随机的随机池，随机池不可变，底层是数组实现的。
@@ -20,42 +18,38 @@ public class WeightArrayPool<E> {
      */
     private final EWeight<E>[] randomPool;
 
-    public WeightArrayPool(Collection<E> elements) {
-        this(e -> ((IWeight) e).weight(), elements);
+    public static <E extends IWeight> WeightArrayPool<E> createPool(Collection<E> elements) {
+        return new WeightArrayPool<>(e -> e.weight(), elements);
     }
 
-    public WeightArrayPool(E... elements) {
-        this(e -> ((IWeight) e).weight(), elements);
+    public static <E extends IWeight> WeightArrayPool<E> createPool(E... elements) {
+        return new WeightArrayPool<>(e -> e.weight(), elements);
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, E... elements) {
-        List<EWeight<E>> pool = new ArrayList<>();
+        Assert.notEmpty(elements, "随机池不能为空！");
+        this.randomPool = new EWeight[elements.length];
         int s = 0;
+        int i = 0;
         for (E e : elements) {
             int weight = calculator.weight(e);
-            if (weight > 0) {
-                s += weight;
-                pool.add(new EWeight<>(e, s));
-            }
+            Assert.isTrue(weight > 0, "权重必须大于0！");
+            s += weight;
+            randomPool[i++] = new EWeight<>(e, s);
         }
-        Assert.notEmpty(pool, "随机池不能为空！");
-        this.randomPool = new EWeight[pool.size()];
-        pool.toArray(randomPool);
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, Collection<E> elements) {
-        List<EWeight<E>> pool = new ArrayList<>();
+        Assert.notEmpty(elements, "随机池不能为空！");
+        this.randomPool = new EWeight[elements.size()];
         int s = 0;
+        int i = 0;
         for (E e : elements) {
             int weight = calculator.weight(e);
-            if (weight > 0) {
-                s += weight;
-                pool.add(new EWeight<>(e, s));
-            }
+            Assert.isTrue(weight > 0, "权重必须大于0！");
+            s += weight;
+            randomPool[i++] = new EWeight<>(e, s);
         }
-        Assert.notEmpty(pool, "随机池不能为空！");
-        this.randomPool = new EWeight[pool.size()];
-        pool.toArray(randomPool);
     }
 
     /**
@@ -64,50 +58,26 @@ public class WeightArrayPool<E> {
      * @param k 目标值
      * @return 索引 当k大于所有元素的总权重时，返回-1
      */
-    E binarySearch(int k) {
+    private E binarySearch(int k) {
         if (k >= sumWeight()) {
             return null;
         }
         int mid, L = 0, R = randomPool.length - 1;
         E result = null;
         while (L <= R) {
-            mid = L + (R - L) / 2; //避免溢出
+            mid = L + (R - L) / 2;
             EWeight<E> m = randomPool[mid];
-            if (m.getSumWeight() > k) {
+            if (m.sumWeight() > k) {
                 R = mid - 1;
-                result = m.getE();
-            } else if (m.getSumWeight() < k) {
+                result = m.e();
+            } else if (m.sumWeight() < k) {
                 L = mid + 1;
             } else {
-                result = randomPool[mid + 1].getE();
+                result = randomPool[mid + 1].e();
                 break;
             }
         }
         return result;
-    }
-
-    /**
-     * 随机出一组元素
-     *
-     * @return 随机一组元素
-     */
-    public E[] random(E[] result) {
-        int count = result.length;
-        Assert.isTrue(count > 0, "count必须大于0！");
-        for (int i = 0; i < count; i++) {
-            result[i] = random();
-        }
-        return result;
-    }
-
-    /**
-     * 随机出一组元素
-     */
-    public void random(Collection<E> container, int count) {
-        Assert.isTrue(count > 0, "count必须大于0！");
-        for (int i = 0; i < count; i++) {
-            container.add(random());
-        }
     }
 
     /**
@@ -117,7 +87,7 @@ public class WeightArrayPool<E> {
      */
     public E random() {
         if (randomPool.length == 1) {
-            return randomPool[0].getE();
+            return randomPool[0].e();
         }
         int randVal = RandomUtil.random(0, sumWeight() - 1);
         return binarySearch(randVal);
@@ -129,13 +99,21 @@ public class WeightArrayPool<E> {
      * @param weight 总权重
      * @return 随机池的一个元素或者null
      */
-    public E randomBySumWeight(int weight) {
+    public E randomByWeight(int weight) {
         Assert.isTrue(weight >= sumWeight(), "权重必须大于当前总权重！");
         int randVal = RandomUtil.random(0, weight - 1);
         return binarySearch(randVal);
     }
 
     private int sumWeight() {
-        return randomPool[randomPool.length - 1].getSumWeight();
+        return randomPool[randomPool.length - 1].sumWeight();
+    }
+
+    private record EWeight<E>(E e, int sumWeight) {
+
+        public EWeight(E e, int sumWeight) {
+            this.e = e;
+            this.sumWeight = sumWeight;
+        }
     }
 }

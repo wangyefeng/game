@@ -1,11 +1,15 @@
 package org.game.common.random;
 
 import junit.framework.TestCase;
-import org.junit.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RandomTest extends TestCase {
 
     private WeightArrayPool<IWeightImpl> pool;
+
+    private IWeightImpl[] arr;
 
     /**
      * Create the test case
@@ -17,29 +21,39 @@ public class RandomTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        IWeightImpl[] arr = new IWeightImpl[5];
-        arr[0] = new IWeightImpl(1, 10);// 0-9
-        arr[1] = new IWeightImpl(2, 20);// 10-29
-        arr[2] = new IWeightImpl(3, 30);// 30-59
-        arr[3] = new IWeightImpl(4, 20);// 60-79
-        arr[4] = new IWeightImpl(5, 50);// 80-129
-        pool = new WeightArrayPool<>(arr);
+        arr = new IWeightImpl[10000];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = new IWeightImpl(i, RandomUtil.random(1, 1000));
+        }
+        pool = WeightArrayPool.createPool(arr);
     }
 
     /**
      * Rigourous Test :-)
      */
     public void testApp() {
-        Assert.assertEquals(1, pool.binarySearch(0).id);
-        Assert.assertEquals(1, pool.binarySearch(9).id);
-        Assert.assertEquals(2, pool.binarySearch(10).id);
-        Assert.assertEquals(2, pool.binarySearch(29).id);
-        Assert.assertEquals(3, pool.binarySearch(30).id);
-        Assert.assertEquals(3, pool.binarySearch(31).id);
-        Assert.assertEquals(4, pool.binarySearch(60).id);
-        Assert.assertEquals(5, pool.binarySearch(129).id);
+        double d = 0.001;
+        int times = 10000000;
+        Map<Integer, Times> map = new HashMap<>(5);
+        int sumWeight = 0;
+        for (int i = 0; i < arr.length; i++) {
+            map.put(i, new Times());
+            sumWeight += arr[i].weight;
+        }
+        for (int i = 0; i < times; i++) {
+            map.get(pool.random().id).num++;
+        }
+        for (int i = 0; i < arr.length; i++) {
+            IWeightImpl iWeight = arr[i];
+            double expected = iWeight.weight * 1.0 / sumWeight;
+            double actual = map.get(i).num * 1.0 / times;
+            assertTrue(Math.abs(actual - expected) < d);
+        }
+    }
 
-        Assert.assertEquals(null, pool.binarySearch(130));
+    private static class Times {
+
+        private int num;
     }
 
     private static class IWeightImpl implements IWeight {
