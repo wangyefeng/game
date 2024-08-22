@@ -19,14 +19,14 @@ public class WeightArrayPool<E> {
     private final EWeight<E>[] randomPool;
 
     public static <E extends IWeight> WeightArrayPool<E> createPool(Collection<E> elements) {
-        return new WeightArrayPool<>(e -> e.weight(), elements);
+        return new WeightArrayPool<>(IWeight::weight, elements);
     }
 
-    public static <E extends IWeight> WeightArrayPool<E> createPool(E... elements) {
-        return new WeightArrayPool<>(e -> e.weight(), elements);
+    public static <E extends IWeight> WeightArrayPool<E> createPool(E[] elements) {
+        return new WeightArrayPool<>(IWeight::weight, elements);
     }
 
-    public WeightArrayPool(WeightCalculator<E> calculator, E... elements) {
+    public WeightArrayPool(WeightCalculator<E> calculator, E[] elements) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.length];
         int s = 0;
@@ -110,10 +110,5 @@ public class WeightArrayPool<E> {
     }
 
     private record EWeight<E>(E e, int sumWeight) {
-
-        public EWeight(E e, int sumWeight) {
-            this.e = e;
-            this.sumWeight = sumWeight;
-        }
     }
 }
