@@ -410,10 +410,13 @@ public class RandomUtil {
      */
     public static <T> T[] randomUnique(T[] pool, T[] result) {
         int poolLength = pool.length;
-        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        Assert.isTrue(poolLength >= result.length && result.length > 0, "结果数组长度必须且大于0且小于等于随机数组长度");
         if (poolLength == result.length) {
             System.arraycopy(pool, 0, result, 0, poolLength);
-        } else if (result.length > 0) {
+        } else if (result.length == 1) {
+            result[0] = pool[random(0, pool.length - 1)];
+            return result;
+        } else {
             @SuppressWarnings("unchecked")
             T[] temp = (T[]) (Array.newInstance(pool[0].getClass(), poolLength));
             System.arraycopy(pool, 0, temp, 0, poolLength);
@@ -435,9 +438,12 @@ public class RandomUtil {
      */
     public static int[] randomUnique(int[] pool, int[] result) {
         int poolLength = pool.length;
-        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        Assert.isTrue(poolLength >= result.length && result.length > 0, "结果数组长度必须且大于0且小于等于随机数组长度");
         if (poolLength == result.length) {
             System.arraycopy(pool, 0, result, 0, poolLength);
+        } else if (result.length == 1) {
+            result[0] = pool[random(0, pool.length - 1)];
+            return result;
         } else {
             int[] temp = new int[poolLength];
             System.arraycopy(pool, 0, temp, 0, poolLength);
@@ -459,9 +465,12 @@ public class RandomUtil {
      */
     public static long[] randomUnique(long[] pool, long[] result) {
         int poolLength = pool.length;
-        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        Assert.isTrue(poolLength >= result.length && result.length > 0, "结果数组长度必须且大于0且小于等于随机数组长度");
         if (poolLength == result.length) {
             System.arraycopy(pool, 0, result, 0, poolLength);
+        } else if (result.length == 1) {
+            result[0] = pool[random(0, pool.length - 1)];
+            return result;
         } else {
             long[] temp = new long[poolLength];
             System.arraycopy(pool, 0, temp, 0, poolLength);
@@ -483,9 +492,12 @@ public class RandomUtil {
      */
     public static double[] randomUnique(double[] pool, double[] result) {
         int poolLength = pool.length;
-        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        Assert.isTrue(poolLength >= result.length && result.length > 0, "结果数组长度必须且大于0且小于等于随机数组长度");
         if (poolLength == result.length) {
             System.arraycopy(pool, 0, result, 0, poolLength);
+        } else if (result.length == 1) {
+            result[0] = pool[random(0, pool.length - 1)];
+            return result;
         } else {
             double[] temp = new double[poolLength];
             System.arraycopy(pool, 0, temp, 0, poolLength);
@@ -507,9 +519,12 @@ public class RandomUtil {
      */
     public static float[] randomUnique(float[] pool, float[] result) {
         int poolLength = pool.length;
-        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        Assert.isTrue(poolLength >= result.length && result.length > 0, "结果数组长度必须且大于0且小于等于随机数组长度");
         if (poolLength == result.length) {
             System.arraycopy(pool, 0, result, 0, poolLength);
+        } else if (result.length == 1) {
+            result[0] = pool[random(0, pool.length - 1)];
+            return result;
         } else {
             float[] temp = new float[poolLength];
             System.arraycopy(pool, 0, temp, 0, poolLength);
