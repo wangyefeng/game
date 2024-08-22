@@ -53,14 +53,14 @@ public class RandomTest extends TestCase {
 
     private static class Times {
 
-        private int num;
+        int num;
     }
 
     private static class IWeightImpl implements IWeight {
 
-        private int id;
+        int id;
 
-        private int weight;
+        int weight;
 
         public IWeightImpl(int id, int weight) {
             this.id = id;
@@ -70,11 +70,6 @@ public class RandomTest extends TestCase {
         @Override
         public int weight() {
             return weight;
-        }
-
-        @Override
-        public String toString() {
-            return id + "";
         }
     }
 }
