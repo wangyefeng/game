@@ -1,9 +1,9 @@
 package org.game.common.random;
 
-
 import org.game.common.util.ArrayUtil;
 import org.game.common.util.Assert;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -405,19 +405,23 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param pool 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @param pool 随机数组
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
-    public static <T> T[] randomArrayNotRepeat(T[] pool, T[] result) {
-        Assert.isTrue(pool.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (pool.length == result.length) {
-            System.arraycopy(pool, 0, result, 0, pool.length);
+    public static <T> T[] randomUnique(T[] pool, T[] result) {
+        int poolLength = pool.length;
+        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (poolLength == result.length) {
+            System.arraycopy(pool, 0, result, 0, poolLength);
         } else if (result.length > 0) {
+            @SuppressWarnings("unchecked")
+            T[] temp = (T[]) (Array.newInstance(pool[0].getClass(), poolLength));
+            System.arraycopy(pool, 0, temp, 0, poolLength);
             for (int i = 0; i < result.length; i++) {
-                int last = pool.length - i - 1;
+                int last = temp.length - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(pool, index, last);
-                result[i] = pool[last];
+                ArrayUtil.swap(temp, index, last);
+                result[i] = temp[last];
             }
         }
         return result;
@@ -426,19 +430,22 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param pool 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @param pool 随机数组
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
-    public static int[] randomArrayNotRepeat(int[] pool, int[] result) {
-        Assert.isTrue(pool.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (pool.length == result.length) {
-            System.arraycopy(pool, 0, result, 0, pool.length);
+    public static int[] randomUnique(int[] pool, int[] result) {
+        int poolLength = pool.length;
+        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (poolLength == result.length) {
+            System.arraycopy(pool, 0, result, 0, poolLength);
         } else {
+            int[] temp = new int[poolLength];
+            System.arraycopy(pool, 0, temp, 0, poolLength);
             for (int i = 0; i < result.length; i++) {
-                int last = pool.length - i - 1;
+                int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(pool, index, last);
-                result[i] = pool[last];
+                ArrayUtil.swap(temp, index, last);
+                result[i] = temp[last];
             }
         }
         return result;
@@ -447,19 +454,22 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param pool 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @param pool 随机数组
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
-    public static long[] randomArrayNotRepeat(long[] pool, long[] result) {
-        Assert.isTrue(pool.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (pool.length == result.length) {
-            System.arraycopy(pool, 0, result, 0, pool.length);
+    public static long[] randomUnique(long[] pool, long[] result) {
+        int poolLength = pool.length;
+        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (poolLength == result.length) {
+            System.arraycopy(pool, 0, result, 0, poolLength);
         } else {
+            long[] temp = new long[poolLength];
+            System.arraycopy(pool, 0, temp, 0, poolLength);
             for (int i = 0; i < result.length; i++) {
-                int last = pool.length - i - 1;
+                int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(pool, index, last);
-                result[i] = pool[last];
+                ArrayUtil.swap(temp, index, last);
+                result[i] = temp[last];
             }
         }
         return result;
@@ -468,19 +478,22 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param pool 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @param pool 随机数组
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
-    public static double[] randomArrayNotRepeat(double[] pool, double[] result) {
-        Assert.isTrue(pool.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (pool.length == result.length) {
-            System.arraycopy(pool, 0, result, 0, pool.length);
+    public static double[] randomUnique(double[] pool, double[] result) {
+        int poolLength = pool.length;
+        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (poolLength == result.length) {
+            System.arraycopy(pool, 0, result, 0, poolLength);
         } else {
+            double[] temp = new double[poolLength];
+            System.arraycopy(pool, 0, temp, 0, poolLength);
             for (int i = 0; i < result.length; i++) {
-                int last = pool.length - i - 1;
+                int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(pool, index, last);
-                result[i] = pool[last];
+                ArrayUtil.swap(temp, index, last);
+                result[i] = temp[last];
             }
         }
         return result;
@@ -489,19 +502,22 @@ public class RandomUtil {
     /**
      * 伪随机数组
      *
-     * @param pool 随机数组  注意：这里为了效率，不会进行复制，而是直接修改原数组，因此调用者需要注意数组位置会改变，但数组的长度不会改变，内容也不会改变
+     * @param pool 随机数组
      * @throws IllegalArgumentException 当随机集合元素数量小于count
      */
-    public static float[] randomArrayNotRepeat(float[] pool, float[] result) {
-        Assert.isTrue(pool.length >= result.length, "随机数组长度必须大于等于结果数组长度");
-        if (pool.length == result.length) {
-            System.arraycopy(pool, 0, result, 0, pool.length);
+    public static float[] randomUnique(float[] pool, float[] result) {
+        int poolLength = pool.length;
+        Assert.isTrue(poolLength >= result.length, "随机数组长度必须大于等于结果数组长度");
+        if (poolLength == result.length) {
+            System.arraycopy(pool, 0, result, 0, poolLength);
         } else {
+            float[] temp = new float[poolLength];
+            System.arraycopy(pool, 0, temp, 0, poolLength);
             for (int i = 0; i < result.length; i++) {
-                int last = pool.length - i - 1;
+                int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(pool, index, last);
-                result[i] = pool[last];
+                ArrayUtil.swap(temp, index, last);
+                result[i] = temp[last];
             }
         }
         return result;
