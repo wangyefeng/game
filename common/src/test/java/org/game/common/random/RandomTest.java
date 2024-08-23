@@ -21,7 +21,7 @@ public class RandomTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        arr = new IWeightImpl[10000];
+        arr = new IWeightImpl[100];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = new IWeightImpl(i, RandomUtil.random(1, 1000));
         }
@@ -32,8 +32,8 @@ public class RandomTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testApp() {
-        double d = 0.001;
-        int times = 10000000;
+        double d = 0.0001;
+        int times = 100000000;
         Map<Integer, Times> map = new HashMap<>(5);
         int sumWeight = 0;
         for (int i = 0; i < arr.length; i++) {

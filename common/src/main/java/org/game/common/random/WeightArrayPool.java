@@ -62,7 +62,7 @@ public class WeightArrayPool<E> {
         int low = 0;
         int high = randomPool.length - 1;
 
-        while (low < high) {
+        while (low <= high) {
             int mid = (low + high) >>> 1;
             int midVal = randomPool[mid].sumWeight;
 
