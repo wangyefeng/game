@@ -56,7 +56,7 @@ public class WeightArrayPool<E> {
      * 二分查找小于等于key的最大值的元素
      *
      * @param key 目标值
-     * @return 索引 当key大于所有元素的总权重时，返回null
+     * @return 随机池的一个元素或者null 当key大于所有元素的总权重时，返回null
      */
     private E binarySearch(int key) {
         int low = 0;
@@ -71,7 +71,7 @@ public class WeightArrayPool<E> {
             } else if (midVal > key) {
                 high = mid - 1;
             } else {
-                return randomPool[mid + 1].e;
+                return randomPool[mid].e;
             }
         }
         return randomPool[low].e;
@@ -86,7 +86,7 @@ public class WeightArrayPool<E> {
         if (randomPool.length == 1) {
             return randomPool[0].e();
         }
-        int randVal = RandomUtil.random(0, sumWeight() - 1);
+        int randVal = RandomUtil.random(1, sumWeight());
         return binarySearch(randVal);
     }
 
@@ -98,8 +98,8 @@ public class WeightArrayPool<E> {
      */
     public E randomByWeight(int weight) {
         Assert.isTrue(weight >= sumWeight(), "权重必须大于当前总权重！");
-        int randVal = RandomUtil.random(0, weight - 1);
-        if (randVal >= sumWeight()) {
+        int randVal = RandomUtil.random(1, weight);
+        if (randVal > sumWeight()) {
             return null;
         }
         return binarySearch(randVal);
