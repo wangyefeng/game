@@ -59,13 +59,10 @@ public class WeightArrayPool<E> {
      * @return 索引 当key大于所有元素的总权重时，返回null
      */
     private E binarySearch(int key) {
-        if (key >= sumWeight()) {
-            return null;
-        }
         int low = 0;
         int high = randomPool.length - 1;
 
-        while (low <= high) {
+        while (low < high) {
             int mid = (low + high) >>> 1;
             int midVal = randomPool[mid].sumWeight;
 
@@ -102,6 +99,9 @@ public class WeightArrayPool<E> {
     public E randomByWeight(int weight) {
         Assert.isTrue(weight >= sumWeight(), "权重必须大于当前总权重！");
         int randVal = RandomUtil.random(0, weight - 1);
+        if (randVal >= sumWeight()) {
+            return null;
+        }
         return binarySearch(randVal);
     }
 
