@@ -53,31 +53,31 @@ public class WeightArrayPool<E> {
     }
 
     /**
-     * 二分查找小于等于k的最大值的索引
+     * 二分查找小于等于key的最大值的元素
      *
-     * @param k 目标值
-     * @return 索引 当k大于所有元素的总权重时，返回-1
+     * @param key 目标值
+     * @return 索引 当key大于所有元素的总权重时，返回null
      */
-    private E binarySearch(int k) {
-        if (k >= sumWeight()) {
+    private E binarySearch(int key) {
+        if (key >= sumWeight()) {
             return null;
         }
-        int mid, L = 0, R = randomPool.length - 1;
-        E result = null;
-        while (L <= R) {
-            mid = L + (R - L) / 2;
-            EWeight<E> m = randomPool[mid];
-            if (m.sumWeight() > k) {
-                R = mid - 1;
-                result = m.e();
-            } else if (m.sumWeight() < k) {
-                L = mid + 1;
+        int low = 0;
+        int high = randomPool.length - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int midVal = randomPool[mid].sumWeight;
+
+            if (midVal < key) {
+                low = mid + 1;
+            } else if (midVal > key) {
+                high = mid - 1;
             } else {
-                result = randomPool[mid + 1].e();
-                break;
+                return randomPool[mid + 1].e;
             }
         }
-        return result;
+        return randomPool[low].e;
     }
 
     /**
