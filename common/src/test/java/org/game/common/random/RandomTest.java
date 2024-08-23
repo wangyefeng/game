@@ -34,7 +34,7 @@ public class RandomTest extends TestCase {
     public void testApp() {
         double d = 0.0001;
         int times = 100000000;
-        Map<Integer, Times> map = new HashMap<>(5);
+        Map<Integer, Times> map = new HashMap<>(arr.length);
         int sumWeight = 0;
         for (int i = 0; i < arr.length; i++) {
             map.put(i, new Times());
