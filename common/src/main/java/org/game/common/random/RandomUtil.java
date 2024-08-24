@@ -1,6 +1,5 @@
 package org.game.common.random;
 
-import org.game.common.util.ArrayUtil;
 import org.game.common.util.Assert;
 
 import java.lang.reflect.Array;
@@ -216,6 +215,17 @@ public class RandomUtil {
     }
 
     /**
+     * 伪随机集合中某个元素
+     *
+     * @param pool 随机池
+     * @throws IllegalArgumentException 当totalWeight小于0时
+     */
+    public static <T extends IWeight> T randomByWeight(Collection<T> pool) {
+        WeightArrayPool<T> weightArrayPool = WeightArrayPool.createPool(pool);
+        return weightArrayPool.random();
+    }
+
+    /**
      * 伪随机带权重的集合
      *
      * @param pool             随机库集合
@@ -223,176 +233,8 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T randomByWeight(Collection<T> pool, WeightCalculator<T> weightCalculator) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为空");
-        if (pool.size() == 1) {
-            return pool.iterator().next();
-        }
-        int sum = 0;
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
-            sum += weight;
-        }
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        // 永远不会执行到这里
-        throw new RuntimeException();
-    }
-
-    /**
-     * 伪随机带权重的数组
-     *
-     * @param pool             随机数组
-     * @param weightCalculator 权重计算器
-     * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
-     */
-    public static <T> T randomByWeight(T[] pool, WeightCalculator<T> weightCalculator) {
-        Assert.isTrue(pool != null && pool.length != 0, "随机库元素数量不能为空");
-        if (pool.length == 1) {
-            return pool[0];
-        }
-        int sum = 0;
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
-            sum += weight;
-        }
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        // 永远不会执行到这里
-        throw new RuntimeException();
-    }
-
-
-    /**
-     * 伪随机集合中某个元素
-     *
-     * @param totalWeight      总权重
-     * @param weightCalculator 权重计算器
-     * @param pool             随机库集合
-     * @throws IllegalArgumentException 当totalWeight小于0时
-     */
-    public static <T> T randomByWeight(Collection<T> pool, WeightCalculator<T> weightCalculator, int totalWeight) {
-        Assert.isTrue(totalWeight > 0, "总权重不能小于0！!! totalWeight：" + totalWeight);
-        int sum = 0;
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            Assert.isTrue(weight >= 0, "权重不能为负数 weight:" + weight);
-            sum += weight;
-        }
-        Assert.isTrue(totalWeight >= sum, "总权重不能小于集合的权重之和！");
-        int randVal = ThreadLocalRandom.current().nextInt(totalWeight);
-        for (T t : pool) {
-            int weight = weightCalculator.weight(t);
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        return null;
-    }
-
-    /**
-     * 伪随机集合中某个元素
-     *
-     * @param pool 随机池
-     * @throws IllegalArgumentException 当totalWeight小于0时
-     */
-    public static <T extends IWeight> T randomByWeight(Collection<T> pool) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机池不能为空！");
-        if (pool.size() == 1) {
-            return pool.iterator().next();
-        }
-        int sum = 0;
-        for (T t : pool) {
-            int weight = t.weight();
-            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
-            sum += weight;
-        }
-        Assert.isTrue(sum > 0, "随机权重总和不能为0！");
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : pool) {
-            int weight = t.weight();
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        throw new RuntimeException("随机出错！");
-    }
-
-    /**
-     * 伪随机数组中某个元素
-     *
-     * @param pool 随机库集合
-     * @throws IllegalArgumentException 当某个权重为负数时
-     * @throws IllegalArgumentException 当数组长度为0时
-     */
-    public static <T extends IWeight> T randomByWeight(T[] pool) {
-        Assert.isTrue(pool != null && pool.length > 0, "随机数组长度不能为0！");
-        if (pool.length == 1) {
-            return pool[0];
-        }
-        int sum = 0;
-        for (T t : pool) {
-            int weight = t.weight();
-            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
-            sum += weight;
-        }
-        Assert.isTrue(sum > 0, "随机权重总和不能为0！");
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : pool) {
-            int weight = t.weight();
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        throw new RuntimeException("随机出错！");
-    }
-
-    /**
-     * 伪随机数组中某个元素
-     *
-     * @param a           随机数组
-     * @param totalWeight 总权重
-     * @throws IllegalArgumentException 当数组长度为0时
-     * @throws IllegalArgumentException 当totalWeight小于等于0时
-     * @throws IllegalArgumentException 当元素某个权重为负数时
-     * @throws IllegalArgumentException 当totalWeight小于所有元素权重之和
-     */
-    public static <T extends IWeight> T randomByWeight(T[] a, int totalWeight) {
-        Assert.isTrue(a != null && a.length > 0, "随机池不能为空！");
-        Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
-        int sum = 0;
-        for (T t : a) {
-            int weight = t.weight();
-            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
-            sum += weight;
-        }
-        Assert.isTrue(sum > 0, "总权重不能大于所有元素权重之和！");
-        Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : a) {
-            int weight = t.weight();
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        return null;
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool(pool, weightCalculator);
+        return weightArrayPool.random();
     }
 
     /**
@@ -406,27 +248,74 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当totalWeight大于所有元素权重之和
      */
     public static <T extends IWeight> T randomByWeight(Collection<T> pool, int totalWeight) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机池长度不能为0！");
-        Assert.isTrue(totalWeight > 0, "总权重不能为非正数！");
-        int sum = 0;
-        for (T t : pool) {
-            int weight = t.weight();
-            Assert.isTrue(weight >= 0, "权重不能为负数：" + weight);
-            sum += weight;
-        }
-        Assert.isTrue(sum > 0, "总权重不能大于所有元素权重之和！");
-        Assert.isTrue(sum <= totalWeight, "总权重不能大于所有元素权重之和！");
-        int randVal = ThreadLocalRandom.current().nextInt(sum);
-        for (T t : pool) {
-            int weight = t.weight();
-            if (randVal < weight) {
-                return t;
-            }
-            randVal -= weight;
-        }
-        return null;
+        WeightArrayPool<T> weightArrayPool = WeightArrayPool.createPool(pool);
+        return weightArrayPool.randomByWeight(totalWeight);
     }
 
+    /**
+     * 伪随机集合中某个元素
+     *
+     * @param totalWeight      总权重
+     * @param weightCalculator 权重计算器
+     * @param pool             随机库集合
+     * @throws IllegalArgumentException 当totalWeight小于0时
+     */
+    public static <T> T randomByWeight(Collection<T> pool, WeightCalculator<T> weightCalculator, int totalWeight) {
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool<>(pool, weightCalculator);
+        return weightArrayPool.randomByWeight(totalWeight);
+    }
+
+    /**
+     * 伪随机数组中某个元素
+     *
+     * @param pool 随机库集合
+     * @throws IllegalArgumentException 当某个权重为负数时
+     * @throws IllegalArgumentException 当数组长度为0时
+     */
+    public static <T extends IWeight> T randomByWeight(T[] pool) {
+        WeightArrayPool<T> weightArrayPool = WeightArrayPool.createPool(pool);
+        return weightArrayPool.random();
+    }
+
+    /**
+     * 伪随机带权重的数组
+     *
+     * @param pool             随机数组
+     * @param weightCalculator 权重计算器
+     * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
+     */
+    public static <T> T randomByWeight(T[] pool, WeightCalculator<T> weightCalculator) {
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool(pool, weightCalculator);
+        return weightArrayPool.random();
+    }
+
+    /**
+     * 伪随机数组中某个元素
+     *
+     * @param pool  随机数组
+     * @param totalWeight 总权重
+     * @throws IllegalArgumentException 当数组长度为0时
+     * @throws IllegalArgumentException 当totalWeight小于等于0时
+     * @throws IllegalArgumentException 当元素某个权重为负数时
+     * @throws IllegalArgumentException 当totalWeight小于所有元素权重之和
+     */
+    public static <T extends IWeight> T randomByWeight(T[] pool, int totalWeight) {
+        WeightArrayPool<T> weightArrayPool = WeightArrayPool.createPool(pool);
+        return weightArrayPool.randomByWeight(totalWeight);
+    }
+
+    /**
+     * 伪随机集合中某个元素
+     *
+     * @param totalWeight      总权重
+     * @param weightCalculator 权重计算器
+     * @param pool             随机库集合
+     * @throws IllegalArgumentException 当totalWeight小于0时
+     */
+    public static <T> T randomByWeight(T[] pool, WeightCalculator<T> weightCalculator, int totalWeight) {
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool<>(pool, weightCalculator);
+        return weightArrayPool.randomByWeight(totalWeight);
+    }
 
     /**
      * 伪随机数组
@@ -449,8 +338,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = temp.length - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(temp, index, last);
-                result[i] = temp[last];
+                result[i] = temp[index];
+                temp[index] = temp[last];
             }
         }
         return result;
@@ -476,8 +365,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(temp, index, last);
-                result[i] = temp[last];
+                result[i] = temp[index];
+                temp[index] = temp[last];
             }
         }
         return result;
@@ -503,8 +392,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(temp, index, last);
-                result[i] = temp[last];
+                result[i] = temp[index];
+                temp[index] = temp[last];
             }
         }
         return result;
@@ -530,8 +419,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(temp, index, last);
-                result[i] = temp[last];
+                result[i] = temp[index];
+                temp[index] = temp[last];
             }
         }
         return result;
@@ -557,8 +446,8 @@ public class RandomUtil {
             for (int i = 0; i < result.length; i++) {
                 int last = poolLength - i - 1;
                 int index = random(0, last);
-                ArrayUtil.swap(temp, index, last);
-                result[i] = temp[last];
+                result[i] = temp[index];
+                temp[index] = temp[last];
             }
         }
         return result;
