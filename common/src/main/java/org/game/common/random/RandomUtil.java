@@ -6,6 +6,7 @@ import org.game.common.util.Assert;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -85,7 +86,7 @@ public class RandomUtil {
     }
 
     /**
-     * 伪随机出集合中某个元素
+     * 伪随机出List中某个元素
      *
      * @param pool 随机池
      * @return 返回库中的某个元素
@@ -97,6 +98,29 @@ public class RandomUtil {
         int size = pool.size();
         int index = random(0, size - 1);
         return pool.get(index);
+    }
+
+    /**
+     * 伪随机出Set中某个元素
+     *
+     * @param pool 随机池
+     * @return 返回库中的某个元素
+     * @throws NullPointerException     当c为null时
+     * @throws IllegalArgumentException 当c没有元素时
+     */
+    public static <T> T random(Set<T> pool) {
+        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
+        int size = pool.size();
+        int index = ThreadLocalRandom.current().nextInt(size);
+        int i = 0;
+        for (T t : pool) {
+            if (i == index) {
+                return t;
+            }
+            i++;
+        }
+        // 永远不会执行到这里
+        throw new RuntimeException();
     }
 
     /**
