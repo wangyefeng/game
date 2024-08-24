@@ -11,6 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 伪随机工具类
+ * 基于ThreadLocalRandom类实现的伪随机数生成器
+ * @see ThreadLocalRandom
  */
 public class RandomUtil {
 
