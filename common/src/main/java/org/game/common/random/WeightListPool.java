@@ -58,7 +58,7 @@ public class WeightListPool<E> {
         if (randomPool.isEmpty()) {
             return 0;
         }
-        return randomPool.get(randomPool.size() - 1).sumWeight;
+        return randomPool.getLast().sumWeight;
     }
 
     private void checkEmptyPool() {
@@ -71,7 +71,7 @@ public class WeightListPool<E> {
         checkEmptyPool();
 
         if (randomPool.size() == 1) {
-            return randomPool.get(0).e;
+            return randomPool.getFirst().e;
         }
 
         int randVal = RandomUtil.random(1, sumWeight());
@@ -118,7 +118,7 @@ public class WeightListPool<E> {
         return binarySearch(randVal);
     }
 
-    private class EWeight<E> {
+    private static class EWeight<E> {
         final E e;
         int sumWeight;
 
