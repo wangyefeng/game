@@ -94,9 +94,9 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c没有元素时
      */
     public static <T> T random(List<T> pool) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
+        Assert.notEmpty(pool, "随机库元素数量不能为0");
         int size = pool.size();
-        int index = random(0, size - 1);
+        int index = ThreadLocalRandom.current().nextInt(size);
         return pool.get(index);
     }
 
@@ -109,7 +109,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c没有元素时
      */
     public static <T> T random(Set<T> pool) {
-        Assert.isTrue(pool != null && !pool.isEmpty(), "随机库元素数量不能为0");
+        Assert.notEmpty(pool, "随机库元素数量不能为0");
         int size = pool.size();
         int index = ThreadLocalRandom.current().nextInt(size);
         int i = 0;
