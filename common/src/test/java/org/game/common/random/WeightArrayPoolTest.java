@@ -5,18 +5,11 @@ import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RandomTest extends TestCase {
+public class WeightArrayPoolTest extends TestCase {
 
     private WeightArrayPool<IWeightImpl> pool;
 
     private IWeightImpl[] arr;
-
-    /**
-     * Create the test case
-     */
-    public RandomTest() {
-        super("RandomUtil");
-    }
 
     @Override
     protected void setUp() throws Exception {
@@ -28,9 +21,6 @@ public class RandomTest extends TestCase {
         pool = WeightArrayPool.createPool(arr);
     }
 
-    /**
-     * Rigourous Test :-)
-     */
     public void testApp() {
         double d = 0.0001;
         int times = 100000000;
