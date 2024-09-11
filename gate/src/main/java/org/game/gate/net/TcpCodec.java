@@ -46,14 +46,11 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
         }
     }
 
-
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (!leakyBucket.addRequest()) {
-            if (ctx.channel().isOpen()) {
-                log.warn("触发限流，channel: {}", ctx.channel());
-                ctx.close();
-            }
+            log.warn("触发限流，channel: {}", ctx.channel());
+            ctx.close();
             return;
         }
         byte from = Topic.CLIENT.getCode();
@@ -67,7 +64,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 in.skipBytes(in.readableBytes());
                 return;
             }
-            if (to == Topic.GATE.getCode()) { // 客户端发送gate处理的消息
+            if (to == Topic.GATE.getCode()) { // gate
                 if (protocol.parser() != null) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
                     Message message = (Message) protocol.parser().parseFrom(inputStream);
@@ -75,7 +72,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 } else {
                     out.add(new MessageCode<>(protocol));
                 }
-            } else {
+            } else if (to == Topic.LOGIC.getCode()) {// logic
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
                 if (player != null && logicClient.isRunning()) {
                     int readableBytes = in.readableBytes();
@@ -97,10 +94,13 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                     log.error("handle message error, player not found, code: {}", code);
                     in.skipBytes(in.readableBytes());
                 }
+            } else {
+                log.warn("decode error, illegal to topic: {}, code: {}", to, code);
+                ctx.close();
             }
         } else {
             log.error("decode error, illegal decoder type: {}", type);
-            in.skipBytes(in.readableBytes());
+            ctx.close();
         }
     }
 }
