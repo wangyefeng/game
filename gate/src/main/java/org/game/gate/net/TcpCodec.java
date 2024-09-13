@@ -91,7 +91,11 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                     logicClient.getChannel().writeAndFlush(byteBuf);
                     in.skipBytes(in.readableBytes());
                 } else {
-                    log.error("handle message error, player not found, code: {}", code);
+                    if (player == null) {
+                        log.error("handle message error, player not found, code: {}", code);
+                    } else {
+                        log.error("handle message error, logic not running, code: {}", code);
+                    }
                     in.skipBytes(in.readableBytes());
                 }
             } else {
