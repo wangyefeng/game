@@ -5,9 +5,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
+import org.game.proto.MessageCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.game.proto.MessageCode;
 
 @ChannelHandler.Sharable
 public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
@@ -34,5 +34,13 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         logicClient.setRunning(false);
+        if (!logicClient.isClosed()) {
+            logicClient.reconnect();
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        log.error("exception caught", cause);
     }
 }

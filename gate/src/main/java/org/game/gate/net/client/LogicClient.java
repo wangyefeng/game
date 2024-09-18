@@ -49,6 +49,8 @@ public class LogicClient extends Client {
 
     private Set<Player> players = new HashSet<>();
 
+    private boolean isClosed = false;
+
     public LogicClient(String host, int port) {
         super(host, port, "logic");
     }
@@ -75,6 +77,12 @@ public class LogicClient extends Client {
     }
 
     @Override
+    public void close() {
+        super.close();
+        isClosed = true;
+    }
+
+    @Override
     public String getHost() {
         return super.getHost();
     }
@@ -94,6 +102,10 @@ public class LogicClient extends Client {
 
     public void removePlayer(Player player) {
         players.remove(player);
+    }
+
+    public boolean isClosed() {
+        return isClosed;
     }
 }
 

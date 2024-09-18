@@ -52,8 +52,9 @@ public class Logic implements CommandLineRunner {
     }
 
     @PreDestroy
-    public void close() {
-        log.info("logic server closed");
+    public void close() throws Exception {
+        log.info("logic server closing...");
+        tcpServer.close(true);
     }
 
     @Override
