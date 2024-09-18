@@ -64,7 +64,7 @@
 
 
     <Loggers>
-        <Root level="info">
+        <Root level="info" includeLocation="true">
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="DEBUG"/>
             <AppenderRef ref="INFO"/>
