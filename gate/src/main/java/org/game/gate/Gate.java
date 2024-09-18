@@ -46,7 +46,7 @@ public class Gate implements CommandLineRunner {
         registerHandler();
         logicClient.start();
         tcpServer.start();
-        log.info("gate server started successfully");
+        log.info("网关服务器启动成功！");
     }
 
     @PreDestroy
