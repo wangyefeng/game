@@ -46,11 +46,13 @@ public class Gate implements CommandLineRunner {
         registerHandler();
         logicClient.start();
         tcpServer.start();
+        log.info("gate server started successfully");
     }
 
     @PreDestroy
-    public void close() {
-        log.info("gate server closed");
+    public void stop() {
+        log.info("gate server closing...");
+        logicClient.close();
     }
 
     @Override

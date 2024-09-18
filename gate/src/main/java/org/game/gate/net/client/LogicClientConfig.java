@@ -17,7 +17,7 @@ public class LogicClientConfig {
     @Autowired
     private ZooKeeper zooKeeper;
 
-    @Bean
+    @Bean(destroyMethod = "")
     public LogicClient logicClient() throws InterruptedException, KeeperException {
         String servicePath = SERVICE_REGISTRY_ZNODE;
         List<String> serviceNodes = zooKeeper.getChildren(servicePath, false);

@@ -34,6 +34,5 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         logicClient.setRunning(false);
-        logicClient.reconnect();
     }
 }

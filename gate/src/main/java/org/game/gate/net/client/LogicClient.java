@@ -1,6 +1,5 @@
 package org.game.gate.net.client;
 
-
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -11,9 +10,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.game.gate.player.Player;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 import org.game.proto.protocol.Protocol;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @description 逻辑服务器的客户端
  */
 @Component
-@Validated
 public class LogicClient extends Client {
 
 
