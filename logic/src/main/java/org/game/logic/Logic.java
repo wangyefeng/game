@@ -57,7 +57,7 @@ public class Logic implements CommandLineRunner {
     public void close() throws Exception {
         stopping = true;
         log.info("服务器关闭中，请等待...");
-        tcpServer.close(true);
+        tcpServer.close();
     }
 
     @Override

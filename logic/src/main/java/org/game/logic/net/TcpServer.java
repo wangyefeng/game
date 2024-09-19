@@ -14,7 +14,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
@@ -47,6 +46,8 @@ public class TcpServer {
 
     private boolean isRunning = false;
 
+    private EventLoopGroup group;
+
     TcpServer() {
     }
 
@@ -58,11 +59,11 @@ public class TcpServer {
             InetAddress localhost = InetAddress.getLocalHost();
             host = localhost.getHostAddress();
         }
-        EventLoopGroup group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
+        group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             ClientHandler clientHandler = new ClientHandler();
-            MessageToByteEncoder playerMsgEncode = new PlayerMsgEncode();
+            PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             GateHandler gateHandler = new GateHandler();
             bootstrap.group(group, group).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
@@ -90,14 +91,9 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
             ChannelFuture future = bootstrap.bind(port).sync();
-            channel = future.channel();
             isRunning = true;
+            channel = future.channel();
             log.info("tcp server started and listening on port {}", port);
-            channel.closeFuture().addListener(_ -> {
-                isRunning = false;
-                log.info("tcp server stopped");
-                group.shutdownGracefully();
-            });
         } catch (Exception e) {
             group.shutdownGracefully();
             throw new RuntimeException(e);
@@ -120,15 +116,13 @@ public class TcpServer {
         this.host = host;
     }
 
-    public void close(boolean isSync) throws InterruptedException {
-        if (isRunning) {
-            if (isSync) {
-                channel.close().sync();
-            } else {
-                channel.close();
-            }
-        } else {
-            throw new IllegalStateException("Server is not running");
+    public void close() throws InterruptedException {
+        if (!isRunning) {
+            return;
         }
+        channel.close().sync();
+        isRunning = false;
+        group.shutdownGracefully();
+        log.info("tcp server closed");
     }
 }
