@@ -9,8 +9,6 @@ import org.game.proto.MessageCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketException;
-
 /**
  * @author wangyefeng
  * @date 2024-07-08
@@ -33,16 +31,15 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof SocketException && "Connection reset".equals(cause.getMessage())) {
-            log.info("Connection reset");
-        } else {
-            log.error("gate处理器发生异常：", cause);
+        log.error("网络连接异常：", cause);
+        if (ctx.channel().isActive()) {
+            ctx.channel().close();
         }
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        log.info("客户端断开连接, 地址：{}", ctx.channel().remoteAddress());
+        log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
     }
 }

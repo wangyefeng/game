@@ -45,9 +45,8 @@ public abstract class Client {
     }
 
     public void close() {
-        ChannelFuture channelFuture = channel.close();
         try {
-            channelFuture.sync();
+            channel.close().sync();
             running = false;
             log.info("断开服务器连接！ {}", this);
         } catch (InterruptedException e) {
@@ -72,7 +71,7 @@ public abstract class Client {
                 log.info("服务器连接成功！连接到服务器 {}", this);
                 break;
             } catch (Exception e) {
-                log.error("连接失败，msg: {} 正在重试...", e.getMessage());
+                log.error("连接服务器失败，原因: {} 正在重试...", e.getMessage());
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {

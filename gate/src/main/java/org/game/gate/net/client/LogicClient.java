@@ -78,8 +78,8 @@ public class LogicClient extends Client {
 
     @Override
     public void close() {
-        super.close();
         isClosed = true;
+        super.close();
     }
 
     @Override
