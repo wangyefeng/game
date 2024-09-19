@@ -3,7 +3,6 @@ package org.game.gate.net.client;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -56,8 +55,8 @@ public class LogicClient extends Client {
     @Override
     public void init() {
         ChannelHandler handler = new LogicHandler(this);
-        EventLoopGroup group = new NioEventLoopGroup(1);
-        bootstrap.group(group).channel(NioSocketChannel.class);
+        eventLoopGroup = new NioEventLoopGroup(1);
+        bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 

@@ -3,6 +3,7 @@ package org.game.gate.net.client;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.EventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -22,6 +23,8 @@ public abstract class Client {
     protected boolean running;
 
     protected String name;
+
+    protected EventLoopGroup eventLoopGroup;
 
     public Client(String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
@@ -47,6 +50,7 @@ public abstract class Client {
     public void close() {
         try {
             channel.close().sync();
+            eventLoopGroup.shutdownGracefully();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
