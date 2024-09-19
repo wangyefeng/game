@@ -43,7 +43,7 @@ public class TcpServer {
             throw new IllegalStateException("Server is already running");
         }
         EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 用于接收客户端连接
-        EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于处理客户端连接
+        EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于读写流处理
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {

@@ -37,6 +37,8 @@ public class Gate implements CommandLineRunner {
     @Autowired
     private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
+    private static boolean stopping = false;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -50,7 +52,8 @@ public class Gate implements CommandLineRunner {
     }
 
     @PreDestroy
-    public void stop() {
+    public void close() {
+        stopping = true;
         log.info("gate server closing...");
         logicClient.close();
     }
@@ -74,5 +77,9 @@ public class Gate implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(Gate.class, args);
+    }
+
+    public static boolean isStopping() {
+        return stopping;
     }
 }

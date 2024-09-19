@@ -2,7 +2,12 @@ package org.game.logic.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,19 +16,21 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import org.game.proto.*;
+import org.game.proto.CommonDecoder;
+import org.game.proto.MessageCodeDecoder;
+import org.game.proto.MessagePlayerDecoder;
+import org.game.proto.PlayerMsgEncode;
+import org.game.proto.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Component
 @ConfigurationProperties(prefix = "tcp")
-@Validated
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -51,14 +58,13 @@ public class TcpServer {
             InetAddress localhost = InetAddress.getLocalHost();
             host = localhost.getHostAddress();
         }
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 用于接收客户端连接
-        EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于处理客户端连接
+        EventLoopGroup group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             ClientHandler clientHandler = new ClientHandler();
             MessageToByteEncoder playerMsgEncode = new PlayerMsgEncode();
             GateHandler gateHandler = new GateHandler();
-            bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
+            bootstrap.group(group, group).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
@@ -87,15 +93,13 @@ public class TcpServer {
             channel = future.channel();
             isRunning = true;
             log.info("tcp server started and listening on port {}", port);
-            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+            channel.closeFuture().addListener(_ -> {
                 isRunning = false;
                 log.info("tcp server stopped");
-                bossGroup.shutdownGracefully();
-                workerGroup.shutdownGracefully();
+                group.shutdownGracefully();
             });
         } catch (Exception e) {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+            group.shutdownGracefully();
             throw new RuntimeException(e);
         }
     }
@@ -123,6 +127,8 @@ public class TcpServer {
             } else {
                 channel.close();
             }
+        } else {
+            throw new IllegalStateException("Server is not running");
         }
     }
 }

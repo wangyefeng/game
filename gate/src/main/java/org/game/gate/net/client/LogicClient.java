@@ -49,8 +49,6 @@ public class LogicClient extends Client {
 
     private Set<Player> players = new HashSet<>();
 
-    private boolean isClosed = false;
-
     public LogicClient(String host, int port) {
         super(host, port, "logic");
     }
@@ -60,7 +58,7 @@ public class LogicClient extends Client {
         ChannelHandler handler = new LogicHandler(this);
         EventLoopGroup group = new NioEventLoopGroup(1);
         bootstrap.group(group).channel(NioSocketChannel.class);
-        HeartBeatHandler heartBeatHandler = new HeartBeatHandler(this);
+        HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
             @Override
@@ -74,12 +72,6 @@ public class LogicClient extends Client {
                 cp.addLast(handler);
             }
         });
-    }
-
-    @Override
-    public void close() {
-        isClosed = true;
-        super.close();
     }
 
     @Override
@@ -102,10 +94,6 @@ public class LogicClient extends Client {
 
     public void removePlayer(Player player) {
         players.remove(player);
-    }
-
-    public boolean isClosed() {
-        return isClosed;
     }
 }
 

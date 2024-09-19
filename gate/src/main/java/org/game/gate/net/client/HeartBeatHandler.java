@@ -20,8 +20,6 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
 
     private static final ByteBuf PING = Unpooled.unreleasableBuffer(Unpooled.directBuffer(8));
 
-    private final Client client;
-
     static {
         PING.writeInt(4);
         PING.writeByte(DecoderType.MESSAGE_CODE.getCode());
@@ -29,8 +27,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
         PING.writeShort(GateToLogicProtocol.PING.getCode());
     }
 
-    public HeartBeatHandler(Client client) {
-        this.client = client;
+    public HeartBeatHandler() {
     }
 
     @Override
@@ -38,11 +35,11 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent event) {
             IdleState state = event.state();
             if (state == IdleState.READER_IDLE) {
-                log.warn("读空闲，断开连接！！！连接: {}", client);
+                log.warn("读空闲，断开连接！！！连接: {}", ctx.channel().remoteAddress());
                 ctx.channel().close();
             } else if (state == IdleState.WRITER_IDLE) {
                 ctx.channel().writeAndFlush(PING.duplicate());
-                log.debug("写空闲，发送心跳包！！！连接: {}", client);
+                log.debug("写空闲，发送心跳包！！！连接: {}", ctx.channel().remoteAddress());
             }
         } else {
             super.userEventTriggered(ctx, evt);

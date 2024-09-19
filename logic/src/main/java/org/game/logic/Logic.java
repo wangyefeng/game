@@ -34,6 +34,8 @@ public class Logic implements CommandLineRunner {
     @Autowired
     private ZooKeeper zooKeeper;
 
+    private static boolean stopping = false;
+
     private static final String SERVICE_ROOT = "/logic";
 
     private void start() throws Exception {
@@ -53,7 +55,8 @@ public class Logic implements CommandLineRunner {
 
     @PreDestroy
     public void close() throws Exception {
-        log.info("服务器关闭中...");
+        stopping = true;
+        log.info("服务器关闭中，请等待...");
         tcpServer.close(true);
     }
 
@@ -72,6 +75,10 @@ public class Logic implements CommandLineRunner {
         gateMsgHandlers.forEach(handler -> GateMsgHandler.register(handler));// 注册gate handler
         clientMsgHandlers.forEach(handler -> ClientMsgHandler.register(handler));// 注册client handler
         log.info("handler register end");
+    }
+
+    public static boolean isStopping() {
+        return stopping;
     }
 
     public static void main(String[] args) {

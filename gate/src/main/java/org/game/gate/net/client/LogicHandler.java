@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.game.gate.Gate;
 import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.proto.MessageCode;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
         super.channelInactive(ctx);
         logicClient.setRunning(false);
-        if (!logicClient.isClosed()) {
+        if (!Gate.isStopping()) {
             log.info("尝试重新连接逻辑服务器{}...", ctx.channel().remoteAddress());
             logicClient.reconnect();
         }
