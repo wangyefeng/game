@@ -89,7 +89,7 @@ public class TcpServer {
             log.info("tcp server started and listening on port {}", port);
             channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
                 isRunning = false;
-                log.warn("tcp server stopped");
+                log.info("tcp server stopped");
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });

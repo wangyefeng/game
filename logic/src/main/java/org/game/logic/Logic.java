@@ -53,7 +53,7 @@ public class Logic implements CommandLineRunner {
 
     @PreDestroy
     public void close() throws Exception {
-        log.info("logic server closing...");
+        log.info("服务器关闭中...");
         tcpServer.close(true);
     }
 
