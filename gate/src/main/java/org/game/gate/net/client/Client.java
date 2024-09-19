@@ -47,8 +47,6 @@ public abstract class Client {
     public void close() {
         try {
             channel.close().sync();
-            running = false;
-            log.info("断开服务器连接！ {}", this);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

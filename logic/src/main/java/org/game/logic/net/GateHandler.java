@@ -41,7 +41,9 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        if (!Logic.isStopping()) {
+        if (Logic.isStopping()) {
+            log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
+        } else {
             log.error("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
         }
     }
