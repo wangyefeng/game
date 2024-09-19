@@ -8,6 +8,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.handler.GateMsgHandler;
 import org.game.logic.net.TcpServer;
+import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class Logic implements CommandLineRunner {
         stopping = true;
         log.info("服务器关闭中，请等待...");
         tcpServer.close();
+        ThreadPool.shutdown();
     }
 
     @Override
