@@ -29,7 +29,7 @@ public final class ValidateHandler implements ClientMsgHandler<Common.PbInt> {
         int playerId = msg.getVal();
         ThreadPoolExecutor playerExecutor = ThreadPool.getPlayerExecutor(playerId);
         playerExecutor.submit(() -> {
-            log.info("Player {} is logging in.", playerId);
+            log.info("Player {} is logging in. channel: {}", playerId, channel.id());
             Player player = null;
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号

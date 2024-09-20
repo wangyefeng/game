@@ -33,12 +33,8 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        if (Gate.isStopping()) {
-            log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
-        } else {
-            log.error("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
-        }
         super.channelInactive(ctx);
+        log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
         logicClient.setRunning(false);
         if (!Gate.isStopping()) {
             log.info("尝试重新连接逻辑服务器{}...", ctx.channel().remoteAddress());

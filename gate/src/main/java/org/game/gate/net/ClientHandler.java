@@ -32,7 +32,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        log.info("Channel active: {}", ctx.channel());
+        log.info("客户端建立TCP连接，地址：{} id: {}", ctx.channel().remoteAddress(), ctx.channel().id());
     }
 
     @Override

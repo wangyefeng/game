@@ -4,7 +4,6 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.game.logic.Logic;
 import org.game.logic.handler.GateMsgHandler;
 import org.game.proto.MessageCode;
 import org.slf4j.Logger;
@@ -41,10 +40,6 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        if (Logic.isStopping()) {
-            log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
-        } else {
-            log.error("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
-        }
+        log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
     }
 }
