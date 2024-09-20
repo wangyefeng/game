@@ -48,11 +48,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof SocketException) {
-            log.info("Socket exception {} channel: {}", cause.getMessage(), ctx.channel());
+            log.info("Socket exception {} channel: {}", cause.getMessage(), ctx.channel().id());
         } else if (cause instanceof ReadTimeoutException) {
-            log.info("Read timeout: {}", ctx.channel());
+            log.info("Read timeout: {}", ctx.channel().id());
         } else {
-            log.error("Exception caught in channel: {}", ctx.channel(), cause);
+            log.error("Exception caught in channel: {}", ctx.channel().id(), cause);
             ctx.close();
         }
     }
@@ -61,7 +61,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel c = ctx.channel();
-        log.info("与客户端断开TCP连接, 地址: {} id: {}", c.remoteAddress(), c.id());
+        log.info("与客户端断开TCP连接, 地址: {} channel: {}", c.remoteAddress(), c.id());
         Player player = c.attr(AttributeKeys.PLAYER).get();
         if (player != null) {
             player.getExecutor().submit(() -> {
