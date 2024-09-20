@@ -6,28 +6,30 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
-import org.game.gate.player.Player;
-import org.game.gate.player.Players;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.net.client.LogicClient;
+import org.game.gate.player.Player;
+import org.game.gate.player.Players;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.game.proto.struct.Common;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.SocketException;
 
 @ChannelHandler.Sharable
-@Component
 public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
     @Autowired
     private LogicClient logicClient;
+
+    public ClientHandler(LogicClient logicClient) {
+        this.logicClient = logicClient;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

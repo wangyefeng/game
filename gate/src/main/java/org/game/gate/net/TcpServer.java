@@ -31,9 +31,6 @@ public class TcpServer {
     @Autowired
     private LogicClient logicClient;
 
-    @Autowired
-    private ClientHandler clientHandler;
-
     private EventLoopGroup bossGroup;
 
     private EventLoopGroup workerGroup;
@@ -50,6 +47,7 @@ public class TcpServer {
         workerGroup = new NioEventLoopGroup(); // 用于读写流处理
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
+            ClientHandler clientHandler = new ClientHandler(logicClient);
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
