@@ -34,6 +34,10 @@ public class TcpServer {
     @Autowired
     private ClientHandler clientHandler;
 
+    private EventLoopGroup bossGroup;
+
+    private EventLoopGroup workerGroup;
+
     TcpServer() {
     }
 
@@ -42,8 +46,8 @@ public class TcpServer {
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
         }
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 用于接收客户端连接
-        EventLoopGroup workerGroup = new NioEventLoopGroup(); // 用于读写流处理
+        bossGroup = new NioEventLoopGroup(1); // 用于接收客户端连接
+        workerGroup = new NioEventLoopGroup(); // 用于读写流处理
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
@@ -66,16 +70,9 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128); // 设置接收缓冲区大小
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
-            ChannelFuture future = bootstrap.bind(port).sync();
-            Channel channel = future.channel();
+            bootstrap.bind(port).sync();
             isRunning = true;
             log.info("tcp server started and listening on port {}", port);
-            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
-                isRunning = false;
-                log.warn("tcp server stopped");
-                bossGroup.shutdownGracefully();
-                workerGroup.shutdownGracefully();
-            });
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -85,5 +82,15 @@ public class TcpServer {
 
     public int getPort() {
         return port;
+    }
+
+    public void close() throws InterruptedException {
+        if (!isRunning) {
+            return;
+        }
+        bossGroup.shutdownGracefully().sync();
+        workerGroup.shutdownGracefully().sync();
+        isRunning = false;
+        log.info("tcp server closed");
     }
 }

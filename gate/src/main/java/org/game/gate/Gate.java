@@ -52,9 +52,10 @@ public class Gate implements CommandLineRunner {
     }
 
     @PreDestroy
-    public void close() {
-        stopping = true;
+    public void close() throws Exception {
         log.info("gate server closing...");
+        stopping = true;
+        tcpServer.close();
         logicClient.close();
     }
 

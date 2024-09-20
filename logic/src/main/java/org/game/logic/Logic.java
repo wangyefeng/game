@@ -56,8 +56,8 @@ public class Logic implements CommandLineRunner {
 
     @PreDestroy
     public void close() throws Exception {
-        stopping = true;
         log.info("服务器关闭中，请等待...");
+        stopping = true;
         tcpServer.close();
         ThreadPool.shutdown();
     }

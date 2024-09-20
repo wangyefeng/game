@@ -60,7 +60,7 @@ public class TcpServer {
             ClientHandler clientHandler = new ClientHandler();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             GateHandler gateHandler = new GateHandler();
-            bootstrap.group(group, group).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
+            bootstrap.group(group).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class : NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
@@ -114,7 +114,7 @@ public class TcpServer {
         if (!isRunning) {
             return;
         }
-        group.shutdownGracefully();
+        group.shutdownGracefully().sync();
         isRunning = false;
         log.info("tcp server closed");
     }
