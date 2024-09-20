@@ -2,12 +2,9 @@ package org.game.logic.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -42,11 +39,9 @@ public class TcpServer {
 
     private int port;
 
-    private Channel channel;
-
     private boolean isRunning = false;
 
-    private EventLoopGroup group;
+    private NioEventLoopGroup group;
 
     TcpServer() {
     }
@@ -90,9 +85,8 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128); // 设置接收缓冲区大小
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
-            ChannelFuture future = bootstrap.bind(port).sync();
+            bootstrap.bind(port).sync();
             isRunning = true;
-            channel = future.channel();
             log.info("tcp server started and listening on port {}", port);
         } catch (Exception e) {
             group.shutdownGracefully();
@@ -120,9 +114,8 @@ public class TcpServer {
         if (!isRunning) {
             return;
         }
-        channel.close().sync();
-        isRunning = false;
         group.shutdownGracefully();
+        isRunning = false;
         log.info("tcp server closed");
     }
 }
