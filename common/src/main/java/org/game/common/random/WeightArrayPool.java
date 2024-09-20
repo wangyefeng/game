@@ -25,69 +25,31 @@ public class WeightArrayPool<E> {
      */
     private int sumWeight;
 
-    public WeightArrayPool(List<E> elements) {
-        Assert.notEmpty(elements, "随机池不能为空！");
-        this.randomPool = new EWeight[elements.size()];
-        for (int i = 0; i < randomPool.length; i++) {
-            E e = elements.get(i);
-            if (!(e instanceof IWeight element)) {
-                throw new IllegalArgumentException("元素" + e + "必须实现IWeight接口！");
-            }
-            int weight = element.weight();
-            if (weight > 0) {
-                sumWeight += weight;
-                randomPool[i] = new EWeight<>(e, weight, sumWeight);
-            }
-        }
+    public WeightArrayPool(Collection<E> elements) {
+        this(e -> ((IWeight) e).weight(), elements);
     }
 
     public WeightArrayPool(E... elements) {
-        Assert.notEmpty(elements, "随机池不能为空！");
-        this.randomPool = new EWeight[elements.length];
-        for (int i = 0; i < randomPool.length; i++) {
-            E e = elements[i];
-            if (!(e instanceof IWeight element)) {
-                throw new IllegalArgumentException("元素" + e + "必须实现IWeight接口！");
-            }
-            int weight = element.weight();
-            if (weight > 0) {
-                sumWeight += weight;
-                randomPool[i] = new EWeight<>(e, weight, sumWeight);
-            }
-        }
-    }
-
-    public WeightArrayPool(WeightCalculator<E> calculator, List<E> elements) {
-        Assert.notEmpty(elements, "随机池不能为空！");
-        this.randomPool = new EWeight[elements.size()];
-        for (int i = 0; i < randomPool.length; i++) {
-            E element = elements.get(i);
-            int weight = calculator.weight(element);
-            if (weight > 0) {
-                sumWeight += weight;
-                randomPool[i] = new EWeight<>(element, weight, sumWeight);
-            }
-        }
+        this(e -> ((IWeight) e).weight(), elements);
     }
 
     public WeightArrayPool(WeightCalculator<E> calculator, E... elements) {
-        Assert.notEmpty(elements, "随机池不能为空！");
-        this.randomPool = new EWeight[elements.length];
-        for (int i = 0; i < randomPool.length; i++) {
-            E element = elements[i];
-            int weight = calculator.weight(element);
-            if (weight > 0) {
-                sumWeight += weight;
-                randomPool[i] = new EWeight<>(element, weight, sumWeight);
-            }
-        }
+        this(calculator, List.of(elements));
     }
 
-
-    // 检查空池
-    private void checkEmptyPool() {
-        if (randomPool.length == 0) {
-            throw new EmptyPoolException();
+    public WeightArrayPool(WeightCalculator<E> calculator, Collection<E> elements) {
+        Assert.notEmpty(elements, "随机池不能为空！");
+        this.randomPool = new EWeight[elements.size()];
+        int i = 0;
+        for (E e : elements) {
+            int weight = calculator.weight(e);
+            if (weight > 0) {
+                sumWeight += weight;
+                randomPool[i++] = new EWeight<>(e, weight, sumWeight);
+            }
+        }
+        if (sumWeight == 0) {
+            throw new IllegalArgumentException("总权重值必须大于0！");
         }
     }
 
@@ -132,7 +94,6 @@ public class WeightArrayPool<E> {
     public E[] random(E[] result) {
         int count = result.length;
         Assert.isTrue(count > 0, "count必须大于0！");
-        checkEmptyPool();
         for (int i = 0; i < count; i++) {
             result[i] = randomOneNotCheck();
         }
@@ -144,7 +105,6 @@ public class WeightArrayPool<E> {
      */
     public void random(List<E> container, int count) {
         Assert.isTrue(count > 0, "count必须大于0！");
-        checkEmptyPool();
         for (int i = 0; i < count; i++) {
             container.add(randomOneNotCheck());
         }
@@ -156,7 +116,6 @@ public class WeightArrayPool<E> {
      * @return 随机元素
      */
     public E random() {
-        checkEmptyPool();
         return randomOneNotCheck();
     }
 
@@ -166,7 +125,6 @@ public class WeightArrayPool<E> {
      * @return 元素数组
      */
     public E[] randomUnique(E[] result) {
-        checkEmptyPool();
         int resultLength = result.length;
         int poolLength = randomPool.length;
         Assert.isTrue(resultLength > 0, "count必须大于0！");
@@ -217,7 +175,6 @@ public class WeightArrayPool<E> {
      * 随机出一组不重复的元素
      */
     public void randomUnique(Collection<E> container, int count) {
-        checkEmptyPool();
         int poolLength = randomPool.length;
         Assert.isTrue(count > 0 && count <= poolLength, "count必须是小于或者到随机池数量的正整数！count=" + count);
         if (count == poolLength) {
@@ -259,7 +216,6 @@ public class WeightArrayPool<E> {
      */
     public E randomBySumWeight(int weight) {
         Assert.isTrue(weight >= sumWeight, "权重必须大于当前总权重！");
-        checkEmptyPool();
         int randVal = RandomUtil.random(0, weight - 1);
         int index = binarySearch(randVal);
         return index >= 0 ? randomPool[index].getE() : null;

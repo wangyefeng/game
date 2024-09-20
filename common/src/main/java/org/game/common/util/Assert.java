@@ -18,7 +18,6 @@ package org.game.common.util;
 
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 复制spring的Assert类，用于提供一些常用的断言方法。
@@ -132,7 +131,7 @@ public abstract class Assert {
         }
     }
 
-    public static void notEmpty(List<? extends Object> elements, String s) {
+    public static void notEmpty(Collection<? extends Object> elements, String s) {
         if (elements == null || elements.isEmpty()) {
             throw new IllegalArgumentException(s);
         }
