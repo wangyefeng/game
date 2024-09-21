@@ -50,7 +50,7 @@ public abstract class Client {
     public void close() {
         try {
             channel.close().sync();
-            eventLoopGroup.shutdownGracefully();
+            eventLoopGroup.shutdownGracefully().sync();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
