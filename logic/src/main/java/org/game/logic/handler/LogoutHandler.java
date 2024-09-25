@@ -1,6 +1,7 @@
 package org.game.logic.handler;
 
 import io.netty.channel.Channel;
+import org.game.logic.data.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class LogoutHandler implements GateMsgHandler<Common.PbInt> {
 
 
     @Override
-    public void handle(Channel channel, Common.PbInt msg) {
+    public void handle(Channel channel, Common.PbInt msg, Config config) {
         ThreadPool.getPlayerExecutor(msg.getVal()).execute(() -> {
             log.info("gate通知logic玩家{}退出", msg.getVal());
             playerService.logout(Players.getPlayer(msg.getVal()));

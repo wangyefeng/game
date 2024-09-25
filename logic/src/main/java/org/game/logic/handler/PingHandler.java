@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import org.game.logic.data.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     }
 
     @Override
-    public void handle(Channel channel, Message msg) {
+    public void handle(Channel channel, Message msg, Config config) {
         log.debug("Received a ping message from gate.");
         channel.writeAndFlush(PONG.duplicate());// 回应PONG消息
     }

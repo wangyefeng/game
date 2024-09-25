@@ -2,6 +2,7 @@ package org.game.logic.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
+import org.game.logic.data.config.Config;
 import org.game.proto.protocol.GateToLogicProtocol;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public interface GateMsgHandler<T extends Message> {
         return handlers.get(code);
     }
 
-    void handle(Channel channel, T msg);
+    void handle(Channel channel, T msg, Config config);
 
     GateToLogicProtocol getProtocol();
 
