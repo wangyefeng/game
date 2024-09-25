@@ -2,7 +2,7 @@ package org.game.logic.player;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.logic.data.PlayerInfo;
+import org.game.logic.data.game.PlayerInfo;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
 

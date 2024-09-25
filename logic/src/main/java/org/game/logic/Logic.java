@@ -5,6 +5,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
+import org.game.logic.data.config.CfgService;
+import org.game.logic.data.config.Config;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.handler.GateMsgHandler;
 import org.game.logic.net.TcpServer;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 
@@ -35,14 +38,28 @@ public class Logic implements CommandLineRunner {
     @Autowired
     private ZooKeeper zooKeeper;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private static boolean stopping = false;
 
     private static final String SERVICE_ROOT = "/logic";
 
     private void start() throws Exception {
+        initConfig();
         registerHandler();
         tcpServer.start();
         registerService();
+    }
+
+    private void initConfig() {
+        Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
+        cfgServices.forEach(CfgService::init);
+        Config.reload(cfgServices);
+    }
+
+    public void reloadConfig() {
+        initConfig();
     }
 
     private void registerService() throws KeeperException, InterruptedException {

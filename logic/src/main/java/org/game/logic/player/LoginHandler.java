@@ -1,13 +1,14 @@
 package org.game.logic.player;
 
 import io.netty.channel.Channel;
-import org.game.logic.data.PlayerInfo;
+import org.game.logic.data.config.Config;
+import org.game.logic.data.game.PlayerInfo;
 import org.game.logic.handler.ClientMsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.game.logic.data.PlayerRepository;
+import org.game.logic.data.game.PlayerDao;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Common;
@@ -22,20 +23,20 @@ public class LoginHandler implements ClientMsgHandler<Common.PbInt> {
     private static final Logger log = LoggerFactory.getLogger(LoginHandler.class);
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private PlayerDao playerDao;
 
     @Override
-    public void handle(Channel channel, int playerId, Common.PbInt message) {
+    public void handle(Channel channel, int playerId, Common.PbInt message, Config config) {
         log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
         Player player = Players.getPlayer(playerId);
         if (player == null) {
-            Optional<PlayerInfo> optional = playerRepository.findById(playerId);
+            Optional<PlayerInfo> optional = playerDao.findById(playerId);
             PlayerInfo playerInfo;
             if (optional.isPresent()) {
                 playerInfo = optional.get();
             } else {
                 playerInfo = new PlayerInfo(playerId, "test", new ArrayList<>());
-                playerRepository.insert(playerInfo);
+                playerDao.insert(playerInfo);
             }
             player = new Player(playerInfo, channel);
             Players.addPlayer(player);

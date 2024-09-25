@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.game.logic.data.config.Config;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
         // 交给业务线程接管
         ThreadPool.getPlayerExecutor(message.getPlayerId()).execute(() -> {
             try {
-                logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage());
+                logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage(), Config.getInstance());
             } catch (Exception e) {
                 log.error("handle message error", e);
             }
