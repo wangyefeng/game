@@ -1,13 +1,14 @@
 package org.game.logic.data.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class IDCfgService<Entity extends Cfg<ID>, Dao extends CfgDao<Entity, ID>, ID> implements CfgService {
+public abstract class IDCfgService<Entity extends Cfg<ID>, Dao extends MongoRepository<Entity, ID>, ID> implements CfgService {
 
     @Autowired
     protected Dao dao;

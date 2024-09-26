@@ -1,4 +1,6 @@
 package org.game.logic.data.config;
 
-public interface CfgItemDao extends CfgDao<CfgItem, Integer> {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface CfgItemDao extends MongoRepository<CfgItem, Integer> {
 }
