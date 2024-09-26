@@ -1,6 +1,5 @@
 package org.game.logic;
 
-import jakarta.annotation.PreDestroy;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -46,6 +45,14 @@ public class Logic implements CommandLineRunner {
     private static final String SERVICE_ROOT = "/logic";
 
     private void start() throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                close();
+                SpringApplication.exit(applicationContext);
+            } catch (Exception e) {
+                log.error("关闭服务器异常！", e);
+            }
+        }, "shutdown-hook"));
         initConfig();
         registerHandler();
         tcpServer.start();
@@ -71,19 +78,19 @@ public class Logic implements CommandLineRunner {
         log.info("zookeeper registry service success, path: {}", path);
     }
 
-    @PreDestroy
     public void close() throws Exception {
-        log.info("服务器关闭中，请等待...");
-        stopping = true;
-        tcpServer.close();
-        ThreadPool.shutdown();
+        synchronized (Logic.class) {
+            log.info("服务器关闭中，请等待...");
+            stopping = true;
+            tcpServer.close();
+            ThreadPool.shutdown();
+        }
     }
 
     @Override
     public void run(String... args) {
         try {
             start();
-            log.info("逻辑服务器启动成功！");
         } catch (Exception e) {
             throw new IllegalStateException("logic start error", e);
         }
@@ -101,6 +108,11 @@ public class Logic implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Logic.class, args);
+        synchronized (Logic.class) {
+            SpringApplication application = new SpringApplication(Logic.class);
+            application.setRegisterShutdownHook(false);
+            application.run(args);
+            log.info("逻辑服务器启动成功！");
+        }
     }
 }
