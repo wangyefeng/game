@@ -46,11 +46,16 @@ public class Logic implements CommandLineRunner {
 
     private void start() throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                close();
-                SpringApplication.exit(applicationContext);
-            } catch (Exception e) {
-                log.error("关闭服务器异常！", e);
+            synchronized (Logic.class) {
+                try {
+                    log.info("JVM 正在关闭，请等待...");
+                    close();
+                } catch (Exception e) {
+                    log.error("关闭服务器异常！", e);
+                } finally {
+                    SpringApplication.exit(applicationContext);
+                }
+                log.info("JVM 已关闭！");
             }
         }, "shutdown-hook"));
         initConfig();
@@ -79,12 +84,9 @@ public class Logic implements CommandLineRunner {
     }
 
     public void close() throws Exception {
-        synchronized (Logic.class) {
-            log.info("服务器关闭中，请等待...");
-            stopping = true;
-            tcpServer.close();
-            ThreadPool.shutdown();
-        }
+        stopping = true;
+        tcpServer.close();
+        ThreadPool.shutdown();
     }
 
     @Override
