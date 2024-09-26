@@ -70,7 +70,6 @@ public class Gate implements CommandLineRunner {
     }
 
     public void close() throws Exception {
-        log.info("gate server closing...");
         stopping = true;
         tcpServer.close();
         logicClient.close();
