@@ -40,22 +40,24 @@ public class Logic implements CommandLineRunner {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private static boolean stopping = false;
+    private Status status = Status.STARTING;
 
     private static final String SERVICE_ROOT = "/logic";
 
     private void start() throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             synchronized (Logic.class) {
-                try {
-                    log.info("JVM 正在关闭，请等待...");
-                    close();
-                } catch (Exception e) {
-                    log.error("关闭服务器异常！", e);
-                } finally {
-                    SpringApplication.exit(applicationContext);
+                if (status == Status.RUNNING) {
+                    try {
+                        log.info("JVM 正在关闭，请等待...");
+                        close();
+                    } catch (Exception e) {
+                        log.error("关闭服务器异常！", e);
+                    } finally {
+                        SpringApplication.exit(applicationContext);
+                    }
+                    log.info("JVM 已关闭！");
                 }
-                log.info("JVM 已关闭！");
             }
         }, "shutdown-hook"));
         initConfig();
@@ -84,7 +86,7 @@ public class Logic implements CommandLineRunner {
     }
 
     public void close() throws Exception {
-        stopping = true;
+        status = Status.STOPPING;
         tcpServer.close();
         ThreadPool.shutdown();
     }
@@ -93,6 +95,7 @@ public class Logic implements CommandLineRunner {
     public void run(String... args) {
         try {
             start();
+            status = Status.RUNNING;
         } catch (Exception e) {
             throw new IllegalStateException("logic start error", e);
         }
@@ -105,8 +108,8 @@ public class Logic implements CommandLineRunner {
         log.info("handler register end");
     }
 
-    public static boolean isStopping() {
-        return stopping;
+    public boolean isStopping() {
+        return status == Status.STOPPING;
     }
 
     public static void main(String[] args) {
@@ -116,5 +119,22 @@ public class Logic implements CommandLineRunner {
             application.run(args);
             log.info("逻辑服务器启动成功！");
         }
+    }
+
+    private enum Status {
+        /**
+         * 服务器启动中
+         */
+        STARTING,
+
+        /**
+         * 服务器运行中
+         */
+        RUNNING,
+
+        /**
+         * 服务器停止中
+         */
+        STOPPING,
     }
 }
