@@ -26,6 +26,8 @@ public abstract class Client {
 
     protected EventLoopGroup eventLoopGroup;
 
+    private Thread reconnectThread;
+
     public Client(String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
         this.host = host;
@@ -49,6 +51,9 @@ public abstract class Client {
 
     public void close() {
         try {
+            if (reconnectThread != null) {
+                reconnectThread.interrupt();
+            }
             channel.close().sync();
             eventLoopGroup.shutdownGracefully().sync();
         } catch (InterruptedException e) {
@@ -65,20 +70,19 @@ public abstract class Client {
     }
 
     public void connect() {
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channel = channelFuture.channel();
                 running = true;
                 log.info("服务器连接成功！连接到服务器 {}", this);
+                reconnectThread = null;
+                break;
+            } catch (InterruptedException e) {
+                log.info("重连线程中断！");
                 break;
             } catch (Exception e) {
                 log.error("连接服务器失败，原因: {} 正在重试...", e.getMessage());
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
             }
         }
     }
@@ -89,8 +93,8 @@ public abstract class Client {
     }
 
     public void reconnect() {
-        Thread thread = new Thread(this::connect, "reconnect");
-        thread.start();
+        reconnectThread = new Thread(() -> connect(), "reconnect");
+        reconnectThread.start();
     }
 
     @Override
