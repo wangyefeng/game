@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author 王叶峰
  */
-public class EventListenerManager<Event> implements Unloadable<Event> {
+public class EventListeners<Event> {
 
     /**
      * 观察者列表
