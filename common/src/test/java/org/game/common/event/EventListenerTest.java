@@ -8,8 +8,8 @@ public class EventListenerTest extends TestCase {
         Player player = new Player(1);
         LevelUpListener listener1 = new LevelUpListener(player.level, 10);
         LevelUpListener listener2 = new LevelUpListener(player.level, 12);
-        player.addEventListener(EventType.LEVEL_UP, listener1);
-        player.addEventListener(EventType.LEVEL_UP, listener2);
+        player.addEventListener(PlayerEventType.LEVEL_UP, listener1);
+        player.addEventListener(PlayerEventType.LEVEL_UP, listener2);
         for (int i = 0; i < 10; i++) {
             player.levelUp();
         }
@@ -17,11 +17,11 @@ public class EventListenerTest extends TestCase {
         assertTrue(listener1.currentLevel == 10);
         assertFalse(listener2.isFinished);
         assertTrue(listener2.currentLevel == 11);
-        assertTrue(player.getEventListeners(EventType.LEVEL_UP).size() == 1);
+        assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 1);
         player.levelUp();
         assertTrue(listener2.isFinished);
         assertTrue(listener2.currentLevel == 12);
-        assertTrue(player.getEventListeners(EventType.LEVEL_UP).size() == 0);
+        assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
     }
 
     private class LevelUpListener implements EventListener<Integer> {
@@ -52,7 +52,7 @@ public class EventListenerTest extends TestCase {
 
         private int level;
 
-        private EventListenerMap<EventType> eventListenerMap = new EventListenerMap<>(EventType.values());
+        private EventListenerMap<PlayerEventType> eventListenerMap = new EventListenerMap<>(PlayerEventType.values());
 
         public Player(int level) {
             this.level = level;
@@ -60,27 +60,27 @@ public class EventListenerTest extends TestCase {
 
         public void levelUp() {
             level++;
-            update(EventType.LEVEL_UP, level);
+            update(PlayerEventType.LEVEL_UP, level);
         }
 
-        public EventListenerMap<EventType> getEventListeners() {
+        public EventListenerMap<PlayerEventType> getEventListeners() {
             return eventListenerMap;
         }
 
-        public void update(EventType type, Object value) {
-            eventListenerMap.update(type, value);
+        public void update(PlayerEventType eventType, Object value) {
+            eventListenerMap.update(eventType, value);
         }
 
-        public <T extends EventListeners<?>> T getEventListeners(EventType eventType) {
+        public <T extends EventListeners<?>> T getEventListeners(PlayerEventType eventType) {
             return eventListenerMap.getEventListeners(eventType);
         }
 
-        public void addEventListener(EventType eventType, EventListener<?> listener) {
+        public void addEventListener(PlayerEventType eventType, EventListener<?> listener) {
             eventListenerMap.addEventListener(eventType, listener);
         }
     }
 
-    public enum EventType {
+    public enum PlayerEventType {
 
         LEVEL_UP,
 

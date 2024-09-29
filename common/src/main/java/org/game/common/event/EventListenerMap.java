@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * @author 王叶峰
  */
-public class EventListenerMap<EventType> {
+public class EventListenerMap<EventType extends Enum<EventType>> {
 
     private Map<EventType, EventListeners<?>> eventListeners;
 
