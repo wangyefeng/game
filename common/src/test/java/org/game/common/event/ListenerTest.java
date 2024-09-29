@@ -2,7 +2,7 @@ package org.game.common.event;
 
 import junit.framework.TestCase;
 
-public class EventListenerTest extends TestCase {
+public class ListenerTest extends TestCase {
 
     public void testApp() {
         Player player = new Player(1);
@@ -24,7 +24,7 @@ public class EventListenerTest extends TestCase {
         assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
     }
 
-    private class LevelUpListener implements EventListener<Integer> {
+    private class LevelUpListener implements Listener<Integer> {
 
         private int currentLevel;
 
@@ -39,7 +39,7 @@ public class EventListenerTest extends TestCase {
         }
 
         @Override
-        public void update(Integer level, EventListeners<Integer> unloadable) {
+        public void update(Integer level, Publisher<Integer> unloadable) {
             currentLevel = level;
             if (level >= targetLevel) {
                 isFinished = true;
@@ -52,7 +52,7 @@ public class EventListenerTest extends TestCase {
 
         private int level;
 
-        private EventListenerMap<PlayerEventType> eventListenerMap = new EventListenerMap<>(PlayerEventType.values());
+        private PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
 
         public Player(int level) {
             this.level = level;
@@ -63,20 +63,20 @@ public class EventListenerTest extends TestCase {
             update(PlayerEventType.LEVEL_UP, level);
         }
 
-        public EventListenerMap<PlayerEventType> getEventListeners() {
-            return eventListenerMap;
+        public PublishManager<PlayerEventType> getEventListeners() {
+            return publishManager;
         }
 
         public void update(PlayerEventType eventType, Object value) {
-            eventListenerMap.update(eventType, value);
+            publishManager.update(eventType, value);
         }
 
-        public <T extends EventListeners<?>> T getEventListeners(PlayerEventType eventType) {
-            return eventListenerMap.getEventListeners(eventType);
+        public <T extends Publisher<?>> T getEventListeners(PlayerEventType eventType) {
+            return publishManager.getEventListeners(eventType);
         }
 
-        public void addEventListener(PlayerEventType eventType, EventListener<?> listener) {
-            eventListenerMap.addEventListener(eventType, listener);
+        public void addEventListener(PlayerEventType eventType, Listener<?> listener) {
+            publishManager.addEventListener(eventType, listener);
         }
     }
 
