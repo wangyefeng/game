@@ -10,3 +10,7 @@ message PbInt {
 message PbString {
 	string val = 1;
 }
+
+message PbLong {
+	int64 val = 1;
+}

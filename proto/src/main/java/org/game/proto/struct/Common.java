@@ -26,7 +26,7 @@ public final class Common {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface PbIntOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.wangyefeng.game.proto.struct.PbInt)
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbInt)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -36,11 +36,11 @@ public final class Common {
     int getVal();
   }
   /**
-   * Protobuf type {@code org.wangyefeng.game.proto.struct.PbInt}
+   * Protobuf type {@code org.game.proto.struct.PbInt}
    */
   public static final class PbInt extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.wangyefeng.game.proto.struct.PbInt)
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbInt)
       PbIntOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -61,15 +61,15 @@ public final class Common {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return Common.internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor;
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbInt_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return Common.internal_static_org_wangyefeng_game_proto_struct_PbInt_fieldAccessorTable
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbInt_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              Common.PbInt.class, Common.PbInt.Builder.class);
+              org.game.proto.struct.Common.PbInt.class, org.game.proto.struct.Common.PbInt.Builder.class);
     }
 
     public static final int VAL_FIELD_NUMBER = 1;
@@ -123,10 +123,10 @@ public final class Common {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof Common.PbInt)) {
+      if (!(obj instanceof org.game.proto.struct.Common.PbInt)) {
         return super.equals(obj);
       }
-      Common.PbInt other = (Common.PbInt) obj;
+      org.game.proto.struct.Common.PbInt other = (org.game.proto.struct.Common.PbInt) obj;
 
       if (getVal()
           != other.getVal()) return false;
@@ -148,44 +148,44 @@ public final class Common {
       return hash;
     }
 
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbInt parseFrom(byte[] data)
+    public static org.game.proto.struct.Common.PbInt parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbInt parseFrom(java.io.InputStream input)
+    public static org.game.proto.struct.Common.PbInt parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -193,26 +193,26 @@ public final class Common {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Common.PbInt parseDelimitedFrom(java.io.InputStream input)
+    public static org.game.proto.struct.Common.PbInt parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static Common.PbInt parseDelimitedFrom(
+    public static org.game.proto.struct.Common.PbInt parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static Common.PbInt parseFrom(
+    public static org.game.proto.struct.Common.PbInt parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -225,7 +225,7 @@ public final class Common {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(Common.PbInt prototype) {
+    public static Builder newBuilder(org.game.proto.struct.Common.PbInt prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -241,26 +241,26 @@ public final class Common {
       return builder;
     }
     /**
-     * Protobuf type {@code org.wangyefeng.game.proto.struct.PbInt}
+     * Protobuf type {@code org.game.proto.struct.PbInt}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.wangyefeng.game.proto.struct.PbInt)
-        Common.PbIntOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbInt)
+        org.game.proto.struct.Common.PbIntOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor;
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbInt_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbInt_fieldAccessorTable
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbInt_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                Common.PbInt.class, Common.PbInt.Builder.class);
+                org.game.proto.struct.Common.PbInt.class, org.game.proto.struct.Common.PbInt.Builder.class);
       }
 
-      // Construct using org.wangyefeng.game.proto.struct.Common.PbInt.newBuilder()
+      // Construct using org.game.proto.struct.Common.PbInt.newBuilder()
       private Builder() {
 
       }
@@ -281,17 +281,17 @@ public final class Common {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor;
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbInt_descriptor;
       }
 
       @java.lang.Override
-      public Common.PbInt getDefaultInstanceForType() {
-        return Common.PbInt.getDefaultInstance();
+      public org.game.proto.struct.Common.PbInt getDefaultInstanceForType() {
+        return org.game.proto.struct.Common.PbInt.getDefaultInstance();
       }
 
       @java.lang.Override
-      public Common.PbInt build() {
-        Common.PbInt result = buildPartial();
+      public org.game.proto.struct.Common.PbInt build() {
+        org.game.proto.struct.Common.PbInt result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -299,14 +299,14 @@ public final class Common {
       }
 
       @java.lang.Override
-      public Common.PbInt buildPartial() {
-        Common.PbInt result = new Common.PbInt(this);
+      public org.game.proto.struct.Common.PbInt buildPartial() {
+        org.game.proto.struct.Common.PbInt result = new org.game.proto.struct.Common.PbInt(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(Common.PbInt result) {
+      private void buildPartial0(org.game.proto.struct.Common.PbInt result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.val_ = val_;
@@ -315,16 +315,16 @@ public final class Common {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof Common.PbInt) {
-          return mergeFrom((Common.PbInt)other);
+        if (other instanceof org.game.proto.struct.Common.PbInt) {
+          return mergeFrom((org.game.proto.struct.Common.PbInt)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(Common.PbInt other) {
-        if (other == Common.PbInt.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.game.proto.struct.Common.PbInt other) {
+        if (other == org.game.proto.struct.Common.PbInt.getDefaultInstance()) return this;
         if (other.getVal() != 0) {
           setVal(other.getVal());
         }
@@ -408,16 +408,16 @@ public final class Common {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.wangyefeng.game.proto.struct.PbInt)
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbInt)
     }
 
-    // @@protoc_insertion_point(class_scope:org.wangyefeng.game.proto.struct.PbInt)
-    private static final Common.PbInt DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbInt)
+    private static final org.game.proto.struct.Common.PbInt DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new Common.PbInt();
+      DEFAULT_INSTANCE = new org.game.proto.struct.Common.PbInt();
     }
 
-    public static Common.PbInt getDefaultInstance() {
+    public static org.game.proto.struct.Common.PbInt getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -453,14 +453,14 @@ public final class Common {
     }
 
     @java.lang.Override
-    public Common.PbInt getDefaultInstanceForType() {
+    public org.game.proto.struct.Common.PbInt getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface PbStringOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.wangyefeng.game.proto.struct.PbString)
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbString)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -476,11 +476,11 @@ public final class Common {
         getValBytes();
   }
   /**
-   * Protobuf type {@code org.wangyefeng.game.proto.struct.PbString}
+   * Protobuf type {@code org.game.proto.struct.PbString}
    */
   public static final class PbString extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.wangyefeng.game.proto.struct.PbString)
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbString)
       PbStringOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -502,15 +502,15 @@ public final class Common {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return Common.internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor;
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbString_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return Common.internal_static_org_wangyefeng_game_proto_struct_PbString_fieldAccessorTable
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbString_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              Common.PbString.class, Common.PbString.Builder.class);
+              org.game.proto.struct.Common.PbString.class, org.game.proto.struct.Common.PbString.Builder.class);
     }
 
     public static final int VAL_FIELD_NUMBER = 1;
@@ -591,10 +591,10 @@ public final class Common {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof Common.PbString)) {
+      if (!(obj instanceof org.game.proto.struct.Common.PbString)) {
         return super.equals(obj);
       }
-      Common.PbString other = (Common.PbString) obj;
+      org.game.proto.struct.Common.PbString other = (org.game.proto.struct.Common.PbString) obj;
 
       if (!getVal()
           .equals(other.getVal())) return false;
@@ -616,44 +616,44 @@ public final class Common {
       return hash;
     }
 
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbString parseFrom(byte[] data)
+    public static org.game.proto.struct.Common.PbString parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Common.PbString parseFrom(java.io.InputStream input)
+    public static org.game.proto.struct.Common.PbString parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -661,26 +661,26 @@ public final class Common {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Common.PbString parseDelimitedFrom(java.io.InputStream input)
+    public static org.game.proto.struct.Common.PbString parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static Common.PbString parseDelimitedFrom(
+    public static org.game.proto.struct.Common.PbString parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static Common.PbString parseFrom(
+    public static org.game.proto.struct.Common.PbString parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -693,7 +693,7 @@ public final class Common {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(Common.PbString prototype) {
+    public static Builder newBuilder(org.game.proto.struct.Common.PbString prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -709,26 +709,26 @@ public final class Common {
       return builder;
     }
     /**
-     * Protobuf type {@code org.wangyefeng.game.proto.struct.PbString}
+     * Protobuf type {@code org.game.proto.struct.PbString}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.wangyefeng.game.proto.struct.PbString)
-        Common.PbStringOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbString)
+        org.game.proto.struct.Common.PbStringOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor;
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbString_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbString_fieldAccessorTable
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbString_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                Common.PbString.class, Common.PbString.Builder.class);
+                org.game.proto.struct.Common.PbString.class, org.game.proto.struct.Common.PbString.Builder.class);
       }
 
-      // Construct using org.wangyefeng.game.proto.struct.Common.PbString.newBuilder()
+      // Construct using org.game.proto.struct.Common.PbString.newBuilder()
       private Builder() {
 
       }
@@ -749,17 +749,17 @@ public final class Common {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Common.internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor;
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbString_descriptor;
       }
 
       @java.lang.Override
-      public Common.PbString getDefaultInstanceForType() {
-        return Common.PbString.getDefaultInstance();
+      public org.game.proto.struct.Common.PbString getDefaultInstanceForType() {
+        return org.game.proto.struct.Common.PbString.getDefaultInstance();
       }
 
       @java.lang.Override
-      public Common.PbString build() {
-        Common.PbString result = buildPartial();
+      public org.game.proto.struct.Common.PbString build() {
+        org.game.proto.struct.Common.PbString result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -767,14 +767,14 @@ public final class Common {
       }
 
       @java.lang.Override
-      public Common.PbString buildPartial() {
-        Common.PbString result = new Common.PbString(this);
+      public org.game.proto.struct.Common.PbString buildPartial() {
+        org.game.proto.struct.Common.PbString result = new org.game.proto.struct.Common.PbString(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(Common.PbString result) {
+      private void buildPartial0(org.game.proto.struct.Common.PbString result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.val_ = val_;
@@ -783,16 +783,16 @@ public final class Common {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof Common.PbString) {
-          return mergeFrom((Common.PbString)other);
+        if (other instanceof org.game.proto.struct.Common.PbString) {
+          return mergeFrom((org.game.proto.struct.Common.PbString)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(Common.PbString other) {
-        if (other == Common.PbString.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.game.proto.struct.Common.PbString other) {
+        if (other == org.game.proto.struct.Common.PbString.getDefaultInstance()) return this;
         if (!other.getVal().isEmpty()) {
           val_ = other.val_;
           bitField0_ |= 0x00000001;
@@ -918,16 +918,16 @@ public final class Common {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.wangyefeng.game.proto.struct.PbString)
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbString)
     }
 
-    // @@protoc_insertion_point(class_scope:org.wangyefeng.game.proto.struct.PbString)
-    private static final Common.PbString DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbString)
+    private static final org.game.proto.struct.Common.PbString DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new Common.PbString();
+      DEFAULT_INSTANCE = new org.game.proto.struct.Common.PbString();
     }
 
-    public static Common.PbString getDefaultInstance() {
+    public static org.game.proto.struct.Common.PbString getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -963,22 +963,462 @@ public final class Common {
     }
 
     @java.lang.Override
-    public Common.PbString getDefaultInstanceForType() {
+    public org.game.proto.struct.Common.PbString getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface PbLongOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbLong)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 val = 1;</code>
+     * @return The val.
+     */
+    long getVal();
+  }
+  /**
+   * Protobuf type {@code org.game.proto.struct.PbLong}
+   */
+  public static final class PbLong extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbLong)
+      PbLongOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 27,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        PbLong.class.getName());
+    }
+    // Use PbLong.newBuilder() to construct.
+    private PbLong(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PbLong() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbLong_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbLong_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.game.proto.struct.Common.PbLong.class, org.game.proto.struct.Common.PbLong.Builder.class);
+    }
+
+    public static final int VAL_FIELD_NUMBER = 1;
+    private long val_ = 0L;
+    /**
+     * <code>int64 val = 1;</code>
+     * @return The val.
+     */
+    @java.lang.Override
+    public long getVal() {
+      return val_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (val_ != 0L) {
+        output.writeInt64(1, val_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (val_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, val_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.game.proto.struct.Common.PbLong)) {
+        return super.equals(obj);
+      }
+      org.game.proto.struct.Common.PbLong other = (org.game.proto.struct.Common.PbLong) obj;
+
+      if (getVal()
+          != other.getVal()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + VAL_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getVal());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.game.proto.struct.Common.PbLong parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.game.proto.struct.Common.PbLong parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Common.PbLong parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.game.proto.struct.Common.PbLong prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.game.proto.struct.PbLong}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbLong)
+        org.game.proto.struct.Common.PbLongOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbLong_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbLong_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.game.proto.struct.Common.PbLong.class, org.game.proto.struct.Common.PbLong.Builder.class);
+      }
+
+      // Construct using org.game.proto.struct.Common.PbLong.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        val_ = 0L;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.game.proto.struct.Common.internal_static_org_game_proto_struct_PbLong_descriptor;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Common.PbLong getDefaultInstanceForType() {
+        return org.game.proto.struct.Common.PbLong.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Common.PbLong build() {
+        org.game.proto.struct.Common.PbLong result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Common.PbLong buildPartial() {
+        org.game.proto.struct.Common.PbLong result = new org.game.proto.struct.Common.PbLong(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.game.proto.struct.Common.PbLong result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.val_ = val_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.game.proto.struct.Common.PbLong) {
+          return mergeFrom((org.game.proto.struct.Common.PbLong)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.game.proto.struct.Common.PbLong other) {
+        if (other == org.game.proto.struct.Common.PbLong.getDefaultInstance()) return this;
+        if (other.getVal() != 0L) {
+          setVal(other.getVal());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                val_ = input.readInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private long val_ ;
+      /**
+       * <code>int64 val = 1;</code>
+       * @return The val.
+       */
+      @java.lang.Override
+      public long getVal() {
+        return val_;
+      }
+      /**
+       * <code>int64 val = 1;</code>
+       * @param value The val to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVal(long value) {
+
+        val_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 val = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVal() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        val_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbLong)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbLong)
+    private static final org.game.proto.struct.Common.PbLong DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.game.proto.struct.Common.PbLong();
+    }
+
+    public static org.game.proto.struct.Common.PbLong getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PbLong>
+        PARSER = new com.google.protobuf.AbstractParser<PbLong>() {
+      @java.lang.Override
+      public PbLong parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PbLong> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PbLong> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.game.proto.struct.Common.PbLong getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor;
+    internal_static_org_game_proto_struct_PbInt_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_wangyefeng_game_proto_struct_PbInt_fieldAccessorTable;
+      internal_static_org_game_proto_struct_PbInt_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor;
+    internal_static_org_game_proto_struct_PbString_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_wangyefeng_game_proto_struct_PbString_fieldAccessorTable;
+      internal_static_org_game_proto_struct_PbString_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_game_proto_struct_PbLong_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_game_proto_struct_PbLong_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -988,25 +1428,31 @@ public final class Common {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014common.proto\022 org.wangyefeng.game.prot" +
-      "o.struct\"\024\n\005PbInt\022\013\n\003val\030\001 \001(\005\"\027\n\010PbStri" +
-      "ng\022\013\n\003val\030\001 \001(\tb\006proto3"
+      "\n\014common.proto\022\025org.game.proto.struct\"\024\n" +
+      "\005PbInt\022\013\n\003val\030\001 \001(\005\"\027\n\010PbString\022\013\n\003val\030\001" +
+      " \001(\t\"\025\n\006PbLong\022\013\n\003val\030\001 \001(\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor =
+    internal_static_org_game_proto_struct_PbInt_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_wangyefeng_game_proto_struct_PbInt_fieldAccessorTable = new
+    internal_static_org_game_proto_struct_PbInt_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_wangyefeng_game_proto_struct_PbInt_descriptor,
+        internal_static_org_game_proto_struct_PbInt_descriptor,
         new java.lang.String[] { "Val", });
-    internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor =
+    internal_static_org_game_proto_struct_PbString_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_org_wangyefeng_game_proto_struct_PbString_fieldAccessorTable = new
+    internal_static_org_game_proto_struct_PbString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_wangyefeng_game_proto_struct_PbString_descriptor,
+        internal_static_org_game_proto_struct_PbString_descriptor,
+        new java.lang.String[] { "Val", });
+    internal_static_org_game_proto_struct_PbLong_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_org_game_proto_struct_PbLong_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_game_proto_struct_PbLong_descriptor,
         new java.lang.String[] { "Val", });
     descriptor.resolveAllFeaturesImmutable();
   }
