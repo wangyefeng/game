@@ -6,42 +6,52 @@ public class ListenerTest extends TestCase {
 
     public void testApp() {
         Player player = new Player(1);
-        LevelUpListener listener1 = new LevelUpListener(player.level, 10);
-        LevelUpListener listener2 = new LevelUpListener(player.level, 12);
-        player.addEventListener(PlayerEventType.LEVEL_UP, listener1);
-        player.addEventListener(PlayerEventType.LEVEL_UP, listener2);
+        TaskListener listener1 = new TaskListener(PlayerEventType.LEVEL_UP, player.level, 10, false);
+        TaskListener listener2 = new TaskListener(PlayerEventType.LEVEL_UP, player.level, 12, false);
+        TaskListener listener3 = new TaskListener(PlayerEventType.RENAME, 0, 1, false);
+        TaskListener[] listeners = {listener1, listener2, listener3};
+        for (TaskListener listener : listeners) {
+            player.addEventListener(listener.type, listener);
+        }
         for (int i = 0; i < 10; i++) {
             player.levelUp();
         }
         assertTrue(listener1.isFinished);
-        assertTrue(listener1.currentLevel == 10);
+        assertTrue(listener1.progress == 10);
         assertFalse(listener2.isFinished);
-        assertTrue(listener2.currentLevel == 11);
+        assertTrue(listener2.progress == 11);
         assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 1);
         player.levelUp();
         assertTrue(listener2.isFinished);
-        assertTrue(listener2.currentLevel == 12);
+        assertTrue(listener2.progress == 12);
         assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
+
+        player.rename("John");
+        assertTrue(listener3.isFinished);
+        assertTrue(listener3.progress == 1);
     }
 
-    private class LevelUpListener implements Listener<Integer> {
+    private class TaskListener implements Listener<Integer> {
 
-        private int currentLevel;
+        private PlayerEventType type;
 
-        private int targetLevel;
+        private int progress;
+
+        private int target;
 
         private boolean isFinished;
 
-        public LevelUpListener(int currentLevel, int targetLevel) {
-            this.currentLevel = currentLevel;
-            this.targetLevel = targetLevel;
-            isFinished = currentLevel >= targetLevel;
+        public TaskListener(PlayerEventType type, int progress, int target, boolean isFinished) {
+            this.type = type;
+            this.progress = progress;
+            this.target = target;
+            this.isFinished = isFinished;
         }
 
         @Override
-        public void update(Integer level, Publisher<Integer> unloadable) {
-            currentLevel = level;
-            if (level >= targetLevel) {
+        public void update(Integer progress, Publisher<Integer> unloadable) {
+            this.progress = progress;
+            if (progress >= target) {
                 isFinished = true;
                 unloadable.unload(this);
             }
@@ -52,6 +62,8 @@ public class ListenerTest extends TestCase {
 
         private int level;
 
+        private String name;
+
         private PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
 
         public Player(int level) {
@@ -61,6 +73,15 @@ public class ListenerTest extends TestCase {
         public void levelUp() {
             level++;
             update(PlayerEventType.LEVEL_UP, level);
+        }
+
+        public void rename(String name) {
+            update(PlayerEventType.RENAME, 1);
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public PublishManager<PlayerEventType> getEventListeners() {
@@ -83,6 +104,8 @@ public class ListenerTest extends TestCase {
     public enum PlayerEventType {
 
         LEVEL_UP,
+
+        RENAME,
 
         ;
     }
