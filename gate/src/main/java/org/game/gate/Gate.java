@@ -5,6 +5,7 @@ import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.net.TcpServer;
 import org.game.gate.net.client.LogicClient;
+import org.game.gate.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +70,23 @@ public class Gate implements CommandLineRunner {
         }
     }
 
-    public void close() throws Exception {
+    public void close() {
         stopping = true;
-        tcpServer.close();
-        logicClient.close();
+        try {
+            tcpServer.close();
+        } catch (Exception e) {
+            log.error("关闭TCP服务器异常！", e);
+        }
+        try {
+            logicClient.close();
+        } catch (Exception e) {
+            log.error("关闭逻辑服务器的连接异常！", e);
+        }
+        try {
+            ThreadPool.shutdown();
+        } catch (Exception e) {
+            log.error("关闭业务线程池异常！", e);
+        }
     }
 
     @Override

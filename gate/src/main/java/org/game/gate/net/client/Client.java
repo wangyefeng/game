@@ -49,16 +49,13 @@ public abstract class Client {
         return port;
     }
 
-    public void close() {
-        try {
-            if (reconnectThread != null) {
-                reconnectThread.interrupt();
-            }
-            channel.close().sync();
-            eventLoopGroup.shutdownGracefully().sync();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    public void close() throws InterruptedException{
+        if (reconnectThread != null) {
+            reconnectThread.interrupt();
         }
+        channel.close().sync();
+        eventLoopGroup.shutdownGracefully().sync();
+        log.info("客户端连接 {} 已关闭！", this);
     }
 
     public boolean isRunning() {

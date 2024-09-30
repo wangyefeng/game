@@ -1,8 +1,15 @@
 package org.game.gate.thread;
 
-import java.util.concurrent.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ThreadPool {
+
+    private static final Logger log = LoggerFactory.getLogger(ThreadPool.class);
 
     public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors() * 2 + 1;
 
@@ -17,5 +24,20 @@ public abstract class ThreadPool {
 
     public static ThreadPoolExecutor getPlayerExecutor(int playerId) {
         return executor[playerId % EXECUTOR_SIZE];
+    }
+
+    public static void shutdown() {
+        for (ThreadPoolExecutor executor : executor) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                log.error("player thread {} shutdown interrupted", e);
+            }
+        }
+        log.info("线程池已关闭！");
     }
 }
