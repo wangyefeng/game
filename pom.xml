@@ -15,12 +15,12 @@
 
     <name>game</name>
     <modules>
-        <module>gate</module> <!-- 网关模块 -->
-        <module>proto</module> <!-- 协议模块 -->
-        <module>logic</module> <!-- 逻辑模块 -->
+        <module>gate</module>
+        <module>proto</module>
+        <module>logic</module>
         <module>common</module>
         <module>client</module>
-        <module>login</module> <!-- 公共模块 -->
+        <module>login</module>
     </modules>
 
     <properties>
