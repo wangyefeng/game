@@ -1,5 +1,6 @@
 package org.game.logic;
 
+import io.netty.util.ResourceLeakDetector;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -44,7 +45,26 @@ public class Logic implements CommandLineRunner {
 
     private static final String SERVICE_ROOT = "/logic";
 
+    static {
+        // 设置netty的资源泄露检测
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        Thread.setDefaultUncaughtExceptionHandler((_, e) -> log.error("未捕获异常！", e));
+    }
+
+    /**
+     * 初始化spring容器后，启动服务器
+     *
+     * @throws Exception 异常
+     */
     private void start() throws Exception {
+        addShutdownHook();
+        initConfig();
+        registerHandler();
+        tcpServer.start();
+        registerService();
+    }
+
+    private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             synchronized (Logic.class) {
                 if (status == Status.RUNNING) {
@@ -60,10 +80,6 @@ public class Logic implements CommandLineRunner {
                 }
             }
         }, "shutdown-hook"));
-        initConfig();
-        registerHandler();
-        tcpServer.start();
-        registerService();
     }
 
     private void initConfig() {
@@ -103,8 +119,8 @@ public class Logic implements CommandLineRunner {
 
     private void registerHandler() {
         log.info("handler registering...");
-        gateMsgHandlers.forEach(handler -> GateMsgHandler.register(handler));// 注册gate handler
-        clientMsgHandlers.forEach(handler -> ClientMsgHandler.register(handler));// 注册client handler
+        gateMsgHandlers.forEach(GateMsgHandler::register);// 注册gate handler
+        clientMsgHandlers.forEach(ClientMsgHandler::register);// 注册client handler
         log.info("handler register end");
     }
 

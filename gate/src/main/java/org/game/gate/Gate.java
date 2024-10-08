@@ -46,28 +46,31 @@ public class Gate implements CommandLineRunner {
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        Thread.setDefaultUncaughtExceptionHandler((_, e) -> log.error("未捕获异常！", e));
     }
 
-    private void start() throws Exception {
-        synchronized (Gate.class) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                synchronized (Gate.class) {
-                    try {
-                        log.info("JVM 正在关闭，请等待...");
-                        close();
-                    } catch (Exception e) {
-                        log.error("关闭服务器异常！", e);
-                    } finally {
-                        SpringApplication.exit(applicationContext);
-                    }
-                    log.info("JVM 已关闭！");
+    private void start() {
+        addShutdownHook();
+        registerHandler();
+        logicClient.start();
+        tcpServer.start();
+        log.info("网关服务器启动成功！");
+    }
+
+    private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            synchronized (Gate.class) {
+                try {
+                    log.info("JVM 正在关闭，请等待...");
+                    close();
+                } catch (Exception e) {
+                    log.error("关闭服务器异常！", e);
+                } finally {
+                    SpringApplication.exit(applicationContext);
                 }
-            }, "shutdown-hook"));
-            registerHandler();
-            logicClient.start();
-            tcpServer.start();
-            log.info("网关服务器启动成功！");
-        }
+                log.info("JVM 已关闭！");
+            }
+        }, "shutdown-hook"));
     }
 
     public void close() {
