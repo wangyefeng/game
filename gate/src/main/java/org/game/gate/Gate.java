@@ -1,6 +1,7 @@
 package org.game.gate;
 
 import io.netty.util.ResourceLeakDetector;
+import org.apache.logging.log4j.core.util.Constants;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.net.TcpServer;
@@ -45,8 +46,9 @@ public class Gate implements CommandLineRunner {
 
     static {
         // 设置netty的资源泄露检测
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
         Thread.setDefaultUncaughtExceptionHandler((_, e) -> log.error("未捕获异常！", e));
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        System.setProperty(Constants.LOG4J_CONTEXT_SELECTOR, "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     }
 
     private void start() {

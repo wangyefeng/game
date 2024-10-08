@@ -1,6 +1,7 @@
 package org.game.logic;
 
 import io.netty.util.ResourceLeakDetector;
+import org.apache.logging.log4j.core.util.Constants;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -47,8 +48,9 @@ public class Logic implements CommandLineRunner {
 
     static {
         // 设置netty的资源泄露检测
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
         Thread.setDefaultUncaughtExceptionHandler((_, e) -> log.error("未捕获异常！", e));
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        System.setProperty(Constants.LOG4J_CONTEXT_SELECTOR, "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     }
 
     /**
