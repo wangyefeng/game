@@ -55,7 +55,6 @@ public abstract class Client {
         }
         channel.close().sync();
         eventLoopGroup.shutdownGracefully().sync();
-        log.info("客户端连接 {} 已关闭！", this);
     }
 
     public boolean isRunning() {
