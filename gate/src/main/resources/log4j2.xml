@@ -3,6 +3,7 @@
     <properties>
         <property name="LOG_HOME">logs</property>
         <property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %c %L - %m%n</property>
+        <property name="LOG_FILE">%d{yyyy-MM-dd}.log</property>
     </properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
@@ -11,20 +12,20 @@
         </Console>
 
         <!-- DEBUG -->
-        <RollingFile name="DEBUG" fileName="${LOG_HOME}/debug/debug.log" filePattern="${LOG_HOME}/debug/%d{yyyy-MM-dd}.log">
+        <RollingFile name="DEBUG" fileName="${LOG_HOME}/debug/debug.log" filePattern="${LOG_HOME}/debug/${LOG_FILE}">
             <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             <DefaultRolloverStrategy max="5">
-                <Delete basePath="${LOG_HOME}/info/" maxDepth="2">
+                <Delete basePath="${LOG_HOME}/debug/" maxDepth="2">
                     <IfFileName glob="*.log"/>
-                    <IfLastModified age="1d"/>
+                    <IfLastModified age="2d"/>
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
 
         <!-- INFO -->
-        <RollingFile name="INFO" fileName="${LOG_HOME}/info/info.log" filePattern="${LOG_HOME}/info/%d{yyyy-MM-dd}.log">
+        <RollingFile name="INFO" fileName="${LOG_HOME}/info/info.log" filePattern="${LOG_HOME}/info/${LOG_FILE}">
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
@@ -37,7 +38,7 @@
         </RollingFile>
 
         <!-- WARN -->
-        <RollingFile name="WARN" fileName="${LOG_HOME}/warn/warn.log" filePattern="${LOG_HOME}/warn/%d{yyyy-MM-dd}.log">
+        <RollingFile name="WARN" fileName="${LOG_HOME}/warn/warn.log" filePattern="${LOG_HOME}/warn/${LOG_FILE}">
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
@@ -50,7 +51,7 @@
         </RollingFile>
 
         <!-- ERROR -->
-        <RollingFile name="ERROR" fileName="${LOG_HOME}/error/error.log" filePattern="${LOG_HOME}/error/%d{yyyy-MM-dd}.log">
+        <RollingFile name="ERROR" fileName="${LOG_HOME}/error/error.log" filePattern="${LOG_HOME}/error/${LOG_FILE}">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
