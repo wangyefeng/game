@@ -54,6 +54,7 @@ public class Logic extends Server implements CommandLineRunner {
      *
      * @throws Exception 异常
      */
+    @Override
     protected void start0(String[] args) throws Exception {
         initConfig();
         registerHandler();

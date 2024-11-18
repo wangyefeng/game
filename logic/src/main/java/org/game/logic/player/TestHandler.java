@@ -15,7 +15,6 @@ public class TestHandler extends PlayerHandler<Common.PbInt> {
 
     @Override
     protected void handle(Player player, Common.PbInt message, Config config) {
-        log.info("TestHandler {} received message: {}", player.getPlayerInfo().getName(), message);
         player.sendToClient(LogicToClientProtocol.TEST, message);
     }
 

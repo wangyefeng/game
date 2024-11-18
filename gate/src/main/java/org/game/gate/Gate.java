@@ -47,6 +47,7 @@ public class Gate extends Server implements CommandLineRunner {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
+    @Override
     protected void start0(String[] args) {
         registerHandler();
         logicClient.start();

@@ -36,10 +36,22 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
         }
         // 交给业务线程接管
         ThreadPool.getPlayerExecutor(message.getPlayerId()).execute(() -> {
+            long start = System.currentTimeMillis();
             try {
                 logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage(), Config.getInstance());
             } catch (Exception e) {
                 log.error("handle message error", e);
+            } finally {
+                long cost = System.currentTimeMillis() - start;
+                if (cost > 1000) {
+                    log.error("处理玩家[{}]消息 协议：{} 数据: {} 耗时：{}ms", message.getPlayerId(), message.getProtocol(), message.getMessage(), cost);
+                } else if (cost > 100) {
+                    log.warn("处理玩家[{}]消息 协议：{} 数据: {} 耗时：{}ms", message.getPlayerId(), message.getProtocol(), message.getMessage(), cost);
+                } else if (cost > 50) {
+                    log.info("处理玩家[{}]消息 协议：{} 数据: {} 耗时：{}ms", message.getPlayerId(), message.getProtocol(), message.getMessage(), cost);
+                } else {
+                    log.debug("处理玩家[{}]消息 协议：{} 数据: {} 耗时：{}ms", message.getPlayerId(), message.getProtocol(), message.getMessage(), cost);
+                }
             }
         });
     }
