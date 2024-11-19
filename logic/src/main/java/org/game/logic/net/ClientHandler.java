@@ -40,7 +40,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
             try {
                 logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage(), Config.getInstance());
             } catch (Exception e) {
-                log.error("handle message error", e);
+                log.error("处理玩家[{}]消息 协议：{} 数据: {} 出错", message.getPlayerId(), message.getProtocol(), message.getMessage(), e);
             } finally {
                 long cost = System.currentTimeMillis() - start;
                 if (cost > 1000) {
