@@ -15,7 +15,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 public class NettyClient {
@@ -26,9 +26,9 @@ public class NettyClient {
 
         try {
             // 设置 SSL 上下文，客户端会验证服务器的证书
-            File trustCertChainFile = new File("C:\\Users\\TU\\Desktop\\fsdownload\\cert.pem");  // CA 根证书
+            InputStream inputStream = NettyClient.class.getClassLoader().getResourceAsStream("cert.pem");
             SslContext sslContext = SslContextBuilder.forClient()
-                    .trustManager(trustCertChainFile) // 客户端通过这个证书验证服务器
+                    .trustManager(inputStream) // 客户端通过这个证书验证服务器
                     .build();
 
             // 创建 Bootstrap

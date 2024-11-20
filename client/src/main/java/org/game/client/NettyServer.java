@@ -53,21 +53,23 @@ public class NettyServer {
     public static void main(String[] args) throws Exception {
         new NettyServer(9099).start();
     }
+
+    private static // 自定义的处理类
+    class ServerHandler extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            // 打印接收到的消息
+            System.out.println("Received from client: " + msg);
+            // 回复客户端
+            ctx.writeAndFlush("Hello from server");
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            cause.printStackTrace();
+            ctx.close();
+        }
+    }
 }
 
-// 自定义的处理类
-class ServerHandler extends ChannelInboundHandlerAdapter {
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        // 打印接收到的消息
-        System.out.println("Received from client: " + msg);
-        // 回复客户端
-        ctx.writeAndFlush("Hello from server");
-    }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        ctx.close();
-    }
-}
