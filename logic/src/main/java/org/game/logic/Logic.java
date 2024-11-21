@@ -59,6 +59,11 @@ public class Logic extends Server implements CommandLineRunner {
         initConfig();
         registerHandler();
         tcpServer.start();
+    }
+
+    @Override
+    protected void afterStart() throws Exception {
+        super.afterStart();
         registerService();
     }
 

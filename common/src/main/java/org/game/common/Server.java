@@ -19,9 +19,9 @@ public abstract class Server {
 
     protected void start(String[] args) {
         try {
-            status = Status.STARTING;
+            beforeStart();
             start0(args);
-            status = Status.RUNNING;
+            afterStart();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     log.info("JVM 正在关闭，请等待...");
@@ -37,12 +37,22 @@ public abstract class Server {
         } catch (Exception e) {
             log.error("服务器启动失败！", e);
             status = Status.STOPPING;
-            System.exit(1);
+            System.exit(-1);
         }
 
     }
 
     protected abstract void start0(String[] args) throws Exception;
+
+    protected void beforeStart() throws Exception {
+        // 子类可重写此方法，在服务器启动前执行一些操作
+        status = Status.STARTING;
+    }
+
+    protected void afterStart() throws Exception {
+        // 子类可重写此方法，在服务器启动后执行一些操作
+        status = Status.RUNNING;
+    }
 
     protected abstract void stop() throws Exception;
 
