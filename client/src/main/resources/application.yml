@@ -1,1 +1,1 @@
-spring:  main:    banner-mode: offserver:  ssl:    enabled: false    trust-certificate: classpath:ssl/cert.pem
+spring:  main:    banner-mode: offserver:  ssl:    enabled: true    trust-certificate: classpath:ssl/cert.pem
