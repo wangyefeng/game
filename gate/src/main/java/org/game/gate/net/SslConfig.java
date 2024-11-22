@@ -11,6 +11,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+
 @Component
 public class SslConfig {
 
@@ -32,15 +34,20 @@ public class SslConfig {
 
     @PostConstruct
     public void init() {
-        if (enabled) {
+        if (!enabled) {
+            return; // SSL未启用，直接返回
+        }
+        log.info("开启TLS/SSL加密！！！");
+        try {
             Resource certificateResource = resourceLoader.getResource(certificate);
             Resource certificatePrivateKeyResource = resourceLoader.getResource(certificatePrivateKey);
-            try {
-                sslContext = SslContextBuilder.forServer(certificateResource.getFile(), certificatePrivateKeyResource.getFile()).build();
-            } catch (Exception e) {
-                log.error("Failed to initialize SSL context", e);
-                System.exit(-1);
-            }
+            File certFile = certificateResource.getFile();
+            File keyFile = certificatePrivateKeyResource.getFile();
+            sslContext = SslContextBuilder.forServer(certFile, keyFile).build();
+        } catch (Exception e) {
+            log.error("初始化SSL上下文失败: {}", e.getMessage(), e);
+            enabled = false;
+            throw new RuntimeException("SSL上下文初始化失败", e);
         }
     }
 

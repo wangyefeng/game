@@ -12,19 +12,40 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import org.game.proto.*;
+import org.game.proto.CodeMsgEncode;
+import org.game.proto.CommonDecoder;
+import org.game.proto.MessageCodeDecoder;
+import org.game.proto.MessagePlayerDecoder;
+import org.game.proto.Topic;
+import org.game.proto.protocol.Protocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.game.proto.protocol.Protocol;
+import org.springframework.core.io.ResourceLoader;
 
-import java.io.InputStream;
+import java.io.File;
 
 @SpringBootApplication
 public class Client implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(Client.class);
     private final String host;
     private final int port;
+
+    @Value("${server.ssl.trust-certificate}")
+    private String trustCertificate;
+
+    @Value("${server.ssl.enabled}")
+    private boolean sslEnabled;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    private SslContext sslContext;
 
     public Client() {
         this.host = "localhost";
@@ -39,10 +60,11 @@ public class Client implements CommandLineRunner {
     public void run(int playerId) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup(1);
         // 设置 SSL 上下文，客户端会验证服务器的证书
-        InputStream inputStream = Client.class.getClassLoader().getResourceAsStream("cert.pem");
-        SslContext sslContext = SslContextBuilder.forClient()
-                .trustManager(inputStream) // 客户端通过这个证书验证服务器
-                .build();
+        if (sslEnabled) {
+            log.info("开启TLS/SSL加密！！！");
+            File trustCertificateFile = resourceLoader.getResource(trustCertificate).getFile();
+            sslContext = SslContextBuilder.forClient().trustManager(trustCertificateFile).build();
+        }
         try {
             Bootstrap bootstrap = new Bootstrap();
             ClientHandler handler = new ClientHandler(playerId);
@@ -53,7 +75,9 @@ public class Client implements CommandLineRunner {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addFirst(sslContext.newHandler(ch.alloc()));
+                            if (sslEnabled) {
+                                pipeline.addFirst(sslContext.newHandler(ch.alloc()));
+                            }
                             pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                             CommonDecoder commonDecoder = new CommonDecoder(Topic.CLIENT.getCode());
                             commonDecoder.registerDecoder(new MessageCodeDecoder());
