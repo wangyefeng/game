@@ -53,6 +53,12 @@ public class Gate extends Server implements CommandLineRunner {
     protected void start0(String[] args) {
         registerHandler();
         logicClient.start();
+    }
+
+    @Override
+    protected void afterStart() throws Exception {
+        super.afterStart();
+        // 最后启动tcp服务
         tcpServer.start();
     }
 

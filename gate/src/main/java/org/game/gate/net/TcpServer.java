@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.game.gate.net.client.LogicClient;
 import org.game.proto.protocol.Protocol;
@@ -56,8 +57,9 @@ public class TcpServer {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    if (sslConfig.isEnabled()) {
-                        pipeline.addFirst(sslConfig.getSslContext().newHandler(ch.alloc()));
+                    SslContext sslContext = sslConfig.getSslContext();
+                    if (sslContext != null) {
+                        pipeline.addFirst(sslContext.newHandler(ch.alloc()));
                     }
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));

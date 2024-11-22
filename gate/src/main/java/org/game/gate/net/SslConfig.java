@@ -30,7 +30,7 @@ public class SslConfig {
     @Value("${server.ssl.certificate-private-key}")
     private String certificatePrivateKey;
 
-    private SslContext sslContext;
+    private volatile SslContext sslContext;
 
     @PostConstruct
     public void init() {
@@ -38,6 +38,10 @@ public class SslConfig {
             return; // SSL未启用，直接返回
         }
         log.info("开启TLS/SSL加密！！！");
+        buildSsl();
+    }
+
+    private void buildSsl() {
         try {
             Resource certificateResource = resourceLoader.getResource(certificate);
             Resource certificatePrivateKeyResource = resourceLoader.getResource(certificatePrivateKey);
@@ -45,9 +49,9 @@ public class SslConfig {
             File keyFile = certificatePrivateKeyResource.getFile();
             sslContext = SslContextBuilder.forServer(certFile, keyFile).build();
         } catch (Exception e) {
-            log.error("初始化SSL上下文失败: {}", e.getMessage(), e);
             enabled = false;
-            throw new RuntimeException("SSL上下文初始化失败", e);
+            sslContext = null;
+            throw new RuntimeException("加载SSL证书失败, 请检查!", e);
         }
     }
 
@@ -55,7 +59,12 @@ public class SslConfig {
         return sslContext;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public void reload() {
+        log.info("重新加载SSL证书！！！");
+        if (!enabled) {
+            log.error("重新加载SSL证书失败: SSL加密未开启！");
+            return;
+        }
+        buildSsl();
     }
 }
