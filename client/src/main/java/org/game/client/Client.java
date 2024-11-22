@@ -10,11 +10,15 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import org.game.proto.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.game.proto.protocol.Protocol;
+
+import java.io.InputStream;
 
 @SpringBootApplication
 public class Client implements CommandLineRunner {
@@ -34,6 +38,11 @@ public class Client implements CommandLineRunner {
 
     public void run(int playerId) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup(1);
+        // 设置 SSL 上下文，客户端会验证服务器的证书
+        InputStream inputStream = Client.class.getClassLoader().getResourceAsStream("cert.pem");
+        SslContext sslContext = SslContextBuilder.forClient()
+                .trustManager(inputStream) // 客户端通过这个证书验证服务器
+                .build();
         try {
             Bootstrap bootstrap = new Bootstrap();
             ClientHandler handler = new ClientHandler(playerId);
@@ -44,6 +53,7 @@ public class Client implements CommandLineRunner {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addFirst(sslContext.newHandler(ch.alloc()));
                             pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                             CommonDecoder commonDecoder = new CommonDecoder(Topic.CLIENT.getCode());
                             commonDecoder.registerDecoder(new MessageCodeDecoder());

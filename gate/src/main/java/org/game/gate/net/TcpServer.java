@@ -2,21 +2,22 @@ package org.game.gate.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.game.gate.net.client.LogicClient;
+import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.game.gate.net.client.LogicClient;
-import org.game.proto.protocol.Protocol;
 
 @Component
 public class TcpServer {
@@ -30,6 +31,9 @@ public class TcpServer {
 
     @Autowired
     private LogicClient logicClient;
+
+    @Autowired
+    private SslConfig sslConfig;
 
     private EventLoopGroup bossGroup;
 
@@ -52,6 +56,9 @@ public class TcpServer {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
+                    if (sslConfig.isEnabled()) {
+                        pipeline.addFirst(sslConfig.getSslContext().newHandler(ch.alloc()));
+                    }
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                     pipeline.addLast(new TcpCodec(logicClient));
