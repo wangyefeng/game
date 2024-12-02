@@ -1,0 +1,11 @@
+singleServerConfig:
+  address: "redis://game.wangyefeng.fun:6379"  # Redis 服务器地址
+  connectionPoolSize: 10            # 连接池大小
+  connectionMinimumIdleSize: 10     # 最小空闲连接数
+  idleConnectionTimeout: 10000      # 空闲连接超时
+  timeout: 3000                     # 连接超时
+  password: wangyefeng              # Redis 密码，默认为空
+threads: 0
+nettyThreads: 0
+#codec: !<org.redisson.codec.JsonJacksonCodec> { }
+transportMode: "NIO"
