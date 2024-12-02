@@ -38,11 +38,6 @@
             <artifactId>redisson-hibernate-53</artifactId>
             <version>3.39.0</version>
         </dependency>
-        <!-- Redis Client (Jedis or Lettuce, depending on your preference) -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -1,6 +1,5 @@
 package org.game.test;
 
-import org.game.test.db.CfgActivity;
 import org.game.test.db.CfgActivityDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +28,8 @@ public class Test implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         long time = System.currentTimeMillis();
-        CfgActivity result = cfgActivityDao.findById("activity_10#20220920");
-        log.info("MySQL查询耗时：{}ms 结果：{}", (System.currentTimeMillis() - time), result);
+        cfgActivityDao.findAll();
+        log.info("查询耗时：{}ms", (System.currentTimeMillis() - time));
     }
 
 }

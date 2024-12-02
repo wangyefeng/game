@@ -1,12 +1,10 @@
 package org.game.test.db;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface CfgActivityDao extends Repository<CfgActivity, String> {
+public interface CfgActivityDao extends JpaRepository<CfgActivity, String> {
 
-    List<CfgActivity> findAll();
-
-    CfgActivity findById(String id);
+    Optional<CfgActivity> findById(String id);
 }
