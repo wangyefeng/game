@@ -1,16 +1,10 @@
-package org.game.test.db;
+package org.game.spring.cache.db;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import org.game.common.util.JsonUtil;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import java.io.Serializable;
 
 /**
  * 掉落表
@@ -19,9 +13,7 @@ import java.io.Serializable;
  * @date 2021年7月30日
  */
 @Entity
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Immutable
-public class CfgActivity implements Serializable {
+public class CfgActivity implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -125,10 +117,5 @@ public class CfgActivity implements Serializable {
 
     public String getChannel() {
         return channel;
-    }
-
-    @Override
-    public String toString() {
-        return JsonUtil.toJson(this);
     }
 }
