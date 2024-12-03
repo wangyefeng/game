@@ -71,7 +71,9 @@ public class Logic extends Server implements CommandLineRunner {
 
     private void initConfig() {
         Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-        cfgServices.forEach(CfgService::init);
+        for (CfgService cfgService : cfgServices) {
+            cfgService.init(cfgService.loadAllCfg(cfgService.getTableName()));
+        }
         Config.reload(cfgServices);
     }
 
