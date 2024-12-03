@@ -3,8 +3,12 @@ package org.game.logic.data.config;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 @Document(collection = "config_item")
-public class CfgItem implements Cfg<Integer> {
+public class CfgItem implements Cfg<Integer>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     private int id;
@@ -17,5 +21,13 @@ public class CfgItem implements Cfg<Integer> {
 
     public String getName() {
         return name;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
