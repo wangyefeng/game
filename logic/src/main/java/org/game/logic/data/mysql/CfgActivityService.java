@@ -8,9 +8,4 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgActivityService extends CfgService<CfgActivity, CfgActivityDao, String> {
-
-    @Override
-    public String getTableName() {
-        return "cfg_activity";
-    }
 }

@@ -73,9 +73,7 @@ public class Logic extends Server implements CommandLineRunner {
         log.info("开始加载配置表...");
         long start = System.currentTimeMillis();
         Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-        for (CfgService cfgService : cfgServices) {
-            cfgService.init(cfgService.loadAllCfg(cfgService.getTableName()));
-        }
+        cfgServices.forEach(CfgService::init);
         Config.reload(cfgServices);
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }

@@ -1,7 +1,6 @@
 package org.game.logic.data.mongodb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Collection;
@@ -13,20 +12,13 @@ public abstract class CfgService<Entity extends Cfg<ID>, Dao extends CrudReposit
     @Autowired
     protected Dao dao;
 
-    protected Map<ID, Entity> map;
+    protected Map<ID, Entity> map = new HashMap<>();
 
     public CfgService() {
     }
 
-    public void init(Map<ID, Entity> map) {
-        this.map = map;
-    }
-
-    @Cacheable(value = "cfg", key = "#tableName")
-    public Map<ID, Entity> loadAllCfg(String tableName) {
-        Map<ID, Entity> result = new HashMap<>();
-        dao.findAll().forEach(cfg -> result.put(cfg.getId(), cfg));
-        return result;
+    public void init() {
+        dao.findAll().forEach(cfg -> map.put(cfg.getId(), cfg));
     }
 
     public Entity getCfg(ID id) {
@@ -36,6 +28,4 @@ public abstract class CfgService<Entity extends Cfg<ID>, Dao extends CrudReposit
     public Collection<Entity> getAllCfg() {
         return map.values();
     }
-
-    public abstract String getTableName();
 }
