@@ -1,14 +1,14 @@
 package org.game.logic.player;
 
 import io.netty.channel.Channel;
-import org.game.logic.data.config.Config;
-import org.game.logic.data.game.PlayerInfo;
+import org.game.logic.data.mongodb.config.Config;
+import org.game.logic.data.mongodb.game.PlayerInfo;
 import org.game.logic.handler.ClientMsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.game.logic.data.game.PlayerDao;
+import org.game.logic.data.mongodb.game.PlayerDao;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Common;

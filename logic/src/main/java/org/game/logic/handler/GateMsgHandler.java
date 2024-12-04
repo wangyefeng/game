@@ -2,7 +2,7 @@ package org.game.logic.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.logic.data.config.Config;
+import org.game.logic.data.mongodb.config.Config;
 import org.game.proto.protocol.GateToLogicProtocol;
 
 import java.util.HashMap;

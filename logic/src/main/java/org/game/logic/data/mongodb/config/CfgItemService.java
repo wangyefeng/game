@@ -1,4 +1,4 @@
-package org.game.logic.data.config;
+package org.game.logic.data.mongodb.config;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

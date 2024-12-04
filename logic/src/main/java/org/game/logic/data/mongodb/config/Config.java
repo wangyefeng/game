@@ -1,4 +1,4 @@
-package org.game.logic.data.config;
+package org.game.logic.data.mongodb.config;
 
 import java.util.Collection;
 import java.util.HashMap;

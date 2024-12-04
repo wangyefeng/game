@@ -1,4 +1,4 @@
-package org.game.logic.data.config;
+package org.game.logic.data.mongodb.config;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

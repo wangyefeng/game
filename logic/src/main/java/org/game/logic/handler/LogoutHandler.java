@@ -1,7 +1,7 @@
 package org.game.logic.handler;
 
 import io.netty.channel.Channel;
-import org.game.logic.data.config.Config;
+import org.game.logic.data.mongodb.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

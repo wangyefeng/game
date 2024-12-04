@@ -1,4 +1,4 @@
-package org.game.logic.data;
+package org.game.logic.data.mongodb;
 
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package org.game.logic.data.config;
+package org.game.logic.data.mongodb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
