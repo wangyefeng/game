@@ -1,4 +1,4 @@
-package org.game.logic.data.mongodb.game;
+package org.game.logic.data.game.entity;
 
 public class Item {
     private int id;

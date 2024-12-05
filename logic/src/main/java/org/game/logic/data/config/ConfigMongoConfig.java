@@ -1,4 +1,4 @@
-package org.game.logic.data.mongodb.config;
+package org.game.logic.data.config;
 
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "org.game.logic.data.mongodb.config", mongoTemplateRef = "configMongoTemplate")
+@EnableMongoRepositories(basePackages = "org.game.logic.data.config.repository", mongoTemplateRef = "configMongoTemplate")
 public class ConfigMongoConfig {
 
     @Bean

@@ -2,7 +2,7 @@ package org.game.logic.player;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.logic.data.mongodb.config.Config;
+import org.game.logic.data.config.Config;
 import org.game.logic.handler.ClientMsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

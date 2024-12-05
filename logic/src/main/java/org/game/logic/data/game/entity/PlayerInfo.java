@@ -1,4 +1,4 @@
-package org.game.logic.data.mongodb.game;
+package org.game.logic.data.game.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
