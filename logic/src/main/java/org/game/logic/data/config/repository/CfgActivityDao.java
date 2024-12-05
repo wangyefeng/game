@@ -4,6 +4,5 @@ import org.game.logic.data.config.entity.CfgActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public interface CfgActivityDao extends JpaRepository<CfgActivity, String> {
 }

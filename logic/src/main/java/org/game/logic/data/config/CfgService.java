@@ -2,16 +2,18 @@ package org.game.logic.data.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 自动注入配置服务
- * @param <Entity> 实体类型
- * @param <ID>
+ * 配置表服务基础类
+ *
+ * @author 王叶峰
  */
+@Service
 public abstract class CfgService<Entity extends Cfg<ID>, Repository extends CrudRepository<Entity, ID>, ID> {
 
     @Autowired
