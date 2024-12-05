@@ -1,16 +1,14 @@
-package org.game.logic.data.mysql;
+package org.game.logic.data.config.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.game.common.util.JsonUtil;
 import org.game.logic.data.config.Cfg;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Immutable
 public class CfgActivity implements Cfg<String> {
 
     @Id

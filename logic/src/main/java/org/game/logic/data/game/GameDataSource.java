@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "org.game.logic.data.game.repository", mongoTemplateRef = "gameMongoTemplate")
-public class GameMongoConfig {
+public class GameDataSource {
 
     @Bean
     @Primary
@@ -24,9 +23,6 @@ public class GameMongoConfig {
     @Bean
     @Primary
     public MongoTemplate gameMongoTemplate() {
-        MongoTemplate mongoTemplate = new MongoTemplate(new SimpleMongoClientDatabaseFactory(gameMongoProperties().getUri()));
-        MappingMongoConverter mongoMapping = (MappingMongoConverter) mongoTemplate.getConverter();
-        mongoMapping.afterPropertiesSet();
-        return mongoTemplate;
+        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(gameMongoProperties().getUri()));
     }
 }

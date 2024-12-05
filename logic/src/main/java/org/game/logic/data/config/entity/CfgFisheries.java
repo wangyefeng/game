@@ -1,9 +1,8 @@
-package org.game.logic.data.mysql;
+package org.game.logic.data.config.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import org.game.logic.data.config.Cfg;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -20,7 +19,6 @@ import java.util.Objects;
  *
  */
 @Entity
-@Table(name = "cfg_fisheries")
 public class CfgFisheries implements Cfg<String> {
 
 	@Id
