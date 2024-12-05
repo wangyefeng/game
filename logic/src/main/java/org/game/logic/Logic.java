@@ -70,7 +70,6 @@ public class Logic extends Server implements CommandLineRunner {
 
     @Override
     protected void afterStart() throws Exception {
-        super.afterStart();
         registerService();
     }
 

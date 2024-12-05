@@ -56,8 +56,7 @@ public class Gate extends Server implements CommandLineRunner {
     }
 
     @Override
-    protected void afterStart() throws Exception {
-        super.afterStart();
+    protected void afterStart() {
         // 最后启动tcp服务
         tcpServer.start();
     }
