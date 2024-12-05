@@ -25,13 +25,11 @@ public class CfgFisheries implements Cfg<String> {
 	@Column(columnDefinition = "VARCHAR(30)")
 	private String id;
 
-	// 方向
 	@Column(name = "direction", columnDefinition = "INT UNSIGNED COMMENT '方向'")
 	private Integer direction;
 
-	// 鱼
 	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name = "fishes", columnDefinition = "JSON")
+	@Column(name = "fishes", columnDefinition = "JSON comment '鱼列表'")
 	private  List<FishInfo> fishes;
 
 	CfgFisheries() {
