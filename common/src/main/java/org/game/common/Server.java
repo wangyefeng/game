@@ -8,7 +8,7 @@ public abstract class Server {
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
 
-    protected static Status status;
+    protected volatile static Status status;
 
     static {
         // 设置默认的异常处理器, 打印日志
@@ -30,9 +30,9 @@ public abstract class Server {
                     stop();
                 } catch (Exception e) {
                     log.error("关闭服务器异常！", e);
-                    System.exit(1);
+                } finally {
+                    log.info("JVM 已关闭！");
                 }
-                log.info("JVM 已关闭！");
             }, "shutdown-hook"));
             log.info("服务器启动成功！");
         } catch (Exception e) {
