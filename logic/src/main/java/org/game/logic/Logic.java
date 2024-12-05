@@ -23,7 +23,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.Set;
 
 @SpringBootApplication
-@EntityScan(basePackages = {"org.game.logic.data.config.entity", "org.game.logic.data.game.entity"})
 public class Logic extends Server implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(Logic.class);
