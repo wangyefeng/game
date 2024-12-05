@@ -93,7 +93,7 @@ public class Client implements CommandLineRunner {
             System.out.println("Connected to server " + host + ":" + port);
 
             // 等待连接关闭
-            future.channel().closeFuture().addListener(future1 -> {
+            future.channel().closeFuture().addListener(_ -> {
                 // 关闭 EventLoopGroup，释放所有资源
                 group.shutdownGracefully();
             });
