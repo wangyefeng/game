@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.beans.Introspector;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -78,27 +79,28 @@ public class Logic extends Server implements CommandLineRunner {
         long start = System.currentTimeMillis();
         Reflections reflections = new Reflections("org.game.logic");
         Set<Class<? extends CfgService>> classes = reflections.getSubTypesOf(CfgService.class);
+        Collection<CfgService> services = new ArrayList<>(classes.size());
         for (Class<? extends CfgService> clazz : classes) {
-            registerService(clazz);
+            services.add(registerService(clazz));
         }
-        Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-        cfgServices.forEach(cfgService -> cfgService.init());
-        Config.reload(cfgServices);
+        Config.reload(services);
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
-    private void registerService(Class<? extends CfgService> requiredType) {
+    private CfgService registerService(Class<? extends CfgService> requiredType) {
         String name = Introspector.decapitalize(requiredType.getSimpleName());
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getAutowireCapableBeanFactory();
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(requiredType);
         beanDefinitionBuilder.setScope(ConfigurableBeanFactory.SCOPE_PROTOTYPE);// 设置为原型模式，重载配置表的时候不会影响到原有bean
         defaultListableBeanFactory.registerBeanDefinition(name, beanDefinitionBuilder.getBeanDefinition());
-        configurableApplicationContext.getBean(requiredType);
+        return configurableApplicationContext.getBean(requiredType);
     }
 
     public void reloadConfig() {
-        initConfig();
+        log.info("开始重新加载配置表...");
+        Config.reload(applicationContext.getBeansOfType(CfgService.class).values());
+        log.info("配置表重新加载完成");
     }
 
     private void registerService() throws KeeperException, InterruptedException {

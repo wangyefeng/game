@@ -1,5 +1,6 @@
 package org.game.logic.data.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     public CfgService() {
     }
 
-    public void init() {
+    @PostConstruct
+    protected void init() {
         repository.findAll().forEach(cfg -> map.put(cfg.getId(), cfg));
     }
 
