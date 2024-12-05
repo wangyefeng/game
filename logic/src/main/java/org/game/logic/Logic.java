@@ -6,7 +6,6 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.game.common.Server;
-import org.game.common.util.StringUtil;
 import org.game.logic.data.config.CfgService;
 import org.game.logic.data.config.Config;
 import org.game.logic.handler.ClientMsgHandler;
@@ -26,6 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.beans.Introspector;
 import java.util.Collection;
 import java.util.Set;
 
@@ -88,7 +88,7 @@ public class Logic extends Server implements CommandLineRunner {
     }
 
     private void registerService(Class<? extends CfgService> requiredType) {
-        String name = StringUtil.decapitalize(requiredType.getSimpleName());
+        String name = Introspector.decapitalize(requiredType.getSimpleName());
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getAutowireCapableBeanFactory();
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(requiredType);
