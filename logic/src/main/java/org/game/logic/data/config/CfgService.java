@@ -2,6 +2,8 @@ package org.game.logic.data.config;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +17,13 @@ import java.util.Map;
  * @author 王叶峰
  */
 @Service
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public abstract class CfgService<Entity extends Cfg<ID>, Repository extends CrudRepository<Entity, ID>, ID> {
 
     @Autowired
     protected Repository repository;
 
     protected Map<ID, Entity> map = new HashMap<>();
-
-    public CfgService() {
-    }
 
     @PostConstruct
     protected void init() {

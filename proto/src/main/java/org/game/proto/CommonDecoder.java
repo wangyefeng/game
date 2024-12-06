@@ -13,6 +13,7 @@ import java.util.Map;
 public class CommonDecoder extends ByteToMessageDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(CommonDecoder.class);
+
     private final byte to;
 
     private Map<Byte, Decoder<?>> decoders = new HashMap<>();
@@ -22,21 +23,22 @@ public class CommonDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        byte type = in.readByte();
-        Decoder<?> decoder = decoders.get(type);
-        if (decoder == null) {
-            throw new IllegalArgumentException("Unknown message type: " + type);
-        }
-        Object message;
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         try {
-            message = decoder.decode(in, to);
+            in.markReaderIndex();
+            byte type = in.readByte();
+            Decoder<?> decoder = decoders.get(type);
+            if (decoder == null) {
+                throw new IllegalArgumentException("非法消息类型: " + type);
+            }
+            Object message = decoder.decode(in, to);
+            out.add(message);
         } catch (Exception e) {
-            ctx.close();
-            log.error("Failed to decode message", e);
-            return;
+            in.resetReaderIndex();
+            byte[] bytes = new byte[in.readableBytes()];
+            in.readBytes(bytes);
+            log.error("解码失败，字节码信息：{}", bytes, e);
         }
-        out.add(message);
     }
 
     public void registerDecoder(Decoder<?> decoder) {

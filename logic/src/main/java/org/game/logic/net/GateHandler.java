@@ -10,6 +10,8 @@ import org.game.proto.MessageCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 /**
  * @author wangyefeng
  * @date 2024-07-08
@@ -22,12 +24,12 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
-        GateMsgHandler<Message> logicHandler = GateMsgHandler.getHandler(message.getProtocol().getCode());
-        if (logicHandler == null) {
-            log.warn("illegal message code: {}", message.getProtocol());
+        Optional<GateMsgHandler<Message>> optionalHandler = GateMsgHandler.getHandler(message.getProtocol().getCode());
+        if (optionalHandler.isEmpty()) {
+            log.warn("非法协议号: {}", message.getProtocol());
             return;
         }
-        logicHandler.handle(ctx.channel(), message.getMessage(), Config.getInstance());
+        optionalHandler.get().handle(ctx.channel(), message.getMessage(), Config.getInstance());
     }
 
     @Override

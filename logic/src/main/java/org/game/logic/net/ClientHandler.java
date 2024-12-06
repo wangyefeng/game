@@ -44,13 +44,13 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
             } finally {
                 long cost = System.currentTimeMillis() - start;
                 if (cost > 1000) {
-                    log.error("处理玩家[{}]消息 协议：{} 耗时：{}ms 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
+                    log.error("处理玩家[{}]消息 协议：{} 耗时：{}毫秒 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
                 } else if (cost > 100) {
-                    log.warn("处理玩家[{}]消息 协议：{} 耗时：{}ms 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
+                    log.warn("处理玩家[{}]消息 协议：{} 耗时：{}毫秒 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
                 } else if (cost > 50) {
-                    log.info("处理玩家[{}]消息 协议：{} 耗时：{}ms 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
+                    log.info("处理玩家[{}]消息 协议：{} 耗时：{}毫秒 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
                 } else {
-                    log.debug("处理玩家[{}]消息 协议：{} 耗时：{}ms 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
+                    log.debug("处理玩家[{}]消息 协议：{} 耗时：{}毫秒 数据: {}", message.getPlayerId(), message.getProtocol(), cost, message.getMessage());
                 }
             }
         });

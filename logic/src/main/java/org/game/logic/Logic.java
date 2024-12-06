@@ -23,7 +23,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.beans.Introspector;
 import java.util.ArrayList;
@@ -71,30 +70,29 @@ public class Logic extends Server implements CommandLineRunner {
 
     @Override
     protected void afterStart() throws Exception {
-        registerService();
+        registerCfgService();
     }
 
     private void initConfig() {
         log.info("开始加载配置表...");
         long start = System.currentTimeMillis();
-        Reflections reflections = new Reflections("org.game.logic");
+        Reflections reflections = new Reflections("org.game.logic.data.config.service");
         Set<Class<? extends CfgService>> classes = reflections.getSubTypesOf(CfgService.class);
         Collection<CfgService> services = new ArrayList<>(classes.size());
         for (Class<? extends CfgService> clazz : classes) {
-            services.add(registerService(clazz));
+            services.add(registerCfgService(clazz));
         }
         Config.reload(services);
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
-    private CfgService registerService(Class<? extends CfgService> requiredType) {
+    private CfgService registerCfgService(Class<? extends CfgService> requiredType) {
         String name = Introspector.decapitalize(requiredType.getSimpleName());
-        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getAutowireCapableBeanFactory();
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(requiredType);
         beanDefinitionBuilder.setScope(ConfigurableBeanFactory.SCOPE_PROTOTYPE);// 设置为原型模式，重载配置表的时候不会影响到原有bean
         defaultListableBeanFactory.registerBeanDefinition(name, beanDefinitionBuilder.getBeanDefinition());
-        return configurableApplicationContext.getBean(requiredType);
+        return applicationContext.getBean(requiredType);
     }
 
     public void reloadConfig() {
@@ -103,7 +101,7 @@ public class Logic extends Server implements CommandLineRunner {
         log.info("配置表重新加载完成");
     }
 
-    private void registerService() throws KeeperException, InterruptedException {
+    private void registerCfgService() throws KeeperException, InterruptedException {
         if (zooKeeper.exists(SERVICE_ROOT, false) == null) {
             zooKeeper.create(SERVICE_ROOT, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
@@ -132,7 +130,7 @@ public class Logic extends Server implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Logic.class);
-        application.setRegisterShutdownHook(false);// 关闭Spring-boot的程序关闭处理策略
+        application.setRegisterShutdownHook(false);// 关闭Spring-boot停服处理策略
         application.run(args);
     }
 }
