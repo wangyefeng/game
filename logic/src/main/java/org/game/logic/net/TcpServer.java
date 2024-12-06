@@ -17,14 +17,9 @@ import org.game.proto.PlayerMsgEncode;
 import org.game.proto.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@Component
-@ConfigurationProperties(prefix = "tcp")
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -33,24 +28,22 @@ public class TcpServer {
 
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
 
-    private String host;
+    private final String host;
 
-    private int port;
+    private final int port;
 
     private boolean isRunning = false;
 
     private NioEventLoopGroup group;
 
-    TcpServer() {
+    TcpServer(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
 
     public void start() throws UnknownHostException {
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
-        }
-        if (host == null) {
-            InetAddress localhost = InetAddress.getLocalHost();
-            host = localhost.getHostAddress();
         }
         group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
@@ -92,20 +85,12 @@ public class TcpServer {
         }
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public int getPort() {
         return port;
     }
 
     public String getHost() {
         return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
     }
 
     public void close() throws InterruptedException {

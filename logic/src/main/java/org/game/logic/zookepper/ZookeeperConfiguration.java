@@ -1,29 +1,27 @@
-package org.game.gate.zookepper;
+package org.game.logic.zookepper;
 
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.CountDownLatch;
 
 @Configuration
-@ConfigurationProperties(prefix = "zookeeper")
-public class ZookeeperConfig {
+@EnableConfigurationProperties(ZookeeperProperties.class)
+public class ZookeeperConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(ZookeeperConfig.class);
-
-    private String address;
-
-    private int timeout;
+    private static final Logger log = LoggerFactory.getLogger(ZookeeperConfiguration.class);
 
     @Bean
-    public ZooKeeper zooKeeper() {
+    public ZooKeeper zooKeeper(ZookeeperProperties zookeeperProperties) {
         log.info("初始化ZooKeeper连接....");
-        ZooKeeper zooKeeper = null;
+        String address = zookeeperProperties.getAddress();
+        int timeout = zookeeperProperties.getTimeout();
+        ZooKeeper zooKeeper;
         try {
             final CountDownLatch countDownLatch = new CountDownLatch(1);
             //连接成功后，会回调watcher监听，此连接操作是异步的，执行完new语句后，直接调用后续代码
@@ -39,21 +37,5 @@ public class ZookeeperConfig {
             throw new IllegalStateException("初始化ZooKeeper连接异常....", e);
         }
         return zooKeeper;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
     }
 }
