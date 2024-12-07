@@ -1,7 +1,14 @@
 package org.game.common.util;
 
-import java.time.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * @author: 王叶峰
@@ -25,6 +32,9 @@ public abstract class DateUtil {
      */
     public static final DateTimeFormatter DEFAULT_TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+    // 使用 ThreadLocal 来确保每个线程都有自己的 SimpleDateFormat 实例
+    private static ThreadLocal<DateFormat> threadLocalDateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
     public static LocalDateTime parseLocalDateTime(String s) {
         return LocalDateTime.parse(s, DEFAULT_DATE_TIME_FORMATTER);
     }
@@ -37,15 +47,15 @@ public abstract class DateUtil {
         return LocalTime.parse(s, DEFAULT_TIME_FORMAT);
     }
 
-    public static String formatLocalDateTime(LocalDateTime localDateTime) {
+    public static String format(LocalDateTime localDateTime) {
         return localDateTime.format(DEFAULT_DATE_TIME_FORMATTER);
     }
 
-    public static String formatLocalDate(LocalDate localDate) {
+    public static String format(LocalDate localDate) {
         return localDate.format(DEFAULT_DATE_FORMAT);
     }
 
-    public static String formatLocalTime(LocalTime localTime) {
+    public static String format(LocalTime localTime) {
         return localTime.format(DEFAULT_TIME_FORMAT);
     }
 
@@ -60,5 +70,9 @@ public abstract class DateUtil {
 
     public static long betweenDays(LocalDate start, LocalDate end) {
         return end.toEpochDay() - start.toEpochDay();
+    }
+
+    public static String format(Date date) {
+        return threadLocalDateFormat.get().format(date);
     }
 }
