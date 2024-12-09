@@ -23,6 +23,7 @@ public class GameDataSource {
     @Bean
     @Primary
     public MongoTemplate gameMongoTemplate() {
-        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(gameMongoProperties().getUri()));
+        MongoProperties mongoProperties = gameMongoProperties();
+        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(mongoProperties.getUri()));
     }
 }

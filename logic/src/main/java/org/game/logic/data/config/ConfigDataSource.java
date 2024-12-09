@@ -20,7 +20,8 @@ public class ConfigDataSource {
 
     @Bean
     public MongoTemplate configMongoTemplate() {
-        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(configMongoProperties().getUri()));
+        MongoProperties mongoProperties = configMongoProperties();
+        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(mongoProperties.getUri()));
     }
 
 }
