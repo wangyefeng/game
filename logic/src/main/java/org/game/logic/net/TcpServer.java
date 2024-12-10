@@ -18,8 +18,6 @@ import org.game.proto.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.UnknownHostException;
-
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -41,7 +39,7 @@ public class TcpServer {
         this.port = port;
     }
 
-    public void start() throws UnknownHostException {
+    public void start() {
         if (isRunning) {
             throw new IllegalStateException("Server is already running");
         }

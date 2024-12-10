@@ -75,10 +75,16 @@ public abstract class Client {
                 reconnectThread = null;
                 break;
             } catch (InterruptedException e) {
-                log.info("重连线程中断！");
+                log.info("重连线程被中断！");
                 break;
             } catch (Exception e) {
                 log.error("连接服务器失败，原因: {} 正在重试...", e.getMessage());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e1) {
+                    log.info("重连线程被中断！");
+                    break;
+                }
             }
         }
     }
