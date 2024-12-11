@@ -1,9 +1,11 @@
 package org.game.common.event;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class ListenerTest extends TestCase {
+public class ListenerTest {
 
+    @Test
     public void testApp() {
         Player player = new Player(1);
         TaskListener listener1 = new TaskListener(PlayerEventType.LEVEL_UP, player.level, 10, false);
@@ -16,19 +18,19 @@ public class ListenerTest extends TestCase {
         for (int i = 0; i < 10; i++) {
             player.levelUp();
         }
-        assertTrue(listener1.isFinished);
-        assertTrue(listener1.progress == 10);
-        assertFalse(listener2.isFinished);
-        assertTrue(listener2.progress == 11);
-        assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 1);
+        Assertions.assertTrue(listener1.isFinished);
+        Assertions.assertTrue(listener1.progress == 10);
+        Assertions.assertFalse(listener2.isFinished);
+        Assertions.assertTrue(listener2.progress == 11);
+        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 1);
         player.levelUp();
-        assertTrue(listener2.isFinished);
-        assertTrue(listener2.progress == 12);
-        assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
+        Assertions.assertTrue(listener2.isFinished);
+        Assertions.assertTrue(listener2.progress == 12);
+        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
 
         player.rename("John");
-        assertTrue(listener3.isFinished);
-        assertTrue(listener3.progress == 1);
+        Assertions.assertTrue(listener3.isFinished);
+        Assertions.assertTrue(listener3.progress == 1);
     }
 
     private class TaskListener implements Listener<Integer> {

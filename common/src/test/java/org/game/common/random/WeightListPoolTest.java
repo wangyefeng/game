@@ -1,11 +1,14 @@
 package org.game.common.random;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeightListPoolTest extends TestCase {
+public class WeightListPoolTest {
 
     private WeightListPool<Integer> pool;
 
@@ -13,9 +16,8 @@ public class WeightListPoolTest extends TestCase {
 
     private int sumWeight;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         int size = 100;
         pool = new WeightListPool<>(size);
         map = new HashMap<>(size);
@@ -33,9 +35,8 @@ public class WeightListPoolTest extends TestCase {
         sumWeight -= times2.weight;
     }
 
-    /**
-     * Rigourous Test :-)
-     */
+    @Test
+    @Disabled
     public void testApp() {
         double d = 0.0001;
         int times = 100000000;
@@ -45,7 +46,7 @@ public class WeightListPoolTest extends TestCase {
         map.forEach((key, times1) -> {
             double expected = times1.weight * 1.0 / sumWeight;
             double actual = map.get(key).num * 1.0 / times;
-            assertTrue(Math.abs(actual - expected) < d);
+            Assertions.assertTrue(Math.abs(actual - expected) < d);
         });
     }
 

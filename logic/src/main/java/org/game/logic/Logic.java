@@ -53,11 +53,9 @@ public class Logic extends Server implements CommandLineRunner {
 
     /**
      * 初始化spring容器后，启动服务器
-     *
-     * @throws Exception 异常
      */
     @Override
-    protected void start0(String[] args) throws Exception {
+    protected void start0(String[] args) {
         initConfig();
         registerHandler();
         tcpServer.start();
