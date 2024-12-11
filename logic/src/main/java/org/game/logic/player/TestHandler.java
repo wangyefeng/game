@@ -1,6 +1,6 @@
 package org.game.logic.player;
 
-import org.game.logic.data.config.Config;
+import org.game.config.Config;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Common;

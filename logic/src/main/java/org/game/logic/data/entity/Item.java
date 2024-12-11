@@ -1,4 +1,4 @@
-package org.game.logic.data.game.entity;
+package org.game.logic.data.entity;
 
 public class Item {
     private int id;

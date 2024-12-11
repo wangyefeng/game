@@ -1,9 +1,8 @@
-package org.game.logic.data.config.entity;
+package org.game.config.data.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import org.game.logic.data.config.Cfg;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 

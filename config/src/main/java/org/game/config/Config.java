@@ -1,4 +1,6 @@
-package org.game.logic.data.config;
+package org.game.config;
+
+import org.game.config.data.service.CfgService;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +11,11 @@ public final class Config {
     private static volatile Config instance;
 
     private Map<Class<? extends CfgService>, CfgService> map = new HashMap<>();
+
+    public static void init(Collection<CfgService> cfgServices) {
+        Config.instance = new Config();
+        cfgServices.forEach(Config.instance::add);
+    }
 
     public static void reload(Collection<CfgService> cfgServices) {
         Config config = new Config();

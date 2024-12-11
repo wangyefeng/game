@@ -1,9 +1,9 @@
 package org.game.logic.player;
 
 import io.netty.channel.Channel;
-import org.game.logic.data.config.Config;
-import org.game.logic.data.game.entity.PlayerInfo;
-import org.game.logic.data.game.repository.PlayerDao;
+import org.game.config.Config;
+import org.game.logic.data.entity.PlayerInfo;
+import org.game.logic.data.repository.PlayerDao;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;

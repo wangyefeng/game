@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.game.logic.data.config.Config;
+import org.game.config.Config;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;

@@ -1,6 +1,5 @@
-package org.game.logic.data.config.entity;
+package org.game.config.data.entity;
 
-import org.game.logic.data.config.Cfg;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

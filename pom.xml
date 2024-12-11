@@ -20,6 +20,7 @@
         <module>logic</module>
         <module>common</module>
         <module>client</module>
+        <module>config</module>
     </modules>
 
     <properties>

@@ -4,14 +4,14 @@ import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import org.game.logic.data.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.game.config.Config;
 import org.game.proto.DecoderType;
 import org.game.proto.Topic;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.game.proto.protocol.LogicToGateProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PingHandler implements GateMsgHandler<Message> {

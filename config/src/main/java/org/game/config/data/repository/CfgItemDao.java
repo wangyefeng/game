@@ -1,6 +1,6 @@
-package org.game.logic.data.config.repository;
+package org.game.config.data.repository;
 
-import org.game.logic.data.config.entity.CfgItem;
+import org.game.config.data.entity.CfgItem;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CfgItemDao extends MongoRepository<CfgItem, Integer> {
