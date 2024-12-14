@@ -6,7 +6,6 @@ import org.hibernate.Session;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.core.EntityInformation;
 
 @NoRepositoryBean
 @Transactional
@@ -14,7 +13,7 @@ public class BaseDao<T, ID> extends SimpleJpaRepository<T, ID> implements Dao<T,
 
     private final Session session;
 
-    private final EntityInformation entityInformation;
+    private final JpaEntityInformation<T, ?> entityInformation;
 
     public BaseDao(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
         super(entityInformation, em);
@@ -23,15 +22,7 @@ public class BaseDao<T, ID> extends SimpleJpaRepository<T, ID> implements Dao<T,
     }
 
     @Override
-    public <S extends T> void evict(S entity) {
+    public <S extends T> void cacheEvict(S entity) {
         session.getFactory().getCache().evict(entity.getClass(), entityInformation.getId(entity));
-    }
-
-    @Transactional
-    @Override
-    public <S extends T> S saveAndEvict(S entity) {
-        S result = super.saveAndFlush(entity);
-        evict(entity);
-        return result;
     }
 }

@@ -11,9 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface Dao<T, ID> extends JpaRepository<T, ID> {
 
-    <S extends T> void evict(S entity);
-
-    <S extends T> S saveAndEvict(S entity);
+    <S extends T> void cacheEvict(S entity);
 
 }
 

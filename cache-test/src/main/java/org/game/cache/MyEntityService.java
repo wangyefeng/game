@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MyEntityService {
+public class MyEntityService extends EntityService {
 
     @Autowired
     private MyEntityDao myEntityDao;
@@ -19,7 +19,7 @@ public class MyEntityService {
 
     public MyEntity saveAndEvict(MyEntity entity) {
         myEntityDao.save(entity);
-        myEntityDao.evict(entity);
+        myEntityDao.cacheEvict(entity);
         return entity;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class MyEntity {
+public class MyEntity extends GameEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
