@@ -7,7 +7,9 @@ import org.game.proto.struct.Common;
 public enum LogicToClientProtocol implements Protocol {
     LOGIN((short) 1, Common.PbInt.parser()),
 
-    TEST((short) 2, Common.PbInt.parser())
+    TEST((short) 2, Common.PbInt.parser()),
+
+    REGISTER((short) 3, Common.PbInt.parser()),
 
     ;
 

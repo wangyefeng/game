@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +17,8 @@ public abstract class ThreadPool {
     public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors();
 
     public static final ThreadPoolExecutor[] playerExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
+
+    public static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(5);
 
     static {
         for (int i = 0; i < EXECUTOR_SIZE; i++) {
@@ -39,5 +44,9 @@ public abstract class ThreadPool {
             }
         }
         log.info("player thread pool shutdown");
+    }
+
+    public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {
+        return scheduledExecutor.scheduleAtFixedRate(runnable, delay, period, unit);
     }
 }

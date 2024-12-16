@@ -1,0 +1,13 @@
+// 通用协议结构
+syntax = "proto3";
+
+package org.game.proto.struct;
+
+message PbRegister {
+	int32 id = 1;
+	string name = 2;
+}
+
+message PbLogin {
+	int32 id = 1;
+}

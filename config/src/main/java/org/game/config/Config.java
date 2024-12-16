@@ -30,6 +30,7 @@ public final class Config {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends CfgService> T get(Class<T> clazz) {
         return (T) map.get(clazz);
     }

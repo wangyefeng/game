@@ -1,9 +1,7 @@
-package org.game.logic.data.entity;
+package org.game.logic.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 @Document(collection = "player_info")
 public class PlayerInfo {
@@ -13,12 +11,9 @@ public class PlayerInfo {
 
     private String name;
 
-    private List<Item> items;
-
-    public PlayerInfo(int id, String name, List<Item> items) {
+    public PlayerInfo(int id, String name) {
         this.id = id;
         this.name = name;
-        this.items = items;
     }
 
     public int getId() {
@@ -35,13 +30,5 @@ public class PlayerInfo {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
     }
 }
