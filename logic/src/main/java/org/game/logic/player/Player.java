@@ -25,7 +25,7 @@ public class Player {
 
     /**
      * 服务模块集合
-      */
+     */
     private Map<Class<? extends GameService>, GameService> map = new HashMap<>();
 
     /**
@@ -45,7 +45,6 @@ public class Player {
             gameService.setPlayer(this);
             map.put(gameService.getClass(), gameService);
         }
-        saveFuture = ThreadPool.scheduleAtFixedRate(() -> ThreadPool.getPlayerExecutor(id).execute(() -> save()), 1, 1, TimeUnit.MINUTES);
     }
 
     public Channel getChannel() {
@@ -94,14 +93,25 @@ public class Player {
         return (T) map.get(playerServiceClass);
     }
 
-    public void create(Login.PbRegister registerMsg) {
+    public void register(Login.PbRegister registerMsg) {
         for (GameService gameService : map.values()) {
             gameService.init(registerMsg);
         }
+        saveFuture = scheduleAtFixedRate(() -> save(), 1, 1, TimeUnit.MINUTES);
+    }
+
+    public void login() {
+        load();
+        saveFuture = scheduleAtFixedRate(() -> save(), 1, 1, TimeUnit.MINUTES);
     }
 
     public void logout() {
         saveFuture.cancel(true);
         save();
     }
+
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
+        return ThreadPool.scheduleAtFixedRate(() -> ThreadPool.getPlayerExecutor(id).execute(runnable), initialDelay, period, unit);
+    }
+
 }

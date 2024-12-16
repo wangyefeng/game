@@ -3,13 +3,12 @@ package org.game.client;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.game.proto.struct.Login;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.struct.Common;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +27,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.VALIDATE, Common.PbInt.newBuilder().setVal(playerId).build()));
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLogin.newBuilder().setId(playerId).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("ping");
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));

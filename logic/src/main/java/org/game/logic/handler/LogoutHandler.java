@@ -20,10 +20,14 @@ public class LogoutHandler implements GateMsgHandler<Common.PbInt> {
     @Override
     public void handle(Channel channel, Common.PbInt msg, Config config) {
         ThreadPool.getPlayerExecutor(msg.getVal()).execute(() -> {
-            log.info("gate通知logic玩家{}退出", msg.getVal());
             Player player = Players.getPlayer(msg.getVal());
+            if (player == null) {
+                log.info("玩家{}退出游戏，但玩家不在线", msg.getVal());
+                return;
+            }
             player.logout();
             Players.removePlayer(msg.getVal());
+            log.info("玩家{}退出游戏", msg.getVal());
         });
     }
 

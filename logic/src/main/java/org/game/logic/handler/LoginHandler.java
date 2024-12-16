@@ -32,9 +32,9 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLogin> {
             player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
             PlayerService playerService = player.getService(PlayerService.class);
             if (playerService.playerExists()) {
-                player.load();
+                player.login();
             } else {
-                log.info("LoginHandler: playerId: {}, message: {}, player not exists", playerId, message);
+                log.warn("玩家登录失败，玩家不存在: playerId: {}", playerId);
                 return;
             }
             Players.addPlayer(player);
