@@ -110,7 +110,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 2; i < 3; i++) {
+        for (int i = 10; i < 100; i++) {
             run(i);
         }
     }

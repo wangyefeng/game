@@ -8,6 +8,7 @@ import org.game.logic.service.GameService;
 import org.game.logic.service.PlayerService;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
+import org.game.proto.struct.Common;
 import org.game.proto.struct.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,14 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLogin> {
                 player.login();
             } else {
                 log.warn("玩家登录失败，玩家不存在: playerId: {}", playerId);
+                player.sendToClient(LogicToClientProtocol.LOGIN, Common.PbInt.newBuilder().setVal(0).build());
                 return;
             }
             Players.addPlayer(player);
         } else {
             player.setChannel(channel);
         }
-        player.sendToClient(LogicToClientProtocol.LOGIN, message);
+        player.sendToClient(LogicToClientProtocol.LOGIN, Common.PbInt.newBuilder().setVal(playerId).build());
     }
 
     @Override

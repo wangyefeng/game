@@ -2,7 +2,7 @@ package org.game.logic.service;
 
 import org.game.common.util.JsonUtil;
 import org.game.logic.entity.PlayerInfo;
-import org.game.logic.repository.PlayerDao;
+import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 public class PlayerService extends AbGameService {
 
     @Autowired
-    private PlayerDao playerDao;
+    private PlayerRepository playerRepository;
 
     private PlayerInfo playerInfo;
 
     @Override
     public void load() {
-        playerInfo = playerDao.findById(player.getId()).orElseThrow();
+        playerInfo = playerRepository.findById(player.getId()).orElseThrow();
     }
 
     @Override
     public void save() {
-        playerDao.save(playerInfo);
+        playerRepository.save(playerInfo);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PlayerService extends AbGameService {
     }
 
     public boolean playerExists() {
-        return playerDao.existsById(player.getId());
+        return playerRepository.existsById(player.getId());
     }
 
 }

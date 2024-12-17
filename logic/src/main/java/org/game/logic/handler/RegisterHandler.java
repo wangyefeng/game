@@ -26,22 +26,19 @@ public class RegisterHandler implements ClientMsgHandler<Login.PbRegister> {
 
     @Override
     public void handle(Channel channel, int playerId, Login.PbRegister message, Config config) {
-        log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
+        log.info("玩家{}注册 信息: {}", playerId, message);
         Player player = Players.getPlayer(playerId);
-        if (player == null) {
-            player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
-            PlayerService playerService = player.getService(PlayerService.class);
-            if (playerService.playerExists()) {
-                player.load();
-            } else {
-                log.info("LoginHandler: playerId: {}, message: {}, player not exists", playerId, message);
-                return;
-            }
-            Players.addPlayer(player);
-        } else {
-            player.setChannel(channel);
+        if (player != null) {
+            return;
         }
-        player.sendToClient(LogicToClientProtocol.LOGIN, message);
+        player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
+        PlayerService playerService = player.getService(PlayerService.class);
+        if (playerService.playerExists()) {
+            return;
+        }
+        player.register(message);
+        Players.addPlayer(player);
+        player.sendToClient(LogicToClientProtocol.REGISTER, message);
     }
 
     @Override

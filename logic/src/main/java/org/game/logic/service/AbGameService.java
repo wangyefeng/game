@@ -12,4 +12,8 @@ public abstract class AbGameService implements GameService {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    public int getPlayerId() {
+        return player.getId();
+    }
 }
