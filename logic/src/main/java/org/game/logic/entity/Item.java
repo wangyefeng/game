@@ -1,6 +1,6 @@
 package org.game.logic.entity;
 
-public class Item {
+public class Item implements Cloneable {
     private int id;
     private int num;
 
@@ -26,5 +26,14 @@ public class Item {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    @Override
+    protected Item clone() {
+        try {
+            return (Item) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }

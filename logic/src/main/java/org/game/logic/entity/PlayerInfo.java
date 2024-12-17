@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "player_info")
-public class PlayerInfo {
+public class PlayerInfo extends Entity {
 
     @Id
     private int id;
@@ -20,15 +20,16 @@ public class PlayerInfo {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public PlayerInfo clone() {
+        return (PlayerInfo) super.clone();
     }
 }

@@ -18,12 +18,15 @@ public abstract class ThreadPool {
 
     public static final ThreadPoolExecutor[] playerExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
 
+    public static final ThreadPoolExecutor[] playerDBExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
+
     public static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(5);
 
     static {
         for (int i = 0; i < EXECUTOR_SIZE; i++) {
             final int k = i;
             playerExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-thread-" + k));
+            playerDBExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-db-thread-" + k));
         }
     }
 
@@ -31,11 +34,26 @@ public abstract class ThreadPool {
         return playerExecutors[playerId % EXECUTOR_SIZE];
     }
 
+    public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
+        return playerDBExecutors[playerId % EXECUTOR_SIZE];
+    }
+
     public static void shutdown() {
         for (ThreadPoolExecutor executor : ThreadPool.playerExecutors) {
             executor.shutdown();
             try {
                 if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                log.error("player thread {} shutdown interrupted", e);
+            }
+        }
+        for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(600, TimeUnit.SECONDS)) {
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {

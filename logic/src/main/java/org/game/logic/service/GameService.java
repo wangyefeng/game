@@ -14,6 +14,8 @@ public interface GameService {
 
     void load();
 
+    void copy();
+
     void save();
 
     void setPlayer(Player player);

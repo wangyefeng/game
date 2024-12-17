@@ -74,18 +74,20 @@ public class Player {
     }
 
     public void save() {
-        long start = System.currentTimeMillis();
         for (GameService gameService : map.values()) {
-            try {
-                gameService.save();
-                if (log.isDebugEnabled()) {
-                    log.debug("玩家{}保存数据，模块：{}，数据：{}", id, gameService.getClass().getSimpleName(), gameService.dataToString());
-                }
-            } catch (Exception e) {
-                log.error("保存数据失败，模块：{}，数据：{}", gameService.getClass().getSimpleName(), gameService.dataToString(), e);
-            }
+            gameService.copy();
         }
-        log.info("玩家{}保存数据完成，耗时：{}毫秒", id, System.currentTimeMillis() - start);
+        ThreadPool.getPlayerDBExecutor(id).execute(() -> {
+            long start = System.currentTimeMillis();
+            for (GameService gameService : map.values()) {
+                try {
+                    gameService.save();
+                } catch (Exception e) {
+                    log.error("玩家{}保存数据失败，模块：{} 数据：{}", id, gameService.getClass().getSimpleName(), gameService.dataToString(), e);
+                }
+            }
+            log.info("玩家{}保存数据完成，耗时：{}毫秒", id, System.currentTimeMillis() - start);
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -97,12 +99,16 @@ public class Player {
         for (GameService gameService : map.values()) {
             gameService.init(registerMsg);
         }
-        saveFuture = scheduleAtFixedRate(() -> save(), 1, 1, TimeUnit.MINUTES);
+        startSaveTimer();
+    }
+
+    private void startSaveTimer() {
+        saveFuture = scheduleAtFixedRate(() -> save(), 0, 1, TimeUnit.MINUTES);
     }
 
     public void login() {
         load();
-        saveFuture = scheduleAtFixedRate(() -> save(), 1, 1, TimeUnit.MINUTES);
+        startSaveTimer();
     }
 
     public void logout() {

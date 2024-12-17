@@ -35,7 +35,6 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLogin> {
             if (playerService.playerExists()) {
                 player.login();
             } else {
-                log.warn("玩家登录失败，玩家不存在: playerId: {}", playerId);
                 player.sendToClient(LogicToClientProtocol.LOGIN, Common.PbInt.newBuilder().setVal(0).build());
                 return;
             }
