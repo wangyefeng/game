@@ -86,7 +86,7 @@ public class Player {
                     log.error("玩家{}保存数据失败，模块：{} 数据：{}", id, gameService.getClass().getSimpleName(), gameService.dataToString(), e);
                 }
             }
-            log.info("玩家{}保存数据完成，耗时：{}毫秒", id, System.currentTimeMillis() - start);
+            log.debug("玩家{}保存数据完成，耗时：{}毫秒", id, System.currentTimeMillis() - start);
         });
     }
 
