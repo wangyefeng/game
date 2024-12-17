@@ -6,11 +6,12 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.game.common.Server;
-import org.game.config.data.service.CfgService;
 import org.game.config.Config;
+import org.game.config.data.service.CfgService;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.handler.GateMsgHandler;
 import org.game.logic.net.TcpServer;
+import org.game.logic.service.GameService;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,12 @@ public class Logic extends Server implements CommandLineRunner {
         initConfig();
         registerHandler();
         tcpServer.start();
+        initGameService();
+    }
+
+    private void initGameService() {
+        // 主动触发GameService的初始化，防止延迟初始化多线程安全问题
+        applicationContext.getBeansOfType(GameService.class);
     }
 
     @Override
