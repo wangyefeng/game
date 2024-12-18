@@ -24,7 +24,7 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
     public void handle(Channel channel, int playerId, T message, Config config) {
         Player player = Players.getPlayer(playerId);
         if (player == null) {
-            log.warn("协议处理失败 玩家{}未登录，协议:{} 协议体：{}", playerId, getProtocol(), message);
+            log.warn("协议处理失败 玩家{}未登录，协议:{} 数据：{}", playerId, getProtocol(), message);
             return;
         }
         handle(player, message, config);
