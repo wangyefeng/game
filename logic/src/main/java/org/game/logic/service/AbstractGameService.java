@@ -24,18 +24,28 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
 
     @Override
     public void load() {
-        entity = repository.findById(player.getId()).orElseThrow();
+        entity = repository.findById(player.getId()).orElse(null);
     }
 
     @Override
     public void save() {
-        repository.save(entity);
+        if (entity == null) {
+            return;
+        }
+        save(entity);
     }
 
     @Override
     public void asyncSave() {
+        if (entity == null) {
+            return;
+        }
         E copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
-        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> repository.save(copy));
+        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(copy));
+    }
+
+    private void save(E entity) {
+        repository.save(entity);
     }
 
     @Override

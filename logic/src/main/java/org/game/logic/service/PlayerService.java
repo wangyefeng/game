@@ -19,5 +19,4 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
     public boolean playerExists() {
         return repository.existsById(player.getId());
     }
-
 }

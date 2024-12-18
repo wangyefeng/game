@@ -15,5 +15,4 @@ public class ItemService extends AbstractGameService<ItemInfo, ItemRepository> {
     public void register(PbRegister registerMsg) {
         entity = new ItemInfo(player.getId());
     }
-
 }
