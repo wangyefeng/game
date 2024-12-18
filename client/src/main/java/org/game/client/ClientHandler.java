@@ -36,7 +36,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         }, 5, 5, TimeUnit.SECONDS);
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("TEST");
-            ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.TEST, Common.PbInt.newBuilder().setVal(2).build()));
+            ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LEVEL_UP));
         }, 5, 5, TimeUnit.SECONDS);
     }
 

@@ -13,6 +13,8 @@ public enum ClientToLogicProtocol implements Protocol {
 
     REGISTER((short) 3, Login.PbRegister.parser()),
 
+    LEVEL_UP((short)4),
+
     ;
     private final short code;
 

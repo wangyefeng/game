@@ -1,6 +1,7 @@
 package org.game.logic.service;
 
 import org.game.logic.entity.PlayerInfo;
+import org.game.logic.player.PlayerEventType;
 import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,5 +19,10 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     public boolean playerExists() {
         return repository.existsById(player.getId());
+    }
+
+    public void levelUp() {
+        entity.setLevel(entity.getLevel() + 1);
+        player.updateEvent(PlayerEventType.LEVEL_UP, entity.getLevel());
     }
 }

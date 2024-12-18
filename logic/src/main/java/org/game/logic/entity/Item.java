@@ -28,6 +28,10 @@ public class Item implements Cloneable {
         this.num = num;
     }
 
+    public void addNum(int num) {
+        this.num += num;
+    }
+
     @Override
     protected Item clone() {
         try {

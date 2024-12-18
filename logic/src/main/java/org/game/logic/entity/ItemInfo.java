@@ -2,29 +2,29 @@ package org.game.logic.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Document(collection = "item_info")
 public class ItemInfo extends Entity {
 
-    private List<Item> items;
+    private Map<Integer, Item> items;
 
     public ItemInfo(int id) {
         super(id);
-        this.items = new ArrayList<>();
+        this.items = new HashMap<>();
     }
 
-    public List<Item> getItems() {
+    public Map<Integer, Item> getItems() {
         return items;
     }
 
     @Override
     public ItemInfo clone() {
         ItemInfo cloned = (ItemInfo) super.clone();
-        cloned.items = new ArrayList<>();
-        for (Item item : items) {
-            cloned.items.add(item.clone());
+        cloned.items = new HashMap<>();
+        for (Item item : items.values()) {
+            cloned.items.put(item.getId(), item.clone());
         }
         return cloned;
     }

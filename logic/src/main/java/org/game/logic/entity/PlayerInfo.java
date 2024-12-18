@@ -1,23 +1,18 @@
 package org.game.logic.entity;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "player_info")
 public class PlayerInfo extends Entity {
 
-    @Id
-    private int id;
-
     private String name;
+
+    private int level;
 
     public PlayerInfo(int id, String name) {
         super(id);
         this.name = name;
-    }
-
-    public int getId() {
-        return id;
+        this.level = 1;
     }
 
     public String getName() {
@@ -31,5 +26,13 @@ public class PlayerInfo extends Entity {
     @Override
     public PlayerInfo clone() {
         return (PlayerInfo) super.clone();
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
