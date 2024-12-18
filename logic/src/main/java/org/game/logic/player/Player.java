@@ -2,7 +2,6 @@ package org.game.logic.player;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.common.util.JsonUtil;
 import org.game.logic.service.GameService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
@@ -76,13 +75,7 @@ public class Player {
 
     public void save() {
         for (GameService gameService : map.values()) {
-            long start = System.currentTimeMillis();
-            try {
-                gameService.asyncSave();
-            } catch (Exception e) {
-                log.error("玩家{}保存数据失败，模块：{} 数据：{}", id, gameService.getClass().getSimpleName(), JsonUtil.toJson(gameService.getData()), e);
-            }
-            log.debug("玩家{}保存数据完成，耗时：{}毫秒", id, System.currentTimeMillis() - start);
+            gameService.asyncSave();
         }
     }
 

@@ -23,5 +23,5 @@ public interface GameService<E extends Entity> {
 
     void init(Login.PbRegister registerMsg);
 
-    E getData();
+    E getEntity();
 }

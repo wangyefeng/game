@@ -39,7 +39,7 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
     }
 
     @Override
-    public E getData() {
+    public E getEntity() {
         return entity;
     }
 }
