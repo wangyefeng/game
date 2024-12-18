@@ -4,10 +4,10 @@ public class Item implements Cloneable {
     private int id;
     private int num;
 
-    public Item() {
-    }
-
     public Item(int id, int num) {
+        if (num < 0) {
+            throw new IllegalArgumentException("num must be non-negative");
+        }
         this.id = id;
         this.num = num;
     }

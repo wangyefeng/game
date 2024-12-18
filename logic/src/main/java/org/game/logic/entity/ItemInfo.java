@@ -21,11 +21,11 @@ public class ItemInfo extends Entity {
 
     @Override
     public ItemInfo clone() {
-        ItemInfo cloned = (ItemInfo) super.clone();
-        cloned.items = new HashMap<>();
+        ItemInfo copy = (ItemInfo) super.clone();
+        copy.items = new HashMap<>();
         for (Item item : items.values()) {
-            cloned.items.put(item.getId(), item.clone());
+            copy.items.put(item.getId(), item.clone());
         }
-        return cloned;
+        return copy;
     }
 }
