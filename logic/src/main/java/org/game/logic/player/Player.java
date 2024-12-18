@@ -86,7 +86,7 @@ public class Player {
 
     public void register(Login.PbRegister registerMsg) {
         for (GameService gameService : map.values()) {
-            gameService.init(registerMsg);
+            gameService.register(registerMsg);
         }
         startSaveTimer();
     }

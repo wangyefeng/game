@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> {
 
     @Override
-    public void init(Login.PbRegister registerMsg) {
+    public void register(Login.PbRegister registerMsg) {
         entity = new PlayerInfo(player.getId(), registerMsg.getName());
     }
 

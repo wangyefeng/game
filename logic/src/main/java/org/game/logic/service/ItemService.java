@@ -1,6 +1,5 @@
 package org.game.logic.service;
 
-import org.game.logic.entity.Item;
 import org.game.logic.entity.ItemInfo;
 import org.game.logic.repository.ItemRepository;
 import org.game.proto.struct.Login.PbRegister;
@@ -13,9 +12,8 @@ import org.springframework.stereotype.Service;
 public class ItemService extends AbstractGameService<ItemInfo, ItemRepository> {
 
     @Override
-    public void init(PbRegister registerMsg) {
+    public void register(PbRegister registerMsg) {
         entity = new ItemInfo(player.getId());
-        entity.getItems().add(new Item(1, 100));
     }
 
 }

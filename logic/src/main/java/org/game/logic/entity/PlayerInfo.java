@@ -12,7 +12,7 @@ public class PlayerInfo extends Entity {
     private String name;
 
     public PlayerInfo(int id, String name) {
-        this.id = id;
+        super(id);
         this.name = name;
     }
 
