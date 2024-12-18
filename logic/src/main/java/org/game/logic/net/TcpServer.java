@@ -9,7 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
 import org.game.proto.MessagePlayerDecoder;
@@ -18,6 +18,8 @@ import org.game.proto.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -25,6 +27,20 @@ public class TcpServer {
     public static final int FRAME_LENGTH = 4; // 帧长度字节长度
 
     public static final int MAX_FRAME_LENGTH = 1024 * 10; // 最大帧长度
+
+    /**
+     * 读超时时间
+     * 单位：秒
+     * 默认：20
+     */
+    private static final int READER_IDLE_TIME = 20;
+
+    /**
+     * 写超时时间
+     * 单位：秒
+     * 默认：5
+     */
+    private static final int WRITER_IDLE_TIME = 5;
 
     private final String host;
 
@@ -49,11 +65,13 @@ public class TcpServer {
             ClientHandler clientHandler = new ClientHandler();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             GateHandler gateHandler = new GateHandler();
+            HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new ReadTimeoutHandler(20));// 设置读超时时间为20秒
+                    pipeline.addLast(new IdleStateHandler(READER_IDLE_TIME, WRITER_IDLE_TIME, 0, TimeUnit.SECONDS));// 设置读超时时间为20秒
+                    pipeline.addLast(heartBeatHandler);
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
                     CommonDecoder commonDecoder = new CommonDecoder(Topic.LOGIC.getCode());
                     commonDecoder.registerDecoder(new MessageCodeDecoder());

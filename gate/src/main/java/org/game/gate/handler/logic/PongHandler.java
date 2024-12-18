@@ -2,11 +2,11 @@ package org.game.gate.handler.logic;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
+import org.game.proto.protocol.LogicToGateProtocol;
+import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.game.proto.protocol.GateToClientProtocol;
-import org.game.proto.protocol.Protocol;
 
 @Component
 public class PongHandler implements LogicMsgHandler<Message> {
@@ -20,6 +20,6 @@ public class PongHandler implements LogicMsgHandler<Message> {
 
     @Override
     public Protocol getProtocol() {
-        return GateToClientProtocol.PONG;
+        return LogicToGateProtocol.PING;
     }
 }

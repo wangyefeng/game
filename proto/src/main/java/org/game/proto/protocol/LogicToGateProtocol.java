@@ -4,9 +4,8 @@ import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 
 public enum LogicToGateProtocol implements Protocol {
-    PONG((short) 0),
+    PING((short) 1);
 
-    ;
     private final short code;
 
     private final Parser<?> parser;
