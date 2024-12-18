@@ -1,5 +1,6 @@
 package org.game.logic.service;
 
+import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
 import org.game.proto.struct.Login;
 import org.springframework.stereotype.Service;
@@ -10,17 +11,17 @@ import org.springframework.stereotype.Service;
  * @author 王叶峰
  */
 @Service
-public interface GameService {
+public interface GameService<E extends Entity> {
 
     void load();
 
-    void copy();
-
     void save();
+
+    void asyncSave();
 
     void setPlayer(Player player);
 
     void init(Login.PbRegister registerMsg);
 
-    String dataToString();
+    E getData();
 }

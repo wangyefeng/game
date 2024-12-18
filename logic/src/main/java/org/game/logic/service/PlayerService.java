@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PlayerService extends AbGameService<PlayerInfo, PlayerRepository> {
+public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> {
 
     @Override
     public void init(Login.PbRegister registerMsg) {

@@ -1,21 +1,19 @@
 package org.game.logic.service;
 
-import org.game.common.util.JsonUtil;
 import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
+import org.game.logic.thread.ThreadPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class AbGameService<E extends Entity, R extends MongoRepository<E, Integer>> implements GameService {
+public abstract class AbstractGameService<E extends Entity, R extends MongoRepository<E, Integer>> implements GameService<E> {
 
     @Autowired
     protected R repository;
 
     protected E entity;
-
-    private E copy;
 
     protected Player player;
 
@@ -30,18 +28,18 @@ public abstract class AbGameService<E extends Entity, R extends MongoRepository<
     }
 
     @Override
-    public void copy() {
-        copy = (E) entity.clone();
-    }
-
-    @Override
     public void save() {
-        repository.save(copy);
-        copy = null;// 释放内存
+        repository.save(entity);
     }
 
     @Override
-    public String dataToString() {
-        return JsonUtil.toJson(copy);
+    public void asyncSave() {
+        E copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
+        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> repository.save(copy));
+    }
+
+    @Override
+    public E getData() {
+        return entity;
     }
 }
