@@ -163,15 +163,92 @@ public class Player {
 
     public void addItem(Item item) {
         Config config = Config.getInstance();
-        CfgItem cfgItem = config.get(CfgItemService.class).getCfg(item.id());
-        if (cfgItem == null) {
-            throw new IllegalArgumentException("Item not found: " + item.id());
+        ItemType type = getItemType(item, config);
+        Addable addable = addableService.get(type);
+        if (addable == null) {
+            throw new IllegalArgumentException("addable item type not found: " + type);
         }
-        ItemType type = ItemType.getType(cfgItem.getType());
-        getAddable(type).add(item);
+        addable.add(item);
     }
 
-    public Addable getAddable(ItemType type) {
-        return addableService.get(type);
+    public boolean itemsEnough(Item... items) {
+        Collection<Item> mergedItems = mergeItems(items);
+        return mergedItemsEnough(mergedItems);
+    }
+
+    public boolean itemsEnough(Collection<Item> items) {
+        Collection<Item> mergedItems = mergeItems(items);
+        return mergedItemsEnough(mergedItems);
+    }
+
+    private boolean mergedItemsEnough(Collection<Item> mergedItems) {
+        for (Item item : mergedItems) {
+            if (!itemEnough(item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean itemEnough(Item item) {
+        Config config = Config.getInstance();
+        ItemType type = getItemType(item, config);
+        Consumable consumable = consumableService.get(type);
+        if (consumable == null) {
+            throw new IllegalArgumentException("consumable item type not found: " + type);
+        }
+        return consumable.enough(item);
+    }
+
+    public void consumeItem(Item item) {
+        Config config = Config.getInstance();
+        ItemType type = getItemType(item, config);
+        Consumable consumable = consumableService.get(type);
+        if (consumable == null) {
+            throw new IllegalArgumentException("consumable item type not found: " + type);
+        }
+        consumable.consume(item);
+    }
+
+    private static ItemType getItemType(Item item, Config config) {
+        CfgItem cfgItem = config.get(CfgItemService.class).getCfg(item.id());
+        if (cfgItem == null) {
+            throw new IllegalArgumentException("item id not found: " + item.id());
+        }
+        ItemType type = ItemType.getType(cfgItem.getType());
+        if (type == null) {
+            throw new IllegalArgumentException("item type not found: " + cfgItem.getType());
+        }
+        return type;
+    }
+
+    public void consumeItems(Item... items) {
+        for (Item item : items) {
+            consumeItem(item);
+        }
+    }
+
+    public void consumeItems(Collection<Item> items) {
+        for (Item item : items) {
+            consumeItem(item);
+        }
+    }
+
+    public Collection<Item> mergeItems(Collection<Item> items) {
+        Map<Integer, Item> result = new HashMap<>();
+        for (Item item : items) {
+            result.putIfAbsent(item.id(), item);
+            result.get(item.id()).add(item.num());
+        }
+        return result.values();
+    }
+
+    public Collection<Item> mergeItems(Item... items) {
+        Map<Integer, Item> result = new HashMap<>();
+        for (Item item : items) {
+            result.putIfAbsent(item.id(), item);
+            result.get(item.id()).add(item.num());
+        }
+        return result.values();
     }
 }
