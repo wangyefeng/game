@@ -5,8 +5,15 @@ import io.netty.channel.Channel;
 import org.game.common.event.Listener;
 import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
+import org.game.config.Config;
+import org.game.config.data.entity.CfgItem;
+import org.game.config.data.service.CfgItemService;
+import org.game.logic.item.Addable;
+import org.game.logic.item.Consumable;
+import org.game.logic.item.Item;
+import org.game.logic.item.ItemType;
+import org.game.logic.service.BackpackService;
 import org.game.logic.service.GameService;
-import org.game.logic.service.ItemService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -27,6 +34,10 @@ public class Player {
      * 服务模块集合
      */
     private final Map<Class<? extends GameService>, GameService> map = new HashMap<>();
+
+    private final Map<ItemType, Addable> addableService = new HashMap<>();
+
+    private final Map<ItemType, Consumable> consumableService = new HashMap<>();
 
     /**
      * 玩家的channel
@@ -49,6 +60,12 @@ public class Player {
         for (GameService gameService : gameServices) {
             gameService.setPlayer(this);
             map.put(gameService.getClass(), gameService);
+            if (gameService instanceof Addable addable) {
+                addableService.put(addable.getType(), addable);
+                if (gameService instanceof Consumable consumable) {
+                    consumableService.put(consumable.getType(), consumable);
+                }
+            }
         }
     }
 
@@ -107,8 +124,8 @@ public class Player {
     }
 
     private void initListener() {
-        ItemService itemService = getService(ItemService.class);
-        itemService.initListener();
+        BackpackService backpackService = getService(BackpackService.class);
+        backpackService.initListener();
     }
 
     public void logout() {
@@ -130,5 +147,31 @@ public class Player {
 
     public void addEventListener(PlayerEventType eventType, Listener<?> listener) {
         publishManager.addEventListener(eventType, listener);
+    }
+
+    public void addItems(Item... items) {
+        for (Item item : items) {
+            addItem(item);
+        }
+    }
+
+    public void addItems(Collection<Item> items) {
+        for (Item item : items) {
+            addItem(item);
+        }
+    }
+
+    public void addItem(Item item) {
+        Config config = Config.getInstance();
+        CfgItem cfgItem = config.get(CfgItemService.class).getCfg(item.id());
+        if (cfgItem == null) {
+            throw new IllegalArgumentException("Item not found: " + item.id());
+        }
+        ItemType type = ItemType.getType(cfgItem.getType());
+        getAddable(type).add(item);
+    }
+
+    public Addable getAddable(ItemType type) {
+        return addableService.get(type);
     }
 }

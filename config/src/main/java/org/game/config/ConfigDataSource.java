@@ -26,13 +26,8 @@ public class ConfigDataSource {
     }
 
     @Bean
-    PropertiesMongoConnectionDetails configMongoConnectionDetails(MongoProperties properties) {
-        return new PropertiesMongoConnectionDetails(properties);
-    }
-
-    @Bean
     public MongoTemplate configMongoTemplate() {
-        PropertiesMongoConnectionDetails propertiesMongoConnectionDetails = configMongoConnectionDetails(configMongoProperties());
+        PropertiesMongoConnectionDetails propertiesMongoConnectionDetails = new PropertiesMongoConnectionDetails(configMongoProperties());
         return new MongoTemplate(configMongoDatabaseFactory(propertiesMongoConnectionDetails));
     }
 

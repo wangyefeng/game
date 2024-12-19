@@ -5,25 +5,31 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.HashMap;
 import java.util.Map;
 
-@Document(collection = "item_info")
-public class ItemInfo extends Entity {
+/**
+ * 背包
+ */
+@Document(collection = "bag_info")
+public class BagInfo extends Entity {
 
-    private Map<Integer, Item> items;
+    /**
+     * 道具
+     */
+    private Map<Integer, BagItem> items;
 
-    public ItemInfo(int id) {
+    public BagInfo(int id) {
         super(id);
         this.items = new HashMap<>();
     }
 
-    public Map<Integer, Item> getItems() {
+    public Map<Integer, BagItem> getItems() {
         return items;
     }
 
     @Override
-    public ItemInfo clone() {
-        ItemInfo copy = (ItemInfo) super.clone();
+    public BagInfo clone() {
+        BagInfo copy = (BagInfo) super.clone();
         copy.items = new HashMap<>();
-        for (Item item : items.values()) {
+        for (BagItem item : items.values()) {
             copy.items.put(item.getId(), item.clone());
         }
         return copy;

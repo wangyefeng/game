@@ -9,6 +9,8 @@ public class PlayerInfo extends Entity {
 
     private int level;
 
+    private int coin;
+
     public PlayerInfo(int id, String name) {
         super(id);
         this.name = name;
@@ -34,5 +36,16 @@ public class PlayerInfo extends Entity {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getCoin() {
+        return coin;
+    }
+
+    public void setCoin(int coin) {
+        if (coin < 0) {
+            throw new IllegalArgumentException("金币不能为负数。");
+        }
+        this.coin = coin;
     }
 }

@@ -9,21 +9,28 @@ public class CfgItem implements Cfg<Integer> {
     @Id
     private int id;
 
+    private int type;
+
     private String name;
+
+    public CfgItem() {
+    }
+
+    public CfgItem(int id, int type, String name) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
     }
 
+    public int getType() {
+        return type;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

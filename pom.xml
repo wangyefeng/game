@@ -22,6 +22,7 @@
         <module>client</module>
         <module>config</module>
         <module>cache-test</module>
+        <module>chat</module>
     </modules>
 
     <properties>

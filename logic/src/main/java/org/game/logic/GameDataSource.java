@@ -25,14 +25,8 @@ public class GameDataSource {
 
     @Bean
     @Primary
-    PropertiesMongoConnectionDetails gameMongoConnectionDetails(MongoProperties properties) {
-        return new PropertiesMongoConnectionDetails(properties);
-    }
-
-    @Bean
-    @Primary
     public MongoTemplate gameMongoTemplate() {
-        PropertiesMongoConnectionDetails propertiesMongoConnectionDetails = gameMongoConnectionDetails(gameMongoProperties());
+        PropertiesMongoConnectionDetails propertiesMongoConnectionDetails = new PropertiesMongoConnectionDetails(gameMongoProperties());
         return new MongoTemplate(gameMongoDatabaseFactory(propertiesMongoConnectionDetails));
     }
 

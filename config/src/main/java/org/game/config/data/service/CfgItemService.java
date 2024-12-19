@@ -9,4 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgItemService extends CfgService<CfgItem, CfgItemDao, Integer> {
+
+    public void add(CfgItem cfgItem) {
+        repository.save(cfgItem);
+    }
 }
