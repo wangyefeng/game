@@ -7,6 +7,7 @@ import org.game.logic.entity.BagItem;
 import org.game.logic.item.Consumable;
 import org.game.logic.item.Item;
 import org.game.logic.item.ItemType;
+import org.game.logic.item.SimpleItem;
 import org.game.logic.player.PlayerEventType;
 import org.game.logic.repository.ItemRepository;
 import org.game.proto.struct.Login.PbRegister;
@@ -30,7 +31,7 @@ public class BackpackService extends AbstractGameService<BagInfo, ItemRepository
 
             @Override
             public void update(Integer level, Publisher<Integer> publisher) {
-                player.addItem(new Item(1, 100));
+                player.addItem(new SimpleItem(1, 100));
             }
         });
     }

@@ -9,6 +9,7 @@ import org.game.config.Config;
 import org.game.config.data.entity.CfgItem;
 import org.game.config.data.service.CfgItemService;
 import org.game.logic.item.Addable;
+import org.game.logic.item.AddableItem;
 import org.game.logic.item.Consumable;
 import org.game.logic.item.Item;
 import org.game.logic.item.ItemType;
@@ -149,13 +150,13 @@ public class Player {
         publishManager.addEventListener(eventType, listener);
     }
 
-    public void addItems(Item... items) {
+    public <T extends Item> void addItems(T... items) {
         for (Item item : items) {
             addItem(item);
         }
     }
 
-    public void addItems(Collection<Item> items) {
+    public <T extends Item> void addItems(Collection<T> items) {
         for (Item item : items) {
             addItem(item);
         }
@@ -171,17 +172,17 @@ public class Player {
         addable.add(item);
     }
 
-    public boolean itemsEnough(Item... items) {
-        Collection<Item> mergedItems = mergeItems(items);
+    public <T extends Item> boolean itemsEnough(T... items) {
+        Collection<AddableItem> mergedItems = mergeItems(items);
         return mergedItemsEnough(mergedItems);
     }
 
-    public boolean itemsEnough(Collection<Item> items) {
-        Collection<Item> mergedItems = mergeItems(items);
+    public <T extends Item> boolean itemsEnough(Collection<T> items) {
+        Collection<AddableItem> mergedItems = mergeItems(items);
         return mergedItemsEnough(mergedItems);
     }
 
-    private boolean mergedItemsEnough(Collection<Item> mergedItems) {
+    private <T extends Item> boolean mergedItemsEnough(Collection<T> mergedItems) {
         for (Item item : mergedItems) {
             if (!itemEnough(item)) {
                 return false;
@@ -234,19 +235,19 @@ public class Player {
         }
     }
 
-    public Collection<Item> mergeItems(Collection<Item> items) {
-        Map<Integer, Item> result = new HashMap<>();
+    public <T extends Item> Collection<AddableItem> mergeItems(Collection<T> items) {
+        Map<Integer, AddableItem> result = new HashMap<>();
         for (Item item : items) {
-            result.putIfAbsent(item.id(), item);
+            result.computeIfAbsent(item.id(), _ -> new AddableItem(item.id(), item.num()));
             result.get(item.id()).add(item.num());
         }
         return result.values();
     }
 
-    public Collection<Item> mergeItems(Item... items) {
-        Map<Integer, Item> result = new HashMap<>();
+    public <T extends Item> Collection<AddableItem> mergeItems(T... items) {
+        Map<Integer, AddableItem> result = new HashMap<>();
         for (Item item : items) {
-            result.putIfAbsent(item.id(), item);
+            result.computeIfAbsent(item.id(), _ -> new AddableItem(item.id(), item.num()));
             result.get(item.id()).add(item.num());
         }
         return result.values();
