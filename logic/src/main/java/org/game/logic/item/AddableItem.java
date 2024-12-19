@@ -1,5 +1,7 @@
 package org.game.logic.item;
 
+import org.game.config.data.entity.Item;
+
 public class AddableItem implements Item {
 
     private final int id;

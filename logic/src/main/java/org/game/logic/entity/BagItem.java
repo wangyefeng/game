@@ -1,6 +1,6 @@
 package org.game.logic.entity;
 
-import org.game.logic.item.Item;
+import org.game.config.data.entity.Item;
 
 /**
  * 背包中的物品

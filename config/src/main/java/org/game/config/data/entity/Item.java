@@ -1,4 +1,4 @@
-package org.game.logic.item;
+package org.game.config.data.entity;
 
 public interface Item {
 

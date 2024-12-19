@@ -1,14 +1,10 @@
 package org.game.logic.service;
 
-import org.game.common.event.Listener;
-import org.game.common.event.Publisher;
+import org.game.config.data.entity.Item;
 import org.game.logic.entity.BagInfo;
 import org.game.logic.entity.BagItem;
 import org.game.logic.item.Consumable;
-import org.game.logic.item.Item;
 import org.game.logic.item.ItemType;
-import org.game.logic.item.SimpleItem;
-import org.game.logic.player.PlayerEventType;
 import org.game.logic.repository.ItemRepository;
 import org.game.proto.struct.Login.PbRegister;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -19,21 +15,11 @@ import java.util.Map;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class BackpackService extends AbstractGameService<BagInfo, ItemRepository> implements Consumable {
+public class BagService extends AbstractGameService<BagInfo, ItemRepository> implements Consumable {
 
     @Override
     public void register(PbRegister registerMsg) {
         entity = new BagInfo(player.getId());
-    }
-
-    public void initListener() {
-        player.addEventListener(PlayerEventType.LEVEL_UP, new Listener<Integer>() {
-
-            @Override
-            public void update(Integer level, Publisher<Integer> publisher) {
-                player.addItem(new SimpleItem(1, 100));
-            }
-        });
     }
 
     @Override

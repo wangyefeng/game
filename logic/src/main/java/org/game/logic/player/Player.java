@@ -7,13 +7,13 @@ import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
 import org.game.config.Config;
 import org.game.config.data.entity.CfgItem;
+import org.game.config.data.entity.Item;
 import org.game.config.data.service.CfgItemService;
+import org.game.config.data.service.CfgRewardService;
 import org.game.logic.item.Addable;
 import org.game.logic.item.AddableItem;
 import org.game.logic.item.Consumable;
-import org.game.logic.item.Item;
 import org.game.logic.item.ItemType;
-import org.game.logic.service.BackpackService;
 import org.game.logic.service.GameService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
@@ -106,6 +106,9 @@ public class Player {
             gameService.register(registerMsg);
         }
         init();
+        Config config = Config.getInstance();
+        CfgRewardService cfgRewardService = config.get(CfgRewardService.class);
+        addItems(cfgRewardService.getCfg(1).getItems());
     }
 
     private void startSaveTimer() {
@@ -125,8 +128,7 @@ public class Player {
     }
 
     private void initListener() {
-        BackpackService backpackService = getService(BackpackService.class);
-        backpackService.initListener();
+        // 注册监听器
     }
 
     public void logout() {

@@ -2,7 +2,7 @@ package org.game.logic.service;
 
 import org.game.logic.entity.PlayerInfo;
 import org.game.logic.item.Consumable;
-import org.game.logic.item.Item;
+import org.game.config.data.entity.Item;
 import org.game.logic.item.ItemIdConstant;
 import org.game.logic.item.ItemType;
 import org.game.logic.player.PlayerEventType;
