@@ -27,7 +27,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLogin> {
 
     @Override
     public void handle(Channel channel, int playerId, Login.PbLogin message, Config config) {
-        log.info("LoginHandler: playerId: {}, message: {}", playerId, message);
+        log.info("玩家{}登录游戏", playerId);
         Player player = Players.getPlayer(playerId);
         if (player == null) {
             player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
