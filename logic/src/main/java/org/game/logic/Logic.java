@@ -89,6 +89,9 @@ public class Logic extends Server implements CommandLineRunner {
     }
 
     private void registerCfgService() throws KeeperException, InterruptedException {
+        if (zooKeeper.exists(SERVICE_ROOT, false) == null) {// 判断服务根节点是否存在，不存在则创建
+            zooKeeper.create(SERVICE_ROOT, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        }
         String serverId = UUID.randomUUID().toString();  // 生成唯一ID
         String servicePath = SERVICE_ROOT + "/" + serverId;
         String path = zooKeeper.create(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);

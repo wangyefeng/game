@@ -53,12 +53,16 @@ public abstract class Client {
         return port;
     }
 
-    public void close() throws InterruptedException{
+    public void close() throws InterruptedException {
         if (reconnectThread != null) {
             reconnectThread.interrupt();
         }
-        channel.close().sync();
-        eventLoopGroup.shutdownGracefully().sync();
+        if (channel.isOpen()) {
+            channel.close().sync();
+        }
+        if (!eventLoopGroup.isShutdown()) {
+            eventLoopGroup.shutdownGracefully().sync();
+        }
     }
 
     public boolean isRunning() {
@@ -79,14 +83,14 @@ public abstract class Client {
                 reconnectThread = null;
                 break;
             } catch (InterruptedException e) {
-                log.info("重连线程被中断！");
+                log.info("重连线程被中断！{}", this);
                 break;
             } catch (Exception e) {
                 log.error("连接服务器失败，原因: {} 正在重试...", e.getMessage());
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e1) {
-                    log.info("重连线程被中断！");
+                    log.info("重连线程被中断！{}", this);
                     break;
                 }
             }
@@ -105,7 +109,7 @@ public abstract class Client {
 
     @Override
     public String toString() {
-        return "{host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
+        return "{id='" + id + '\'' + ", host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
     }
 
     public String getName() {

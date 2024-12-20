@@ -44,4 +44,12 @@ public class ClientGroup<C extends Client> {
     public C next() {
         return RandomUtil.random(clients.values());
     }
+
+    public boolean contains(String id) {
+        return clients.containsKey(id);
+    }
+
+    public Map<String, C> getClients() {
+        return clients;
+    }
 }
