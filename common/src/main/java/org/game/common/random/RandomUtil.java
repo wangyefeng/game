@@ -5,7 +5,6 @@ import org.game.common.util.Assert;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -109,7 +108,7 @@ public class RandomUtil {
      * @throws NullPointerException     当c为null时
      * @throws IllegalArgumentException 当c没有元素时
      */
-    public static <T> T random(Set<T> pool) {
+    public static <T> T random(Collection<T> pool) {
         Assert.notEmpty(pool, "随机库元素数量不能为0");
         int size = pool.size();
         int index = ThreadLocalRandom.current().nextInt(size);

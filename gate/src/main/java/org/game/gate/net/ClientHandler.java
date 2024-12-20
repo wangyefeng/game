@@ -7,7 +7,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.game.gate.handler.client.ClientMsgHandler;
-import org.game.gate.net.client.LogicClient;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.proto.MessageCode;
@@ -15,7 +14,6 @@ import org.game.proto.protocol.GateToLogicProtocol;
 import org.game.proto.struct.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.SocketException;
 
@@ -24,11 +22,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
-    @Autowired
-    private LogicClient logicClient;
-
-    public ClientHandler(LogicClient logicClient) {
-        this.logicClient = logicClient;
+    public ClientHandler() {
     }
 
     @Override
@@ -69,8 +63,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             player.getExecutor().submit(() -> {
                 Player player2 = c.attr(AttributeKeys.PLAYER).get();
                 Players.removePlayer(player2.getId());
-                if (logicClient.isRunning()) {
-                    logicClient.getChannel().writeAndFlush(new MessageCode<>(GateToLogicProtocol.LOGOUT, Common.PbInt.newBuilder().setVal(player2.getId()).build()));
+                if (player2.getLogicClient().isRunning()) {
+                    player2.getLogicClient().getChannel().writeAndFlush(new MessageCode<>(GateToLogicProtocol.LOGOUT, Common.PbInt.newBuilder().setVal(player2.getId()).build()));
                 }
             }).get();
         }

@@ -12,7 +12,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import org.game.gate.net.client.LogicClient;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class TcpServer {
 
     @Value("${server.tcp-port:8888}")
     private int port;
-
-    @Autowired
-    private LogicClient logicClient;
 
     @Autowired
     private SslConfig sslConfig;
@@ -52,7 +48,7 @@ public class TcpServer {
         workerGroup = new NioEventLoopGroup(); // 用于读写流处理
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            ClientHandler clientHandler = new ClientHandler(logicClient);
+            ClientHandler clientHandler = new ClientHandler();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
@@ -63,7 +59,7 @@ public class TcpServer {
                     }
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
-                    pipeline.addLast(new TcpCodec(logicClient));
+                    pipeline.addLast(new TcpCodec());
                     pipeline.addLast(clientHandler);
                 }
             });

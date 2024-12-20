@@ -1,6 +1,7 @@
 package org.game.gate.player;
 
 import io.netty.channel.Channel;
+import org.game.gate.net.client.LogicClient;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -22,10 +23,13 @@ public class Player {
      */
     private ThreadPoolExecutor executor;
 
-    public Player(int id, Channel channel, ThreadPoolExecutor executor) {
+    private LogicClient logicClient;
+
+    public Player(int id, Channel channel, ThreadPoolExecutor executor, LogicClient logicClient) {
         this.id = id;
         this.channel = channel;
         this.executor = executor;
+        this.logicClient = logicClient;
     }
 
     public int getId() {
@@ -55,5 +59,9 @@ public class Player {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    public LogicClient getLogicClient() {
+        return logicClient;
     }
 }

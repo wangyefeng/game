@@ -1,18 +1,21 @@
 package org.game.gate.net;
 
 import com.google.protobuf.Message;
-import io.netty.buffer.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.game.gate.player.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.game.gate.net.client.LogicClient;
 import org.game.proto.DecoderType;
 import org.game.proto.MessageCode;
 import org.game.proto.Topic;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -20,12 +23,9 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
 
     private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
 
-    private LogicClient logicClient;
-
     private LeakyBucket leakyBucket = new LeakyBucket(20, 10);
 
-    public TcpCodec(LogicClient logicClient) {
-        this.logicClient = logicClient;
+    public TcpCodec() {
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 }
             } else if (to == Topic.LOGIC.getCode()) {// logic
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
-                if (player != null && logicClient.isRunning()) {
+                if (player != null && player.getLogicClient().isRunning()) {
                     int readableBytes = in.readableBytes();
                     ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(12, 12);
                     try {
@@ -88,7 +88,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                         throw e;
                     }
                     ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, in.retainedDuplicate());
-                    logicClient.getChannel().writeAndFlush(byteBuf);
+                    player.getLogicClient().getChannel().writeAndFlush(byteBuf);
                     in.skipBytes(in.readableBytes());
                 } else {
                     if (player == null) {

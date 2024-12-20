@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"})
@@ -88,11 +89,9 @@ public class Logic extends Server implements CommandLineRunner {
     }
 
     private void registerCfgService() throws KeeperException, InterruptedException {
-        if (zooKeeper.exists(SERVICE_ROOT, false) == null) {
-            zooKeeper.create(SERVICE_ROOT, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        }
-        String servicePath = SERVICE_ROOT + "/" + tcpServer.getHost() + ":" + tcpServer.getPort();
-        String path = zooKeeper.create(servicePath, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        String serverId = UUID.randomUUID().toString();  // 生成唯一ID
+        String servicePath = SERVICE_ROOT + "/" + serverId;
+        String path = zooKeeper.create(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
         log.info("zookeeper registry service success, path: {}", path);
     }
 

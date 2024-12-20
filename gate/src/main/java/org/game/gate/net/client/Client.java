@@ -12,6 +12,8 @@ public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
 
+    private String id;
+
     protected String host;
 
     protected int port;
@@ -28,8 +30,10 @@ public abstract class Client {
 
     private Thread reconnectThread;
 
-    public Client(String host, int port, String name) {
+    public Client(String id, String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
+        Assert.isTrue(port > 0, "端口号必须大于0!");
+        this.id = id;
         this.host = host;
         this.port = port;
         this.name = name;
@@ -102,5 +106,13 @@ public abstract class Client {
     @Override
     public String toString() {
         return "{host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
     }
 }

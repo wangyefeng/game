@@ -2,10 +2,13 @@ package org.game.gate.handler.client;
 
 import io.netty.channel.Channel;
 import org.game.gate.net.AttributeKeys;
+import org.game.gate.net.client.ClientGroup;
+import org.game.gate.net.client.LogicClient;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.game.gate.thread.ThreadPool;
 import org.game.proto.MessageCode;
@@ -19,6 +22,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 public final class ValidateHandler implements ClientMsgHandler<Common.PbInt> {
 
     private static final Logger log = LoggerFactory.getLogger(ValidateHandler.class);
+
+    @Autowired
+    private ClientGroup<LogicClient> clientGroup;
 
     @Override
     public void handle(Channel channel, Common.PbInt msg) throws Exception {
@@ -40,7 +46,7 @@ public final class ValidateHandler implements ClientMsgHandler<Common.PbInt> {
                 oldChannel.close();
                 player.setChannel(channel);
             } else {
-                player = new Player(playerId, channel, playerExecutor);
+                player = new Player(playerId, channel, playerExecutor, clientGroup.next());
                 Players.addPlayer(player);
             }
             channel.attr(AttributeKeys.PLAYER).set(player);

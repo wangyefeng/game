@@ -10,7 +10,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.game.gate.player.Player;
 import org.game.proto.protocol.Protocol;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2024-07-05
  * @description 逻辑服务器的客户端
  */
-@Component
 public class LogicClient extends Client {
-
 
     /**
      * 读超时时间
@@ -48,8 +45,8 @@ public class LogicClient extends Client {
 
     private Set<Player> players = new HashSet<>();
 
-    public LogicClient(String host, int port) {
-        super(host, port, "logic");
+    public LogicClient(String id, String host, int port) {
+        super(id, host, port, "logic");
     }
 
     @Override
