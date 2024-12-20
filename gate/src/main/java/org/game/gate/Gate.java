@@ -10,7 +10,6 @@ import org.game.common.Server;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.net.TcpServer;
-import org.game.gate.net.client.Client;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
@@ -122,15 +121,6 @@ public class Gate extends Server implements CommandLineRunner {
                             logicClient.start();
                             clientGroup.add(logicClient);
                         }
-                        clientGroup.getClients().forEach((serverId, client) -> {
-                            if (!serviceNodes.contains(serverId)) {
-                                try {
-                                    ((Client) client).close();
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
                     } catch (KeeperException e) {
                         throw new RuntimeException(e);
                     } catch (InterruptedException e) {

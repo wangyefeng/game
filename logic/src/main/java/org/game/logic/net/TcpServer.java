@@ -97,7 +97,7 @@ public class TcpServer {
             log.info("tcp server started and listening on port {}", port);
         } catch (Exception e) {
             group.shutdownGracefully();
-            throw new RuntimeException(e);
+            throw new RuntimeException("TCP服务器启动失败 端口：" + port, e);
         }
     }
 
