@@ -6,7 +6,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("config_item")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgItemService extends CfgService<CfgItem, CfgItemDao, Integer> {
 

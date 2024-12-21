@@ -1,7 +1,7 @@
 package org.game.logic.handler;
 
 import io.netty.channel.Channel;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.service.GameService;
@@ -25,7 +25,7 @@ public class RegisterHandler implements ClientMsgHandler<Login.PbRegister> {
     private ApplicationContext applicationContext;
 
     @Override
-    public void handle(Channel channel, int playerId, Login.PbRegister message, Config config) {
+    public void handle(Channel channel, int playerId, Login.PbRegister message, Configs config) {
         log.info("玩家{}注册 信息: {}", playerId, message);
         Player player = Players.getPlayer(playerId);
         if (player != null) {

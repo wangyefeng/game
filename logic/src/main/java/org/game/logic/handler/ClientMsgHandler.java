@@ -2,7 +2,7 @@ package org.game.logic.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.proto.protocol.ClientToLogicProtocol;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public interface ClientMsgHandler<T extends Message> {
         return handlers.get(code);
     }
 
-    void handle(Channel channel, int playerId, T message, Config config);
+    void handle(Channel channel, int playerId, T message, Configs config);
 
     ClientToLogicProtocol getProtocol();
 }

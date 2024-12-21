@@ -6,27 +6,29 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class Config {
+public final class Configs {
 
-    private static volatile Config instance;
+    private static volatile Configs instance;
 
     private Map<Class<? extends CfgService>, CfgService> map = new HashMap<>();
 
     public static void init(Collection<CfgService> cfgServices) {
-        Config.instance = new Config();
-        cfgServices.forEach(Config.instance::add);
+        Configs.instance = new Configs();
+        cfgServices.forEach(Configs.instance::add);
     }
 
     public static void reload(Collection<CfgService> cfgServices) {
-        Config config = new Config();
-        cfgServices.forEach(config::add);
-        Config.instance = config;
+        Map<Class<? extends CfgService>, CfgService> newMap = new HashMap<>(instance.map);
+        for (CfgService cfgService : cfgServices) {
+            newMap.put(cfgService.getClass(), cfgService);
+        }
+        instance.map = newMap;
     }
 
-    private Config() {
+    private Configs() {
     }
 
-    public static Config getInstance() {
+    public static Configs getInstance() {
         return instance;
     }
 

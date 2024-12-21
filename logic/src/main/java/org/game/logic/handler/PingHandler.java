@@ -2,7 +2,7 @@ package org.game.logic.handler;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 
     @Override
-    public void handle(Channel channel, Message msg, Config config) {
+    public void handle(Channel channel, Message msg, Configs config) {
         log.debug("Received a ping message from gate.");
         // do nothing
     }

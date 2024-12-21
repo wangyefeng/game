@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import org.game.common.event.Listener;
 import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.config.data.entity.CfgItem;
 import org.game.config.data.entity.Item;
 import org.game.config.data.service.CfgItemService;
@@ -106,7 +106,7 @@ public class Player {
             gameService.register(registerMsg);
         }
         init();
-        Config config = Config.getInstance();
+        Configs config = Configs.getInstance();
         CfgRewardService cfgRewardService = config.get(CfgRewardService.class);
         addItems(cfgRewardService.getCfg(1).getItems());
     }
@@ -165,7 +165,7 @@ public class Player {
     }
 
     public void addItem(Item item) {
-        Config config = Config.getInstance();
+        Configs config = Configs.getInstance();
         ItemType type = getItemType(item, config);
         Addable addable = addableService.get(type);
         if (addable == null) {
@@ -194,7 +194,7 @@ public class Player {
     }
 
     public boolean itemEnough(Item item) {
-        Config config = Config.getInstance();
+        Configs config = Configs.getInstance();
         ItemType type = getItemType(item, config);
         Consumable consumable = consumableService.get(type);
         if (consumable == null) {
@@ -204,7 +204,7 @@ public class Player {
     }
 
     public void consumeItem(Item item) {
-        Config config = Config.getInstance();
+        Configs config = Configs.getInstance();
         ItemType type = getItemType(item, config);
         Consumable consumable = consumableService.get(type);
         if (consumable == null) {
@@ -213,7 +213,7 @@ public class Player {
         consumable.consume(item);
     }
 
-    private static ItemType getItemType(Item item, Config config) {
+    private static ItemType getItemType(Item item, Configs config) {
         CfgItem cfgItem = config.get(CfgItemService.class).getCfg(item.id());
         if (cfgItem == null) {
             throw new IllegalArgumentException("item id not found: " + item.id());

@@ -1,7 +1,7 @@
 package org.game.logic.handler;
 
 import io.netty.channel.Channel;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.thread.ThreadPool;
@@ -18,7 +18,7 @@ public class LogoutHandler implements GateMsgHandler<Common.PbInt> {
 
 
     @Override
-    public void handle(Channel channel, Common.PbInt msg, Config config) {
+    public void handle(Channel channel, Common.PbInt msg, Configs config) {
         ThreadPool.getPlayerExecutor(msg.getVal()).execute(() -> {
             Player player = Players.getPlayer(msg.getVal());
             if (player == null) {

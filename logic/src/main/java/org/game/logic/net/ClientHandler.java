@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
         ThreadPool.getPlayerExecutor(message.getPlayerId()).execute(() -> {
             long start = System.currentTimeMillis();
             try {
-                logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage(), Config.getInstance());
+                logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getMessage(), Configs.getInstance());
             } catch (Exception e) {
                 log.error("处理玩家[{}]消息 协议：{} 数据: {} 出错", message.getPlayerId(), message.getProtocol(), message.getMessage(), e);
             } finally {

@@ -1,6 +1,7 @@
 package org.game.config.data.service;
 
 import jakarta.annotation.PostConstruct;
+import org.game.config.Configs;
 import org.game.config.data.entity.Cfg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
@@ -32,5 +33,9 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
 
     public Collection<Entity> getAllCfg() {
         return map.values();
+    }
+
+    public void check(Configs config) throws Exception {
+        // 校验配置项
     }
 }

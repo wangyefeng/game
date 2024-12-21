@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.logic.handler.GateMsgHandler;
 import org.game.proto.MessageCode;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             log.warn("非法协议号: {}", message.getProtocol());
             return;
         }
-        optionalHandler.get().handle(ctx.channel(), message.getMessage(), Config.getInstance());
+        optionalHandler.get().handle(ctx.channel(), message.getMessage(), Configs.getInstance());
     }
 
     @Override

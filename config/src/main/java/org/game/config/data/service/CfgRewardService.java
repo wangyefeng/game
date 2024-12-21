@@ -6,7 +6,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("config_reward")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgRewardService extends CfgService<CfgReward, CfgRewardDao, Integer> {
 }

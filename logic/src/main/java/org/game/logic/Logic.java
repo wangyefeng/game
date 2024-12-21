@@ -6,7 +6,7 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.game.common.Server;
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.config.data.service.CfgService;
 import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.handler.GateMsgHandler;
@@ -22,6 +22,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -77,15 +79,28 @@ public class Logic extends Server implements CommandLineRunner {
     private void initConfig() {
         log.info("开始加载配置表...");
         long start = System.currentTimeMillis();
-        Config.init(applicationContext.getBeansOfType(CfgService.class).values());
+        Configs.init(applicationContext.getBeansOfType(CfgService.class).values());
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
-    public void reloadConfig() {
+    public void reloadAllConfig() {
         long start = System.currentTimeMillis();
         log.info("开始重新加载配置表...");
-        Config.reload(applicationContext.getBeansOfType(CfgService.class).values());
+        Configs.reload(applicationContext.getBeansOfType(CfgService.class).values());
         log.info("配置表重新加载完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
+    }
+
+    public void reloadConfig(String... tableNames) {
+        Collection<CfgService> cfgServices = new ArrayList<>();
+        for (String tableName : tableNames) {
+            CfgService cfgService = applicationContext.getBean(tableName, CfgService.class);
+            if (cfgService == null) {
+                throw new IllegalArgumentException("重载配置表失败, 未找到配置表: " + tableName);
+            }
+            cfgServices.add(cfgService);
+        }
+        Configs.reload(cfgServices);
+        log.info("重载配置表: {}", Arrays.toString(tableNames));
     }
 
     private void registerCfgService() throws KeeperException, InterruptedException {

@@ -1,6 +1,6 @@
 package org.game.logic.handler;
 
-import org.game.config.Config;
+import org.game.config.Configs;
 import org.game.logic.player.Player;
 import org.game.logic.service.PlayerService;
 import org.game.proto.protocol.ClientToLogicProtocol;
@@ -15,7 +15,7 @@ public class LevelUpHandler extends PlayerHandler<PbInt> {
     private static final Logger log = LoggerFactory.getLogger(LevelUpHandler.class);
 
     @Override
-    protected void handle(Player player, PbInt message, Config config) {
+    protected void handle(Player player, PbInt message, Configs config) {
         PlayerService playerService = player.getService(PlayerService.class);
         playerService.levelUp();
     }
