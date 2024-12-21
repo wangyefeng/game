@@ -3,10 +3,13 @@ package org.game.config.data.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
+@Valid
 public class CfgActivity implements Cfg<String> {
 
     @Id
@@ -41,6 +44,7 @@ public class CfgActivity implements Cfg<String> {
     private String name;
 
     @Column(name = "email_id", columnDefinition = "INT COMMENT '邮件模板id'")
+    @Min(value = 1)
     private int emailId;
 
     @Column(name = "rank_email_id", columnDefinition = "INT default 0  COMMENT '排行榜邮件模板id'")
@@ -109,5 +113,9 @@ public class CfgActivity implements Cfg<String> {
 
     public String getChannel() {
         return channel;
+    }
+
+    public void setEmailId(int emailId) {
+        this.emailId = emailId;
     }
 }

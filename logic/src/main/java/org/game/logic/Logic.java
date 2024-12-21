@@ -86,7 +86,12 @@ public class Logic extends Server implements CommandLineRunner {
     public void reloadAllConfig() {
         long start = System.currentTimeMillis();
         log.info("开始重新加载配置表...");
-        Configs.reload(applicationContext.getBeansOfType(CfgService.class).values());
+        try {
+            Configs.reload(applicationContext.getBeansOfType(CfgService.class).values());
+        } catch (Exception e) {
+            log.error("重载配置表失败", e);
+            return;
+        }
         log.info("配置表重新加载完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
     }
 
@@ -99,7 +104,12 @@ public class Logic extends Server implements CommandLineRunner {
             }
             cfgServices.add(cfgService);
         }
-        Configs.reload(cfgServices);
+        try {
+            Configs.reload(cfgServices);
+        } catch (Exception e) {
+            log.error("重载配置表: {}", Arrays.toString(tableNames), e);
+            return;
+        }
         log.info("重载配置表: {}", Arrays.toString(tableNames));
     }
 

@@ -13,6 +13,5 @@ public class CfgFisheriesService extends CfgService<CfgFisheries, CfgFisheriesDa
 
     @Override
     public void check(Configs config) throws Exception {
-        super.check(config);
     }
 }

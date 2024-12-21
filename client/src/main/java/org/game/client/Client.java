@@ -12,6 +12,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import org.game.common.random.RandomUtil;
 import org.game.proto.CodeMsgEncode;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
@@ -89,7 +90,7 @@ public class Client implements CommandLineRunner {
                     });
 
             // 连接到服务器
-            ChannelFuture future = bootstrap.connect(host, port).sync();
+            ChannelFuture future = bootstrap.connect(host, RandomUtil.random(new int[]{8888, 8880})).sync();
             System.out.println("Connected to server " + host + ":" + port);
 
             // 等待连接关闭
@@ -110,7 +111,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 100; i++) {
             run(i);
         }
     }

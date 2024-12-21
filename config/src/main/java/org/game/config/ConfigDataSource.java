@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EntityScan(basePackages = "org.game.config.data.entity")
 public class ConfigDataSource {
 
-    @Bean
+    @Bean(name = "configMongoProperties")
     @ConfigurationProperties(prefix = "spring.data.mongodb.config")
     public MongoProperties configMongoProperties() {
         return new MongoProperties();
