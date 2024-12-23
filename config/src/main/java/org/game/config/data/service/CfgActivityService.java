@@ -1,6 +1,7 @@
 package org.game.config.data.service;
 
 import org.game.config.Configs;
+import org.game.config.data.ConfigException;
 import org.game.config.data.entity.CfgActivity;
 import org.game.config.data.repository.CfgActivityDao;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class CfgActivityService extends CfgService<CfgActivity, CfgActivityDao, String> {
 
     @Override
-    public void check0(Configs config) throws Exception {
+    protected void check0(CfgActivity cfgActivity, Configs config) throws ConfigException {
+
     }
 }

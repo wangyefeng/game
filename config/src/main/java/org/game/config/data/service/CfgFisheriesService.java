@@ -1,6 +1,7 @@
 package org.game.config.data.service;
 
 import org.game.config.Configs;
+import org.game.config.data.ConfigException;
 import org.game.config.data.entity.CfgFisheries;
 import org.game.config.data.repository.CfgFisheriesDao;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class CfgFisheriesService extends CfgService<CfgFisheries, CfgFisheriesDao, String> {
 
     @Override
-    public void check0(Configs config) {
+    protected void check0(CfgFisheries cfgFisheries, Configs config) throws ConfigException {
+
     }
 }

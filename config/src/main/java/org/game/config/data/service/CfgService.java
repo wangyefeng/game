@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.game.config.Configs;
+import org.game.config.data.ConfigException;
 import org.game.config.data.entity.Cfg;
 import org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl;
 import org.hibernate.persister.entity.AbstractEntityPersister;
@@ -48,15 +49,15 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return map.values();
     }
 
-    public void check(Configs config) throws Exception {
+    public void check(Configs config) throws ConfigException {
         // 创建验证工厂和验证器
         for (Entity entity : map.values()) {
             // 执行验证
             for (ConstraintViolation<Entity> violation : validator.validate(entity)) {
-                throw new Exception("配置表：[" + getCfgName(entity) + "] id=[" + entity.getId() + "]出现错误, 字段：[" + getColumnName(entity, violation.getPropertyPath().toString()) + "] 信息：" + violation.getMessage());
+                throw new ConfigException(getCfgName(entity), entity.getId(), getColumnName(entity, violation.getPropertyPath().toString()), violation.getMessage());
             }
+            check0(entity, config);
         }
-        check0(config);
     }
 
     public String getCfgName(Entity entity) {
@@ -79,5 +80,5 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return persist.getPropertyColumnNames(field)[0];
     }
 
-    protected abstract void check0(Configs config) throws Exception;
+    protected abstract void check0(Entity entity, Configs config) throws ConfigException;
 }
