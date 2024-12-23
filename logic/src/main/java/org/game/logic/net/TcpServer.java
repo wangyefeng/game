@@ -17,9 +17,14 @@ import org.game.proto.PlayerMsgEncode;
 import org.game.proto.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+@Component
+@EnableConfigurationProperties(TcpServerProperties.class)
 public class TcpServer {
 
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
@@ -50,7 +55,12 @@ public class TcpServer {
 
     private NioEventLoopGroup group;
 
-    TcpServer(String host, int port) {
+    @Autowired
+    TcpServer(TcpServerProperties properties) {
+        this(properties.getHost(), properties.getPort());
+    }
+
+    public TcpServer(String host, int port) {
         this.host = host;
         this.port = port;
     }

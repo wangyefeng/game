@@ -17,7 +17,6 @@ import org.game.gate.zookepper.ZookeeperProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,12 +28,11 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * @author wangyefeng
- * @date 2024-07-05
  * @description 网关服务器
  */
 @SpringBootApplication
 @EnableConfigurationProperties(ZookeeperProperties.class)
-public class Gate extends Server implements CommandLineRunner {
+public class Gate extends Server {
 
     private static final Logger log = LoggerFactory.getLogger(Gate.class);
 
@@ -66,7 +64,7 @@ public class Gate extends Server implements CommandLineRunner {
     }
 
     @Override
-    protected void start0(String[] args) {
+    protected void start0() {
         registerHandler();
         connectLogic();
     }
@@ -147,11 +145,6 @@ public class Gate extends Server implements CommandLineRunner {
         clientGroup.close();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
-    }
-
-    @Override
-    public void run(String... args) {
-        start(args);
     }
 
     private void registerHandler() {

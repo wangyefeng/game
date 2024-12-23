@@ -16,20 +16,17 @@ import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"})
-public class Logic extends Server implements CommandLineRunner {
+public class Logic extends Server {
 
     private static final Logger log = LoggerFactory.getLogger(Logic.class);
 
@@ -59,8 +56,7 @@ public class Logic extends Server implements CommandLineRunner {
      * 初始化spring容器后，启动服务器
      */
     @Override
-    protected void start0(String[] args) {
-        initConfig();
+    protected void start0() {
         registerHandler();
         tcpServer.start();
         initGameService();
@@ -73,7 +69,7 @@ public class Logic extends Server implements CommandLineRunner {
 
     @Override
     protected void afterStart() throws Exception {
-        registerCfgService();
+        registerService();
     }
 
     private void initConfig() {
@@ -83,37 +79,7 @@ public class Logic extends Server implements CommandLineRunner {
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
-    public void reloadAllConfig() {
-        long start = System.currentTimeMillis();
-        log.info("开始重新加载配置表...");
-        try {
-            Configs.reload(applicationContext.getBeansOfType(CfgService.class).values());
-        } catch (Exception e) {
-            log.error("重载配置表失败", e);
-            return;
-        }
-        log.info("配置表重新加载完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
-    }
-
-    public void reloadConfig(String... tableNames) {
-        Collection<CfgService> cfgServices = new ArrayList<>();
-        for (String tableName : tableNames) {
-            CfgService cfgService = applicationContext.getBean(tableName, CfgService.class);
-            if (cfgService == null) {
-                throw new IllegalArgumentException("重载配置表失败, 未找到配置表: " + tableName);
-            }
-            cfgServices.add(cfgService);
-        }
-        try {
-            Configs.reload(cfgServices);
-        } catch (Exception e) {
-            log.error("重载配置表: {}", Arrays.toString(tableNames), e);
-            return;
-        }
-        log.info("重载配置表: {}", Arrays.toString(tableNames));
-    }
-
-    private void registerCfgService() throws KeeperException, InterruptedException {
+    private void registerService() throws KeeperException, InterruptedException {
         if (zooKeeper.exists(SERVICE_ROOT, false) == null) {// 判断服务根节点是否存在，不存在则创建
             zooKeeper.create(SERVICE_ROOT, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
@@ -127,11 +93,6 @@ public class Logic extends Server implements CommandLineRunner {
         tcpServer.close();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
-    }
-
-    @Override
-    public void run(String... args) {
-        start(args);
     }
 
     private void registerHandler() {

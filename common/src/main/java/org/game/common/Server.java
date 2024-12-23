@@ -3,7 +3,11 @@ package org.game.common;
 import org.apache.logging.log4j.core.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public abstract class Server {
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
@@ -17,10 +21,11 @@ public abstract class Server {
         System.setProperty(Constants.LOG4J_CONTEXT_SELECTOR, "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     }
 
-    protected void start(String[] args) {
+    @EventListener(ApplicationStartedEvent.class)
+    protected void start() {
         try {
             status = Status.STARTING;
-            start0(args);
+            start0();
             afterStart();
             status = Status.RUNNING;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -43,7 +48,7 @@ public abstract class Server {
 
     }
 
-    protected abstract void start0(String[] args) throws Exception;
+    protected abstract void start0() throws Exception;
 
     protected abstract void afterStart() throws Exception;
 
