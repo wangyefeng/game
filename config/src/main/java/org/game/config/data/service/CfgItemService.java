@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
 public class CfgItemService extends CfgService<CfgItem, CfgItemDao, Integer> {
 
     @Override
-    public void check(Configs config) throws Exception {
+    public void check0(Configs config) throws Exception {
     }
 }

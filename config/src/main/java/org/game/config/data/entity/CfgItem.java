@@ -1,14 +1,18 @@
 package org.game.config.data.entity;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "config_item")
+@Valid
 public class CfgItem implements Cfg<Integer> {
 
     @Id
     private int id;
 
+    @Min(0)
     private int type;
 
     private String name;

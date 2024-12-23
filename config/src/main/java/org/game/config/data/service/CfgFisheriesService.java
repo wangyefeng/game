@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
 public class CfgFisheriesService extends CfgService<CfgFisheries, CfgFisheriesDao, String> {
 
     @Override
-    public void check(Configs config) throws Exception {
+    public void check0(Configs config) {
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class CfgActivityService extends CfgService<CfgActivity, CfgActivityDao, String> {
 
     @Override
-    public void check(Configs config) throws Exception {
-        super.check(config);
+    public void check0(Configs config) throws Exception {
     }
 }

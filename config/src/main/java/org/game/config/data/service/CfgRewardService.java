@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class CfgRewardService extends CfgService<CfgReward, CfgRewardDao, Integer> {
 
     @Override
-    public void check(Configs config) throws Exception {
+    protected void check0(Configs config) throws Exception {
+
     }
 }

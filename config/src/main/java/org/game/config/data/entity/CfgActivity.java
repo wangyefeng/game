@@ -44,7 +44,7 @@ public class CfgActivity implements Cfg<String> {
     private String name;
 
     @Column(name = "email_id", columnDefinition = "INT COMMENT '邮件模板id'")
-    @Min(value = 1)
+    @Min(0)
     private int emailId;
 
     @Column(name = "rank_email_id", columnDefinition = "INT default 0  COMMENT '排行榜邮件模板id'")

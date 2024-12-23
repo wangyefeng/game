@@ -56,19 +56,28 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
                 throw new Exception("配置表：[" + getCfgName(entity) + "] id=[" + entity.getId() + "]出现错误, 字段：[" + getColumnName(entity, violation.getPropertyPath().toString()) + "] 信息：" + violation.getMessage());
             }
         }
+        check0(config);
     }
 
-    private String getCfgName(Entity entity) {
+    public String getCfgName(Entity entity) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
+        if (!metaData.isEntityClass(entity.getClass())) {
+            return entity.getClass().getSimpleName();
+        }
         EntityPersister entityPersister = metaData.entityPersister(entity.getClass());
         return entityPersister.getIdentifierTableName();
     }
 
-    private String getColumnName(Entity entity, String field) {
+    public String getColumnName(Entity entity, String field) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
+        if (!metaData.isEntityClass(entity.getClass())) {
+            return entity.getClass().getSimpleName();
+        }
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
         return persist.getPropertyColumnNames(field)[0];
     }
+
+    protected abstract void check0(Configs config) throws Exception;
 }
