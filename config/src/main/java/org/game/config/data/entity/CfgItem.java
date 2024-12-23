@@ -12,7 +12,7 @@ public class CfgItem implements Cfg<Integer> {
     @Id
     private int id;
 
-    @Min(0)
+    @Min(100)
     private int type;
 
     private String name;

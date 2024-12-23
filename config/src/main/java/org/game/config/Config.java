@@ -1,9 +1,8 @@
 package org.game.config;
 
 import jakarta.persistence.EntityManager;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.game.config.data.entity.Cfg;
+import org.game.config.data.ConfigException;
 import org.game.config.data.service.CfgService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 
 @Component
 @EnableAutoConfiguration(exclude = {MongoDataAutoConfiguration.class})
@@ -44,19 +42,12 @@ public class Config implements InitializingBean {
         Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
         Configs.init(cfgServices);
         if (checkConfig) {
-            boolean success = true;
             for (CfgService cfgService : cfgServices) {
-                for (Object cfg : cfgService.getAllCfg()) {
-                    Cfg cfg1 = (Cfg) cfg;
-                    Set<ConstraintViolation<Cfg>> validates = validator.validate(cfg1);
-                    for (ConstraintViolation<Cfg> validate : validates) {
-                        log.error("配置表: {}, id: {}, 字段: {}, 错误: {}", cfgService.getCfgName(cfg1), cfg1.getId(), cfgService.getColumnName(cfg1, validate.getPropertyPath().toString()), validate.getMessage());
-                        success = false;
-                    }
+                try {
+                    cfgService.check(Configs.getInstance());
+                } catch (ConfigException e) {
+                    log.error("配置表校验失败!!! 表名: {} id:{} 字段：{} 原因: {}", e.getTableName(), e.getId(), e.getFieldName(), e.getMessage());
                 }
-            }
-            if (!success) {
-                throw new Exception("配置表检测出现错误，详情请看错误日志！！！");
             }
         }
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);

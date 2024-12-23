@@ -50,7 +50,6 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     }
 
     public void check(Configs config) throws ConfigException {
-        // 创建验证工厂和验证器
         for (Entity entity : map.values()) {
             // 执行验证
             for (ConstraintViolation<Entity> violation : validator.validate(entity)) {
@@ -74,7 +73,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
         if (!metaData.isEntityClass(entity.getClass())) {
-            return entity.getClass().getSimpleName();
+            return field;
         }
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
         return persist.getPropertyColumnNames(field)[0];
