@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @EnableAutoConfiguration(exclude = {MongoDataAutoConfiguration.class})
@@ -42,12 +43,31 @@ public class Config implements InitializingBean {
         Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
         Configs.init(cfgServices);
         if (checkConfig) {
+            List<ConfigException> configExceptions = new ArrayList<>();
             for (CfgService cfgService : cfgServices) {
                 try {
                     cfgService.check(Configs.getInstance());
                 } catch (ConfigException e) {
-                    log.error("配置表校验失败!!! 表名: {} id:{} 字段：{} 原因: {}", e.getTableName(), e.getId(), e.getFieldName(), e.getMessage());
+                    configExceptions.add(e);
                 }
+            }
+            if (!configExceptions.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (ConfigException e : configExceptions) {
+                    if (sb.length() > 0) {
+                        sb.append("\n");
+                    }
+                    sb.append("表：");
+                    sb.append(e.getTableName());
+                    sb.append(" id: ");
+                    sb.append(e.getId());
+                    sb.append(" 字段: ");
+                    sb.append(e.getFieldName());
+                    sb.append(" 错误信息: ");
+                    sb.append(e.getMessage());
+                }
+                log.error(sb.toString());
+                throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
             }
         }
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
