@@ -88,20 +88,22 @@ public class Gate extends Server {
                     clientGroup.add(logicClient);
                 }
                 Watcher w = event -> {
-                    log.info("节点{}数据发生变化，进行相关处理....", event.getPath());
                     try {
-                        List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
-                        for (String serverId : serviceNodes) {
-                            if (clientGroup.contains(serverId)) {
-                                continue;
+                        if (event.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
+                            log.info("逻辑服务器节点发生变化，进行相关处理....");
+                            List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
+                            for (String serverId : serviceNodes) {
+                                if (clientGroup.contains(serverId)) {
+                                    continue;
+                                }
+                                String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
+                                byte[] data = zkClient.getData().forPath(path);
+                                String serverInfo = new String(data);
+                                String[] logicAddress = serverInfo.split(":");
+                                LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
+                                logicClient.start();
+                                clientGroup.add(logicClient);
                             }
-                            String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
-                            byte[] data = zkClient.getData().forPath(path);
-                            String serverInfo = new String(data);
-                            String[] logicAddress = serverInfo.split(":");
-                            LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
-                            logicClient.start();
-                            clientGroup.add(logicClient);
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -125,6 +127,7 @@ public class Gate extends Server {
     }
 
     public void stop() throws Exception {
+        // zkClient.close();
         tcpServer.close();
         clientGroup.close();
         ThreadPool.shutdown();
