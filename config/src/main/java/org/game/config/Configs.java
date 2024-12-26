@@ -1,6 +1,6 @@
 package org.game.config;
 
-import org.game.config.data.service.CfgService;
+import org.game.config.service.CfgService;
 
 import java.util.Collection;
 import java.util.HashMap;

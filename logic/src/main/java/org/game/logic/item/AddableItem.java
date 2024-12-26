@@ -1,6 +1,6 @@
 package org.game.logic.item;
 
-import org.game.config.data.entity.Item;
+import org.game.config.entity.Item;
 
 public class AddableItem implements Item {
 

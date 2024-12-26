@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "org.game.logic.repository", mongoTemplateRef = "gameMongoTemplate")
+@EnableMongoRepositories(basePackages = "org.game.logic", mongoTemplateRef = "gameMongoTemplate")
 public class GameDataSource {
 
     @Bean

@@ -2,8 +2,7 @@ package org.game.config;
 
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Validator;
-import org.game.config.data.ConfigException;
-import org.game.config.data.service.CfgService;
+import org.game.config.service.CfgService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -66,7 +65,6 @@ public class Config implements InitializingBean {
                     sb.append(" 错误信息: ");
                     sb.append(e.getMessage());
                 }
-                log.error(sb.toString());
                 throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
             }
         }

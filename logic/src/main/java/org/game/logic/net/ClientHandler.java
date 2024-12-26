@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.game.config.Configs;
-import org.game.logic.handler.ClientMsgHandler;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,9 +14,9 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "org.game.config.data.repository", mongoTemplateRef = "configMongoTemplate")
-@EnableJpaRepositories(basePackages = "org.game.config.data.repository")
-@EntityScan(basePackages = "org.game.config.data.entity")
+@EnableMongoRepositories(basePackages = "org.game.config", mongoTemplateRef = "configMongoTemplate")
+@EnableJpaRepositories(basePackages = "org.game.config")
+@EntityScan(basePackages = "org.game.config")
 public class ConfigDataSource {
 
     @Bean(name = "configMongoProperties")
