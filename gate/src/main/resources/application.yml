@@ -1,1 +1,1 @@
-server:  tcp-port: 8888  ssl:    enabled: true    certificate: classpath:ssl/fullchain.pem    certificate-private-key: classpath:ssl/privkey.pemspring:  main:    banner-mode: offzookeeper:  address: game.wangyefeng.fun:2181  timeout: 10000
+server:  tcp-port: 8888  ssl:    enabled: true    certificate: classpath:ssl/fullchain.pem    certificate-private-key: classpath:ssl/privkey.pemspring:  main:    banner-mode: offzookeeper:  address: game.wangyefeng.fun:2181  session-timeout: 10000  connection-timeout: 5000

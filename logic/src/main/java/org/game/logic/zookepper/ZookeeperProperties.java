@@ -7,18 +7,25 @@ public class ZookeeperProperties {
 
     private final String address;
 
-    private final int timeout;
+    private final int connectionTimeout;
 
-    ZookeeperProperties(String address, int timeout) {
+    private final int sessionTimeout;
+
+    public ZookeeperProperties(String address, int connectionTimeout, int sessionTimeout) {
         this.address = address;
-        this.timeout = timeout;
+        this.connectionTimeout = connectionTimeout;
+        this.sessionTimeout = sessionTimeout;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public int getTimeout() {
-        return timeout;
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public int getSessionTimeout() {
+        return sessionTimeout;
     }
 }

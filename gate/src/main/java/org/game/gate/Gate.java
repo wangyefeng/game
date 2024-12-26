@@ -2,10 +2,8 @@ package org.game.gate;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetector.Level;
-import org.apache.zookeeper.AddWatchMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher.Event.KeeperState;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.zookeeper.Watcher;
 import org.game.common.Server;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
@@ -24,7 +22,6 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author wangyefeng
@@ -54,9 +51,7 @@ public class Gate extends Server {
     private ClientGroup clientGroup;
 
     @Autowired
-    private ZookeeperProperties zkProperties;
-
-    private ZooKeeper zooKeeper;
+    private CuratorFramework zkClient;
 
     static {
         // 设置netty的资源泄露检测
@@ -73,58 +68,47 @@ public class Gate extends Server {
         try {
             // 连接逻辑服
             String servicePath = SERVICE_REGISTRY_ZNODE;
-            String address = zkProperties.getAddress();
-            int timeout = zkProperties.getTimeout();
             try {
-                final CountDownLatch countDownLatch = new CountDownLatch(1);
-                //连接成功后，会回调watcher监听，此连接操作是异步的，执行完new语句后，直接调用后续代码
-                zooKeeper = new ZooKeeper(address, timeout, event -> {
-                    if (event.getState() == KeeperState.SyncConnected) {
-                        //如果收到了服务端的响应事件,连接成功
-                        countDownLatch.countDown();
-                    }
-                });
-                countDownLatch.await();
-                List<String> serverInfos = zooKeeper.getChildren(servicePath, true);
+                List<String> serverInfos = zkClient.getChildren().forPath(servicePath);
                 if (serverInfos.isEmpty()) {
-                    log.warn("没有发现逻辑服节点，等待！");
+                    log.warn("没有发现逻辑服节点，等待中！");
                     while (serverInfos.isEmpty()) {
                         Thread.sleep(1000);
-                        serverInfos = zooKeeper.getChildren(servicePath, true);
+                        serverInfos = zkClient.getChildren().forPath(servicePath);
                     }
                     log.info("发现逻辑服节点：{}个 继续启动....", serverInfos.size());
                 }
                 for (String serverId : serverInfos) {
                     String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
-                    byte[] data = zooKeeper.getData(path, true, null);
+                    byte[] data = zkClient.getData().forPath(path);
                     String serverInfo = new String(data);
                     String[] logicAddress = serverInfo.split(":");
                     LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
                     logicClient.start();
                     clientGroup.add(logicClient);
                 }
-                zooKeeper.addWatch(servicePath, event -> {
+                Watcher w = event -> {
                     log.info("节点{}数据发生变化，进行相关处理....", event.getPath());
                     try {
-                        List<String> serviceNodes = zooKeeper.getChildren(servicePath, true);
+                        List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
                         for (String serverId : serviceNodes) {
                             if (clientGroup.contains(serverId)) {
                                 continue;
                             }
                             String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
-                            byte[] data = zooKeeper.getData(path, true, null);
+                            byte[] data = zkClient.getData().forPath(path);
                             String serverInfo = new String(data);
                             String[] logicAddress = serverInfo.split(":");
                             LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
                             logicClient.start();
                             clientGroup.add(logicClient);
                         }
-                    } catch (KeeperException e) {
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }, AddWatchMode.PERSISTENT);
+                };
+
+                zkClient.getChildren().usingWatcher(w).forPath(servicePath);
                 log.info("连接ZooKeeper成功！！");
             } catch (Exception e) {
                 throw new IllegalStateException("初始化ZooKeeper连接异常....", e);

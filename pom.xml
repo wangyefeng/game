@@ -54,9 +54,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>3.9.2</version>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>5.7.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>ch.qos.logback</groupId>

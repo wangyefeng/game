@@ -1,10 +1,9 @@
 package org.game.logic;
 
 import io.netty.util.ResourceLeakDetector;
+import io.netty.util.internal.EmptyArrays;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
 import org.game.common.Server;
 import org.game.config.Configs;
 import org.game.config.service.CfgService;
@@ -39,7 +38,7 @@ public class Logic extends Server {
     private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     @Autowired
-    private ZooKeeper zooKeeper;
+    private CuratorFramework zkClient;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -78,14 +77,14 @@ public class Logic extends Server {
         log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
-    private void registerService() throws KeeperException, InterruptedException {
-        if (zooKeeper.exists(SERVICE_ROOT, false) == null) {// 判断服务根节点是否存在，不存在则创建
-            zooKeeper.create(SERVICE_ROOT, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    private void registerService() throws Exception {
+        if (zkClient.checkExists().forPath(SERVICE_ROOT) == null) {
+            zkClient.create().forPath(SERVICE_ROOT, EmptyArrays.EMPTY_BYTES);
         }
         String serverId = UUID.randomUUID().toString();  // 生成唯一ID
         String servicePath = SERVICE_ROOT + "/" + serverId;
-        String path = zooKeeper.create(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-        log.info("zookeeper registry service success, path: {}", path);
+        zkClient.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes());
+        log.info("zookeeper registry service success, path: {}", servicePath);
     }
 
     protected void stop() throws Exception {
