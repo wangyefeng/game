@@ -14,13 +14,13 @@ import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Collection;
-import java.util.UUID;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"})
@@ -43,7 +43,11 @@ public class Logic extends Server {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private static final String SERVICE_ROOT = "/logic";
+    @Value("${zookeeper.root-path}")
+    private String rootPath;
+
+    @Value("${logic.server-id}")
+    private int id;
 
     static {
         // 设置netty的资源泄露检测
@@ -79,12 +83,11 @@ public class Logic extends Server {
     }
 
     private void registerService() throws Exception {
-        if (zkClient.checkExists().forPath(SERVICE_ROOT) == null) {
-            zkClient.create().forPath(SERVICE_ROOT, EmptyArrays.EMPTY_BYTES);
+        if (zkClient.checkExists().forPath(rootPath) == null) {
+            zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
-        String serverId = UUID.randomUUID().toString();  // 生成唯一ID
-        String servicePath = SERVICE_ROOT + "/" + serverId;
-        zkClient.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes());
+        String servicePath = rootPath + "/" + id;
+        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes());
         log.info("zookeeper registry service success, path: {}", servicePath);
     }
 

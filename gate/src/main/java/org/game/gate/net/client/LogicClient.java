@@ -45,7 +45,7 @@ public class LogicClient extends Client {
 
     private Set<Player> players = new HashSet<>();
 
-    public LogicClient(String id, String host, int port) {
+    public LogicClient(int id, String host, int port) {
         super(id, host, port, "logic");
     }
 

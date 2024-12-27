@@ -3,11 +3,13 @@ package org.game.gate;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetector.Level;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.game.common.Server;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.net.TcpServer;
+import org.game.gate.net.client.Client;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
@@ -21,7 +23,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author wangyefeng
@@ -83,33 +87,11 @@ public class Gate extends Server {
                     byte[] data = zkClient.getData().forPath(path);
                     String serverInfo = new String(data);
                     String[] logicAddress = serverInfo.split(":");
-                    LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
+                    LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), logicAddress[0], Integer.parseInt(logicAddress[1]));
                     logicClient.start();
                     clientGroup.add(logicClient);
                 }
-                Watcher w = event -> {
-                    try {
-                        if (event.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                            log.info("逻辑服务器节点发生变化，进行相关处理....");
-                            List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
-                            for (String serverId : serviceNodes) {
-                                if (clientGroup.contains(serverId)) {
-                                    continue;
-                                }
-                                String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
-                                byte[] data = zkClient.getData().forPath(path);
-                                String serverInfo = new String(data);
-                                String[] logicAddress = serverInfo.split(":");
-                                LogicClient logicClient = new LogicClient(serverId, logicAddress[0], Integer.parseInt(logicAddress[1]));
-                                logicClient.start();
-                                clientGroup.add(logicClient);
-                            }
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                };
-
+                Watcher w = new LogicWatcher(zkClient, clientGroup, servicePath);
                 zkClient.getChildren().usingWatcher(w).forPath(servicePath);
                 log.info("连接ZooKeeper成功！！");
             } catch (Exception e) {
@@ -117,6 +99,62 @@ public class Gate extends Server {
             }
         } catch (Exception e) {
             throw new RuntimeException("连接逻辑服失败！", e);
+        }
+    }
+
+    private static class LogicWatcher implements Watcher {
+
+        private CuratorFramework zkClient;
+
+        private ClientGroup clientGroup;
+
+        private String servicePath;
+
+        public LogicWatcher(CuratorFramework zkClient, ClientGroup clientGroup, String servicePath) {
+            this.zkClient = zkClient;
+            this.clientGroup = clientGroup;
+            this.servicePath = servicePath;
+        }
+
+        @Override
+        public void process(WatchedEvent event) {
+            try {
+                if (event.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
+                    log.info("逻辑服务器节点发生变化，进行相关处理....");
+                    List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
+                    Set<Integer> nodes = new HashSet<>(serviceNodes.size());
+                    for (String serverId : serviceNodes) {
+                        int id = Integer.parseInt(serverId);
+                        nodes.add(id);
+                        if (clientGroup.contains(id)) {
+                            continue;
+                        }
+                        String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
+                        byte[] data = zkClient.getData().forPath(path);
+                        String serverInfo = new String(data);
+                        String[] logicAddress = serverInfo.split(":");
+                        LogicClient logicClient = new LogicClient(id, logicAddress[0], Integer.parseInt(logicAddress[1]));
+                        logicClient.start();
+                        clientGroup.add(logicClient);
+                    }
+                    clientGroup.getClients().values().removeIf(o -> {
+                        Client client = (Client) o;
+                        if (!nodes.contains(client.getId())) {
+                            try {
+                                client.close();
+                            } catch (Exception e) {
+                                log.error("关闭逻辑服务器{}异常", client.getId(), e);
+                            }
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                // 重新注册 Watcher 以继续监听节点变化
+                zkClient.getChildren().usingWatcher(this).forPath(servicePath);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

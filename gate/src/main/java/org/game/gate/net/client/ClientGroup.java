@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 public class ClientGroup<C extends Client> {
 
-    private Map<String, C> clients = new HashMap<>();
+    private Map<Integer, C> clients = new HashMap<>();
 
     public ClientGroup() {
     }
@@ -45,11 +45,11 @@ public class ClientGroup<C extends Client> {
         return RandomUtil.random(clients.values());
     }
 
-    public boolean contains(String id) {
+    public boolean contains(int id) {
         return clients.containsKey(id);
     }
 
-    public Map<String, C> getClients() {
+    public Map<Integer, C> getClients() {
         return clients;
     }
 }

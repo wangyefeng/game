@@ -34,7 +34,7 @@ public abstract class ThreadPool {
         }
         scheduledExecutor = new ScheduledThreadPoolExecutor(5);
         scheduledExecutor.scheduleAtFixedRate(() -> {
-            log.info("实时在线玩家数量{}", Players.getPlayers().size());
+            log.debug("实时在线玩家数量{}", Players.getPlayers().size());
         }, 10, 10, TimeUnit.SECONDS);
     }
 
