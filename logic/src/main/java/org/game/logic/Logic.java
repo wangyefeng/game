@@ -58,6 +58,7 @@ public class Logic extends Server {
         registerHandler();
         tcpServer.start();
         initGameService();
+        ThreadPool.start();
     }
 
     private void initGameService() {

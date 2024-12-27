@@ -3,6 +3,7 @@ package org.game.logic.player.handler;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.net.ClientMsgHandler;
+import org.game.logic.net.GateHandler;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.GameService;
@@ -41,6 +42,7 @@ public class LoginHandler implements ClientMsgHandler<PbLogin> {
                 return;
             }
             Players.addPlayer(player);
+            channel.attr(GateHandler.PLAYERS_KEY).get().add(player.getId());
         } else {
             player.setChannel(channel);
         }

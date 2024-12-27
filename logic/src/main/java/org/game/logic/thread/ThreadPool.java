@@ -1,5 +1,6 @@
 package org.game.logic.thread;
 
+import org.game.logic.player.Players;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,26 +17,25 @@ public abstract class ThreadPool {
 
     public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors();
 
-    public static final ThreadPoolExecutor[] playerExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
+    public static ThreadPoolExecutor[] playerExecutors;
 
-    public static final ThreadPoolExecutor[] playerDBExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
+    public static ThreadPoolExecutor[] playerDBExecutors;
 
-    public static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(5);
+    public static ScheduledExecutorService scheduledExecutor;
 
-    static {
+
+    public static void start() {
+        playerExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
+        playerDBExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
         for (int i = 0; i < EXECUTOR_SIZE; i++) {
             final int k = i;
             playerExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-thread-" + k));
             playerDBExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-db-thread-" + k));
         }
-    }
-
-    public static ThreadPoolExecutor getPlayerExecutor(int playerId) {
-        return playerExecutors[playerId % EXECUTOR_SIZE];
-    }
-
-    public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
-        return playerDBExecutors[playerId % EXECUTOR_SIZE];
+        scheduledExecutor = new ScheduledThreadPoolExecutor(5);
+        scheduledExecutor.scheduleAtFixedRate(() -> {
+            log.info("实时在线玩家数量{}", Players.getPlayers().size());
+        }, 10, 10, TimeUnit.SECONDS);
     }
 
     public static void shutdown() {
@@ -66,5 +66,13 @@ public abstract class ThreadPool {
 
     public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {
         return scheduledExecutor.scheduleAtFixedRate(runnable, delay, period, unit);
+    }
+
+    public static ThreadPoolExecutor getPlayerExecutor(int playerId) {
+        return playerExecutors[playerId % EXECUTOR_SIZE];
+    }
+
+    public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
+        return playerDBExecutors[playerId % EXECUTOR_SIZE];
     }
 }

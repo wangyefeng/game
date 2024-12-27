@@ -4,12 +4,18 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 import org.game.config.Configs;
+import org.game.logic.player.Player;
+import org.game.logic.player.Players;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessageCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Vector;
 
 /**
  * @author wangyefeng
@@ -20,6 +26,15 @@ import java.util.Optional;
 public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(GateHandler.class);
+
+    public static final AttributeKey<List<Integer>> PLAYERS_KEY = AttributeKey.newInstance("players");
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        ctx.channel().attr(PLAYERS_KEY).set(new Vector<>());
+        log.info("client channel active: {}", ctx.channel().remoteAddress());
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
@@ -42,6 +57,21 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+        List<Integer> players = ctx.channel().attr(GateHandler.PLAYERS_KEY).get();
+        for (Integer playerId : players) {
+            if (Players.containsPlayer(playerId)) {
+                ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+                    Player player = Players.getPlayer(playerId);
+                    if (player == null) {
+                        log.info("玩家{}退出游戏，但玩家不在线", playerId);
+                        return;
+                    }
+                    player.logout();
+                    Players.removePlayer(playerId);
+                    log.info("玩家{}退出游戏", playerId);
+                });
+            }
+        }
         log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
     }
 }

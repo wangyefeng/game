@@ -2,6 +2,7 @@ package org.game.logic.player.handler;
 
 import io.netty.channel.Channel;
 import org.game.config.Configs;
+import org.game.logic.net.GateHandler;
 import org.game.logic.net.GateMsgHandler;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
@@ -30,6 +31,7 @@ public class LogoutHandler implements GateMsgHandler<PbInt> {
             player.logout();
             Players.removePlayer(msg.getVal());
             log.info("玩家{}退出游戏", msg.getVal());
+            channel.attr(GateHandler.PLAYERS_KEY).get().remove((Integer) player.getId());
         });
     }
 

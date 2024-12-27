@@ -21,12 +21,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        log.info("client channel active: {}", ctx.channel().remoteAddress());
-    }
-
-    @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer<?> message) {
         ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(message.getCode());
         if (logicHandler == null) {
