@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.game.gate.handler.client.ClientMsgHandler;
+import org.game.gate.net.client.LogicClient;
+import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.proto.MessageCode;
@@ -53,7 +55,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         }
     }
 
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel c = ctx.channel();
@@ -63,8 +64,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             player.getExecutor().submit(() -> {
                 Player player2 = c.attr(AttributeKeys.PLAYER).get();
                 Players.removePlayer(player2.getId());
-                if (player2.getLogicClient().isRunning()) {
-                    player2.getLogicClient().getChannel().writeAndFlush(new MessageCode<>(GateToLogicProtocol.LOGOUT, Common.PbInt.newBuilder().setVal(player2.getId()).build()));
+                LogicClient logicClient = player2.getLogicClient();
+                if (logicClient.isRunning()) {
+                    Channel channel = logicClient.getChannel();
+                    channel.writeAndFlush(new MessageCode<>(GateToLogicProtocol.LOGOUT, Common.PbInt.newBuilder().setVal(player2.getId()).build()));
+                    channel.attr(LogicHandler.PLAYERS_KEY).get().remove((Integer) player.getId());
                 }
             }).get();
         }

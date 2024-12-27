@@ -5,6 +5,7 @@ import io.netty.util.ResourceLeakDetector.Level;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.game.common.Server;
 import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.handler.logic.LogicMsgHandler;
@@ -150,8 +151,10 @@ public class Gate extends Server {
                         return false;
                     });
                 }
-                // 重新注册 Watcher 以继续监听节点变化
-                zkClient.getChildren().usingWatcher(this).forPath(servicePath);
+                if (event.getState() != KeeperState.Closed) {
+                    // 重新注册 Watcher 以继续监听节点变化
+                    zkClient.getChildren().usingWatcher(this).forPath(servicePath);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -165,7 +168,6 @@ public class Gate extends Server {
     }
 
     public void stop() throws Exception {
-        // zkClient.close();
         tcpServer.close();
         clientGroup.close();
         ThreadPool.shutdown();

@@ -15,8 +15,8 @@ public abstract class Players {
         return players.get(id);
     }
 
-    public static void removePlayer(int id) {
-        players.remove(id);
+    public static Player removePlayer(int id) {
+        return players.remove(id);
     }
 
     public static Map<Integer, Player> getPlayers() {

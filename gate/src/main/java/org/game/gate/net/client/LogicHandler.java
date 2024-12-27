@@ -4,11 +4,18 @@ import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 import org.game.common.Server;
 import org.game.gate.handler.logic.LogicMsgHandler;
+import org.game.gate.player.Player;
+import org.game.gate.player.Players;
+import org.game.gate.thread.ThreadPool;
 import org.game.proto.MessageCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Vector;
 
 @ChannelHandler.Sharable
 public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
@@ -17,8 +24,16 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private LogicClient logicClient;
 
+    public static final AttributeKey<List<Integer>> PLAYERS_KEY = AttributeKey.newInstance("players");
+
     public LogicHandler(LogicClient logicClient) {
         this.logicClient = logicClient;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        ctx.channel().attr(PLAYERS_KEY).set(new Vector<>());
     }
 
     @Override
@@ -36,6 +51,15 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         super.channelInactive(ctx);
         log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
         logicClient.setRunning(false);
+        List<Integer> players = ctx.channel().attr(PLAYERS_KEY).get();
+        for (Integer playerId : players) {
+            ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+                Player player = Players.getPlayer(playerId);
+                if (player != null) {
+                    player.getChannel().close();
+                }
+            });
+        }
         if (!Server.isStopping()) {
             log.info("尝试重新连接逻辑服务器{}...", ctx.channel().remoteAddress());
             logicClient.reconnect();

@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import org.game.gate.net.AttributeKeys;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
+import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.slf4j.Logger;
@@ -46,10 +47,17 @@ public final class ValidateHandler implements ClientMsgHandler<Common.PbInt> {
                 oldChannel.close();
                 player.setChannel(channel);
             } else {
+                if (clientGroup.getClients().isEmpty()) {
+                    channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
+                    channel.attr(AttributeKeys.PLAYER).set(null);
+                    channel.close();
+                    return;
+                }
                 player = new Player(playerId, channel, playerExecutor, clientGroup.next());
                 Players.addPlayer(player);
             }
             channel.attr(AttributeKeys.PLAYER).set(player);
+            player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
         }).get();
     }
 

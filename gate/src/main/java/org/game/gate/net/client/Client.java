@@ -109,7 +109,7 @@ public abstract class Client {
 
     @Override
     public String toString() {
-        return "{id='" + id + '\'' + ", host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
+        return "{id=" + id + ", host='" + host + '\'' + ", port=" + port + ", name='" + name + '\'' + '}';
     }
 
     public String getName() {
