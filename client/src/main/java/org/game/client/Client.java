@@ -35,7 +35,7 @@ public class Client implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
     private final String host;
-    private final int port;
+    private final int[] ports;
 
     @Value("${server.ssl.trust-certificate}")
     private String trustCertificate;
@@ -50,12 +50,12 @@ public class Client implements CommandLineRunner {
 
     public Client() {
         this.host = "localhost";
-        this.port = 8888;
+        this.ports = new int[]{8888, 8880};
     }
 
-    public Client(String host, int port) {
+    public Client(String host, int[] ports) {
         this.host = host;
-        this.port = port;
+        this.ports = ports;
     }
 
     public void run(int playerId) throws Exception {
@@ -90,8 +90,8 @@ public class Client implements CommandLineRunner {
                     });
 
             // 连接到服务器
-            ChannelFuture future = bootstrap.connect(host, RandomUtil.random(new int[]{8888, 8880})).sync();
-            System.out.println("Connected to server " + host + ":" + port);
+            ChannelFuture future = bootstrap.connect(host, RandomUtil.random(ports)).sync();
+            System.out.println("Connected to server " + host + ":" + ports);
 
             // 等待连接关闭
             future.channel().closeFuture().addListener(_ -> {
@@ -111,7 +111,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 10; i++) {
             run(i);
         }
     }

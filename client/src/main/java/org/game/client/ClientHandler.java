@@ -49,4 +49,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             }, 5, 5, TimeUnit.SECONDS);
         }
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        log.info("玩家{}已断开连接", playerId);
+    }
 }
