@@ -8,8 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.util.HashMap;
-
 /**
  * @author wangyefeng
  * @date 2024-07-05
@@ -19,7 +17,7 @@ import java.util.HashMap;
 @EnableJpaRepositories(repositoryBaseClass = BaseDao.class)
 public class TestApp implements CommandLineRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestApp.class);
+    private static final Logger log = LoggerFactory.getLogger(TestApp.class);
 
     @Autowired
     private MyEntityService myEntityService;
@@ -33,15 +31,13 @@ public class TestApp implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         MyEntity myEntity = myEntityService.findById(1l);
-        myEntity.setMap(new HashMap<>());
-        myEntity.getMap().put("key1", "value1");
+        myEntity.getMap().clear();
         myEntityService.save(myEntity);
-        myEntity.getMap().put("key1", "value2");
+        myEntity.getMap().put("k", "v");
         myEntityService.save(myEntity);
-        Thread thread = new Thread(() -> {
-            myEntity.getMap().put("key1", "value2");
+        new Thread(() -> {
+            myEntity.getMap().put("k", "v");
             myEntityService.save(myEntity);
-        });
-        thread.start();
+        }).start();
     }
 }

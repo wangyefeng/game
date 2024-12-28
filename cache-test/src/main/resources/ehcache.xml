@@ -18,9 +18,6 @@
 
     <!-- entity缓存配置模板 -->
     <cache-template name="entity">
-        <expiry>
-            <ttl unit="hours">1</ttl>
-        </expiry>
         <heap>6000000</heap>
     </cache-template>
 

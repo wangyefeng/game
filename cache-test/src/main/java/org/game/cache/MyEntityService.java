@@ -16,10 +16,4 @@ public class MyEntityService extends EntityService {
     public MyEntity findById(Long id) {
         return myEntityDao.findById(id).orElse(null);
     }
-
-    public MyEntity saveAndEvict(MyEntity entity) {
-        myEntityDao.save(entity);
-        myEntityDao.cacheEvict(entity);
-        return entity;
-    }
 }
