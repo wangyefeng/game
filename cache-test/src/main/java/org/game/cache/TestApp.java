@@ -1,6 +1,5 @@
 package org.game.cache;
 
-import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ public class TestApp implements CommandLineRunner {
     @Autowired
     private MyEntityService myEntityService;
 
-    @Autowired
-    private EntityManagerFactory sessionFactory;
-
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(TestApp.class);
         application.setRegisterShutdownHook(false);
@@ -41,9 +37,9 @@ public class TestApp implements CommandLineRunner {
         myEntity.getMap().put("key1", "value1");
         myEntityService.save(myEntity);
         myEntity.getMap().put("key1", "value2");
-        myEntityService.saveAndEvict(myEntity);
+        myEntityService.save(myEntity);
         Thread thread = new Thread(() -> {
-            myEntity.getMap().put("key1", "value3");
+            myEntity.getMap().put("key1", "value2");
             myEntityService.save(myEntity);
         });
         thread.start();
