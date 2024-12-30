@@ -23,6 +23,7 @@
         <module>config</module>
         <module>cache-test</module>
         <module>chat</module>
+        <module>login</module>
     </modules>
 
     <properties>
