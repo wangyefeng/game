@@ -1,9 +1,12 @@
 package org.game.login.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.game.login.AccountType;
 
 @Entity
 public class User {
@@ -12,12 +15,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
     private long createTime;
 
     User() {
     }
 
-    public User(long createTime) {
+    public User(AccountType accountType, long createTime) {
+        this.accountType = accountType;
         this.createTime = createTime;
     }
 
@@ -27,5 +34,9 @@ public class User {
 
     public long getCreateTime() {
         return createTime;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
     }
 }

@@ -1,9 +1,12 @@
 package org.game.login.service;
 
+import org.game.common.util.TokenUtil;
+import org.game.login.AccountType;
 import org.game.login.entity.Account;
 import org.game.login.entity.User;
 import org.game.login.repository.AccountRepository;
-import org.game.login.response.RegisterResponse;
+import org.game.login.response.HttpResp;
+import org.game.login.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,27 +26,25 @@ public class AccountService {
         return accountRepository.findById(username);
     }
 
-    public RegisterResponse register(String username, String password) {
-        // 检查用户是否已存在（可以根据用户名或邮箱）
+    public HttpResp<?> register(String username, String password) {
         if (accountRepository.existsById(username)) {
-            return new RegisterResponse(false, "用户名已存在！！！");
+            return HttpResp.fail(1, "用户名已存在");
         }
-        // 创建新用户
-        Account account = new Account(username, password, new User(System.currentTimeMillis()));
-        // 保存到数据库
+        Account account = new Account(username, password, new User(AccountType.INNER, System.currentTimeMillis()));
         accountRepository.save(account);
-        return new RegisterResponse(true, null);
+        return HttpResp.SUCCESS;
     }
 
-    public Account login(String username, String password) {
+    public HttpResp<LoginResponse> login(String username, String password) {
         Optional<Account> optionalAccount = find(username);
         if (optionalAccount.isEmpty()) {
-            return null;
+            return HttpResp.fail(1, "用户不存在");
         }
         Account account = optionalAccount.get();
         if (!account.getPassword().equals(password)) {
-            return null;
+            return HttpResp.fail(2, "密码错误");
         }
-        return account;
+        int id = account.getUser().getId();
+        return HttpResp.success(new LoginResponse(id, TokenUtil.token(id)));
     }
 }

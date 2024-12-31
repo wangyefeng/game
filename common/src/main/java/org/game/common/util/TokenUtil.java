@@ -1,4 +1,4 @@
-package org.game.login;
+package org.game.common.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TokenUtils {
+public class TokenUtil {
     //设置过期时间
     private static final long EXPIRE_TIME = 5 * Timer.ONE_MINUTE;
 
