@@ -8,6 +8,7 @@ import org.game.login.repository.AccountRepository;
 import org.game.login.response.HttpResp;
 import org.game.login.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +18,9 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public void save(Account account) {
         accountRepository.save(account);
@@ -30,7 +34,7 @@ public class AccountService {
         if (accountRepository.existsById(username)) {
             return HttpResp.fail(1, "用户名已存在");
         }
-        Account account = new Account(username, password, new User(AccountType.INNER, System.currentTimeMillis()));
+        Account account = new Account(username, passwordEncoder.encode(password), new User(AccountType.INNER, System.currentTimeMillis()));
         accountRepository.save(account);
         return HttpResp.SUCCESS;
     }
@@ -41,7 +45,7 @@ public class AccountService {
             return HttpResp.fail(1, "用户不存在");
         }
         Account account = optionalAccount.get();
-        if (!account.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, account.getPassword())) {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
