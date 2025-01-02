@@ -1,4 +1,4 @@
-package org.game.login.response;
+package org.game.common.http;
 
 public class HttpResp<T> {
 
@@ -7,6 +7,9 @@ public class HttpResp<T> {
     private int code;
     private String msg;
     private T data;
+
+    public HttpResp() {
+    }
 
     public HttpResp(int code, String msg, T data) {
         this.code = code;
@@ -37,5 +40,9 @@ public class HttpResp<T> {
 
     public T getData() {
         return data;
+    }
+
+    public boolean isSuccess() {
+        return code == 0;
     }
 }

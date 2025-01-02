@@ -5,7 +5,7 @@ import org.game.login.AccountType;
 import org.game.login.entity.Account;
 import org.game.login.entity.User;
 import org.game.login.repository.AccountRepository;
-import org.game.login.response.HttpResp;
+import org.game.common.http.HttpResp;
 import org.game.login.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,13 +30,13 @@ public class AccountService {
         return accountRepository.findById(username);
     }
 
-    public HttpResp<?> register(String username, String password) {
+    public HttpResp<LoginResponse> register(String username, String password) {
         if (accountRepository.existsById(username)) {
             return HttpResp.fail(1, "用户名已存在");
         }
         Account account = new Account(username, passwordEncoder.encode(password), new User(AccountType.INNER, System.currentTimeMillis()));
         accountRepository.save(account);
-        return HttpResp.SUCCESS;
+        return HttpResp.success(new LoginResponse(account.getUser().getId(), TokenUtil.token(account.getUser().getId())));
     }
 
     public HttpResp<LoginResponse> login(String username, String password) {

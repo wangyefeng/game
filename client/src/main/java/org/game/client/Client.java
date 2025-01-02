@@ -1,5 +1,6 @@
 package org.game.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,7 +13,9 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import org.game.common.http.HttpResp;
 import org.game.common.random.RandomUtil;
+import org.game.common.util.JsonUtil;
 import org.game.proto.CodeMsgEncode;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
@@ -27,6 +30,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import java.io.File;
 
@@ -58,7 +63,7 @@ public class Client implements CommandLineRunner {
         this.ports = ports;
     }
 
-    public void run(int playerId) throws Exception {
+    public void run(int playerId, String token) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup(1);
         // 设置 SSL 上下文，客户端会验证服务器的证书
         if (sslEnabled) {
@@ -68,7 +73,7 @@ public class Client implements CommandLineRunner {
         }
         try {
             Bootstrap bootstrap = new Bootstrap();
-            ClientHandler handler = new ClientHandler(playerId);
+            ClientHandler handler = new ClientHandler(playerId, token);
             MessageToByteEncoder encode = new CodeMsgEncode();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
@@ -104,15 +109,46 @@ public class Client implements CommandLineRunner {
         }
     }
 
-
     public static void main(String[] args) {
         SpringApplication.run(Client.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 1; i <= 10; i++) {
-            run(i);
+        Builder basedUrl = WebClient.builder().baseUrl("http://127.0.0.1/auth");
+        for (int i = 1; i <= 1; i++) {
+            int finalI = i;
+            String token;
+            int playerId;
+            String loginResponse = basedUrl.build()
+                    .get()
+                    .uri(uriBuilder -> uriBuilder.path("/login")
+                            .queryParam("username", "user" + finalI) // 查询参数
+                            .queryParam("password", "123456")
+                            .build()) // 请求的 URI
+                    .retrieve() // 发起请求
+                    .bodyToMono(String.class).block();
+            HttpResp<LoginResponse> httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
+            });
+            if (httpResp.isSuccess()) {
+                token = httpResp.getData().token();
+                playerId = httpResp.getData().userId();
+            } else {
+                String registerResponse = basedUrl.build()
+                        .get()
+                        .uri(uriBuilder -> uriBuilder.path("/register")
+                                .queryParam("username", "user" + finalI) // 查询参数
+                                .queryParam("password", "123456")
+                                .build()) // 请求的 URI
+                        .retrieve() // 发起请求
+                        .bodyToMono(String.class).block();
+                HttpResp<LoginResponse> registerResp = JsonUtil.parseJson(registerResponse, new TypeReference<>() {
+                });
+                token = registerResp.getData().token();
+                playerId = registerResp.getData().userId();
+            }
+            log.info("登录成功，token：{}", token);
+            run(playerId, token);
         }
     }
 }

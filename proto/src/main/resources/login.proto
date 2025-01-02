@@ -8,6 +8,11 @@ message PbRegister {
 	string name = 2;
 }
 
+message PbValidate {
+	int32 id = 1;
+	string token = 2;
+}
+
 message PbLogin {
 	int32 id = 1;
 }

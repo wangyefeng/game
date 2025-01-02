@@ -21,14 +21,17 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private final int playerId;
 
-    public ClientHandler(int playerId) {
+    private final String token;
+
+    public ClientHandler(int playerId, String token) {
         this.playerId = playerId;
+        this.token = token;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.VALIDATE, Common.PbInt.newBuilder().setVal(playerId).build()));
+        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.VALIDATE, Login.PbValidate.newBuilder().setId(playerId).setToken(token).build()));
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(playerId).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("ping");

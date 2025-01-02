@@ -3,6 +3,7 @@ package org.game.proto.protocol;
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 import org.game.proto.struct.Common;
+import org.game.proto.struct.Login;
 
 public enum ClientToGateProtocol implements Protocol {
 
@@ -10,7 +11,7 @@ public enum ClientToGateProtocol implements Protocol {
     PING((short) 0),
 
     // 账号验证
-    VALIDATE((short) 1, Common.PbInt.parser()),
+    VALIDATE((short) 1, Login.PbValidate.parser()),
     ;
 
 
