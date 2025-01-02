@@ -6,9 +6,9 @@ import org.game.proto.struct.Login;
 
 public enum ClientToLogicProtocol implements Protocol {
 
-    LOGIN((short) 1, Login.PbLogin.parser()),
+    LOGIN((short) 1, Login.PbLoginReq.parser()),
 
-    REGISTER((short) 3, Login.PbRegister.parser()),
+    REGISTER((short) 3, Login.PbRegisterReq.parser()),
 
     LEVEL_UP((short)4),
 

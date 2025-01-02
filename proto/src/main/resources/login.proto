@@ -3,16 +3,32 @@ syntax = "proto3";
 
 package org.game.proto.struct;
 
-message PbRegister {
-	int32 id = 1;
-	string name = 2;
+message PbRegisterReq {
+	string name = 1;
 }
 
-message PbValidate {
+message PbAccountValidateReq {
 	int32 id = 1;
 	string token = 2;
 }
 
-message PbLogin {
+message PbAccountValidateResp {
+	bool success = 1;
+	int32 id = 2;
+	string playerToken = 3;
+	bool isRegistered  = 4;
+}
+
+message PbPlayerValidateReq {
 	int32 id = 1;
+	string token = 2;
+}
+
+message PbPlayerValidateResp {
+	bool success = 1;
+	int32 id = 2;
+	bool isRegistered  = 3;
+}
+
+message PbLoginReq {
 }

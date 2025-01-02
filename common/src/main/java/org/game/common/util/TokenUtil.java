@@ -11,19 +11,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenUtil {
-    //设置过期时间
-    private static final long EXPIRE_TIME = 5 * Timer.ONE_MINUTE;
 
-    //token秘钥
-    private static final String TOKEN_SECRET = "HRTehj^$39Mghdkl%$%38";
+    // token过期时间
+    public static final long TOKEN_EXPIRE_TIME = Timer.ONE_MINUTE;
 
-    public static String token(int userId) {
+    // token秘钥
+    public static final Algorithm TOKEN_SECRET = Algorithm.HMAC256("HRTehj^$39Mghdkl%$%38");
+
+    // token秘钥
+    public static final Algorithm PLAYER_TOKEN_SECRET = Algorithm.HMAC256("365zb5t3e4vb65%$#2390nb");
+
+    public static String token(int playerId, Algorithm secret, Date expiresAt) {
         String token = "";
         try {
             //过期时间
-            Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
-            //秘钥及加密算法
-            Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
             //设置头部信息
             Map<String, Object> header = new HashMap<>();
             header.put("typ", "JWT");
@@ -31,21 +32,20 @@ public class TokenUtil {
             //携带username，password信息，生成签名
             token = JWT.create()
                     .withHeader(header)
-                    .withClaim("userId", userId)
-                    .withExpiresAt(date)
-                    .sign(algorithm);
+                    .withClaim("playerId", playerId)
+                    .withExpiresAt(expiresAt)
+                    .sign(secret);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return token;
     }
 
-    public static boolean verify(String token, int userId) {
+    public static boolean verify(String token, int playerId, Algorithm secret) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
-            JWTVerifier verifier = JWT.require(algorithm).build();
+            JWTVerifier verifier = JWT.require(secret).build();
             DecodedJWT decodedJWT = verifier.verify(token);
-            return decodedJWT.getClaim("userId").asInt().equals(userId);
+            return decodedJWT.getClaim("playerId").asInt().equals(playerId);
         } catch (Exception e) {
             return false;
         }

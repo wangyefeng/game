@@ -15,7 +15,7 @@ public class LoginController {
     private AccountService accountService;
 
     @RequestMapping(value = "/register")
-    public HttpResp<LoginResponse> register(String username, String password) {
+    public HttpResp<?> register(String username, String password) {
         return accountService.register(username, password);
     }
 

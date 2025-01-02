@@ -1,21 +1,23 @@
 package org.game.logic.player;
 
 import io.netty.channel.Channel;
+import org.game.common.RedisKeys;
 import org.game.config.Configs;
-import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.GameService;
+import org.game.logic.net.ClientMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
-import org.game.proto.struct.Login.PbRegister;
+import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterHandler implements ClientMsgHandler<PbRegister> {
+public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
 
 
     private static final Logger log = LoggerFactory.getLogger(RegisterHandler.class);
@@ -23,8 +25,11 @@ public class RegisterHandler implements ClientMsgHandler<PbRegister> {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @Override
-    public void handle(Channel channel, int playerId, Login.PbRegister message, Configs config) {
+    public void handle(Channel channel, int playerId, Login.PbRegisterReq message, Configs config) {
         log.info("玩家{}注册 信息: {}", playerId, message);
         Player player = Players.getPlayer(playerId);
         if (player != null) {
@@ -36,6 +41,7 @@ public class RegisterHandler implements ClientMsgHandler<PbRegister> {
             return;
         }
         player.register(message);
+        redisTemplate.opsForSet().add(RedisKeys.ALL_PLAYERS, playerId + "");
         Players.addPlayer(player);
         player.sendToClient(LogicToClientProtocol.REGISTER, message);
     }

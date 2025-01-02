@@ -1,16 +1,17 @@
 package org.game.login.service;
 
+import org.game.common.http.HttpResp;
 import org.game.common.util.TokenUtil;
 import org.game.login.AccountType;
 import org.game.login.entity.Account;
 import org.game.login.entity.User;
 import org.game.login.repository.AccountRepository;
-import org.game.common.http.HttpResp;
 import org.game.login.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -30,13 +31,13 @@ public class AccountService {
         return accountRepository.findById(username);
     }
 
-    public HttpResp<LoginResponse> register(String username, String password) {
+    public HttpResp<?> register(String username, String password) {
         if (accountRepository.existsById(username)) {
             return HttpResp.fail(1, "用户名已存在");
         }
         Account account = new Account(username, passwordEncoder.encode(password), new User(AccountType.INNER, System.currentTimeMillis()));
         accountRepository.save(account);
-        return HttpResp.success(new LoginResponse(account.getUser().getId(), TokenUtil.token(account.getUser().getId())));
+        return HttpResp.SUCCESS;
     }
 
     public HttpResp<LoginResponse> login(String username, String password) {
@@ -49,6 +50,6 @@ public class AccountService {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
-        return HttpResp.success(new LoginResponse(id, TokenUtil.token(id)));
+        return HttpResp.success(new LoginResponse(id, TokenUtil.token(id, TokenUtil.TOKEN_SECRET, new Date(System.currentTimeMillis() + TokenUtil.TOKEN_EXPIRE_TIME))));
     }
 }

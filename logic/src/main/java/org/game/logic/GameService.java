@@ -20,7 +20,7 @@ public interface GameService<E extends Entity> {
 
     void setPlayer(Player player);
 
-    void register(Login.PbRegister registerMsg);
+    void register(Login.PbRegisterReq registerMsg);
 
     E getEntity();
 }

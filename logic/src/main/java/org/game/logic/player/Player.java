@@ -101,7 +101,7 @@ public class Player {
         return (T) map.get(playerServiceClass);
     }
 
-    public void register(Login.PbRegister registerMsg) {
+    public void register(Login.PbRegisterReq registerMsg) {
         for (GameService gameService : map.values()) {
             gameService.register(registerMsg);
         }

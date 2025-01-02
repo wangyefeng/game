@@ -27,9 +27,12 @@ public abstract class Protocols {
             byte from = protocol.from().getCode();
             byte to = protocol.to().getCode();
             short code = protocol.getCode();
-            protocolMap.computeIfAbsent(from, _ -> new HashMap<>())
+            Protocol p = protocolMap.computeIfAbsent(from, _ -> new HashMap<>())
                     .computeIfAbsent(to, _ -> new HashMap<>())
                     .put(code, protocol);
+            if (p != null) {
+                throw new IllegalArgumentException("Duplicate protocol code: " + code);
+            }
         }
     }
 

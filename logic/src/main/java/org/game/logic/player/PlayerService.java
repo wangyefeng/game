@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> implements Consumable {
 
     @Override
-    public void register(Login.PbRegister registerMsg) {
+    public void register(Login.PbRegisterReq registerMsg) {
         entity = new PlayerInfo(player.getId(), registerMsg.getName());
     }
 

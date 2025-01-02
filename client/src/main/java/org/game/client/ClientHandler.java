@@ -6,8 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.ClientToLogicProtocol;
-import org.game.proto.protocol.LogicToClientProtocol;
-import org.game.proto.struct.Common;
+import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.struct.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +30,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.VALIDATE, Login.PbValidate.newBuilder().setId(playerId).setToken(token).build()));
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Common.PbInt.newBuilder().setVal(playerId).build()));
+        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.ACCOUNT_VALIDATE, Login.PbAccountValidateReq.newBuilder().setId(playerId).setToken(token).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("ping");
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));
@@ -42,14 +40,18 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
         log.info("Received message from {}: msg：{} content：{}", message.getProtocol().from(), message.getProtocol(), message.getMessage());
-        if (message.getProtocol().equals(LogicToClientProtocol.LOGIN)) {
-            Common.PbInt loginResponse = (Common.PbInt) message.getMessage();
-            if (loginResponse.getVal() == 0) {
-                ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.REGISTER, Login.PbRegister.newBuilder().setId(playerId).setName("test" + playerId).build()));
+        if (message.getProtocol().equals(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE)) {
+            Login.PbAccountValidateResp loginResponse = (Login.PbAccountValidateResp) message.getMessage();
+            if (loginResponse.getSuccess()) {
+                if (loginResponse.getIsRegistered()) {
+                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));
+                } else {
+                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.REGISTER, Login.PbRegisterReq.newBuilder().setName("test" + playerId).build()));
+                }
+                ctx.executor().scheduleAtFixedRate(() -> {
+                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LEVEL_UP));
+                }, 5, 5, TimeUnit.SECONDS);
             }
-            ctx.executor().scheduleAtFixedRate(() -> {
-                ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LEVEL_UP));
-            }, 5, 5, TimeUnit.SECONDS);
         }
     }
 

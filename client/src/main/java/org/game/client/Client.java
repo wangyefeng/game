@@ -142,10 +142,29 @@ public class Client implements CommandLineRunner {
                                 .build()) // 请求的 URI
                         .retrieve() // 发起请求
                         .bodyToMono(String.class).block();
-                HttpResp<LoginResponse> registerResp = JsonUtil.parseJson(registerResponse, new TypeReference<>() {
-                });
-                token = registerResp.getData().token();
-                playerId = registerResp.getData().userId();
+                HttpResp<?> registerResp = JsonUtil.parseJson(registerResponse, HttpResp.class);
+                if (registerResp.isSuccess()) {
+                    loginResponse = basedUrl.build()
+                            .get()
+                            .uri(uriBuilder -> uriBuilder.path("/login")
+                                    .queryParam("username", "user" + finalI) // 查询参数
+                                    .queryParam("password", "123456")
+                                    .build()) // 请求的 URI
+                            .retrieve() // 发起请求
+                            .bodyToMono(String.class).block();
+                    httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
+                    });
+                    if (httpResp.isSuccess()) {
+                        token = httpResp.getData().token();
+                        playerId = httpResp.getData().userId();
+                    } else {
+                        log.error("登录失败：{}", httpResp.getMsg());
+                        return;
+                    }
+                } else {
+                    log.error("注册失败：{}", registerResp.getMsg());
+                    return;
+                }
             }
             log.info("登录成功，token：{}", token);
             run(playerId, token);

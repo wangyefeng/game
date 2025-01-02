@@ -2,15 +2,18 @@ package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
-import org.game.proto.struct.Common;
+import org.game.proto.struct.Login;
 
 public enum GateToClientProtocol implements Protocol {
     PONG((short) 0),
 
-    TOKEN_VALIDATE((short) 1, Common.PbBool.parser()),
+    ACCOUNT_TOKEN_VALIDATE((short) 1, Login.PbAccountValidateResp.parser()),
 
-    KICK_OUT((short) 2);
+    KICK_OUT((short) 2),
 
+    PLAYER_TOKEN_VALIDATE((short) 3, Login.PbPlayerValidateResp.parser()),
+
+    ;
 
     private final short code;
 
