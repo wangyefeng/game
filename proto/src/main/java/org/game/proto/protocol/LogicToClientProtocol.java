@@ -2,14 +2,12 @@ package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
-import org.game.proto.struct.Common;
+import org.game.proto.struct.Login;
 
 public enum LogicToClientProtocol implements Protocol {
-    LOGIN((short) 1, Common.PbInt.parser()),
+    LOGIN((short) 1, Login.PbLoginResp.parser()),
 
-    TEST((short) 2, Common.PbInt.parser()),
-
-    REGISTER((short) 3, Common.PbInt.parser()),
+    REGISTER((short) 3, Login.PbLoginResp.parser()),
 
     ;
 

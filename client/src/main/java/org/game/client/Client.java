@@ -55,7 +55,7 @@ public class Client implements CommandLineRunner {
 
     public Client() {
         this.host = "localhost";
-        this.ports = new int[]{8888, 8880};
+        this.ports = new int[]{8888};
     }
 
     public Client(String host, int[] ports) {
@@ -106,6 +106,7 @@ public class Client implements CommandLineRunner {
         } catch (Exception e) {
             // 关闭 EventLoopGroup，释放所有资源
             group.shutdownGracefully();
+            throw e;
         }
     }
 
@@ -116,7 +117,7 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Builder basedUrl = WebClient.builder().baseUrl("http://127.0.0.1/auth");
-        for (int i = 1; i <= 1; i++) {
+        for (int i = 1; i <= 10; i++) {
             int finalI = i;
             String token;
             int playerId;

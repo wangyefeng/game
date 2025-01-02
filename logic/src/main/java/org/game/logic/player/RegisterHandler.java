@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.entity.PlayerInfo;
 import org.game.logic.net.ClientMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -43,7 +44,8 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
         player.register(message);
         redisTemplate.opsForSet().add(RedisKeys.ALL_PLAYERS, playerId + "");
         Players.addPlayer(player);
-        player.sendToClient(LogicToClientProtocol.REGISTER, message);
+        PlayerInfo playerInfo = playerService.getEntity();
+        player.sendToClient(LogicToClientProtocol.REGISTER, Login.PbLoginResp.newBuilder().setId(playerId).setName(playerInfo.getName()).setLevel(playerInfo.getLevel()).build());
     }
 
     @Override

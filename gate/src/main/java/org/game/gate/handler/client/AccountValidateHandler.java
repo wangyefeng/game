@@ -78,6 +78,7 @@ public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAc
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
             Boolean isRegistered = redisTemplate.opsForSet().isMember(RedisKeys.ALL_PLAYERS, ps);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE, Login.PbAccountValidateResp.newBuilder().setSuccess(true).setId(playerId).setPlayerToken(playerToken).setIsRegistered(isRegistered).build()));
+            log.info("玩家[{}]token验证成功！", playerId);
         }).get();
     }
 

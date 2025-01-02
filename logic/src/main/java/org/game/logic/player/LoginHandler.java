@@ -3,11 +3,11 @@ package org.game.logic.player;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.entity.PlayerInfo;
 import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.net.GateHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
-import org.game.proto.struct.Common;
 import org.game.proto.struct.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,9 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
         } else {
             player.setChannel(channel);
         }
-        player.sendToClient(LogicToClientProtocol.LOGIN, Common.PbInt.newBuilder().setVal(playerId).build());
+        PlayerService playerService = player.getService(PlayerService.class);
+        PlayerInfo playerInfo = playerService.getEntity();
+        player.sendToClient(LogicToClientProtocol.LOGIN, Login.PbLoginResp.newBuilder().setId(playerId).setName(playerInfo.getName()).setLevel(playerInfo.getLevel()).build());
     }
 
     @Override
