@@ -1,10 +1,12 @@
 package org.game.logic.player;
 
-import org.game.logic.item.Consumable;
+import org.game.logic.entity.PlayerInfo;
+import org.game.logic.player.item.Consumable;
 import org.game.config.entity.Item;
-import org.game.logic.item.ItemIdConstant;
-import org.game.logic.item.ItemType;
+import org.game.logic.player.item.ItemIdConstant;
+import org.game.logic.player.item.ItemType;
 import org.game.logic.AbstractGameService;
+import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

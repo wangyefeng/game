@@ -1,4 +1,4 @@
-package org.game.logic.item;
+package org.game.logic.player.item;
 
 public interface ItemIdConstant {
 

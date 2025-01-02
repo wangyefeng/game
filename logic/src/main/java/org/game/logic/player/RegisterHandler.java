@@ -1,12 +1,9 @@
-package org.game.logic.player.handler;
+package org.game.logic.player;
 
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.net.ClientMsgHandler;
-import org.game.logic.player.Player;
-import org.game.logic.player.Players;
 import org.game.logic.GameService;
-import org.game.logic.player.PlayerService;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;

@@ -1,4 +1,4 @@
-package org.game.logic.bag;
+package org.game.logic.entity;
 
 import org.game.config.entity.Item;
 

@@ -1,9 +1,12 @@
-package org.game.logic.bag;
+package org.game.logic.player.bag;
 
 import org.game.config.entity.Item;
 import org.game.logic.AbstractGameService;
-import org.game.logic.item.Consumable;
-import org.game.logic.item.ItemType;
+import org.game.logic.entity.BagInfo;
+import org.game.logic.entity.BagItem;
+import org.game.logic.player.item.Consumable;
+import org.game.logic.player.item.ItemType;
+import org.game.logic.repository.BagRepository;
 import org.game.proto.struct.Login.PbRegister;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

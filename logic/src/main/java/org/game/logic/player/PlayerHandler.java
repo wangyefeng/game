@@ -1,11 +1,9 @@
-package org.game.logic.player.handler;
+package org.game.logic.player;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.net.ClientMsgHandler;
-import org.game.logic.player.Player;
-import org.game.logic.player.Players;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

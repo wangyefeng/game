@@ -1,4 +1,4 @@
-package org.game.logic.item;
+package org.game.logic.player.item;
 
 import java.util.HashMap;
 import java.util.Map;
