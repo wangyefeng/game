@@ -3,12 +3,13 @@ package org.game.logic.player;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
-import org.game.logic.entity.PlayerInfo;
 import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.net.GateHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbLoginResp;
+import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +36,15 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
                 log.warn("玩家登录失败，玩家 {}不存在", playerId);
                 return;
             }
-            player.login();
+            player.login(message);
             Players.addPlayer(player);
             channel.attr(GateHandler.PLAYERS_KEY).get().add(player.getId());
         } else {
             player.setChannel(channel);
         }
-        PlayerService playerService = player.getService(PlayerService.class);
-        PlayerInfo playerInfo = playerService.getEntity();
-        player.sendToClient(LogicToClientProtocol.LOGIN, Login.PbLoginResp.newBuilder().setId(playerId).setName(playerInfo.getName()).setLevel(playerInfo.getLevel()).build());
+        Builder resp = PbLoginResp.newBuilder();
+        player.loginResp(resp);
+        player.sendToClient(LogicToClientProtocol.LOGIN, resp.build());
     }
 
     @Override

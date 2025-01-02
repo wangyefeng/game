@@ -2,6 +2,7 @@ package org.game.logic;
 
 import org.game.logic.player.Player;
 import org.game.logic.thread.ThreadPool;
+import org.game.proto.struct.Login.PbLoginReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,10 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
     @Override
     public E getEntity() {
         return entity;
+    }
+
+    @Override
+    public void login(PbLoginReq loginMsg) {
+        // do nothing
     }
 }

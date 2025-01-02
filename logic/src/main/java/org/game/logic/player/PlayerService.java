@@ -1,13 +1,15 @@
 package org.game.logic.player;
 
+import org.game.config.entity.Item;
+import org.game.logic.AbstractGameService;
 import org.game.logic.entity.PlayerInfo;
 import org.game.logic.player.item.Consumable;
-import org.game.config.entity.Item;
 import org.game.logic.player.item.ItemIdConstant;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.AbstractGameService;
 import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbLoginReq;
+import org.game.proto.struct.Login.PbLoginResp;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,17 @@ import org.springframework.stereotype.Service;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> implements Consumable {
 
+
     @Override
     public void register(Login.PbRegisterReq registerMsg) {
         entity = new PlayerInfo(player.getId(), registerMsg.getName());
+    }
+
+    @Override
+    public void loginResp(PbLoginResp.Builder loginResp) {
+        loginResp.setLevel(entity.getLevel());
+        loginResp.setId(entity.getId());
+        loginResp.setName(entity.getName());
     }
 
     public boolean playerExists() {

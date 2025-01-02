@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.management.timer.Timer;
 import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAccountValidateReq> {
@@ -53,7 +54,7 @@ public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAc
         playerExecutor.submit(() -> {
             String ps = playerId + "";
             String playerToken = TokenUtil.token(playerId, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
-            redisTemplate.opsForHash().put(RedisKeys.PLAYER_TOKEN, ps, playerToken);
+            redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, playerToken, 30, TimeUnit.DAYS);
             log.info("Player {} is logging in. channel: {}", playerId, channel.id());
             Player player;
             boolean containsPlayer = Players.containsPlayer(playerId);

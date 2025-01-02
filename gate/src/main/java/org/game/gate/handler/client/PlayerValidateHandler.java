@@ -47,7 +47,7 @@ public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPla
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbPlayerValidateResp.newBuilder().setSuccess(false).build()));
             return;
         }
-        String tokenInRedis = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_TOKEN, playerId + "");
+        String tokenInRedis = redisTemplate.opsForValue().get(RedisKeys.PLAYER_TOKEN_PREFIX + playerId);
         if (!token.equals(tokenInRedis)) {
             log.info("player {} token verify failed.", playerId);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbPlayerValidateResp.newBuilder().setSuccess(false).build()));

@@ -7,6 +7,7 @@ import org.game.logic.entity.BagItem;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemType;
 import org.game.logic.repository.BagRepository;
+import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +22,11 @@ public class BagService extends AbstractGameService<BagInfo, BagRepository> impl
     @Override
     public void register(PbRegisterReq registerMsg) {
         entity = new BagInfo(player.getId());
+    }
+
+    @Override
+    public void loginResp(Builder loginResp) {
+        // do nothing
     }
 
     @Override

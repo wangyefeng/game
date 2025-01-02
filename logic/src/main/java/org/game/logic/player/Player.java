@@ -115,11 +115,20 @@ public class Player {
         saveFuture = scheduleAtFixedRate(this::asyncSave, 0, 1, TimeUnit.MINUTES);
     }
 
-    public void login() {
+    public void loginResp(Login.PbLoginResp.Builder loginReq) {
+        for (GameService gameService : map.values()) {
+            gameService.loginResp(loginReq);
+        }
+    }
+
+    public void login(Login.PbLoginReq loginMsg) {
         for (GameService gameService : map.values()) {
             gameService.load();
         }
         init();
+        for (GameService gameService : map.values()) {
+            gameService.login(loginMsg);
+        }
     }
 
     private void init() {
@@ -134,6 +143,7 @@ public class Player {
     public void logout() {
         saveFuture.cancel(true);
         asyncSave();
+        channel = null;
     }
 
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {

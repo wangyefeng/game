@@ -9,6 +9,8 @@ import org.game.logic.net.ClientMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbLoginResp;
+import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,9 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
         player.register(message);
         redisTemplate.opsForSet().add(RedisKeys.ALL_PLAYERS, playerId + "");
         Players.addPlayer(player);
-        PlayerInfo playerInfo = playerService.getEntity();
-        player.sendToClient(LogicToClientProtocol.REGISTER, Login.PbLoginResp.newBuilder().setId(playerId).setName(playerInfo.getName()).setLevel(playerInfo.getLevel()).build());
+        Builder resp = PbLoginResp.newBuilder();
+        player.loginResp(resp);
+        player.sendToClient(LogicToClientProtocol.LOGIN, resp.build());
     }
 
     @Override
