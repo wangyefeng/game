@@ -38,16 +38,16 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
-        Optional<GateMsgHandler<Message>> optionalHandler = GateMsgHandler.getHandler(message.getProtocol().getCode());
+        Optional<GateMsgHandler<Message>> optionalHandler = GateMsgHandler.getHandler(message.getProtocol());
         if (optionalHandler.isEmpty()) {
-            log.warn("非法协议号: {}", message.getProtocol());
+            log.warn("非法协议: {} {}", message.getProtocol().getClass().getSimpleName(), message.getProtocol());
             return;
         }
-        optionalHandler.get().handle(ctx.channel(), message.getMessage(), Configs.getInstance());
+        optionalHandler.get().handle(ctx.channel(), message.getData(), Configs.getInstance());
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("网络连接异常：", cause);
         if (ctx.channel().isActive()) {
             ctx.channel().close();

@@ -9,12 +9,12 @@ public class MessagePlayer<T extends Message> {
 
     private Protocol protocol;
 
-    private T message;
+    private T data;
 
     public MessagePlayer(int playerId, Protocol protocol, T message) {
         this.playerId = playerId;
         this.protocol = protocol;
-        this.message = message;
+        this.data = message;
     }
 
     public MessagePlayer(int playerId, Protocol protocol) {
@@ -25,8 +25,8 @@ public class MessagePlayer<T extends Message> {
         return protocol.getCode();
     }
 
-    public T getMessage() {
-        return message;
+    public T getData() {
+        return data;
     }
 
     public int getPlayerId() {

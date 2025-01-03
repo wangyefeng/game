@@ -117,7 +117,7 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Builder basedUrl = WebClient.builder().baseUrl("http://127.0.0.1/auth");
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 2; i++) {
             int finalI = i;
             String token;
             int playerId;

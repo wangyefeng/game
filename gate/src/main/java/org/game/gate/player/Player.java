@@ -1,7 +1,10 @@
 package org.game.gate.player;
 
+import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.gate.net.client.LogicClient;
+import org.game.proto.MessageCode;
+import org.game.proto.protocol.GateToClientProtocol;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -63,5 +66,13 @@ public class Player {
 
     public LogicClient getLogicClient() {
         return logicClient;
+    }
+
+    public void writeToClient(GateToClientProtocol protocol) {
+        writeToClient(protocol, null);
+    }
+
+    public void writeToClient(GateToClientProtocol protocol, Message message) {
+        channel.writeAndFlush(new MessageCode<>(protocol, message));
     }
 }

@@ -4,23 +4,24 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.proto.protocol.ClientToLogicProtocol;
+import org.game.proto.protocol.Protocol;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public interface ClientMsgHandler<T extends Message> {
 
-    Map<Short, ClientMsgHandler<Message>> handlers = new HashMap<>();
+    Map<ClientToLogicProtocol, ClientMsgHandler<Message>> handlers = new HashMap<>();
 
     static void register(ClientMsgHandler<? extends Message> handler) {
-        if (handlers.containsKey(handler.getProtocol().getCode())) {
+        if (handlers.containsKey(handler.getProtocol())) {
             throw new IllegalArgumentException("Duplicate protocol:" + handler.getProtocol());
         }
-        handlers.put(handler.getProtocol().getCode(), (ClientMsgHandler<Message>) handler);
+        handlers.put(handler.getProtocol(), (ClientMsgHandler<Message>) handler);
     }
 
-    static ClientMsgHandler<Message> getHandler(short code) {
-        return handlers.get(code);
+    static ClientMsgHandler<Message> getHandler(Protocol protocol) {
+        return handlers.get(protocol);
     }
 
     void handle(Channel channel, int playerId, T message, Configs config);

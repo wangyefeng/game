@@ -4,7 +4,10 @@ import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 
 public enum LogicToGateProtocol implements Protocol {
-    PING((short) 1);
+    PING((short) 1),
+
+    KICK_OUT((short) 2),
+    ;
 
     private final short code;
 

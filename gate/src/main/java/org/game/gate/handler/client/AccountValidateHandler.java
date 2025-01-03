@@ -14,6 +14,7 @@ import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbAccountValidateResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAc
         int playerId = msg.getId();
         String token = msg.getToken();
         if (!TokenUtil.verify(token, playerId, TokenUtil.TOKEN_SECRET)) {
-            log.warn("player {} token verify failed.", playerId);
+            log.info("玩家{}身份验证失败。 channel: {}", playerId, channel);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE, Login.PbAccountValidateResp.newBuilder().setSuccess(false).build()));
             return;
         }
@@ -55,20 +56,18 @@ public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAc
             String ps = playerId + "";
             String playerToken = TokenUtil.token(playerId, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
             redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, playerToken, 30, TimeUnit.DAYS);
-            log.info("Player {} is logging in. channel: {}", playerId, channel.id());
+            log.info("玩家{}身份验证成功。 channel: {}", playerId, channel);
             Player player;
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
-                Channel oldChannel = player.getChannel();
-                oldChannel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
-                oldChannel.attr(AttributeKeys.PLAYER).set(null);
-                oldChannel.close();
+                log.info("玩家{}被顶号 channel：{}", playerId, player.getChannel());
+                player.writeToClient(GateToClientProtocol.KICK_OUT);
+                player.getChannel().close();
                 player.setChannel(channel);
             } else {
                 if (clientGroup.getClients().isEmpty()) {
                     channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
-                    channel.attr(AttributeKeys.PLAYER).set(null);
                     channel.close();
                     return;
                 }
@@ -78,8 +77,7 @@ public final class AccountValidateHandler implements ClientMsgHandler<Login.PbAc
             channel.attr(AttributeKeys.PLAYER).set(player);
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
             Boolean isRegistered = redisTemplate.opsForSet().isMember(RedisKeys.ALL_PLAYERS, ps);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE, Login.PbAccountValidateResp.newBuilder().setSuccess(true).setId(playerId).setPlayerToken(playerToken).setIsRegistered(isRegistered).build()));
-            log.info("玩家[{}]token验证成功！", playerId);
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE, PbAccountValidateResp.newBuilder().setSuccess(true).setId(playerId).setPlayerToken(playerToken).setIsRegistered(isRegistered).build()));
         }).get();
     }
 

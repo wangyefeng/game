@@ -60,15 +60,12 @@ public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPla
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
-                Channel oldChannel = player.getChannel();
-                oldChannel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
-                oldChannel.attr(AttributeKeys.PLAYER).set(null);
-                oldChannel.close();
+                player.writeToClient(GateToClientProtocol.KICK_OUT);
+                player.getChannel().close();
                 player.setChannel(channel);
             } else {
                 if (clientGroup.getClients().isEmpty()) {
                     channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
-                    channel.attr(AttributeKeys.PLAYER).set(null);
                     channel.close();
                     return;
                 }

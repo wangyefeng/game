@@ -43,7 +43,11 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             log.warn("illegal message code: {}", message.getCode());
             return;
         }
-        logicMsgHandler.handle(ctx.channel(), message.getMessage());
+        try {
+            logicMsgHandler.handle(ctx.channel(), message.getData());
+        } catch (Exception e) {
+            log.error("处理logic消息{}时发生异常", message, e);
+        }
     }
 
     @Override

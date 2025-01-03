@@ -44,7 +44,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
         }
         Builder resp = PbLoginResp.newBuilder();
         player.loginResp(resp);
-        player.sendToClient(LogicToClientProtocol.LOGIN, resp.build());
+        player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
     }
 
     @Override

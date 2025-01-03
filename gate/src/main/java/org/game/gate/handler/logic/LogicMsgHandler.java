@@ -22,7 +22,7 @@ public interface LogicMsgHandler<T extends Message> {
         return handlers.get(code);
     }
 
-    void handle(Channel channel, T message);
+    void handle(Channel channel, T message) throws Exception;
 
     Protocol getProtocol();
 

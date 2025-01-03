@@ -39,9 +39,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
-        log.info("Received message from {}: msg：{} content：{}", message.getProtocol().from(), message.getProtocol(), message.getMessage());
+        log.info("Received message from {}: msg：{} content：{}", message.getProtocol().from(), message.getProtocol(), message.getData());
         if (message.getProtocol().equals(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE)) {
-            Login.PbAccountValidateResp loginResponse = (Login.PbAccountValidateResp) message.getMessage();
+            Login.PbAccountValidateResp loginResponse = (Login.PbAccountValidateResp) message.getData();
             if (loginResponse.getSuccess()) {
                 if (loginResponse.getIsRegistered()) {
                     ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));

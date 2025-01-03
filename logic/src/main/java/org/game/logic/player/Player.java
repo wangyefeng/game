@@ -10,14 +10,15 @@ import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.service.CfgItemService;
 import org.game.config.service.CfgRewardService;
+import org.game.logic.GameService;
 import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.GameService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
+import org.game.proto.protocol.LogicToGateProtocol;
 import org.game.proto.struct.Login;
 
 import java.util.Collection;
@@ -82,12 +83,20 @@ public class Player {
         return id;
     }
 
-    public void sendToClient(LogicToClientProtocol protocol, Message message) {
+    public void writeToClient(LogicToClientProtocol protocol, Message message) {
         channel.writeAndFlush(new MessagePlayer<>(getId(), protocol, message));
     }
 
-    public void sendToClient(LogicToClientProtocol protocol) {
-        channel.writeAndFlush(new MessagePlayer<>(getId(), protocol));
+    public void writeToClient(LogicToClientProtocol protocol) {
+        writeToClient(protocol, null);
+    }
+
+    public void writeToGate(LogicToGateProtocol protocol, Message message) {
+        channel.writeAndFlush(new MessagePlayer<>(getId(), protocol, message));
+    }
+
+    public void writeToGate(LogicToGateProtocol protocol) {
+        writeToGate(protocol, null);
     }
 
     public void asyncSave() {

@@ -30,7 +30,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        log.info("与客户端建立TCP连接，地址：{} id: {}", ctx.channel().remoteAddress(), ctx.channel().id());
+        log.info("与客户端建立TCP连接，channel", ctx.channel());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             log.warn("illegal message code: {}", message.getCode());
             return;
         }
-        handler.handle(ctx.channel(), message.getMessage());
+        handler.handle(ctx.channel(), message.getData());
     }
 
     @Override
