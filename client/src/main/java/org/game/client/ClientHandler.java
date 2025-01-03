@@ -30,7 +30,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.ACCOUNT_VALIDATE, Login.PbAccountValidateReq.newBuilder().setId(playerId).setToken(token).build()));
+        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setId(playerId).setToken(token).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("ping");
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));
@@ -40,8 +40,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
         log.info("Received message from {}: msg：{} content：{}", message.getProtocol().from(), message.getProtocol(), message.getData());
-        if (message.getProtocol().equals(GateToClientProtocol.ACCOUNT_TOKEN_VALIDATE)) {
-            Login.PbAccountValidateResp loginResponse = (Login.PbAccountValidateResp) message.getData();
+        if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
+            Login.PbAuthResp loginResponse = (Login.PbAuthResp) message.getData();
             if (loginResponse.getSuccess()) {
                 if (loginResponse.getIsRegistered()) {
                     ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));

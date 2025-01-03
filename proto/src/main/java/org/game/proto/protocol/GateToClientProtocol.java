@@ -8,11 +8,9 @@ import org.springframework.util.Assert;
 public enum GateToClientProtocol implements Protocol {
     PONG((short) 0),
 
-    ACCOUNT_TOKEN_VALIDATE((short) 1, Login.PbAccountValidateResp.parser()),
-
     KICK_OUT((short) 2),
 
-    PLAYER_TOKEN_VALIDATE((short) 3, Login.PbPlayerValidateResp.parser()),
+    PLAYER_TOKEN_VALIDATE((short) 3, Login.PbAuthResp.parser()),
 
     ;
 
@@ -30,7 +28,7 @@ public enum GateToClientProtocol implements Protocol {
         this.parser = parser;
     }
 
-    static {
+    public static void register() {
         Protocols.addProtocols(GateToClientProtocol.values());
     }
 

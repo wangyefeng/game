@@ -11,6 +11,7 @@ import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.net.GateMsgHandler;
 import org.game.logic.net.TcpServer;
 import org.game.logic.thread.ThreadPool;
+import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ public class Logic extends Server {
      */
     @Override
     protected void start0() {
+        Protocols.init();
         registerHandler();
         tcpServer.start();
         initGameService();

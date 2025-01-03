@@ -3,36 +3,29 @@ syntax = "proto3";
 
 package org.game.proto.struct;
 
-message PbRegisterReq {
-	string name = 1;
-}
-
-message PbAccountValidateReq {
+// 认证请求
+message PbAuthReq {
 	int32 id = 1;
 	string token = 2;
 }
 
-message PbAccountValidateResp {
-	bool success = 1;
-	int32 id = 2;
-	string playerToken = 3;
-	bool isRegistered  = 4;
-}
-
-message PbPlayerValidateReq {
-	int32 id = 1;
-	string token = 2;
-}
-
-message PbPlayerValidateResp {
+// 认证返回
+message PbAuthResp {
 	bool success = 1;
 	int32 id = 2;
 	bool isRegistered  = 3;
 }
 
+// 注册请求
+message PbRegisterReq {
+	string name = 1;
+}
+
+// 登录请求
 message PbLoginReq {
 }
 
+// 登录返回
 message PbLoginResp {
 	int32 id = 1;
 	string name = 2;

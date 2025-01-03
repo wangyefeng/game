@@ -23,9 +23,9 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
-public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPlayerValidateReq> {
+public final class AuthHandler implements ClientMsgHandler<Login.PbAuthReq> {
 
-    private static final Logger log = LoggerFactory.getLogger(PlayerValidateHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthHandler.class);
 
     @Autowired
     private ClientGroup<LogicClient> clientGroup;
@@ -34,7 +34,7 @@ public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPla
     private StringRedisTemplate redisTemplate;
 
     @Override
-    public void handle(Channel channel, Login.PbPlayerValidateReq msg) throws Exception {
+    public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
         if (channel.hasAttr(AttributeKeys.PLAYER)) {
             log.warn("player {} has already logged in.", channel.attr(AttributeKeys.PLAYER).get());
             return;
@@ -43,19 +43,19 @@ public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPla
         int playerId = msg.getId();
         String token = msg.getToken();
         if (!TokenUtil.verify(token, playerId, TokenUtil.PLAYER_TOKEN_SECRET)) {
-            log.warn("player {} token verify failed.", playerId);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbPlayerValidateResp.newBuilder().setSuccess(false).build()));
+            log.warn("玩家{}认证失败", playerId);
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
         String tokenInRedis = redisTemplate.opsForValue().get(RedisKeys.PLAYER_TOKEN_PREFIX + playerId);
         if (!token.equals(tokenInRedis)) {
-            log.info("player {} token verify failed.", playerId);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbPlayerValidateResp.newBuilder().setSuccess(false).build()));
+            log.info("玩家{}认证失败,token已失效", playerId);
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
         ThreadPoolExecutor playerExecutor = ThreadPool.getPlayerExecutor(playerId);
         playerExecutor.submit(() -> {
-            log.info("Player {} is logging in. channel: {}", playerId, channel.id());
+            log.info("玩家{}认证成功 channel:{}", playerId, channel);
             Player player;
             boolean containsPlayer = Players.containsPlayer(playerId);
             if (containsPlayer) {// 顶号
@@ -75,13 +75,13 @@ public final class PlayerValidateHandler implements ClientMsgHandler<Login.PbPla
             channel.attr(AttributeKeys.PLAYER).set(player);
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
             Boolean isRegistered = redisTemplate.opsForSet().isMember(RedisKeys.ALL_PLAYERS, playerId + "");
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbPlayerValidateResp.newBuilder().setSuccess(true).setId(playerId).setIsRegistered(isRegistered).build()));
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setId(playerId).setIsRegistered(isRegistered).build()));
         }).get();
     }
 
     @Override
     public ClientToGateProtocol getProtocol() {
-        return ClientToGateProtocol.PLAYER_VALIDATE;
+        return ClientToGateProtocol.AUTH;
     }
 
 }

@@ -28,7 +28,7 @@ public enum ClientToLogicProtocol implements Protocol {
         this.parser = parser;
     }
 
-    static {
+    public static void register() {
         Protocols.addProtocols(ClientToLogicProtocol.values());
     }
 

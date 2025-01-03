@@ -26,7 +26,7 @@ public enum GateToLogicProtocol implements Protocol {
         this.parser = parser;
     }
 
-    static {
+    public static void register() {
         Protocols.addProtocols(GateToLogicProtocol.values());
     }
 

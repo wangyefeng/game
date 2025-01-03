@@ -6,9 +6,8 @@ import org.game.proto.struct.Login;
 import org.springframework.util.Assert;
 
 public enum LogicToClientProtocol implements Protocol {
-    LOGIN((short) 1, Login.PbLoginResp.parser()),
 
-    REGISTER((short) 2, Login.PbLoginResp.parser()),
+    LOGIN((short) 1, Login.PbLoginResp.parser()),
 
     ;
 
@@ -16,7 +15,7 @@ public enum LogicToClientProtocol implements Protocol {
 
     private final Parser<?> parser;
 
-    static {
+    public static void register() {
         Protocols.addProtocols(LogicToClientProtocol.values());
     }
 

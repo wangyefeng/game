@@ -25,6 +25,1184 @@ public final class Login {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
+  public interface PbAuthReqOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbAuthReq)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int32 id = 1;</code>
+     * @return The id.
+     */
+    int getId();
+
+    /**
+     * <code>string token = 2;</code>
+     * @return The token.
+     */
+    java.lang.String getToken();
+    /**
+     * <code>string token = 2;</code>
+     * @return The bytes for token.
+     */
+    com.google.protobuf.ByteString
+        getTokenBytes();
+  }
+  /**
+   * <pre>
+   * 认证请求
+   * </pre>
+   *
+   * Protobuf type {@code org.game.proto.struct.PbAuthReq}
+   */
+  public static final class PbAuthReq extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbAuthReq)
+      PbAuthReqOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 27,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        PbAuthReq.class.getName());
+    }
+    // Use PbAuthReq.newBuilder() to construct.
+    private PbAuthReq(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PbAuthReq() {
+      token_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthReq_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.game.proto.struct.Login.PbAuthReq.class, org.game.proto.struct.Login.PbAuthReq.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private int id_ = 0;
+    /**
+     * <code>int32 id = 1;</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public int getId() {
+      return id_;
+    }
+
+    public static final int TOKEN_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object token_ = "";
+    /**
+     * <code>string token = 2;</code>
+     * @return The token.
+     */
+    @java.lang.Override
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string token = 2;</code>
+     * @return The bytes for token.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0) {
+        output.writeInt32(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, token_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, id_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, token_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.game.proto.struct.Login.PbAuthReq)) {
+        return super.equals(obj);
+      }
+      org.game.proto.struct.Login.PbAuthReq other = (org.game.proto.struct.Login.PbAuthReq) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getToken()
+          .equals(other.getToken())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId();
+      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getToken().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.game.proto.struct.Login.PbAuthReq parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.game.proto.struct.Login.PbAuthReq parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Login.PbAuthReq parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.game.proto.struct.Login.PbAuthReq prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * 认证请求
+     * </pre>
+     *
+     * Protobuf type {@code org.game.proto.struct.PbAuthReq}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbAuthReq)
+        org.game.proto.struct.Login.PbAuthReqOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthReq_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.game.proto.struct.Login.PbAuthReq.class, org.game.proto.struct.Login.PbAuthReq.Builder.class);
+      }
+
+      // Construct using org.game.proto.struct.Login.PbAuthReq.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        id_ = 0;
+        token_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthReq_descriptor;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthReq getDefaultInstanceForType() {
+        return org.game.proto.struct.Login.PbAuthReq.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthReq build() {
+        org.game.proto.struct.Login.PbAuthReq result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthReq buildPartial() {
+        org.game.proto.struct.Login.PbAuthReq result = new org.game.proto.struct.Login.PbAuthReq(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.game.proto.struct.Login.PbAuthReq result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.token_ = token_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.game.proto.struct.Login.PbAuthReq) {
+          return mergeFrom((org.game.proto.struct.Login.PbAuthReq)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.game.proto.struct.Login.PbAuthReq other) {
+        if (other == org.game.proto.struct.Login.PbAuthReq.getDefaultInstance()) return this;
+        if (other.getId() != 0) {
+          setId(other.getId());
+        }
+        if (!other.getToken().isEmpty()) {
+          token_ = other.token_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                id_ = input.readInt32();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                token_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private int id_ ;
+      /**
+       * <code>int32 id = 1;</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public int getId() {
+        return id_;
+      }
+      /**
+       * <code>int32 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(int value) {
+
+        id_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        id_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object token_ = "";
+      /**
+       * <code>string token = 2;</code>
+       * @return The token.
+       */
+      public java.lang.String getToken() {
+        java.lang.Object ref = token_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          token_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @return The bytes for token.
+       */
+      public com.google.protobuf.ByteString
+          getTokenBytes() {
+        java.lang.Object ref = token_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          token_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @param value The token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToken(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        token_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToken() {
+        token_ = getDefaultInstance().getToken();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @param value The bytes for token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTokenBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        token_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbAuthReq)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbAuthReq)
+    private static final org.game.proto.struct.Login.PbAuthReq DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbAuthReq();
+    }
+
+    public static org.game.proto.struct.Login.PbAuthReq getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PbAuthReq>
+        PARSER = new com.google.protobuf.AbstractParser<PbAuthReq>() {
+      @java.lang.Override
+      public PbAuthReq parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PbAuthReq> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PbAuthReq> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.game.proto.struct.Login.PbAuthReq getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface PbAuthRespOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbAuthResp)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bool success = 1;</code>
+     * @return The success.
+     */
+    boolean getSuccess();
+
+    /**
+     * <code>int32 id = 2;</code>
+     * @return The id.
+     */
+    int getId();
+
+    /**
+     * <code>bool isRegistered = 3;</code>
+     * @return The isRegistered.
+     */
+    boolean getIsRegistered();
+  }
+  /**
+   * <pre>
+   * 认证返回
+   * </pre>
+   *
+   * Protobuf type {@code org.game.proto.struct.PbAuthResp}
+   */
+  public static final class PbAuthResp extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbAuthResp)
+      PbAuthRespOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 27,
+        /* patch= */ 1,
+        /* suffix= */ "",
+        PbAuthResp.class.getName());
+    }
+    // Use PbAuthResp.newBuilder() to construct.
+    private PbAuthResp(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PbAuthResp() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthResp_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.game.proto.struct.Login.PbAuthResp.class, org.game.proto.struct.Login.PbAuthResp.Builder.class);
+    }
+
+    public static final int SUCCESS_FIELD_NUMBER = 1;
+    private boolean success_ = false;
+    /**
+     * <code>bool success = 1;</code>
+     * @return The success.
+     */
+    @java.lang.Override
+    public boolean getSuccess() {
+      return success_;
+    }
+
+    public static final int ID_FIELD_NUMBER = 2;
+    private int id_ = 0;
+    /**
+     * <code>int32 id = 2;</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public int getId() {
+      return id_;
+    }
+
+    public static final int ISREGISTERED_FIELD_NUMBER = 3;
+    private boolean isRegistered_ = false;
+    /**
+     * <code>bool isRegistered = 3;</code>
+     * @return The isRegistered.
+     */
+    @java.lang.Override
+    public boolean getIsRegistered() {
+      return isRegistered_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (success_ != false) {
+        output.writeBool(1, success_);
+      }
+      if (id_ != 0) {
+        output.writeInt32(2, id_);
+      }
+      if (isRegistered_ != false) {
+        output.writeBool(3, isRegistered_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (success_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(1, success_);
+      }
+      if (id_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, id_);
+      }
+      if (isRegistered_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, isRegistered_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.game.proto.struct.Login.PbAuthResp)) {
+        return super.equals(obj);
+      }
+      org.game.proto.struct.Login.PbAuthResp other = (org.game.proto.struct.Login.PbAuthResp) obj;
+
+      if (getSuccess()
+          != other.getSuccess()) return false;
+      if (getId()
+          != other.getId()) return false;
+      if (getIsRegistered()
+          != other.getIsRegistered()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getSuccess());
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId();
+      hash = (37 * hash) + ISREGISTERED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsRegistered());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.game.proto.struct.Login.PbAuthResp parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.game.proto.struct.Login.PbAuthResp parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Login.PbAuthResp parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.game.proto.struct.Login.PbAuthResp prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * 认证返回
+     * </pre>
+     *
+     * Protobuf type {@code org.game.proto.struct.PbAuthResp}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbAuthResp)
+        org.game.proto.struct.Login.PbAuthRespOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthResp_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.game.proto.struct.Login.PbAuthResp.class, org.game.proto.struct.Login.PbAuthResp.Builder.class);
+      }
+
+      // Construct using org.game.proto.struct.Login.PbAuthResp.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        success_ = false;
+        id_ = 0;
+        isRegistered_ = false;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAuthResp_descriptor;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthResp getDefaultInstanceForType() {
+        return org.game.proto.struct.Login.PbAuthResp.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthResp build() {
+        org.game.proto.struct.Login.PbAuthResp result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Login.PbAuthResp buildPartial() {
+        org.game.proto.struct.Login.PbAuthResp result = new org.game.proto.struct.Login.PbAuthResp(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.game.proto.struct.Login.PbAuthResp result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.success_ = success_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.isRegistered_ = isRegistered_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.game.proto.struct.Login.PbAuthResp) {
+          return mergeFrom((org.game.proto.struct.Login.PbAuthResp)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.game.proto.struct.Login.PbAuthResp other) {
+        if (other == org.game.proto.struct.Login.PbAuthResp.getDefaultInstance()) return this;
+        if (other.getSuccess() != false) {
+          setSuccess(other.getSuccess());
+        }
+        if (other.getId() != 0) {
+          setId(other.getId());
+        }
+        if (other.getIsRegistered() != false) {
+          setIsRegistered(other.getIsRegistered());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                success_ = input.readBool();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 16: {
+                id_ = input.readInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 24: {
+                isRegistered_ = input.readBool();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private boolean success_ ;
+      /**
+       * <code>bool success = 1;</code>
+       * @return The success.
+       */
+      @java.lang.Override
+      public boolean getSuccess() {
+        return success_;
+      }
+      /**
+       * <code>bool success = 1;</code>
+       * @param value The success to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSuccess(boolean value) {
+
+        success_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool success = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSuccess() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        success_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int id_ ;
+      /**
+       * <code>int32 id = 2;</code>
+       * @return The id.
+       */
+      @java.lang.Override
+      public int getId() {
+        return id_;
+      }
+      /**
+       * <code>int32 id = 2;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(int value) {
+
+        id_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 id = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        id_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private boolean isRegistered_ ;
+      /**
+       * <code>bool isRegistered = 3;</code>
+       * @return The isRegistered.
+       */
+      @java.lang.Override
+      public boolean getIsRegistered() {
+        return isRegistered_;
+      }
+      /**
+       * <code>bool isRegistered = 3;</code>
+       * @param value The isRegistered to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsRegistered(boolean value) {
+
+        isRegistered_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isRegistered = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsRegistered() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        isRegistered_ = false;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbAuthResp)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbAuthResp)
+    private static final org.game.proto.struct.Login.PbAuthResp DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbAuthResp();
+    }
+
+    public static org.game.proto.struct.Login.PbAuthResp getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PbAuthResp>
+        PARSER = new com.google.protobuf.AbstractParser<PbAuthResp>() {
+      @java.lang.Override
+      public PbAuthResp parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PbAuthResp> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PbAuthResp> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.game.proto.struct.Login.PbAuthResp getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface PbRegisterReqOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbRegisterReq)
       com.google.protobuf.MessageOrBuilder {
@@ -42,6 +1220,10 @@ public final class Login {
         getNameBytes();
   }
   /**
+   * <pre>
+   * 注册请求
+   * </pre>
+   *
    * Protobuf type {@code org.game.proto.struct.PbRegisterReq}
    */
   public static final class PbRegisterReq extends
@@ -275,6 +1457,10 @@ public final class Login {
       return builder;
     }
     /**
+     * <pre>
+     * 注册请求
+     * </pre>
+     *
      * Protobuf type {@code org.game.proto.struct.PbRegisterReq}
      */
     public static final class Builder extends
@@ -535,2483 +1721,15 @@ public final class Login {
 
   }
 
-  public interface PbAccountValidateReqOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbAccountValidateReq)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
-     */
-    int getId();
-
-    /**
-     * <code>string token = 2;</code>
-     * @return The token.
-     */
-    java.lang.String getToken();
-    /**
-     * <code>string token = 2;</code>
-     * @return The bytes for token.
-     */
-    com.google.protobuf.ByteString
-        getTokenBytes();
-  }
-  /**
-   * Protobuf type {@code org.game.proto.struct.PbAccountValidateReq}
-   */
-  public static final class PbAccountValidateReq extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbAccountValidateReq)
-      PbAccountValidateReqOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 27,
-        /* patch= */ 1,
-        /* suffix= */ "",
-        PbAccountValidateReq.class.getName());
-    }
-    // Use PbAccountValidateReq.newBuilder() to construct.
-    private PbAccountValidateReq(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private PbAccountValidateReq() {
-      token_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateReq_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.game.proto.struct.Login.PbAccountValidateReq.class, org.game.proto.struct.Login.PbAccountValidateReq.Builder.class);
-    }
-
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_ = 0;
-    /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
-     */
-    @java.lang.Override
-    public int getId() {
-      return id_;
-    }
-
-    public static final int TOKEN_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object token_ = "";
-    /**
-     * <code>string token = 2;</code>
-     * @return The token.
-     */
-    @java.lang.Override
-    public java.lang.String getToken() {
-      java.lang.Object ref = token_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        token_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string token = 2;</code>
-     * @return The bytes for token.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getTokenBytes() {
-      java.lang.Object ref = token_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        token_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (id_ != 0) {
-        output.writeInt32(1, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 2, token_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (id_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, token_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.game.proto.struct.Login.PbAccountValidateReq)) {
-        return super.equals(obj);
-      }
-      org.game.proto.struct.Login.PbAccountValidateReq other = (org.game.proto.struct.Login.PbAccountValidateReq) obj;
-
-      if (getId()
-          != other.getId()) return false;
-      if (!getToken()
-          .equals(other.getToken())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
-      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getToken().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateReq parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.game.proto.struct.Login.PbAccountValidateReq prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code org.game.proto.struct.PbAccountValidateReq}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbAccountValidateReq)
-        org.game.proto.struct.Login.PbAccountValidateReqOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateReq_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.game.proto.struct.Login.PbAccountValidateReq.class, org.game.proto.struct.Login.PbAccountValidateReq.Builder.class);
-      }
-
-      // Construct using org.game.proto.struct.Login.PbAccountValidateReq.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        id_ = 0;
-        token_ = "";
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateReq getDefaultInstanceForType() {
-        return org.game.proto.struct.Login.PbAccountValidateReq.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateReq build() {
-        org.game.proto.struct.Login.PbAccountValidateReq result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateReq buildPartial() {
-        org.game.proto.struct.Login.PbAccountValidateReq result = new org.game.proto.struct.Login.PbAccountValidateReq(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(org.game.proto.struct.Login.PbAccountValidateReq result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.token_ = token_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.game.proto.struct.Login.PbAccountValidateReq) {
-          return mergeFrom((org.game.proto.struct.Login.PbAccountValidateReq)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.game.proto.struct.Login.PbAccountValidateReq other) {
-        if (other == org.game.proto.struct.Login.PbAccountValidateReq.getDefaultInstance()) return this;
-        if (other.getId() != 0) {
-          setId(other.getId());
-        }
-        if (!other.getToken().isEmpty()) {
-          token_ = other.token_;
-          bitField0_ |= 0x00000002;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                id_ = input.readInt32();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                token_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private int id_ ;
-      /**
-       * <code>int32 id = 1;</code>
-       * @return The id.
-       */
-      @java.lang.Override
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>int32 id = 1;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(int value) {
-
-        id_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 id = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object token_ = "";
-      /**
-       * <code>string token = 2;</code>
-       * @return The token.
-       */
-      public java.lang.String getToken() {
-        java.lang.Object ref = token_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          token_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @return The bytes for token.
-       */
-      public com.google.protobuf.ByteString
-          getTokenBytes() {
-        java.lang.Object ref = token_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          token_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @param value The token to set.
-       * @return This builder for chaining.
-       */
-      public Builder setToken(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        token_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearToken() {
-        token_ = getDefaultInstance().getToken();
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @param value The bytes for token to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTokenBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        token_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbAccountValidateReq)
-    }
-
-    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbAccountValidateReq)
-    private static final org.game.proto.struct.Login.PbAccountValidateReq DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbAccountValidateReq();
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateReq getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<PbAccountValidateReq>
-        PARSER = new com.google.protobuf.AbstractParser<PbAccountValidateReq>() {
-      @java.lang.Override
-      public PbAccountValidateReq parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<PbAccountValidateReq> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<PbAccountValidateReq> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.game.proto.struct.Login.PbAccountValidateReq getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface PbAccountValidateRespOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbAccountValidateResp)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bool success = 1;</code>
-     * @return The success.
-     */
-    boolean getSuccess();
-
-    /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
-     */
-    int getId();
-
-    /**
-     * <code>string playerToken = 3;</code>
-     * @return The playerToken.
-     */
-    java.lang.String getPlayerToken();
-    /**
-     * <code>string playerToken = 3;</code>
-     * @return The bytes for playerToken.
-     */
-    com.google.protobuf.ByteString
-        getPlayerTokenBytes();
-
-    /**
-     * <code>bool isRegistered = 4;</code>
-     * @return The isRegistered.
-     */
-    boolean getIsRegistered();
-  }
-  /**
-   * Protobuf type {@code org.game.proto.struct.PbAccountValidateResp}
-   */
-  public static final class PbAccountValidateResp extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbAccountValidateResp)
-      PbAccountValidateRespOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 27,
-        /* patch= */ 1,
-        /* suffix= */ "",
-        PbAccountValidateResp.class.getName());
-    }
-    // Use PbAccountValidateResp.newBuilder() to construct.
-    private PbAccountValidateResp(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private PbAccountValidateResp() {
-      playerToken_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateResp_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.game.proto.struct.Login.PbAccountValidateResp.class, org.game.proto.struct.Login.PbAccountValidateResp.Builder.class);
-    }
-
-    public static final int SUCCESS_FIELD_NUMBER = 1;
-    private boolean success_ = false;
-    /**
-     * <code>bool success = 1;</code>
-     * @return The success.
-     */
-    @java.lang.Override
-    public boolean getSuccess() {
-      return success_;
-    }
-
-    public static final int ID_FIELD_NUMBER = 2;
-    private int id_ = 0;
-    /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
-     */
-    @java.lang.Override
-    public int getId() {
-      return id_;
-    }
-
-    public static final int PLAYERTOKEN_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object playerToken_ = "";
-    /**
-     * <code>string playerToken = 3;</code>
-     * @return The playerToken.
-     */
-    @java.lang.Override
-    public java.lang.String getPlayerToken() {
-      java.lang.Object ref = playerToken_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        playerToken_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string playerToken = 3;</code>
-     * @return The bytes for playerToken.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getPlayerTokenBytes() {
-      java.lang.Object ref = playerToken_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        playerToken_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ISREGISTERED_FIELD_NUMBER = 4;
-    private boolean isRegistered_ = false;
-    /**
-     * <code>bool isRegistered = 4;</code>
-     * @return The isRegistered.
-     */
-    @java.lang.Override
-    public boolean getIsRegistered() {
-      return isRegistered_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (success_ != false) {
-        output.writeBool(1, success_);
-      }
-      if (id_ != 0) {
-        output.writeInt32(2, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(playerToken_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 3, playerToken_);
-      }
-      if (isRegistered_ != false) {
-        output.writeBool(4, isRegistered_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (success_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(1, success_);
-      }
-      if (id_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(playerToken_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(3, playerToken_);
-      }
-      if (isRegistered_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(4, isRegistered_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.game.proto.struct.Login.PbAccountValidateResp)) {
-        return super.equals(obj);
-      }
-      org.game.proto.struct.Login.PbAccountValidateResp other = (org.game.proto.struct.Login.PbAccountValidateResp) obj;
-
-      if (getSuccess()
-          != other.getSuccess()) return false;
-      if (getId()
-          != other.getId()) return false;
-      if (!getPlayerToken()
-          .equals(other.getPlayerToken())) return false;
-      if (getIsRegistered()
-          != other.getIsRegistered()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getSuccess());
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
-      hash = (37 * hash) + PLAYERTOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getPlayerToken().hashCode();
-      hash = (37 * hash) + ISREGISTERED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIsRegistered());
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbAccountValidateResp parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.game.proto.struct.Login.PbAccountValidateResp prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code org.game.proto.struct.PbAccountValidateResp}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbAccountValidateResp)
-        org.game.proto.struct.Login.PbAccountValidateRespOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateResp_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.game.proto.struct.Login.PbAccountValidateResp.class, org.game.proto.struct.Login.PbAccountValidateResp.Builder.class);
-      }
-
-      // Construct using org.game.proto.struct.Login.PbAccountValidateResp.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        success_ = false;
-        id_ = 0;
-        playerToken_ = "";
-        isRegistered_ = false;
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateResp getDefaultInstanceForType() {
-        return org.game.proto.struct.Login.PbAccountValidateResp.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateResp build() {
-        org.game.proto.struct.Login.PbAccountValidateResp result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbAccountValidateResp buildPartial() {
-        org.game.proto.struct.Login.PbAccountValidateResp result = new org.game.proto.struct.Login.PbAccountValidateResp(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(org.game.proto.struct.Login.PbAccountValidateResp result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.success_ = success_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.playerToken_ = playerToken_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.isRegistered_ = isRegistered_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.game.proto.struct.Login.PbAccountValidateResp) {
-          return mergeFrom((org.game.proto.struct.Login.PbAccountValidateResp)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.game.proto.struct.Login.PbAccountValidateResp other) {
-        if (other == org.game.proto.struct.Login.PbAccountValidateResp.getDefaultInstance()) return this;
-        if (other.getSuccess() != false) {
-          setSuccess(other.getSuccess());
-        }
-        if (other.getId() != 0) {
-          setId(other.getId());
-        }
-        if (!other.getPlayerToken().isEmpty()) {
-          playerToken_ = other.playerToken_;
-          bitField0_ |= 0x00000004;
-          onChanged();
-        }
-        if (other.getIsRegistered() != false) {
-          setIsRegistered(other.getIsRegistered());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                success_ = input.readBool();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 16: {
-                id_ = input.readInt32();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 16
-              case 26: {
-                playerToken_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 32: {
-                isRegistered_ = input.readBool();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 32
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private boolean success_ ;
-      /**
-       * <code>bool success = 1;</code>
-       * @return The success.
-       */
-      @java.lang.Override
-      public boolean getSuccess() {
-        return success_;
-      }
-      /**
-       * <code>bool success = 1;</code>
-       * @param value The success to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSuccess(boolean value) {
-
-        success_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool success = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSuccess() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        success_ = false;
-        onChanged();
-        return this;
-      }
-
-      private int id_ ;
-      /**
-       * <code>int32 id = 2;</code>
-       * @return The id.
-       */
-      @java.lang.Override
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>int32 id = 2;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(int value) {
-
-        id_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 id = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object playerToken_ = "";
-      /**
-       * <code>string playerToken = 3;</code>
-       * @return The playerToken.
-       */
-      public java.lang.String getPlayerToken() {
-        java.lang.Object ref = playerToken_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          playerToken_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string playerToken = 3;</code>
-       * @return The bytes for playerToken.
-       */
-      public com.google.protobuf.ByteString
-          getPlayerTokenBytes() {
-        java.lang.Object ref = playerToken_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          playerToken_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string playerToken = 3;</code>
-       * @param value The playerToken to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPlayerToken(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        playerToken_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string playerToken = 3;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPlayerToken() {
-        playerToken_ = getDefaultInstance().getPlayerToken();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string playerToken = 3;</code>
-       * @param value The bytes for playerToken to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPlayerTokenBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        playerToken_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-
-      private boolean isRegistered_ ;
-      /**
-       * <code>bool isRegistered = 4;</code>
-       * @return The isRegistered.
-       */
-      @java.lang.Override
-      public boolean getIsRegistered() {
-        return isRegistered_;
-      }
-      /**
-       * <code>bool isRegistered = 4;</code>
-       * @param value The isRegistered to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIsRegistered(boolean value) {
-
-        isRegistered_ = value;
-        bitField0_ |= 0x00000008;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool isRegistered = 4;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearIsRegistered() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        isRegistered_ = false;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbAccountValidateResp)
-    }
-
-    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbAccountValidateResp)
-    private static final org.game.proto.struct.Login.PbAccountValidateResp DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbAccountValidateResp();
-    }
-
-    public static org.game.proto.struct.Login.PbAccountValidateResp getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<PbAccountValidateResp>
-        PARSER = new com.google.protobuf.AbstractParser<PbAccountValidateResp>() {
-      @java.lang.Override
-      public PbAccountValidateResp parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<PbAccountValidateResp> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<PbAccountValidateResp> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.game.proto.struct.Login.PbAccountValidateResp getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface PbPlayerValidateReqOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbPlayerValidateReq)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
-     */
-    int getId();
-
-    /**
-     * <code>string token = 2;</code>
-     * @return The token.
-     */
-    java.lang.String getToken();
-    /**
-     * <code>string token = 2;</code>
-     * @return The bytes for token.
-     */
-    com.google.protobuf.ByteString
-        getTokenBytes();
-  }
-  /**
-   * Protobuf type {@code org.game.proto.struct.PbPlayerValidateReq}
-   */
-  public static final class PbPlayerValidateReq extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbPlayerValidateReq)
-      PbPlayerValidateReqOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 27,
-        /* patch= */ 1,
-        /* suffix= */ "",
-        PbPlayerValidateReq.class.getName());
-    }
-    // Use PbPlayerValidateReq.newBuilder() to construct.
-    private PbPlayerValidateReq(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private PbPlayerValidateReq() {
-      token_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateReq_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.game.proto.struct.Login.PbPlayerValidateReq.class, org.game.proto.struct.Login.PbPlayerValidateReq.Builder.class);
-    }
-
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_ = 0;
-    /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
-     */
-    @java.lang.Override
-    public int getId() {
-      return id_;
-    }
-
-    public static final int TOKEN_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object token_ = "";
-    /**
-     * <code>string token = 2;</code>
-     * @return The token.
-     */
-    @java.lang.Override
-    public java.lang.String getToken() {
-      java.lang.Object ref = token_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        token_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string token = 2;</code>
-     * @return The bytes for token.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getTokenBytes() {
-      java.lang.Object ref = token_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        token_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (id_ != 0) {
-        output.writeInt32(1, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 2, token_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (id_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, token_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.game.proto.struct.Login.PbPlayerValidateReq)) {
-        return super.equals(obj);
-      }
-      org.game.proto.struct.Login.PbPlayerValidateReq other = (org.game.proto.struct.Login.PbPlayerValidateReq) obj;
-
-      if (getId()
-          != other.getId()) return false;
-      if (!getToken()
-          .equals(other.getToken())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
-      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getToken().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateReq parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.game.proto.struct.Login.PbPlayerValidateReq prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code org.game.proto.struct.PbPlayerValidateReq}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbPlayerValidateReq)
-        org.game.proto.struct.Login.PbPlayerValidateReqOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateReq_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.game.proto.struct.Login.PbPlayerValidateReq.class, org.game.proto.struct.Login.PbPlayerValidateReq.Builder.class);
-      }
-
-      // Construct using org.game.proto.struct.Login.PbPlayerValidateReq.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        id_ = 0;
-        token_ = "";
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateReq getDefaultInstanceForType() {
-        return org.game.proto.struct.Login.PbPlayerValidateReq.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateReq build() {
-        org.game.proto.struct.Login.PbPlayerValidateReq result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateReq buildPartial() {
-        org.game.proto.struct.Login.PbPlayerValidateReq result = new org.game.proto.struct.Login.PbPlayerValidateReq(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(org.game.proto.struct.Login.PbPlayerValidateReq result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.token_ = token_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.game.proto.struct.Login.PbPlayerValidateReq) {
-          return mergeFrom((org.game.proto.struct.Login.PbPlayerValidateReq)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.game.proto.struct.Login.PbPlayerValidateReq other) {
-        if (other == org.game.proto.struct.Login.PbPlayerValidateReq.getDefaultInstance()) return this;
-        if (other.getId() != 0) {
-          setId(other.getId());
-        }
-        if (!other.getToken().isEmpty()) {
-          token_ = other.token_;
-          bitField0_ |= 0x00000002;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                id_ = input.readInt32();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 18: {
-                token_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private int id_ ;
-      /**
-       * <code>int32 id = 1;</code>
-       * @return The id.
-       */
-      @java.lang.Override
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>int32 id = 1;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(int value) {
-
-        id_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 id = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object token_ = "";
-      /**
-       * <code>string token = 2;</code>
-       * @return The token.
-       */
-      public java.lang.String getToken() {
-        java.lang.Object ref = token_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          token_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @return The bytes for token.
-       */
-      public com.google.protobuf.ByteString
-          getTokenBytes() {
-        java.lang.Object ref = token_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          token_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @param value The token to set.
-       * @return This builder for chaining.
-       */
-      public Builder setToken(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        token_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearToken() {
-        token_ = getDefaultInstance().getToken();
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string token = 2;</code>
-       * @param value The bytes for token to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTokenBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        token_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbPlayerValidateReq)
-    }
-
-    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbPlayerValidateReq)
-    private static final org.game.proto.struct.Login.PbPlayerValidateReq DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbPlayerValidateReq();
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateReq getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<PbPlayerValidateReq>
-        PARSER = new com.google.protobuf.AbstractParser<PbPlayerValidateReq>() {
-      @java.lang.Override
-      public PbPlayerValidateReq parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<PbPlayerValidateReq> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<PbPlayerValidateReq> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.game.proto.struct.Login.PbPlayerValidateReq getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface PbPlayerValidateRespOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbPlayerValidateResp)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bool success = 1;</code>
-     * @return The success.
-     */
-    boolean getSuccess();
-
-    /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
-     */
-    int getId();
-
-    /**
-     * <code>bool isRegistered = 3;</code>
-     * @return The isRegistered.
-     */
-    boolean getIsRegistered();
-  }
-  /**
-   * Protobuf type {@code org.game.proto.struct.PbPlayerValidateResp}
-   */
-  public static final class PbPlayerValidateResp extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbPlayerValidateResp)
-      PbPlayerValidateRespOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 27,
-        /* patch= */ 1,
-        /* suffix= */ "",
-        PbPlayerValidateResp.class.getName());
-    }
-    // Use PbPlayerValidateResp.newBuilder() to construct.
-    private PbPlayerValidateResp(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private PbPlayerValidateResp() {
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateResp_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.game.proto.struct.Login.PbPlayerValidateResp.class, org.game.proto.struct.Login.PbPlayerValidateResp.Builder.class);
-    }
-
-    public static final int SUCCESS_FIELD_NUMBER = 1;
-    private boolean success_ = false;
-    /**
-     * <code>bool success = 1;</code>
-     * @return The success.
-     */
-    @java.lang.Override
-    public boolean getSuccess() {
-      return success_;
-    }
-
-    public static final int ID_FIELD_NUMBER = 2;
-    private int id_ = 0;
-    /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
-     */
-    @java.lang.Override
-    public int getId() {
-      return id_;
-    }
-
-    public static final int ISREGISTERED_FIELD_NUMBER = 3;
-    private boolean isRegistered_ = false;
-    /**
-     * <code>bool isRegistered = 3;</code>
-     * @return The isRegistered.
-     */
-    @java.lang.Override
-    public boolean getIsRegistered() {
-      return isRegistered_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (success_ != false) {
-        output.writeBool(1, success_);
-      }
-      if (id_ != 0) {
-        output.writeInt32(2, id_);
-      }
-      if (isRegistered_ != false) {
-        output.writeBool(3, isRegistered_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (success_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(1, success_);
-      }
-      if (id_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, id_);
-      }
-      if (isRegistered_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(3, isRegistered_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.game.proto.struct.Login.PbPlayerValidateResp)) {
-        return super.equals(obj);
-      }
-      org.game.proto.struct.Login.PbPlayerValidateResp other = (org.game.proto.struct.Login.PbPlayerValidateResp) obj;
-
-      if (getSuccess()
-          != other.getSuccess()) return false;
-      if (getId()
-          != other.getId()) return false;
-      if (getIsRegistered()
-          != other.getIsRegistered()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getSuccess());
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
-      hash = (37 * hash) + ISREGISTERED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIsRegistered());
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.game.proto.struct.Login.PbPlayerValidateResp parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.game.proto.struct.Login.PbPlayerValidateResp prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code org.game.proto.struct.PbPlayerValidateResp}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbPlayerValidateResp)
-        org.game.proto.struct.Login.PbPlayerValidateRespOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateResp_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.game.proto.struct.Login.PbPlayerValidateResp.class, org.game.proto.struct.Login.PbPlayerValidateResp.Builder.class);
-      }
-
-      // Construct using org.game.proto.struct.Login.PbPlayerValidateResp.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        success_ = false;
-        id_ = 0;
-        isRegistered_ = false;
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.game.proto.struct.Login.internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateResp getDefaultInstanceForType() {
-        return org.game.proto.struct.Login.PbPlayerValidateResp.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateResp build() {
-        org.game.proto.struct.Login.PbPlayerValidateResp result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.game.proto.struct.Login.PbPlayerValidateResp buildPartial() {
-        org.game.proto.struct.Login.PbPlayerValidateResp result = new org.game.proto.struct.Login.PbPlayerValidateResp(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(org.game.proto.struct.Login.PbPlayerValidateResp result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.success_ = success_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.id_ = id_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.isRegistered_ = isRegistered_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.game.proto.struct.Login.PbPlayerValidateResp) {
-          return mergeFrom((org.game.proto.struct.Login.PbPlayerValidateResp)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.game.proto.struct.Login.PbPlayerValidateResp other) {
-        if (other == org.game.proto.struct.Login.PbPlayerValidateResp.getDefaultInstance()) return this;
-        if (other.getSuccess() != false) {
-          setSuccess(other.getSuccess());
-        }
-        if (other.getId() != 0) {
-          setId(other.getId());
-        }
-        if (other.getIsRegistered() != false) {
-          setIsRegistered(other.getIsRegistered());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                success_ = input.readBool();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
-              case 16: {
-                id_ = input.readInt32();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 16
-              case 24: {
-                isRegistered_ = input.readBool();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 24
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private boolean success_ ;
-      /**
-       * <code>bool success = 1;</code>
-       * @return The success.
-       */
-      @java.lang.Override
-      public boolean getSuccess() {
-        return success_;
-      }
-      /**
-       * <code>bool success = 1;</code>
-       * @param value The success to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSuccess(boolean value) {
-
-        success_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool success = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSuccess() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        success_ = false;
-        onChanged();
-        return this;
-      }
-
-      private int id_ ;
-      /**
-       * <code>int32 id = 2;</code>
-       * @return The id.
-       */
-      @java.lang.Override
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>int32 id = 2;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(int value) {
-
-        id_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 id = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private boolean isRegistered_ ;
-      /**
-       * <code>bool isRegistered = 3;</code>
-       * @return The isRegistered.
-       */
-      @java.lang.Override
-      public boolean getIsRegistered() {
-        return isRegistered_;
-      }
-      /**
-       * <code>bool isRegistered = 3;</code>
-       * @param value The isRegistered to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIsRegistered(boolean value) {
-
-        isRegistered_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool isRegistered = 3;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearIsRegistered() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        isRegistered_ = false;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbPlayerValidateResp)
-    }
-
-    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbPlayerValidateResp)
-    private static final org.game.proto.struct.Login.PbPlayerValidateResp DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.game.proto.struct.Login.PbPlayerValidateResp();
-    }
-
-    public static org.game.proto.struct.Login.PbPlayerValidateResp getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<PbPlayerValidateResp>
-        PARSER = new com.google.protobuf.AbstractParser<PbPlayerValidateResp>() {
-      @java.lang.Override
-      public PbPlayerValidateResp parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<PbPlayerValidateResp> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<PbPlayerValidateResp> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.game.proto.struct.Login.PbPlayerValidateResp getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface PbLoginReqOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbLoginReq)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
+   * <pre>
+   * 登录请求
+   * </pre>
+   *
    * Protobuf type {@code org.game.proto.struct.PbLoginReq}
    */
   public static final class PbLoginReq extends
@@ -3195,6 +1913,10 @@ public final class Login {
       return builder;
     }
     /**
+     * <pre>
+     * 登录请求
+     * </pre>
+     *
      * Protobuf type {@code org.game.proto.struct.PbLoginReq}
      */
     public static final class Builder extends
@@ -3391,6 +2113,10 @@ public final class Login {
     int getLevel();
   }
   /**
+   * <pre>
+   * 登录返回
+   * </pre>
+   *
    * Protobuf type {@code org.game.proto.struct.PbLoginResp}
    */
   public static final class PbLoginResp extends
@@ -3668,6 +2394,10 @@ public final class Login {
       return builder;
     }
     /**
+     * <pre>
+     * 登录返回
+     * </pre>
+     *
      * Protobuf type {@code org.game.proto.struct.PbLoginResp}
      */
     public static final class Builder extends
@@ -4017,30 +2747,20 @@ public final class Login {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_game_proto_struct_PbAuthReq_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_game_proto_struct_PbAuthResp_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_game_proto_struct_PbRegisterReq_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_game_proto_struct_PbRegisterReq_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_game_proto_struct_PbAccountValidateReq_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_game_proto_struct_PbAccountValidateResp_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_game_proto_struct_PbPlayerValidateReq_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_game_proto_struct_PbPlayerValidateResp_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_game_proto_struct_PbLoginReq_descriptor;
   private static final 
@@ -4060,60 +2780,44 @@ public final class Login {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\013login.proto\022\025org.game.proto.struct\"\035\n\r" +
-      "PbRegisterReq\022\014\n\004name\030\001 \001(\t\"1\n\024PbAccount" +
-      "ValidateReq\022\n\n\002id\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\"_" +
-      "\n\025PbAccountValidateResp\022\017\n\007success\030\001 \001(\010" +
-      "\022\n\n\002id\030\002 \001(\005\022\023\n\013playerToken\030\003 \001(\t\022\024\n\014isR" +
-      "egistered\030\004 \001(\010\"0\n\023PbPlayerValidateReq\022\n" +
-      "\n\002id\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\"I\n\024PbPlayerVal" +
-      "idateResp\022\017\n\007success\030\001 \001(\010\022\n\n\002id\030\002 \001(\005\022\024" +
-      "\n\014isRegistered\030\003 \001(\010\"\014\n\nPbLoginReq\"6\n\013Pb" +
-      "LoginResp\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005l" +
-      "evel\030\003 \001(\005b\006proto3"
+      "\n\013login.proto\022\025org.game.proto.struct\"&\n\t" +
+      "PbAuthReq\022\n\n\002id\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\"?\n\n" +
+      "PbAuthResp\022\017\n\007success\030\001 \001(\010\022\n\n\002id\030\002 \001(\005\022" +
+      "\024\n\014isRegistered\030\003 \001(\010\"\035\n\rPbRegisterReq\022\014" +
+      "\n\004name\030\001 \001(\t\"\014\n\nPbLoginReq\"6\n\013PbLoginRes" +
+      "p\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005level\030\003 \001" +
+      "(\005b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_game_proto_struct_PbRegisterReq_descriptor =
+    internal_static_org_game_proto_struct_PbAuthReq_descriptor =
       getDescriptor().getMessageTypes().get(0);
+    internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_game_proto_struct_PbAuthReq_descriptor,
+        new java.lang.String[] { "Id", "Token", });
+    internal_static_org_game_proto_struct_PbAuthResp_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_game_proto_struct_PbAuthResp_descriptor,
+        new java.lang.String[] { "Success", "Id", "IsRegistered", });
+    internal_static_org_game_proto_struct_PbRegisterReq_descriptor =
+      getDescriptor().getMessageTypes().get(2);
     internal_static_org_game_proto_struct_PbRegisterReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbRegisterReq_descriptor,
         new java.lang.String[] { "Name", });
-    internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_org_game_proto_struct_PbAccountValidateReq_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_game_proto_struct_PbAccountValidateReq_descriptor,
-        new java.lang.String[] { "Id", "Token", });
-    internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_org_game_proto_struct_PbAccountValidateResp_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_game_proto_struct_PbAccountValidateResp_descriptor,
-        new java.lang.String[] { "Success", "Id", "PlayerToken", "IsRegistered", });
-    internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor =
-      getDescriptor().getMessageTypes().get(3);
-    internal_static_org_game_proto_struct_PbPlayerValidateReq_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_game_proto_struct_PbPlayerValidateReq_descriptor,
-        new java.lang.String[] { "Id", "Token", });
-    internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor =
-      getDescriptor().getMessageTypes().get(4);
-    internal_static_org_game_proto_struct_PbPlayerValidateResp_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_game_proto_struct_PbPlayerValidateResp_descriptor,
-        new java.lang.String[] { "Success", "Id", "IsRegistered", });
     internal_static_org_game_proto_struct_PbLoginReq_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_org_game_proto_struct_PbLoginReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbLoginReq_descriptor,
         new java.lang.String[] { });
     internal_static_org_game_proto_struct_PbLoginResp_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_org_game_proto_struct_PbLoginResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbLoginResp_descriptor,

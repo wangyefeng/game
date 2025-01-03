@@ -1,6 +1,7 @@
 package org.game.chat;
 
 import org.game.common.Server;
+import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class Chat extends Server {
 
     @Override
     protected void start0() throws Exception {
+        Protocols.init();
     }
 
     @Override

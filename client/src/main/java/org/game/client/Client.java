@@ -22,6 +22,7 @@ import org.game.proto.MessageCodeDecoder;
 import org.game.proto.MessagePlayerDecoder;
 import org.game.proto.Topic;
 import org.game.proto.protocol.Protocol;
+import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +117,7 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        Protocols.init();
         Builder basedUrl = WebClient.builder().baseUrl("http://127.0.0.1/auth");
         for (int i = 1; i <= 2; i++) {
             int finalI = i;

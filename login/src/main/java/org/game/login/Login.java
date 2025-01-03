@@ -20,7 +20,6 @@ public class Login extends Server {
 
     @Override
     protected void start0() throws Exception {
-
     }
 
     @Override

@@ -10,11 +10,8 @@ public enum ClientToGateProtocol implements Protocol {
     // 心跳
     PING((short) 0),
 
-    // 账号验证
-    ACCOUNT_VALIDATE((short) 1, Login.PbAccountValidateReq.parser()),
-
     // 玩家验证
-    PLAYER_VALIDATE((short) 2, Login.PbPlayerValidateReq.parser()),
+    AUTH((short) 1, Login.PbAuthReq.parser()),
     ;
 
 
@@ -32,7 +29,7 @@ public enum ClientToGateProtocol implements Protocol {
         this.parser = parser;
     }
 
-    static {
+    public static void register() {
         Protocols.addProtocols(ClientToGateProtocol.values());
     }
 

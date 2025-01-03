@@ -15,6 +15,7 @@ import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
 import org.game.gate.zookepper.ZookeeperProperties;
+import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,7 @@ public class Gate extends Server {
 
     @Override
     protected void start0() {
+        Protocols.init();
         registerHandler();
         connectLogic();
     }

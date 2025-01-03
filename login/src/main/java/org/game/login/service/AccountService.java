@@ -1,5 +1,6 @@
 package org.game.login.service;
 
+import org.game.common.RedisKeys;
 import org.game.common.http.HttpResp;
 import org.game.common.util.TokenUtil;
 import org.game.login.AccountType;
@@ -8,11 +9,14 @@ import org.game.login.entity.User;
 import org.game.login.repository.AccountRepository;
 import org.game.login.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.timer.Timer;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -22,6 +26,9 @@ public class AccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     public void save(Account account) {
         accountRepository.save(account);
@@ -50,6 +57,8 @@ public class AccountService {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
-        return HttpResp.success(new LoginResponse(id, TokenUtil.token(id, TokenUtil.TOKEN_SECRET, new Date(System.currentTimeMillis() + TokenUtil.TOKEN_EXPIRE_TIME))));
+        String playerToken = TokenUtil.token(id, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
+        redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + id, playerToken, 30, TimeUnit.DAYS);
+        return HttpResp.success(new LoginResponse(id, playerToken));
     }
 }

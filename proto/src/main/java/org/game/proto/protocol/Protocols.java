@@ -12,6 +12,15 @@ public abstract class Protocols {
 
     private static final Map<Byte, Map<Byte, Map<Short, Protocol>>> protocolMap = new HashMap<>();
 
+    public static void init() {
+        LogicToGateProtocol.register();
+        ClientToLogicProtocol.register();
+        GateToClientProtocol.register();
+        GateToLogicProtocol.register();
+        ClientToGateProtocol.register();
+        LogicToClientProtocol.register();
+    }
+
     public static void addProtocols(Protocol[] protocols) {
         for (Protocol protocol : protocols) {
             byte from = protocol.from().getCode();
