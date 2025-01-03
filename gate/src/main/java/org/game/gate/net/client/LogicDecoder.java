@@ -33,7 +33,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             short code = in.readShort();
             Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
-                error(from, to, code);
+                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
                 in.skipBytes(in.readableBytes());
                 return;
             }
@@ -46,7 +46,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
                     out.add(new MessageCode<>(protocol));
                 }
             } else {
-                error(from, to, code);
+                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
                 in.skipBytes(in.readableBytes());
             }
         } else if (type == DecoderType.MESSAGE_PLAYER.getCode()) {
@@ -56,7 +56,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             short code = in.readShort();
             Protocol protocol = Protocols.getProtocol(from, to, code);
             if (protocol == null || protocol.to().getCode() != to) {
-                error(from, to, code);
+                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
                 in.skipBytes(in.readableBytes());
                 return;
             }
@@ -86,13 +86,9 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 });
                 in.skipBytes(in.readableBytes());
             } else {
-                error(from, to, code);
+                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
                 in.skipBytes(in.readableBytes());
             }
         }
-    }
-
-    private static void error(byte from, byte to, short code) {
-        log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
     }
 }

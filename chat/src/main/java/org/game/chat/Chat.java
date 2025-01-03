@@ -25,7 +25,6 @@ public class Chat extends Server {
 
     @Override
     protected void start0() throws Exception {
-
     }
 
     @Override

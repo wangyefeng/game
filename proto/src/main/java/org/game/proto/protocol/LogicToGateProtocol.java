@@ -2,6 +2,7 @@ package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
+import org.springframework.util.Assert;
 
 public enum LogicToGateProtocol implements Protocol {
     PING((short) 1),
@@ -18,8 +19,13 @@ public enum LogicToGateProtocol implements Protocol {
     }
 
     LogicToGateProtocol(short code, Parser<?> parser) {
+        Assert.isTrue(code >= 0, "协议号必须大于0");
         this.code = code;
         this.parser = parser;
+    }
+
+    static {
+        Protocols.addProtocols(LogicToGateProtocol.values());
     }
 
     @Override

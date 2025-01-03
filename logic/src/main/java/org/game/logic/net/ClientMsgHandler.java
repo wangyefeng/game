@@ -14,9 +14,6 @@ public interface ClientMsgHandler<T extends Message> {
     Map<ClientToLogicProtocol, ClientMsgHandler<Message>> handlers = new HashMap<>();
 
     static void register(ClientMsgHandler<? extends Message> handler) {
-        if (handlers.containsKey(handler.getProtocol())) {
-            throw new IllegalArgumentException("Duplicate protocol:" + handler.getProtocol());
-        }
         handlers.put(handler.getProtocol(), (ClientMsgHandler<Message>) handler);
     }
 

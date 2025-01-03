@@ -12,17 +12,7 @@ public abstract class Protocols {
 
     private static final Map<Byte, Map<Byte, Map<Short, Protocol>>> protocolMap = new HashMap<>();
 
-    static {
-        // 初始化协议映射表
-        addProtocols(ClientToGateProtocol.values());
-        addProtocols(ClientToLogicProtocol.values());
-        addProtocols(GateToClientProtocol.values());
-        addProtocols(GateToLogicProtocol.values());
-        addProtocols(LogicToClientProtocol.values());
-        addProtocols(LogicToGateProtocol.values());
-    }
-
-    private static void addProtocols(Protocol[] protocols) {
+    public static void addProtocols(Protocol[] protocols) {
         for (Protocol protocol : protocols) {
             byte from = protocol.from().getCode();
             byte to = protocol.to().getCode();
@@ -31,7 +21,7 @@ public abstract class Protocols {
                     .computeIfAbsent(to, _ -> new HashMap<>())
                     .put(code, protocol);
             if (p != null) {
-                throw new IllegalArgumentException("Duplicate protocol code: " + code);
+                throw new IllegalArgumentException("协议号[" + code + "]冲突。" + protocol.getClass().getSimpleName() + "." + protocol + "与" + protocol.getClass().getSimpleName() + "." + p);
             }
         }
     }

@@ -3,24 +3,29 @@ package org.game.proto.protocol;
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 import org.game.proto.struct.Login;
+import org.springframework.util.Assert;
 
 public enum LogicToClientProtocol implements Protocol {
     LOGIN((short) 1, Login.PbLoginResp.parser()),
 
-    REGISTER((short) 3, Login.PbLoginResp.parser()),
+    REGISTER((short) 2, Login.PbLoginResp.parser()),
 
     ;
-
 
     private final short code;
 
     private final Parser<?> parser;
+
+    static {
+        Protocols.addProtocols(LogicToClientProtocol.values());
+    }
 
     LogicToClientProtocol(short code) {
         this(code, null);
     }
 
     LogicToClientProtocol(short code, Parser<?> parser) {
+        Assert.isTrue(code >= 0, "协议号必须大于0");
         this.code = code;
         this.parser = parser;
     }
