@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import org.game.gate.net.client.LogicClient;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.GateToClientProtocol;
+import org.game.proto.protocol.GateToLogicProtocol;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -74,5 +75,13 @@ public class Player {
 
     public void writeToClient(GateToClientProtocol protocol, Message message) {
         channel.writeAndFlush(new MessageCode<>(protocol, message));
+    }
+
+    public void writeToLogic(GateToLogicProtocol protocol, Message message) {
+        getLogicClient().getChannel().writeAndFlush(new MessageCode<>(protocol, message));
+    }
+
+    public void writeToLogic(GateToLogicProtocol protocol) {
+        writeToLogic(protocol, null);
     }
 }
