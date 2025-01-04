@@ -1,7 +1,6 @@
 package org.game.logic.player;
 
 import io.netty.channel.Channel;
-import org.game.common.RedisKeys;
 import org.game.config.Configs;
 import org.game.logic.GameService;
 import org.game.logic.net.ClientMsgHandler;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,9 +24,6 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
     @Override
     public void handle(Channel channel, int playerId, Login.PbRegisterReq message, Configs config) {
@@ -43,7 +38,6 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
             return;
         }
         player.register(message);
-        redisTemplate.opsForSet().add(RedisKeys.ALL_PLAYERS, playerId + "");
         Players.addPlayer(player);
         Builder resp = PbLoginResp.newBuilder();
         player.loginResp(resp);

@@ -50,6 +50,9 @@ public class Logic extends Server {
     @Value("${logic.server-id}")
     private int id;
 
+    @Autowired
+    private io.grpc.Server grpcServer;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -59,7 +62,7 @@ public class Logic extends Server {
      * 初始化spring容器后，启动服务器
      */
     @Override
-    protected void start0() {
+    protected void start0() throws Exception {
         Protocols.init();
         registerHandler();
         tcpServer.start();
@@ -74,6 +77,7 @@ public class Logic extends Server {
 
     @Override
     protected void afterStart() throws Exception {
+        grpcServer.start();
         registerService();
     }
 
@@ -95,6 +99,7 @@ public class Logic extends Server {
 
     protected void stop() throws Exception {
         tcpServer.close();
+        grpcServer.shutdown();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
     }
@@ -111,4 +116,5 @@ public class Logic extends Server {
         application.setRegisterShutdownHook(false);// 关闭Spring-boot停服处理策略
         application.run(args);
     }
+
 }

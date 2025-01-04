@@ -1,5 +1,6 @@
 package org.game.gate.handler.client;
 
+import io.grpc.ManagedChannel;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.common.util.TokenUtil;
@@ -14,6 +15,10 @@ import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.PlayerExistServiceGrpc;
+import org.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
+import org.game.proto.struct.Rpc.PbPlayerExistReq;
+import org.game.proto.struct.Rpc.PbPlayerExistResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,9 @@ public final class AuthHandler implements ClientMsgHandler<Login.PbAuthReq> {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private ManagedChannel grpcClient;
 
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
@@ -74,8 +82,13 @@ public final class AuthHandler implements ClientMsgHandler<Login.PbAuthReq> {
             }
             channel.attr(AttributeKeys.PLAYER).set(player);
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
-            Boolean isRegistered = redisTemplate.opsForSet().isMember(RedisKeys.ALL_PLAYERS, playerId + "");
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setId(playerId).setIsRegistered(isRegistered).build()));
+            // 创建阻塞式存根
+            PlayerExistServiceBlockingStub blockingStub = PlayerExistServiceGrpc.newBlockingStub(grpcClient);
+            // 创建请求对象
+            PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(playerId).build();
+            // 调用服务端方法并获取响应
+            PbPlayerExistResp response = blockingStub.exists(request);
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setId(playerId).setIsRegistered(response.getExist()).build()));
         }).get();
     }
 

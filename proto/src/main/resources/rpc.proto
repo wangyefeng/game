@@ -1,0 +1,18 @@
+// 通用协议结构
+syntax = "proto3";
+
+package org.game.proto.struct;
+
+// 玩家是否存在请求
+message PbPlayerExistReq {
+  int32 id = 1;
+}
+
+// 玩家是否存在返回
+message PbPlayerExistResp {
+  bool exist = 1;
+}
+
+service PlayerExistService {
+  rpc exists (PbPlayerExistReq) returns (PbPlayerExistResp);
+}
