@@ -68,7 +68,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <clearOutputDirectory>false</clearOutputDirectory>
-                    <protoSourceRoot>${project.basedir}/src/main/resources</protoSourceRoot>
+                    <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
                     <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
                     <protocArtifact>com.google.protobuf:protoc:4.29.0:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
