@@ -39,7 +39,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
-        log.info("Received message from {}: msg：{} content：{}", message.getProtocol().from(), message.getProtocol(), message.getData());
+        log.info("Received message from {}: msg：{} content：\n{}", message.getProtocol().from(), message.getProtocol(), message.getData());
         if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
             Login.PbAuthResp loginResponse = (Login.PbAuthResp) message.getData();
             if (loginResponse.getSuccess()) {

@@ -19,6 +19,7 @@ import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,8 +40,6 @@ public class Gate extends Server {
 
     private static final Logger log = LoggerFactory.getLogger(Gate.class);
 
-    private static final String SERVICE_REGISTRY_ZNODE = "/logic";
-
     @Autowired
     private TcpServer tcpServer;
 
@@ -59,6 +58,9 @@ public class Gate extends Server {
     @Autowired
     private CuratorFramework zkClient;
 
+    @Value("${zookeeper.root-path}")
+    private String servicePath;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(Level.PARANOID);
@@ -74,7 +76,6 @@ public class Gate extends Server {
     private void connectLogic() {
         try {
             // 连接逻辑服
-            String servicePath = SERVICE_REGISTRY_ZNODE;
             try {
                 List<String> serverInfos = zkClient.getChildren().forPath(servicePath);
                 if (serverInfos.isEmpty()) {
@@ -86,7 +87,7 @@ public class Gate extends Server {
                     log.info("发现逻辑服节点：{}个 继续启动....", serverInfos.size());
                 }
                 for (String serverId : serverInfos) {
-                    String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
+                    String path = servicePath + "/" + serverId;
                     byte[] data = zkClient.getData().forPath(path);
                     String serverInfo = new String(data);
                     String[] logicAddress = serverInfo.split(":");
@@ -132,7 +133,7 @@ public class Gate extends Server {
                         if (clientGroup.contains(id)) {
                             continue;
                         }
-                        String path = SERVICE_REGISTRY_ZNODE + "/" + serverId;
+                        String path = servicePath + "/" + serverId;
                         byte[] data = zkClient.getData().forPath(path);
                         String serverInfo = new String(data);
                         String[] logicAddress = serverInfo.split(":");
