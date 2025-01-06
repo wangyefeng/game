@@ -26,8 +26,8 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
     private ApplicationContext applicationContext;
 
     @Override
-    public void handle(Channel channel, int playerId, Login.PbRegisterReq message, Configs config) {
-        log.info("玩家{}注册 信息: {}", playerId, message);
+    public void handle(Channel channel, int playerId, Login.PbRegisterReq data, Configs config) {
+        log.info("玩家{}注册 信息: {}", playerId, data);
         Player player = Players.getPlayer(playerId);
         if (player != null) {
             return;
@@ -37,7 +37,7 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
         if (playerService.playerExists()) {
             return;
         }
-        player.register(message);
+        player.register(data);
         Players.addPlayer(player);
         Builder resp = PbLoginResp.newBuilder();
         player.loginResp(resp);

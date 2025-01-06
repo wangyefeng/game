@@ -20,13 +20,13 @@ public abstract class PlayerHandler<T extends Message> implements ClientMsgHandl
     private static final Logger log = LoggerFactory.getLogger(PlayerHandler.class);
 
     @Override
-    public void handle(Channel channel, int playerId, T message, Configs config) {
+    public void handle(Channel channel, int playerId, T data, Configs config) {
         Player player = Players.getPlayer(playerId);
         if (player == null) {
-            log.warn("协议处理失败 玩家{}未登录，协议:{} 数据：{}", playerId, getProtocol(), message);
+            log.warn("协议处理失败 玩家{}未登录，协议:{} 数据：{}", playerId, getProtocol(), data);
             return;
         }
-        handle(player, message, config);
+        handle(player, data, config);
     }
 
     /**

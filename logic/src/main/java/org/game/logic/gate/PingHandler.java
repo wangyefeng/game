@@ -15,7 +15,7 @@ public class PingHandler implements GateMsgHandler<Message> {
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 
     @Override
-    public void handle(Channel channel, Message msg, Configs config) {
+    public void handle(Channel channel, Message data, Configs config) {
         log.debug("Received a ping message from gate.");
         // do nothing
     }

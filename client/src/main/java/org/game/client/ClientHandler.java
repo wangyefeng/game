@@ -1,5 +1,6 @@
 package org.game.client;
 
+import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -39,9 +40,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
-        log.info("Received message from {}: msg：{} content：\n{}", message.getProtocol().from(), message.getProtocol(), message.getData());
+        log.info("Received message: {}", message);
+        Message data = message.getData();
         if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
-            Login.PbAuthResp loginResponse = (Login.PbAuthResp) message.getData();
+            Login.PbAuthResp loginResponse = (Login.PbAuthResp) data;
             if (loginResponse.getSuccess()) {
                 if (loginResponse.getIsRegistered()) {
                     ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));

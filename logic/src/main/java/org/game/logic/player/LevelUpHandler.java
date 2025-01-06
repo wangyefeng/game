@@ -13,7 +13,7 @@ public class LevelUpHandler extends PlayerHandler<PbInt> {
     private static final Logger log = LoggerFactory.getLogger(LevelUpHandler.class);
 
     @Override
-    protected void handle(Player player, PbInt message, Configs config) {
+    protected void handle(Player player, PbInt data, Configs config) {
         PlayerService playerService = player.getService(PlayerService.class);
         playerService.levelUp();
     }

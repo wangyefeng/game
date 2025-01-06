@@ -19,16 +19,16 @@ public class LogoutHandler implements GateMsgHandler<PbInt> {
 
 
     @Override
-    public void handle(Channel channel, Common.PbInt msg, Configs config) {
-        ThreadPool.getPlayerExecutor(msg.getVal()).execute(() -> {
-            Player player = Players.getPlayer(msg.getVal());
+    public void handle(Channel channel, Common.PbInt data, Configs config) {
+        ThreadPool.getPlayerExecutor(data.getVal()).execute(() -> {
+            Player player = Players.getPlayer(data.getVal());
             if (player == null) {
-                log.info("玩家{}退出游戏，但玩家不在线", msg.getVal());
+                log.info("玩家{}退出游戏，但玩家不在线", data.getVal());
                 return;
             }
             player.logout();
-            Players.removePlayer(msg.getVal());
-            log.info("玩家{}退出游戏", msg.getVal());
+            Players.removePlayer(data.getVal());
+            log.info("玩家{}退出游戏", data.getVal());
             channel.attr(GateHandler.PLAYERS_KEY).get().remove((Integer) player.getId());
         });
     }

@@ -21,7 +21,7 @@ public interface ClientMsgHandler<T extends Message> {
         return handlers.get(protocol);
     }
 
-    void handle(Channel channel, int playerId, T message, Configs config);
+    void handle(Channel channel, int playerId, T data, Configs config);
 
     ClientToLogicProtocol getProtocol();
 }

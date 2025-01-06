@@ -41,4 +41,9 @@ public interface Protocol {
      * @return 解析器
      */
     Parser<?> parser();
+
+    static String toString(Protocol protocol) {
+        return protocol.getClass().getSimpleName() + "{" + protocol.getCode() +
+                "}";
+    }
 }

@@ -26,7 +26,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
     private ApplicationContext applicationContext;
 
     @Override
-    public void handle(Channel channel, int playerId, Login.PbLoginReq message, Configs config) {
+    public void handle(Channel channel, int playerId, Login.PbLoginReq data, Configs config) {
         log.info("玩家{}登录游戏", playerId);
         Player player = Players.getPlayer(playerId);
         if (player == null) {
@@ -36,7 +36,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
                 log.warn("玩家登录失败，玩家 {}不存在", playerId);
                 return;
             }
-            player.login(message);
+            player.login(data);
             Players.addPlayer(player);
             channel.attr(GateHandler.PLAYERS_KEY).get().add(player.getId());
         } else {

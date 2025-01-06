@@ -33,17 +33,17 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessagePlayer<?>>
             try {
                 logicHandler.handle(ctx.channel(), message.getPlayerId(), message.getData(), Configs.getInstance());
             } catch (Exception e) {
-                log.error("处理玩家[{}]消息 协议：{} 数据: {} 出错", message.getPlayerId(), message.getProtocol(), message.getData(), e);
+                log.error("协议处理失败：{}", message, e);
             } finally {
                 long cost = System.currentTimeMillis() - start;
                 if (cost > 1000) {
-                    log.error("处理玩家[{}]消息 耗时：{}毫秒 协议：{} 数据: {}", message.getPlayerId(), cost, message.getProtocol(), message.getData());
+                    log.error("处理协议耗时：{}毫秒 协议：{}", cost, message);
                 } else if (cost > 100) {
-                    log.warn("处理玩家[{}]消息 耗时：{}毫秒 协议：{} 数据: {}", message.getPlayerId(), cost, message.getProtocol(), message.getData());
+                    log.warn("处理协议耗时：{}毫秒 协议：{}", cost, message);
                 } else if (cost > 50) {
-                    log.info("处理玩家[{}]消息 耗时：{}毫秒 协议：{} 数据: {}", message.getPlayerId(), cost, message.getProtocol(), message.getData());
+                    log.info("处理协议耗时：{}毫秒 协议：{}", cost, message);
                 } else {
-                    log.debug("处理玩家[{}]消息 耗时：{}毫秒 协议：{} 数据: {}", message.getPlayerId(), cost, message.getProtocol(), message.getData());
+                    log.debug("处理协议耗时：{}毫秒 协议：{}", cost, message);
                 }
             }
         });
