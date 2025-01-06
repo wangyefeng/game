@@ -1,6 +1,5 @@
 package org.game.logic.net;
 
-import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Vector;
 
 /**
@@ -23,7 +21,7 @@ import java.util.Vector;
  * @description 处理消息的handler
  */
 @ChannelHandler.Sharable
-public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
+public class GateHandler extends SimpleChannelInboundHandler<GateMessage<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(GateHandler.class);
 
@@ -37,13 +35,11 @@ public class GateHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
-        Optional<GateMsgHandler<Message>> optionalHandler = GateMsgHandler.getHandler(message.getProtocol());
-        if (optionalHandler.isEmpty()) {
-            log.warn("非法协议: {} {}", message.getProtocol().getClass().getSimpleName(), message.getProtocol());
-            return;
+    protected void channelRead0(ChannelHandlerContext ctx, GateMessage clientMessage) {
+        Object message = clientMessage.message();
+        if (message instanceof MessageCode<?> messageCode) {
+            GateMsgHandler.getHandler(messageCode.getProtocol()).handle(ctx.channel(), messageCode.getData(), Configs.getInstance());
         }
-        optionalHandler.get().handle(ctx.channel(), message.getData(), Configs.getInstance());
     }
 
     @Override

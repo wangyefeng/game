@@ -8,7 +8,6 @@ import org.game.proto.protocol.Protocol;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public interface GateMsgHandler<T extends Message> {
 
@@ -18,8 +17,8 @@ public interface GateMsgHandler<T extends Message> {
         handlers.put(handler.getProtocol(), (GateMsgHandler<Message>) handler);
     }
 
-    static Optional<GateMsgHandler<Message>> getHandler(Protocol protocol) {
-        return Optional.of(handlers.get(protocol));
+    static GateMsgHandler<Message> getHandler(Protocol protocol) {
+        return handlers.get(protocol);
     }
 
     void handle(Channel channel, T data, Configs config);

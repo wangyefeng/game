@@ -11,8 +11,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.game.proto.CommonDecoder;
-import org.game.proto.MessageCodeDecoder;
-import org.game.proto.MessagePlayerDecoder;
 import org.game.proto.PlayerMsgEncode;
 import org.game.proto.Topic;
 import org.slf4j.Logger;
@@ -87,9 +85,9 @@ public class TcpServer {
                     commonDecoder.registerDecoder(new MessageCodeDecoder());
                     commonDecoder.registerDecoder(new MessagePlayerDecoder());
                     pipeline.addLast(commonDecoder);
-                    pipeline.addLast(playerMsgEncode);
                     pipeline.addLast(clientHandler);
                     pipeline.addLast(gateHandler);
+                    pipeline.addLast(playerMsgEncode);
                 }
             });
             bootstrap.option(ChannelOption.SO_BACKLOG, 200);
