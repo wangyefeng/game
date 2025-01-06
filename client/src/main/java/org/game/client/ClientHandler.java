@@ -33,14 +33,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         super.channelActive(ctx);
         ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setId(playerId).setToken(token).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
-            log.info("ping");
+            log.info("player: {}, ping", playerId);
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));
         }, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
-        log.info("Received message: {}", message);
+        log.info("player: {}, Received message: {}", playerId, message);
         Message data = message.getData();
         if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
             Login.PbAuthResp loginResponse = (Login.PbAuthResp) data;
