@@ -14,7 +14,7 @@ import org.game.proto.protocol.Protocols;
 /**
  * 消息码解码器
  */
-public class MessagePlayerDecoder implements Decoder<Object> {
+public class MessagePlayerDecoder implements Decoder {
 
     public MessagePlayerDecoder() {
     }

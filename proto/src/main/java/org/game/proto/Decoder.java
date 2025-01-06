@@ -5,15 +5,14 @@ import io.netty.buffer.ByteBuf;
 /**
  * Decode interface
  * @author wangyefeng
- * @param <T>
  */
-public interface Decoder<T> {
+public interface Decoder {
 
     /**
      * decode
      * @param msg
      */
-    T decode(ByteBuf msg, byte to) throws Exception;
+    Object decode(ByteBuf msg, byte to) throws Exception;
 
     /**
      * type

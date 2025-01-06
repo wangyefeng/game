@@ -10,13 +10,13 @@ import org.game.proto.protocol.Protocols;
 /**
  * 消息码解码器
  */
-public class MessageCodeDecoder implements Decoder<MessageCode<?>> {
+public class MessageCodeDecoder implements Decoder {
 
     public MessageCodeDecoder() {
     }
 
     @Override
-    public MessageCode<?> decode(ByteBuf msg, byte to) throws Exception {
+    public Object decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
         short code = msg.readShort();
         Protocol protocol = Protocols.getProtocol(from, to, code);

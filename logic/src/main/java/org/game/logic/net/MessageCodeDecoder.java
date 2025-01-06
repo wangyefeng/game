@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 /**
  * 消息码解码器
  */
-public class MessageCodeDecoder implements Decoder<Object> {
+public class MessageCodeDecoder implements Decoder {
 
     public MessageCodeDecoder() {
     }

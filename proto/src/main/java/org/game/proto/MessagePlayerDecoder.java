@@ -9,13 +9,13 @@ import org.game.proto.protocol.Protocols;
 /**
  * 消息码解码器
  */
-public class MessagePlayerDecoder implements Decoder<MessagePlayer<?>> {
+public class MessagePlayerDecoder implements Decoder {
 
     public MessagePlayerDecoder() {
     }
 
     @Override
-    public MessagePlayer<?> decode(ByteBuf msg, byte to) throws Exception {
+    public Object decode(ByteBuf msg, byte to) throws Exception {
         byte from = msg.readByte();
         int playerId = msg.readInt();
         short code = msg.readShort();

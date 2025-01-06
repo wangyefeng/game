@@ -16,7 +16,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
 
     private final byte to;
 
-    private Map<Byte, Decoder<?>> decoders = new HashMap<>();
+    private Map<Byte, Decoder> decoders = new HashMap<>();
 
     public CommonDecoder(byte to) {
         this.to = to;
@@ -27,7 +27,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
         try {
             in.markReaderIndex();
             byte type = in.readByte();
-            Decoder<?> decoder = decoders.get(type);
+            Decoder decoder = decoders.get(type);
             if (decoder == null) {
                 throw new IllegalArgumentException("非法消息类型: " + type);
             }
@@ -41,7 +41,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
         }
     }
 
-    public void registerDecoder(Decoder<?> decoder) {
+    public void registerDecoder(Decoder decoder) {
         if (decoders.containsKey(decoder.getType().getCode())) {
             throw new IllegalArgumentException("Duplicate message type: " + decoder.getType().getCode());
         }
