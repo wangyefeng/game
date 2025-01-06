@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service("cfg_activity")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CfgActivityService extends CfgService<CfgActivity, CfgActivityDao, String> {
+public class CfgActivityService extends CfgService<CfgActivity, CfgActivityDao, Integer> {
 
     @Override
     protected void check0(CfgActivity cfgActivity, Configs config) throws ConfigException {

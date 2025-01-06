@@ -1,0 +1,284 @@
+package org.game.config.tools;
+
+import cn.hutool.extra.pinyin.PinyinUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+public class XlsxSqlUtils {
+
+    private static final String TYPE_INT = "int";
+
+    private static final String TYPE_STRING = "string";
+
+    private static final String TYPE_FLOAT = "float";
+
+    private static final String TYPE_DOUBLE = "double";
+
+    private static final String TYPE_LONG = "long";
+
+    private static final String TYPE_BOOL = "bool";
+
+    private static final String TYPE_JSON = "json";
+
+    private static final String TYPE_DATETIME = "datetime";
+
+    private static final String TYPE_DATE = "date";
+
+    private static final String TYPE_COMMON = "common";
+
+    private static final String TYPE_SERVER = "server";
+
+    private static String path = "C:\\fish\\document\\table";
+
+    public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
+        File file = new File(path);
+        String[] tables = file.list((dir, name) -> name != null && name.endsWith(".xlsx"));
+        for (String table : tables) {
+            readExcel(path, new File(path + File.separatorChar + table), charset, config);
+        }
+    }
+
+    // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
+    public static void readExcel(String path, File file, Charset charset, RandomAccessFile config) throws Exception {
+        Workbook book = new XSSFWorkbook(file);
+        Iterator<Sheet> it = book.sheetIterator();
+        int k = -1;
+        while (it.hasNext()) {
+            Sheet sheet = it.next();
+            k++;
+            if (book.isSheetHidden(k)) {
+                continue;
+            }
+            if (containsChinese(sheet.getSheetName())) {
+                continue;
+            }
+            Row row0 = sheet.getRow(0);// 字段名
+            Row row1 = sheet.getRow(1);// 字段名
+            Row row2 = sheet.getRow(2);// 字段类型
+            Row row3 = sheet.getRow(3);// 字段是否是服务器用的
+            int lastRowIndex = 4;// 最大行数
+            for (int i = 4; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null || row.getCell(0) == null || row.getCell(0).toString().isEmpty()) {
+                    break;
+                }
+                lastRowIndex = i;
+            }
+
+            Map<Integer, String> map = new HashMap<>();
+            int firstCellIndex1 = row2.getFirstCellNum();
+            int lastCellIndex1 = row2.getLastCellNum();
+            int idCellNum = -1;
+            for (int j = firstCellIndex1; j < lastCellIndex1; j++) {
+                Cell cell = row2.getCell(j);
+                String cellinfo = cell.getStringCellValue();
+                String t = row3.getCell(j).getStringCellValue();
+                if (TYPE_COMMON.equals(t) || TYPE_SERVER.equals(t)) {
+                    String s;
+                    if (cellinfo.contains("!")) {
+                        s = cellinfo.replace("!", "");
+                        idCellNum = j;
+                    } else {
+                        s = cellinfo;
+                    }
+                    map.put(j, s);
+                }
+            }
+            if (map.isEmpty()) {
+                continue;
+            }
+            if (sheet.getSheetName().equals("cfg_sensitive_words")) {
+                continue;
+            }
+            System.out.println("开始解析配置表：" + sheet.getSheetName());
+            RandomAccessFile sqlFile = new RandomAccessFile(path + "/sql/" + sheet.getSheetName() + ".sql", "rw");
+            clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
+            int firstRowIndex = sheet.getFirstRowNum() + 4;
+            StringBuilder sql = new StringBuilder();
+            sql.append("DROP TABLE IF EXISTS `" + sheet.getSheetName() + "`;\r");
+            sql.append("CREATE TABLE `" + sheet.getSheetName() + "`  (\r");
+            int finalIdCellNum = idCellNum;
+            map.forEach((cellNum, s) -> {
+                Cell cell = row1.getCell(cellNum);
+                sql.append('`');
+                sql.append(cell.getStringCellValue());
+                sql.append("` ");
+                switch (s) {
+                    case TYPE_INT -> sql.append("INT(0) NOT NULL");
+                    case TYPE_LONG -> sql.append("BIGINT(0) NOT NULL");
+                    case TYPE_STRING -> {
+                        if (finalIdCellNum == cellNum) {
+                            sql.append("VARCHAR(255) NOT NULL");
+                        } else {
+                            sql.append("VARCHAR(1000) NULL");
+                        }
+                    }
+                    case TYPE_JSON -> sql.append("JSON NULL");
+                    case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
+                    case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
+                    case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
+                    case TYPE_DATE -> sql.append("DATE NOT NULL");
+                    default -> System.out.println("非法类型:" + s);
+                }
+                sql.append(" COMMENT '");
+                sql.append(row0.getCell(cellNum).getStringCellValue());
+                sql.append("',\r");
+            });
+            if (idCellNum >= 0) {
+                Cell idCell = row1.getCell(idCellNum);
+                sql.append("PRIMARY KEY (`" + idCell.getStringCellValue() + "`) USING BTREE\r");
+            } else {
+                sql.delete(sql.length() - 2, sql.length() - 1);
+            }
+            sql.append(")");
+            if (lastRowIndex == 3 || sheet.getRow(4) == null || sheet.getRow(4).getCell(0) == null) {
+
+            } else {
+                String start;
+                StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
+                int lastCellIndex;
+                {
+                    Row row = sheet.getRow(1);
+                    lastCellIndex = row.getLastCellNum();
+                    int firstCellIndex = row.getFirstCellNum();
+                    for (int j = firstCellIndex; j < lastCellIndex; j++) {
+                        String type = map.get(j);
+                        if (type == null) {
+                            continue;
+                        }
+                        Cell cell = row.getCell(j);
+                        if (cell == null || cell.toString().isBlank()) {
+                            lastCellIndex = j;
+                            startBuilder.delete(startBuilder.length() - 2, startBuilder.length());
+                            startBuilder.append(") VALUES (");
+                            break;
+                        }
+                        String cellinfo = cell.getStringCellValue();
+                        startBuilder.append("`");
+                        startBuilder.append(cellinfo);
+                        startBuilder.append("`, ");
+                    }
+                    startBuilder.replace(startBuilder.length() - 3, startBuilder.length(), "");
+                    startBuilder.append("`) VALUES ");
+                    start = startBuilder.toString();
+                }
+                boolean b = true;
+                for (int i = firstRowIndex; i <= lastRowIndex; i++) {
+                    Row row = sheet.getRow(i);
+                    // sheet.getColumns()返回该页的总列数
+                    if (row == null) {
+                        break;
+                    }
+                    int firstCellIndex = row.getFirstCellNum();
+                    if (b) {
+                        sql.append(";\r");
+                        sql.append(start);
+                    } else {
+                        sql.append(",");
+                    }
+                    sql.append("(");
+                    b = false;
+                    for (int j = firstCellIndex; j < lastCellIndex; j++) {
+                        String type = map.get(j);
+                        if (type == null) {
+                            continue;
+                        }
+                        Cell cell = row.getCell(j);
+                        if (cell == null) {
+                            break;
+                        }
+                        String c = cell.toString();
+                        if (c.isBlank()) {
+                            sql.append("null, ");
+                        } else {
+                            CellType cellType = cell.getCellType();
+                            if (TYPE_INT.equals(type) || TYPE_LONG.equals(type) || TYPE_BOOL.equals(type)) {
+                                if (cellType == CellType.FORMULA) {
+                                    sql.append(((XSSFCell) cell).getCTCell().getV());
+                                } else {
+                                    sql.append(Math.round(Double.parseDouble(c)));
+                                }
+                            } else if (TYPE_STRING.equals(type)) {
+                                sql.append('\'');
+                                cell.setCellType(CellType.STRING);
+                                sql.append(cell.getStringCellValue());
+                                sql.append('\'');
+                            } else if (TYPE_FLOAT.equals(type) || TYPE_DOUBLE.equals(type)) {
+                                sql.append(cell.getNumericCellValue());
+                            } else if (TYPE_JSON.equals(type) || TYPE_DATETIME.equals(type) || TYPE_DATE.equals(type)) {
+                                cell.setCellType(CellType.STRING);
+                                sql.append('\'');
+                                sql.append(cell.getStringCellValue());
+                                sql.append('\'');
+                            }
+                            sql.append(", ");
+                        }
+                    }
+                    sql.replace(sql.length() - 2, sql.length(), "");
+                    sql.append(")");
+                }
+            }
+            byte[] bs = sql.toString().getBytes(charset);
+            sqlFile.write(bs);
+            config.write(bs);
+            config.write(";\r".getBytes(charset));
+            sqlFile.close();
+            System.out.println("解析配置表完毕：" + sheet.getSheetName());
+        }
+        book.close();
+    }
+
+    public static void main(String[] args) throws Exception {
+        Charset charset = Charset.forName("UTF-8");
+        clearInfoForFile(path + "/config.sql");
+        RandomAccessFile config = new RandomAccessFile(path + "/config.sql", "rw");
+        XlsxSqlUtils.common(path, charset, config);
+    }
+
+    public static boolean containsChinese(String s) {
+        if (s == null || s.isEmpty()) {
+            return false;
+        }
+        char[] chars = s.toCharArray();
+        for (char c : chars) {
+            if (PinyinUtil.isChinese(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 清空文件内容
+     *
+     * @param fileName
+     */
+    public static void clearInfoForFile(String fileName) {
+        File file = new File(fileName);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write("");
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
