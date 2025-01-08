@@ -47,7 +47,7 @@ public abstract class ThreadPool {
                 }
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                log.error("player thread {} shutdown interrupted", e);
+                log.error("player thread shutdown interrupted", e);
             }
         }
         for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
@@ -58,7 +58,7 @@ public abstract class ThreadPool {
                 }
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                log.error("player thread {} shutdown interrupted", e);
+                log.error("player thread shutdown interrupted", e);
             }
         }
         log.info("player thread pool shutdown");

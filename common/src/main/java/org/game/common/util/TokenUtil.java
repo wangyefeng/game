@@ -15,7 +15,6 @@ public class TokenUtil {
     public static final Algorithm PLAYER_TOKEN_SECRET = Algorithm.HMAC256("365zb5t3e4vb65%$#2390nb");
 
     public static String token(int playerId, Algorithm secret, Date expiresAt) {
-        String token = "";
         try {
             //过期时间
             //设置头部信息
@@ -23,7 +22,7 @@ public class TokenUtil {
             header.put("typ", "JWT");
             header.put("alg", "HS256");
             //携带username，password信息，生成签名
-            token = JWT.create()
+            return JWT.create()
                     .withHeader(header)
                     .withClaim("playerId", playerId)
                     .withExpiresAt(expiresAt)
@@ -31,7 +30,6 @@ public class TokenUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return token;
     }
 
     public static boolean verify(String token, int playerId, Algorithm secret) {

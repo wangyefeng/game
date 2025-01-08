@@ -97,7 +97,7 @@ public class Client implements CommandLineRunner {
 
             // 连接到服务器
             ChannelFuture future = bootstrap.connect(host, RandomUtil.random(ports)).sync();
-            System.out.println("Connected to server " + host + ":" + ports);
+            log.info("Connected to server {}:{}", host, ports);
 
             // 等待连接关闭
             future.channel().closeFuture().addListener(_ -> {

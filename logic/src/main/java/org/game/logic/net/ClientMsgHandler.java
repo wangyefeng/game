@@ -4,7 +4,6 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.proto.protocol.ClientToLogicProtocol;
-import org.game.proto.protocol.Protocol;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ public interface ClientMsgHandler<T extends Message> {
         handlers.put(handler.getProtocol(), (ClientMsgHandler<Message>) handler);
     }
 
-    static ClientMsgHandler<Message> getHandler(Protocol protocol) {
+    static ClientMsgHandler<Message> getHandler(ClientToLogicProtocol protocol) {
         return handlers.get(protocol);
     }
 

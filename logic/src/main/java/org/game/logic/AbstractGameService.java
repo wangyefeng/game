@@ -41,6 +41,7 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
         if (entity == null) {
             return;
         }
+        @SuppressWarnings("unchecked")
         E copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
         ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(copy));
     }

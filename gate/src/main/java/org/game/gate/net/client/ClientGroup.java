@@ -37,7 +37,7 @@ public class ClientGroup<C extends Client> {
         }
     }
 
-    public C get(String id) {
+    public C get(Integer id) {
         return clients.get(id);
     }
 

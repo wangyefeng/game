@@ -71,7 +71,7 @@ public class MysqlToExcel implements InitializingBean {
         // 判断是否还有输入
         Scanner scan = new Scanner(System.in);
         log.info("请输入要加载的表名，多个请要逗号隔开，全部加载输入0：");
-        String scanStr = null;
+        String scanStr;
         if (scan.hasNext()) {
             scanStr = scan.next();
             if (!scanStr.equals("0")) {
@@ -80,7 +80,7 @@ public class MysqlToExcel implements InitializingBean {
             }
         }
 
-        Connection conn = null;
+        Connection conn;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
@@ -110,8 +110,8 @@ public class MysqlToExcel implements InitializingBean {
                 log.info("正在生成表:{}.xlsx", tableName);
                 Sheet sheet = book.createSheet(tableName);
                 //声明sql
-                String sql = "SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'";
-                rs = st.executeQuery(sql);
+                StringBuilder sql = new StringBuilder("SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'");
+                rs = st.executeQuery(sql.toString());
                 int index = 0;
                 Row row0 = sheet.createRow(0);
                 Row row1 = sheet.createRow(1);
@@ -173,16 +173,16 @@ public class MysqlToExcel implements InitializingBean {
                         cell3.setCellStyle(textStyle);
                     }
                 }
-                sql = "select ";
+                sql = new StringBuilder("select ");
                 for (int i = 0; i < columnNames.size(); i++) {
                     if (i == columnNames.size() - 1) {
-                        sql = sql + "`" + columnNames.get(i) + "`" + " from " + name + "." + tableName;
+                        sql.append("`").append(columnNames.get(i)).append("`").append(" from ").append(name).append(".").append(tableName);
                     } else {
-                        sql = sql + "`" + columnNames.get(i) + "`" + " , ";
+                        sql.append("`").append(columnNames.get(i)).append("`").append(" , ");
                     }
 
                 }
-                rs = st.executeQuery(sql);
+                rs = st.executeQuery(sql.toString());
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int cols = rsmd.getColumnCount();
 

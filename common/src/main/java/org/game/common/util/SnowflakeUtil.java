@@ -42,12 +42,12 @@ public abstract class SnowflakeUtil {
     /**
      * 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数)
      */
-    private final static long maxWorkerId = -1L ^ (-1L << workerIdBits);
+    private final static long maxWorkerId = ~(-1L << workerIdBits);
 
     /**
      * 支持的最大数据标识id，结果是31
      */
-    private final static long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+    private final static long maxDatacenterId = ~(-1L << datacenterIdBits);
 
     /**
      * 序列在id中占的位数
@@ -72,7 +72,7 @@ public abstract class SnowflakeUtil {
     /**
      * 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
      */
-    private static final long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private static final long sequenceMask = ~(-1L << sequenceBits);
 
     /**
      * 工作机器ID(0~31)
@@ -121,8 +121,7 @@ public abstract class SnowflakeUtil {
         if (datacenterId > maxDatacenterId || datacenterId < 0) {
             throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         }
-        Long id = nextId();
-        return id;
+        return nextId();
     }
 
     /**

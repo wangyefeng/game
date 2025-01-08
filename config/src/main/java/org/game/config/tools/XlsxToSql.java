@@ -81,6 +81,7 @@ public class XlsxToSql implements InitializingBean {
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
         String[] tables = file.list((dir, name) -> name != null && name.endsWith(".xlsx"));
+        assert tables != null;
         for (String table : tables) {
             readExcel(path, new File(path + File.separatorChar + table), charset, config);
         }
@@ -143,8 +144,8 @@ public class XlsxToSql implements InitializingBean {
             clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
             int firstRowIndex = sheet.getFirstRowNum() + 4;
             StringBuilder sql = new StringBuilder();
-            sql.append("DROP TABLE IF EXISTS `" + sheet.getSheetName() + "`;\r");
-            sql.append("CREATE TABLE `" + sheet.getSheetName() + "`  (\r");
+            sql.append("DROP TABLE IF EXISTS `").append(sheet.getSheetName()).append("`;\r");
+            sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
             int finalIdCellNum = idCellNum;
             map.forEach((cellNum, s) -> {
                 Cell cell = row1.getCell(cellNum);
@@ -166,7 +167,7 @@ public class XlsxToSql implements InitializingBean {
                     case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
                     case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
                     case TYPE_DATE -> sql.append("DATE NOT NULL");
-                    default -> log.info("未知类型：{}");
+                    default -> log.info("未知类型：{}", s);
                 }
                 sql.append(" COMMENT '");
                 sql.append(row0.getCell(cellNum).getStringCellValue());
@@ -174,7 +175,7 @@ public class XlsxToSql implements InitializingBean {
             });
             if (idCellNum >= 0) {
                 Cell idCell = row1.getCell(idCellNum);
-                sql.append("PRIMARY KEY (`" + idCell.getStringCellValue() + "`) USING BTREE\r");
+                sql.append("PRIMARY KEY (`").append(idCell.getStringCellValue()).append("`) USING BTREE\r");
             } else {
                 sql.delete(sql.length() - 2, sql.length() - 1);
             }
@@ -248,13 +249,11 @@ public class XlsxToSql implements InitializingBean {
                                 }
                             } else if (TYPE_STRING.equals(type)) {
                                 sql.append('\'');
-                                cell.setCellType(CellType.STRING);
                                 sql.append(cell.getStringCellValue());
                                 sql.append('\'');
                             } else if (TYPE_FLOAT.equals(type) || TYPE_DOUBLE.equals(type)) {
                                 sql.append(cell.getNumericCellValue());
                             } else if (TYPE_JSON.equals(type) || TYPE_DATETIME.equals(type) || TYPE_DATE.equals(type)) {
-                                cell.setCellType(CellType.STRING);
                                 sql.append('\'');
                                 sql.append(cell.getStringCellValue());
                                 sql.append('\'');
@@ -305,7 +304,7 @@ public class XlsxToSql implements InitializingBean {
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

@@ -62,7 +62,7 @@ public class SslConfig {
                     k.close();
                 }
             } catch (IOException e) {
-                throw new RuntimeException("加载SSL证书失败, 请检查!", e);
+                log.error("关闭SSL证书输入流失败!", e);
             }
         }
     }

@@ -15,11 +15,12 @@ public abstract class ThreadPool {
 
     public static final ThreadPoolExecutor[] executor = new ThreadPoolExecutor[EXECUTOR_SIZE];
 
-    static {
+    public static void init() {
         for (int i = 0; i < EXECUTOR_SIZE; i++) {
             int finalI = i;
             executor[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-thread-" + finalI));
         }
+        log.info("线程池初始化完成！");
     }
 
     public static ThreadPoolExecutor getPlayerExecutor(int playerId) {
@@ -35,7 +36,7 @@ public abstract class ThreadPool {
                 }
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                log.error("player thread {} shutdown interrupted", e);
+                log.error("player thread shutdown interrupted", e);
             }
         }
         log.info("线程池已关闭！");

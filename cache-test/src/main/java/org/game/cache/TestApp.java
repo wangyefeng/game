@@ -30,7 +30,7 @@ public class TestApp implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        MyEntity myEntity = myEntityService.findById(1l);
+        MyEntity myEntity = myEntityService.findById(1L);
         myEntity.getMap().clear();
         myEntityService.save(myEntity);
         myEntity.getMap().put("k", "v");

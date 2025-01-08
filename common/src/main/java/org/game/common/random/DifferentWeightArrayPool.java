@@ -101,7 +101,9 @@ public class DifferentWeightArrayPool<E> {
             return result;
         }
         if (size == randomPool.length) {
-            System.arraycopy(randomPool, 0, result, 0, size);
+            for (int i = 0; i < size; i++) {
+                result[i] = randomPool[i].e;
+            }
             return result;
         }
         int oldSum = sumWeight;

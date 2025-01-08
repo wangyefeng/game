@@ -9,6 +9,7 @@ import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessageCode;
+import org.game.proto.protocol.GateToLogicProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class GateHandler extends SimpleChannelInboundHandler<GateMessage<?>> {
     protected void channelRead0(ChannelHandlerContext ctx, GateMessage clientMessage) {
         Object message = clientMessage.message();
         if (message instanceof MessageCode<?> messageCode) {
-            GateMsgHandler.getHandler(messageCode.getProtocol()).handle(ctx.channel(), messageCode.getData(), Configs.getInstance());
+            GateMsgHandler.getHandler((GateToLogicProtocol) messageCode.getProtocol()).handle(ctx.channel(), messageCode.getData(), Configs.getInstance());
         }
     }
 

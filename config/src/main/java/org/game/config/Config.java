@@ -76,9 +76,6 @@ public class Config implements InitializingBean {
         Collection<CfgService> cfgServices = new ArrayList<>();
         for (String tableName : tableNames) {
             CfgService cfgService = applicationContext.getBean(tableName, CfgService.class);
-            if (cfgService == null) {
-                throw new IllegalArgumentException("重载配置表失败, 未找到配置表: " + tableName);
-            }
             cfgServices.add(cfgService);
         }
         try {

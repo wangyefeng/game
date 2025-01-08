@@ -25,6 +25,9 @@ public class MessagePlayerDecoder implements Decoder {
         int playerId = msg.readInt();
         short code = msg.readShort();
         Protocol protocol = Protocols.getProtocol(from, to, code);
+        if (protocol == null) {
+            throw new UnsupportedOperationException("协议不存在：" + from + "->" + to + ":" + code);
+        }
         MessagePlayer<?> messagePlayer;
         if (protocol.parser() != null) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);

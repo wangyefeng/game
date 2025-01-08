@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.game.config.Configs;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
+import org.game.proto.protocol.ClientToLogicProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientMessage<?>>
     protected void channelRead0(ChannelHandlerContext ctx, ClientMessage<?> clientMessage) throws OperationNotSupportedException {
         Object message = clientMessage.message();
         if (message instanceof MessagePlayer<?> messagePlayer) {
-            ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler(messagePlayer.getProtocol());
+            ClientMsgHandler<Message> logicHandler = ClientMsgHandler.getHandler((ClientToLogicProtocol) messagePlayer.getProtocol());
             // 交给业务线程接管
             ThreadPool.getPlayerExecutor(messagePlayer.getPlayerId()).execute(() -> {
                 long start = System.currentTimeMillis();
