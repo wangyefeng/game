@@ -1,6 +1,9 @@
 package org.game.config.tools;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,18 +20,14 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,9 +58,6 @@ public class MysqlToExcel implements InitializingBean {
     @Value("${spring.datasource.password}")
     private String password;
 
-    @Value("${spring.datasource.dbname}")
-    private String name;
-
     @Value("${config.xlsx-path}")
     private String path;
 
@@ -69,7 +65,7 @@ public class MysqlToExcel implements InitializingBean {
         //创建文件夹
         File fileMdr = new File(path);
         if (!fileMdr.exists()) {
-            System.out.println("开始创建文件夹" + path + "  是否成功：" + fileMdr.mkdirs());
+            fileMdr.mkdirs();
         }
         //验证数据的正确性
         List<String> tables = new ArrayList<>();
@@ -79,7 +75,6 @@ public class MysqlToExcel implements InitializingBean {
         String scanStr = null;
         if (scan.hasNext()) {
             scanStr = scan.next();
-            System.out.println("输入的数据为：" + scanStr);
             if (!scanStr.equals("0")) {
                 String[] strs = scanStr.split(",");
                 tables = Arrays.asList(strs);
@@ -92,43 +87,34 @@ public class MysqlToExcel implements InitializingBean {
             conn = DriverManager.getConnection(url, username, password);
             Statement st = conn.createStatement();
             DatabaseMetaData dmd = conn.getMetaData();
+            String name = conn.getCatalog();
             ResultSet rs = dmd.getTables(name, name, null, new String[]{"TABLE"});
             //获取所有表名　－　就是一个sheet
 
-            List<String> table = new ArrayList<String>();
+            List<String> table = new ArrayList<>();
             while (rs.next()) {
                 String tableName = rs.getString("TABLE_NAME");
                 table.add(tableName);
             }
 
             log.info("获取所有表名:" + table);
+            List<String> finalTables = tables;
+            table.removeIf(tableName -> !finalTables.isEmpty() && !finalTables.contains(tableName));
+            Workbook book = new XSSFWorkbook();
+            CellStyle textStyle = book.createCellStyle();
+            // 获取一个数据格式对象
+            DataFormat dataFormat = book.createDataFormat();
+            // 设置单元格的格式为文本
+            textStyle.setDataFormat(dataFormat.getFormat("@"));
+            textStyle.setAlignment(HorizontalAlignment.CENTER);
 
-            if (scanStr.equals("0")) {
-                tables = table;
-            } else {
-                List<String> tab = new ArrayList<String>();
-                for (String tableName : tables) {
-                    if (table.contains(tableName)) {
-                        tab.add(tableName);
-                    } else {
-                        System.out.println("输入的表明：" + tableName + "不存在！！！");
-                    }
-                }
-                if (CollectionUtils.isEmpty(tab)) {
-                    System.out.println("输入的表明全部不存在，直接加载全部配置");
-                    tables = table;
-                } else {
-                    tables = tab;
-                }
-            }
 
-            for (String tableName : tables) {
-                Workbook book = new XSSFWorkbook();
+            for (String tableName : table) {
                 Sheet sheet = book.createSheet(tableName);
                 //声明sql
                 String sql = "SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'";
                 rs = st.executeQuery(sql);
-                int index = -1;
+                int index = 0;
                 Row row0 = sheet.createRow(0);
                 Row row1 = sheet.createRow(1);
                 Row row2 = sheet.createRow(2);
@@ -137,27 +123,57 @@ public class MysqlToExcel implements InitializingBean {
                 List<String> columnNames = new ArrayList<>();
                 List<String> dateTypes = new ArrayList<>();
                 while (rs.next()) {
-                    index++;
-                    sheet.setColumnWidth(index, 1024 * 4);
-                    Cell cell = row0.createCell(index);
-                    cell.setCellValue(rs.getString("column_comment"));
-                    Cell cell1 = row1.createCell(index);
-                    String name = rs.getString("COLUMN_NAME");
-                    columnNames.add(name);
-                    cell1.setCellValue(name);
-                    Cell cell2 = row2.createCell(index);
-                    String type = rs.getString("DATA_TYPE");
-                    dateTypes.add(type);
-                    if (type.equals("varchar")) {
-                        type = "string";
-                    } else if (type.equals("bit")) {
-                        type = "bool";
-                    } else if (type.equals("bigint")) {
-                        type = "long";
+                    String columnName = rs.getString("COLUMN_NAME");
+                    if (columnName.equals("id")) {
+                        sheet.setColumnWidth(0, 1024 * 4);
+                        Cell cell = row0.createCell(0);
+                        cell.setCellValue(rs.getString("column_comment"));
+                        cell.setCellStyle(textStyle);
+                        Cell cell1 = row1.createCell(0);
+                        columnNames.add(0, columnName);
+                        cell1.setCellValue(columnName);
+                        cell1.setCellStyle(textStyle);
+                        Cell cell2 = row2.createCell(0);
+                        String type = rs.getString("DATA_TYPE");
+                        dateTypes.add(0, type);
+                        if (type.equals("varchar")) {
+                            type = "string";
+                        } else if (type.equals("bit")) {
+                            type = "bool";
+                        } else if (type.equals("bigint")) {
+                            type = "long";
+                        }
+                        cell2.setCellValue(type);
+                        cell2.setCellStyle(textStyle);
+                        Cell cell3 = row3.createCell(0);
+                        cell3.setCellValue("server");
+                        cell3.setCellStyle(textStyle);
+                    } else {
+                        index++;
+                        sheet.setColumnWidth(index, 1024 * 6);
+                        Cell cell = row0.createCell(index);
+                        cell.setCellValue(rs.getString("column_comment"));
+                        cell.setCellStyle(textStyle);
+                        Cell cell1 = row1.createCell(index);
+                        cell1.setCellStyle(textStyle);
+                        columnNames.add(columnName);
+                        cell1.setCellValue(columnName);
+                        Cell cell2 = row2.createCell(index);
+                        String type = rs.getString("DATA_TYPE");
+                        dateTypes.add(type);
+                        if (type.equals("varchar")) {
+                            type = "string";
+                        } else if (type.equals("bit")) {
+                            type = "bool";
+                        } else if (type.equals("bigint")) {
+                            type = "long";
+                        }
+                        cell2.setCellValue(type);
+                        cell2.setCellStyle(textStyle);
+                        Cell cell3 = row3.createCell(index);
+                        cell3.setCellValue("server");
+                        cell3.setCellStyle(textStyle);
                     }
-                    cell2.setCellValue(type);
-                    Cell cell3 = row3.createCell(index);
-                    cell3.setCellValue("server");
                 }
                 sql = "select ";
                 for (int i = 0; i < columnNames.size(); i++) {
@@ -169,8 +185,7 @@ public class MysqlToExcel implements InitializingBean {
 
                 }
 
-                System.out.println("sql:" + sql);
-                //                sql1 = " from " + dbName + "." + tableName;
+                log.info("sql:" + sql);
                 rs = st.executeQuery(sql);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int cols = rsmd.getColumnCount();
@@ -196,19 +211,14 @@ public class MysqlToExcel implements InitializingBean {
                             }
                         }
                         cel.setCellValue(val);
+                        cel.setCellStyle(textStyle);
                     }
                 }
                 book.write(new FileOutputStream(path + "/" + tableName + ".xlsx"));
             }
             conn.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (FileNotFoundException fileNotFoundException) {
-            fileNotFoundException.printStackTrace();
-        } catch (ClassNotFoundException classNotFoundException) {
-            classNotFoundException.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             scan.close();
         }
