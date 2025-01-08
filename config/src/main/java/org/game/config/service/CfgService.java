@@ -62,9 +62,6 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     public String getCfgName(Entity entity) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        if (!metaData.isEntityClass(entity.getClass())) {
-            return entity.getClass().getSimpleName();
-        }
         EntityPersister entityPersister = metaData.entityPersister(entity.getClass());
         return entityPersister.getIdentifierTableName();
     }
@@ -72,9 +69,6 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     public String getColumnName(Entity entity, String field) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        if (!metaData.isEntityClass(entity.getClass())) {
-            return field;
-        }
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
         return persist.getPropertyColumnNames(field)[0];
     }
