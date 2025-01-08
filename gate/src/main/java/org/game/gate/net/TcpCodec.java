@@ -59,7 +59,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
             byte to = in.readByte();
             short code = in.readShort();
             Protocol protocol = Protocols.getProtocol(from, to, code);
-            if (protocol == null || protocol.to().getCode() != to) {
+            if (protocol == null) {
                 log.error("decode error, protocol not found, from: {}, to: {}, code: {}", from, to, code);
                 in.skipBytes(in.readableBytes());
                 return;

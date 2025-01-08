@@ -27,16 +27,30 @@ public class LogicDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         byte type = in.readByte();// 协议类型
+        byte from, to;
+        short code;
+        final int playerId;
         if (type == DecoderType.MESSAGE_CODE.getCode()) {
-            byte from = Topic.LOGIC.getCode();
-            byte to = in.readByte();
-            short code = in.readShort();
-            Protocol protocol = Protocols.getProtocol(from, to, code);
-            if (protocol == null || protocol.to().getCode() != to) {
-                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
-                in.skipBytes(in.readableBytes());
-                return;
-            }
+            playerId = 0;
+            from = Topic.LOGIC.getCode();
+            to = in.readByte();
+            code = in.readShort();
+        } else if (type == DecoderType.MESSAGE_PLAYER.getCode()) {
+            from = Topic.LOGIC.getCode();
+            to = in.readByte();
+            playerId = in.readInt();
+            code = in.readShort();
+        } else {
+            throw new IllegalArgumentException("非法的协议类型：" + type);
+        }
+        Protocol protocol = Protocols.getProtocol(from, to, code);
+        if (protocol == null) {
+            log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
+            in.skipBytes(in.readableBytes());
+            return;
+        }
+
+        if (type == DecoderType.MESSAGE_CODE.getCode()) {
             if (to == Topic.GATE.getCode()) {
                 if (protocol.parser() != null) {
                     ByteBufInputStream inputStream = new ByteBufInputStream(in);
@@ -46,20 +60,10 @@ public class LogicDecoder extends ByteToMessageDecoder {
                     out.add(new MessageCode<>(protocol));
                 }
             } else {
-                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
+                log.warn("目前不支持 消息类型：MESSAGE_CODE 转发消息给{} 敬请期待！", to);
                 in.skipBytes(in.readableBytes());
             }
-        } else if (type == DecoderType.MESSAGE_PLAYER.getCode()) {
-            byte from = Topic.LOGIC.getCode();
-            byte to = in.readByte();
-            int playerId = in.readInt();
-            short code = in.readShort();
-            Protocol protocol = Protocols.getProtocol(from, to, code);
-            if (protocol == null || protocol.to().getCode() != to) {
-                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
-                in.skipBytes(in.readableBytes());
-                return;
-            }
+        } else {
             if (to == Topic.CLIENT.getCode()) {
                 ByteBuf duplicate = in.retainedDuplicate();
                 ThreadPool.getPlayerExecutor(playerId).execute(() -> {
@@ -86,7 +90,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
                 });
                 in.skipBytes(in.readableBytes());
             } else {
-                 log.error("收到非法消息协议 from:{}, to:{}, code:{}", from, to, code);
+                log.warn("目前不支持 消息类型：MESSAGE_PLAYER 转发消息给{} 敬请期待！", to);
                 in.skipBytes(in.readableBytes());
             }
         }

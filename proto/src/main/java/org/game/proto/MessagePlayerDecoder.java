@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
+import org.springframework.util.Assert;
 
 /**
  * 消息码解码器
@@ -20,9 +21,7 @@ public class MessagePlayerDecoder implements Decoder {
         int playerId = msg.readInt();
         short code = msg.readShort();
         Protocol protocol = Protocols.getProtocol(from, to, code);
-        if (protocol == null) {
-            throw new UnsupportedOperationException("协议不存在：" + from + "->" + to + ":" + code);
-        }
+        Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
         if (protocol.parser() != null) {
             ByteBufInputStream inputStream = new ByteBufInputStream(msg);
             Message message = (Message) protocol.parser().parseFrom(inputStream);
