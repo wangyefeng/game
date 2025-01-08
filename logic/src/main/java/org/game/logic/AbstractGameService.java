@@ -1,9 +1,12 @@
 package org.game.logic;
 
+import org.game.common.util.JsonUtil;
 import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.struct.Login.PbLoginReq;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract class AbstractGameService<E extends Entity, R extends MongoRepository<E, Integer>> implements GameService<E> {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractGameService.class);
     @Autowired
     protected R repository;
 
@@ -41,9 +45,15 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
         if (entity == null) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        E copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
-        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(copy));
+        E copy;
+        try {
+            copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
+        } catch (CloneNotSupportedException e) {
+            log.error("克隆对象失败，entity: {} {}", entity.getClass().getSimpleName(), JsonUtil.toJson(entity), e);
+            copy = entity;
+        }
+        final E finalCopy = copy;
+        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(finalCopy));
     }
 
     private void save(E entity) {

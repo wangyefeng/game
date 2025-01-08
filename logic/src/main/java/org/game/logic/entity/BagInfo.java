@@ -26,7 +26,7 @@ public class BagInfo extends Entity {
     }
 
     @Override
-    public BagInfo clone() {
+    public BagInfo clone() throws CloneNotSupportedException {
         BagInfo copy = (BagInfo) super.clone();
         copy.items = new HashMap<>();
         for (BagItem item : items.values()) {

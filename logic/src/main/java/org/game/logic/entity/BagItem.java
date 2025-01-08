@@ -58,11 +58,7 @@ public class BagItem implements Cloneable {
     }
 
     @Override
-    protected BagItem clone() {
-        try {
-            return (BagItem) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+    protected BagItem clone() throws CloneNotSupportedException {
+        return (BagItem) super.clone();
     }
 }

@@ -180,9 +180,7 @@ public class XlsxToSql implements InitializingBean {
                 sql.delete(sql.length() - 2, sql.length() - 1);
             }
             sql.append(")");
-            if (lastRowIndex == 3 || sheet.getRow(4) == null || sheet.getRow(4).getCell(0) == null) {
-
-            } else {
+            if (lastRowIndex != 3 || sheet.getRow(4) != null || sheet.getRow(4).getCell(0) != null) {
                 String start;
                 StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
                 int lastCellIndex;
@@ -297,7 +295,9 @@ public class XlsxToSql implements InitializingBean {
         File file = new File(fileName);
         try {
             if (!file.exists()) {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                    throw new RuntimeException("创建文件失败：" + fileName);
+                }
             }
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("");

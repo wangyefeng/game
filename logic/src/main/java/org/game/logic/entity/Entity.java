@@ -11,13 +11,8 @@ public abstract class Entity implements Cloneable {
         this.id = id;
     }
 
-    public Entity clone() {
-        try {
-            return (Entity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // This should never happen
-            return null;
-        }
+    public Entity clone() throws CloneNotSupportedException {
+        return (Entity) super.clone();
     }
 
     public int getId() {

@@ -64,7 +64,9 @@ public class MysqlToExcel implements InitializingBean {
         //创建文件夹
         File fileMdr = new File(path);
         if (!fileMdr.exists()) {
-            fileMdr.mkdirs();
+            if (!fileMdr.mkdirs()) {
+                throw new RuntimeException("创建文件失败：" + path);
+            }
         }
         //验证数据的正确性
         List<String> tables = new ArrayList<>();

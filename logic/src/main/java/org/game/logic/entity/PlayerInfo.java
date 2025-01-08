@@ -26,7 +26,7 @@ public class PlayerInfo extends Entity {
     }
 
     @Override
-    public PlayerInfo clone() {
+    public PlayerInfo clone() throws CloneNotSupportedException {
         return (PlayerInfo) super.clone();
     }
 

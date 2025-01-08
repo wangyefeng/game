@@ -24,7 +24,7 @@ public class Publisher<Event> {
     }
 
     public void update(Event event) {
-        Listener<Event>[] arrLocal = listeners.toArray(new Listener[listeners.size()]);
+        Listener<Event>[] arrLocal = listeners.toArray(new Listener[0]);
         for (Listener<Event> listener : arrLocal) {
             listener.update(event, this);
         }
