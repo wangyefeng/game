@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -33,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 /**
  * mysql数据导出到excel工具类
@@ -42,10 +43,10 @@ import java.util.logging.Logger;
  */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = XlsxToSql.class)})
+@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = XlsxToSql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = Check.class)})
 public class MysqlToExcel implements InitializingBean {
 
-    private static Logger log = Logger.getLogger(MysqlToExcel.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);
 
     //数据库的url
     @Value("${spring.datasource.url}")
@@ -97,7 +98,6 @@ public class MysqlToExcel implements InitializingBean {
                 table.add(tableName);
             }
 
-            log.info("获取所有表名:" + table);
             List<String> finalTables = tables;
             table.removeIf(tableName -> !finalTables.isEmpty() && !finalTables.contains(tableName));
             Workbook book = new XSSFWorkbook();
@@ -108,8 +108,8 @@ public class MysqlToExcel implements InitializingBean {
             textStyle.setDataFormat(dataFormat.getFormat("@"));
             textStyle.setAlignment(HorizontalAlignment.CENTER);
 
-
             for (String tableName : table) {
+                log.info("正在生成表:{}.xlsx", tableName);
                 Sheet sheet = book.createSheet(tableName);
                 //声明sql
                 String sql = "SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'";
@@ -184,8 +184,6 @@ public class MysqlToExcel implements InitializingBean {
                     }
 
                 }
-
-                log.info("sql:" + sql);
                 rs = st.executeQuery(sql);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int cols = rsmd.getColumnCount();
@@ -215,6 +213,7 @@ public class MysqlToExcel implements InitializingBean {
                     }
                 }
                 book.write(new FileOutputStream(path + "/" + tableName + ".xlsx"));
+                log.info("生成表:{}.xlsx成功！", tableName);
             }
             conn.close();
         } catch (Exception e) {

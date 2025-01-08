@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 public class CfgActivity implements Cfg<Integer> {
 
     @Id
-    @Column(name = "`id`", columnDefinition = "VARCHAR(32) COMMENT '唯一id'")
+    @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
     private Integer id;
 
     @Column(name = "`type`", columnDefinition = "INT COMMENT '活动类型'")
     private int type;
 
-    @Column(name = "`start_time`", columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "`start_time`", columnDefinition = "DATETIME COMMENT '开始时间'")
     private LocalDateTime startTime;
 
-    @Column(name = "`end_time`", columnDefinition = "datetime COMMENT '结束时间'")
+    @Column(name = "`end_time`", columnDefinition = "DATETIME COMMENT '结束时间'")
     private LocalDateTime endTime;
 
     @Override

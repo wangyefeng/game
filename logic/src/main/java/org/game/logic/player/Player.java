@@ -9,7 +9,6 @@ import org.game.config.Configs;
 import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.service.CfgItemService;
-import org.game.config.service.CfgRewardService;
 import org.game.logic.GameService;
 import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
@@ -115,9 +114,6 @@ public class Player {
             gameService.register(registerMsg);
         }
         init();
-        Configs config = Configs.getInstance();
-        CfgRewardService cfgRewardService = config.get(CfgRewardService.class);
-        addItems(cfgRewardService.getCfg(1).getItems());
     }
 
     private void startSaveTimer() {

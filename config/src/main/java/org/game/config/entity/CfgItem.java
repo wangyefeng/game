@@ -1,30 +1,24 @@
 package org.game.config.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "config_item")
+@Entity
 @Valid
 public class CfgItem implements Cfg<Integer> {
 
     @Id
+    @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
     private int id;
 
     @Min(100)
+    @Column(name = "`type`", columnDefinition = "INT COMMENT '物品类型'")
     private int type;
 
     private String name;
-
-    public CfgItem() {
-    }
-
-    public CfgItem(int id, int type, String name) {
-        this.id = id;
-        this.type = type;
-        this.name = name;
-    }
 
     public Integer getId() {
         return id;

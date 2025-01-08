@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -21,20 +23,27 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
+@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = Check.class)})
 public class XlsxToSql implements InitializingBean {
 
+    private static final Logger log = LoggerFactory.getLogger(XlsxToSql.class);
     private static final String TYPE_INT = "int";
 
     private static final String TYPE_STRING = "string";
@@ -59,6 +68,17 @@ public class XlsxToSql implements InitializingBean {
 
     @Value("${config.xlsx-path}")
     private String path;
+
+    //数据库的url
+    @Value("${spring.datasource.url}")
+    private String url;
+    //数据库的用户名
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    //数据库的密码
+    @Value("${spring.datasource.password}")
+    private String password;
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
@@ -299,8 +319,52 @@ public class XlsxToSql implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         Charset charset = Charset.forName("UTF-8");
-        clearInfoForFile(path + "/config.sql");
-        RandomAccessFile config = new RandomAccessFile(path + "/config.sql", "rw");
+        String configPath = path + "/config.sql";
+        clearInfoForFile(configPath);
+        RandomAccessFile config = new RandomAccessFile(configPath, "rw");
         XlsxToSql.common(path, charset, config);
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(url, username, password);
+            executeSQLFile(conn, configPath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+
+    public void executeSQLFile(Connection conn, String sqlFilePath) throws IOException {
+        StringBuilder sqlScript = new StringBuilder();
+
+        // 读取 SQL 文件内容
+        try (BufferedReader br = new BufferedReader(new FileReader(sqlFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // 忽略注释和空行
+                if (line.trim().startsWith("--") || line.trim().isEmpty()) {
+                    continue;
+                }
+                sqlScript.append(line).append(" ");
+            }
+        }
+
+        // 将 SQL 文件按语句分割
+        String[] statements = sqlScript.toString().split(";");
+
+        // 执行 SQL 语句
+        for (String statement : statements) {
+            if (!statement.trim().isEmpty()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(statement.trim());
+                    log.info("执行成功: {}", statement.trim());
+                } catch (SQLException e) {
+                    log.error("执行失败: {}", statement.trim(), e);
+                }
+            }
+        }
     }
 }
