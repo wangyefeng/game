@@ -1,5 +1,6 @@
 package org.game.logic;
 
+import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
 import org.game.proto.struct.Login;
 import org.springframework.stereotype.Service;

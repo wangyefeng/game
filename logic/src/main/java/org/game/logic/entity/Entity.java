@@ -1,4 +1,4 @@
-package org.game.logic;
+package org.game.logic.entity;
 
 import org.springframework.data.annotation.Id;
 

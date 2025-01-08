@@ -20,8 +20,6 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +38,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = Check.class)})
+@ComponentScan(useDefaultFilters = false)
 public class XlsxToSql implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(XlsxToSql.class);
@@ -140,7 +138,7 @@ public class XlsxToSql implements InitializingBean {
             if (sheet.getSheetName().equals("cfg_sensitive_words")) {
                 continue;
             }
-            System.out.println("开始解析配置表：" + sheet.getSheetName());
+            log.info("开始解析配置表：{}", sheet.getSheetName());
             RandomAccessFile sqlFile = new RandomAccessFile(path + "/sql/" + sheet.getSheetName() + ".sql", "rw");
             clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
             int firstRowIndex = sheet.getFirstRowNum() + 4;
@@ -168,7 +166,7 @@ public class XlsxToSql implements InitializingBean {
                     case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
                     case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
                     case TYPE_DATE -> sql.append("DATE NOT NULL");
-                    default -> System.out.println("非法类型:" + s);
+                    default -> log.info("未知类型：{}");
                 }
                 sql.append(" COMMENT '");
                 sql.append(row0.getCell(cellNum).getStringCellValue());
@@ -273,7 +271,7 @@ public class XlsxToSql implements InitializingBean {
             config.write(bs);
             config.write(";\r".getBytes(charset));
             sqlFile.close();
-            System.out.println("解析配置表完毕：" + sheet.getSheetName());
+            log.info("解析配置表完毕：{}", sheet.getSheetName());
         }
         book.close();
     }

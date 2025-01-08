@@ -20,8 +20,6 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +41,7 @@ import java.util.Scanner;
  */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = XlsxToSql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = Check.class)})
+@ComponentScan(useDefaultFilters = false)
 public class MysqlToExcel implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);

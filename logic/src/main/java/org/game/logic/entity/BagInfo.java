@@ -1,6 +1,5 @@
 package org.game.logic.entity;
 
-import org.game.logic.Entity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
