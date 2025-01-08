@@ -14,12 +14,12 @@ import java.util.Map;
 @Component
 public class ClientGroup<C extends Client> {
 
-    private Map<Integer, C> clients = new HashMap<>();
+    private final Map<Integer, C> clients = new HashMap<>();
 
     public ClientGroup() {
     }
 
-    public void remove(int id) {
+    public void remove(Integer id) {
         clients.remove(id);
     }
 
