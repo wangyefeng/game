@@ -1,5 +1,6 @@
 package org.game.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.mongo.MongoConnectionDetails;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = "org.game.config.repository", mongoTemplateRef = "configMongoTemplate")
 @EnableJpaRepositories(basePackages = "org.game.config.repository")
 @EntityScan(basePackages = "org.game.config.entity")
+@ConditionalOnClass(ConfigCheck.class)
 public class ConfigDataSource {
 
     @Bean(name = "configMongoProperties")

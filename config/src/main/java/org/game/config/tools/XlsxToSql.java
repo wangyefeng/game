@@ -8,6 +8,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +30,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class XlsxSqlUtils {
+@SpringBootApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
+@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
+public class XlsxToSql implements InitializingBean {
 
     private static final String TYPE_INT = "int";
 
@@ -42,7 +57,8 @@ public class XlsxSqlUtils {
 
     private static final String TYPE_SERVER = "server";
 
-    private static String path = "C:\\fish\\document\\table";
+    @Value("${config.xlsx-path}")
+    private String path;
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
@@ -242,13 +258,6 @@ public class XlsxSqlUtils {
         book.close();
     }
 
-    public static void main(String[] args) throws Exception {
-        Charset charset = Charset.forName("UTF-8");
-        clearInfoForFile(path + "/config.sql");
-        RandomAccessFile config = new RandomAccessFile(path + "/config.sql", "rw");
-        XlsxSqlUtils.common(path, charset, config);
-    }
-
     public static boolean containsChinese(String s) {
         if (s == null || s.isEmpty()) {
             return false;
@@ -280,5 +289,18 @@ public class XlsxSqlUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(XlsxToSql.class);
+        application.run(args);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Charset charset = Charset.forName("UTF-8");
+        clearInfoForFile(path + "/config.sql");
+        RandomAccessFile config = new RandomAccessFile(path + "/config.sql", "rw");
+        XlsxToSql.common(path, charset, config);
     }
 }

@@ -5,6 +5,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -29,23 +41,31 @@ import java.util.logging.Logger;
  *
  * @author WangYefeng
  */
-public class MysqlToExcel {
+@SpringBootApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
+@ComponentScan(basePackages = {"org.game.config.tools"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = XlsxToSql.class)})
+public class MysqlToExcel implements InitializingBean {
+
     private static Logger log = Logger.getLogger(MysqlToExcel.class.getName());
 
     //数据库的url
-    private static String dburl = "jdbc:mysql://game.wangyefeng.fun:3306/config?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
-
+    @Value("${spring.datasource.url}")
+    private String url;
     //数据库的用户名
-    private static String dbUserName = "root";
+    @Value("${spring.datasource.username}")
+    private String username;
 
     //数据库的密码
-    private static String dbPassWord = "WangTang@19920124";
+    @Value("${spring.datasource.password}")
+    private String password;
 
-    private static String dbName = "config";
+    @Value("${spring.datasource.dbname}")
+    private String name;
 
-    private static String path = "C:\\fish\\document\\table";
+    @Value("${config.xlsx-path}")
+    private String path;
 
-    public static void getConnectionCentenForm() {
+    public void getConnectionCentenForm() {
         //创建文件夹
         File fileMdr = new File(path);
         if (!fileMdr.exists()) {
@@ -69,10 +89,10 @@ public class MysqlToExcel {
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(dburl, dbUserName, dbPassWord);
+            conn = DriverManager.getConnection(url, username, password);
             Statement st = conn.createStatement();
             DatabaseMetaData dmd = conn.getMetaData();
-            ResultSet rs = dmd.getTables(dbName, dbName, null, new String[]{"TABLE"});
+            ResultSet rs = dmd.getTables(name, name, null, new String[]{"TABLE"});
             //获取所有表名　－　就是一个sheet
 
             List<String> table = new ArrayList<String>();
@@ -106,7 +126,7 @@ public class MysqlToExcel {
                 Workbook book = new XSSFWorkbook();
                 Sheet sheet = book.createSheet(tableName);
                 //声明sql
-                String sql = "SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + dbName + "'";
+                String sql = "SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'";
                 rs = st.executeQuery(sql);
                 int index = -1;
                 Row row0 = sheet.createRow(0);
@@ -142,7 +162,7 @@ public class MysqlToExcel {
                 sql = "select ";
                 for (int i = 0; i < columnNames.size(); i++) {
                     if (i == columnNames.size() - 1) {
-                        sql = sql + "`" + columnNames.get(i) + "`" + " from " + dbName + "." + tableName;
+                        sql = sql + "`" + columnNames.get(i) + "`" + " from " + name + "." + tableName;
                     } else {
                         sql = sql + "`" + columnNames.get(i) + "`" + " , ";
                     }
@@ -195,6 +215,12 @@ public class MysqlToExcel {
     }
 
     public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(MysqlToExcel.class);
+        application.run(args);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         getConnectionCentenForm();
     }
 }
