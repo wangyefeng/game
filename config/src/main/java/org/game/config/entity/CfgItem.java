@@ -14,7 +14,7 @@ public class CfgItem implements Cfg<Integer> {
     @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
     private int id;
 
-    @Min(100)
+    @Min(0)
     @Column(name = "`type`", columnDefinition = "INT COMMENT '物品类型'")
     private int type;
 

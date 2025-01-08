@@ -69,7 +69,7 @@ public class Config implements InitializingBean {
                 throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
             }
         }
-        log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
+        log.info("检查配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
     }
 
     public void reloadConfig(String... tableNames) {
