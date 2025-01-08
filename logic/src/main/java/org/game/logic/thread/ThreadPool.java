@@ -33,35 +33,17 @@ public abstract class ThreadPool {
             playerDBExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-db-thread-" + k));
         }
         scheduledExecutor = new ScheduledThreadPoolExecutor(5);
-        scheduledExecutor.scheduleAtFixedRate(() -> {
-            log.debug("实时在线玩家数量{}", Players.getPlayers().size());
-        }, 10, 10, TimeUnit.SECONDS);
+        scheduledExecutor.scheduleAtFixedRate(() -> log.debug("实时在线玩家数量{}", Players.getPlayers().size()), 10, 10, TimeUnit.SECONDS);
     }
 
     public static void shutdown() {
         for (ThreadPoolExecutor executor : ThreadPool.playerExecutors) {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                log.error("player thread shutdown interrupted", e);
-            }
+            executor.close();
         }
         for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(600, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                log.error("player thread shutdown interrupted", e);
-            }
+            executor.close();
         }
-        log.info("player thread pool shutdown");
+        log.info("thread pool shutdown");
     }
 
     public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {

@@ -68,6 +68,7 @@ public class Gate extends Server {
 
     @Override
     protected void start0() {
+        ThreadPool.start();
         Protocols.init();
         registerHandler();
         connectLogic();
