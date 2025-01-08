@@ -8,7 +8,7 @@ import org.game.common.Server;
 import org.game.config.Configs;
 import org.game.config.service.CfgService;
 import org.game.config.tools.MysqlToExcel;
-import org.game.config.tools.XlsxToSql;
+import org.game.config.tools.ExcelToMysql;
 import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.net.GateMsgHandler;
 import org.game.logic.net.TcpServer;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.FilterType;
 import java.util.Collection;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = XlsxToSql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
+@ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = ExcelToMysql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
 public class Logic extends Server {
 
     private static final Logger log = LoggerFactory.getLogger(Logic.class);

@@ -13,13 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,11 +34,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
-@ComponentScan(useDefaultFilters = false)
-public class XlsxToSql implements InitializingBean {
+@ComponentScan(basePackages = "org.game.config",  // 扫描该包及其子包
+        excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class))
+public class ExcelToMysql implements InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(XlsxToSql.class);
+    private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
     private static final String TYPE_INT = "int";
 
     private static final String TYPE_STRING = "string";
@@ -309,7 +306,7 @@ public class XlsxToSql implements InitializingBean {
     }
 
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(XlsxToSql.class);
+        SpringApplication application = new SpringApplication(ExcelToMysql.class);
         application.run(args);
     }
 
@@ -319,7 +316,7 @@ public class XlsxToSql implements InitializingBean {
         String configPath = path + "/config.sql";
         clearInfoForFile(configPath);
         RandomAccessFile config = new RandomAccessFile(configPath, "rw");
-        XlsxToSql.common(path, charset, config);
+        ExcelToMysql.common(path, charset, config);
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

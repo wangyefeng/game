@@ -42,7 +42,9 @@ public class Config implements InitializingBean {
         long start = System.currentTimeMillis();
         Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
         Configs.init(cfgServices);
+        log.info("加载配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
         if (checkConfig) {
+            log.info("开始检查配置表...");
             List<ConfigException> configExceptions = new ArrayList<>();
             for (CfgService cfgService : cfgServices) {
                 try {
@@ -68,8 +70,8 @@ public class Config implements InitializingBean {
                 }
                 throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
             }
+            log.info("检查配置表完成。");
         }
-        log.info("检查配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
     }
 
     public void reloadConfig(String... tableNames) {
