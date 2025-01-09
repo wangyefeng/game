@@ -28,10 +28,6 @@ public enum ClientToLogicProtocol implements Protocol {
         this.parser = parser;
     }
 
-    public static void register() {
-        Protocols.addProtocols(ClientToLogicProtocol.values());
-    }
-
     @Override
     public Topic from() {
         return Topic.CLIENT;

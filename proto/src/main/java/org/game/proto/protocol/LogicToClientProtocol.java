@@ -15,10 +15,6 @@ public enum LogicToClientProtocol implements Protocol {
 
     private final Parser<?> parser;
 
-    public static void register() {
-        Protocols.addProtocols(LogicToClientProtocol.values());
-    }
-
     LogicToClientProtocol(short code) {
         this(code, null);
     }

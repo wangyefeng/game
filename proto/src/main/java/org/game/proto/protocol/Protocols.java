@@ -13,22 +13,24 @@ public abstract class Protocols {
     private static final Map<Key, Protocol> protocolMap = new HashMap<>();
 
     public static void init() {
-        LogicToGateProtocol.register();
-        ClientToLogicProtocol.register();
-        GateToClientProtocol.register();
-        GateToLogicProtocol.register();
-        ClientToGateProtocol.register();
-        LogicToClientProtocol.register();
+        Protocols.addProtocols(ClientToGateProtocol.values()
+                , ClientToLogicProtocol.values()
+                , GateToClientProtocol.values()
+                , GateToLogicProtocol.values()
+                , LogicToClientProtocol.values()
+                , LogicToGateProtocol.values());
     }
 
-    public static void addProtocols(Protocol[] protocols) {
-        for (Protocol protocol : protocols) {
-            byte from = protocol.from().getCode();
-            byte to = protocol.to().getCode();
-            short code = protocol.getCode();
-            Protocol p = protocolMap.put(new Key(from, to, code), protocol);
-            if (p != null) {
-                throw new IllegalArgumentException(Protocol.toString(protocol) + "与" + Protocol.toString(p) + "协议号冲突！！！");
+    public static void addProtocols(Protocol[]... allProtocols) {
+        for (Protocol[] protocols : allProtocols) {
+            for (Protocol protocol : protocols) {
+                byte from = protocol.from().getCode();
+                byte to = protocol.to().getCode();
+                short code = protocol.getCode();
+                Protocol p = protocolMap.put(new Key(from, to, code), protocol);
+                if (p != null) {
+                    throw new IllegalArgumentException(Protocol.toString(protocol) + "与" + Protocol.toString(p) + "协议号冲突！！！");
+                }
             }
         }
     }

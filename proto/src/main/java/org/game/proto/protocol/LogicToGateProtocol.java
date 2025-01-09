@@ -24,10 +24,6 @@ public enum LogicToGateProtocol implements Protocol {
         this.parser = parser;
     }
 
-    public static void register() {
-        Protocols.addProtocols(LogicToGateProtocol.values());
-    }
-
     @Override
     public Topic from() {
         return Topic.LOGIC;

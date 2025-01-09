@@ -29,10 +29,6 @@ public enum ClientToGateProtocol implements Protocol {
         this.parser = parser;
     }
 
-    public static void register() {
-        Protocols.addProtocols(ClientToGateProtocol.values());
-    }
-
     @Override
     public Topic from() {
         return Topic.CLIENT;
