@@ -4,7 +4,6 @@ import org.game.common.util.JsonUtil;
 import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
 import org.game.logic.thread.ThreadPool;
-import org.game.proto.struct.Login.PbLoginReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
         ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(finalCopy));
     }
 
-    private void save(E entity) {
+    public void save(E entity) {
         repository.save(entity);
     }
 
@@ -66,7 +65,7 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
     }
 
     @Override
-    public void login(PbLoginReq loginMsg) {
+    public void init() {
         // do nothing
     }
 }

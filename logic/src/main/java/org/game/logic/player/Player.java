@@ -110,9 +110,7 @@ public class Player {
     }
 
     public void register(Login.PbRegisterReq registerMsg) {
-        for (GameService gameService : map.values()) {
-            gameService.register(registerMsg);
-        }
+        map.values().forEach(service -> service.register(registerMsg));
         init();
     }
 
@@ -120,29 +118,18 @@ public class Player {
         saveFuture = scheduleAtFixedRate(this::asyncSave, 0, 1, TimeUnit.MINUTES);
     }
 
-    public void loginResp(Login.PbLoginResp.Builder loginReq) {
-        for (GameService gameService : map.values()) {
-            gameService.loginResp(loginReq);
-        }
+    public void loginResp(Login.PbLoginResp.Builder loginResp) {
+        map.values().forEach(service -> service.loginResp(loginResp));
     }
 
     public void login(Login.PbLoginReq loginMsg) {
-        for (GameService gameService : map.values()) {
-            gameService.load();
-        }
+        map.values().forEach(GameService::load);
         init();
-        for (GameService gameService : map.values()) {
-            gameService.login(loginMsg);
-        }
     }
 
     private void init() {
-        initListener();
+        map.values().forEach(GameService::init);
         startSaveTimer();
-    }
-
-    private void initListener() {
-        // 注册监听器
     }
 
     public void logout() {

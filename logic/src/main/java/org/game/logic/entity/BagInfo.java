@@ -16,9 +16,6 @@ public class BagInfo extends Entity {
      */
     private Map<Integer, BagItem> items;
 
-    public BagInfo() {
-    }
-
     public BagInfo(int id) {
         super(id);
         this.items = new HashMap<>();

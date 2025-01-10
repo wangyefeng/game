@@ -7,7 +7,6 @@ import org.game.logic.AbstractGameService;
 import org.game.logic.entity.ActivityInfo;
 import org.game.logic.player.function.FunctionService;
 import org.game.logic.repository.ActivityRepository;
-import org.game.proto.struct.Login.PbLoginReq;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -28,8 +27,7 @@ public class ActivityService extends AbstractGameService<ActivityInfo, ActivityR
     }
 
     @Override
-    public void login(PbLoginReq loginMsg) {
-        super.login(loginMsg);
+    public void init() {
         checkActivity(false);
     }
 

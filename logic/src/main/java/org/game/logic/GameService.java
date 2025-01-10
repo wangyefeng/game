@@ -13,19 +13,51 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GameService<E extends Entity> {
 
+    /**
+     * 加载游戏数据
+     */
     void load();
 
+    /**
+     * 初始化游戏数据
+     */
+    void init();
+
+    /**
+     * 保存游戏数据
+     */
     void save();
 
+    /**
+     * 获取实体对象
+     *
+     * @return 实体对象
+     */
+    E getEntity();
+
+    /**
+     * 异步保存游戏数据
+     */
     void asyncSave();
 
+    /**
+     * 设置玩家对象
+     *
+     * @param player 玩家对象
+     */
     void setPlayer(Player player);
 
-    void login(Login.PbLoginReq loginMsg);
-
+    /**
+     * 注册
+     *
+     * @param registerMsg 注册消息
+     */
     void register(Login.PbRegisterReq registerMsg);
 
+    /**
+     * 登录响应
+     *
+     * @param loginResp 登录响应消息
+     */
     void loginResp(Login.PbLoginResp.Builder loginResp);
-
-    E getEntity();
 }

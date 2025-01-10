@@ -14,7 +14,7 @@ public class CfgFunction implements Cfg<Integer> {
 
     @Id
     @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
-    private Integer id;
+    private int id;
 
     @Column(name = "`type`", columnDefinition = "INT COMMENT '类型'")
     private int type;

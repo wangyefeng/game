@@ -20,9 +20,6 @@ public class ActivityInfo extends Entity {
         this.activityIds = new HashSet<>();
     }
 
-    public ActivityInfo() {
-    }
-
     public Set<Integer> getActivityIds() {
         return activityIds;
     }
