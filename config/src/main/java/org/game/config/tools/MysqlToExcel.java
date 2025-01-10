@@ -13,11 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,8 +37,9 @@ import java.util.Scanner;
  * @author WangYefeng
  */
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 @ComponentScan(useDefaultFilters = false)
+@EntityScan(basePackages = "org.game.config.entity")
+@EnableJpaRepositories({"org.game.config.repository"})
 @Tool
 public class MysqlToExcel implements InitializingBean {
 
@@ -113,6 +113,20 @@ public class MysqlToExcel implements InitializingBean {
                 //声明sql
                 StringBuilder sql = new StringBuilder("SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'");
                 rs = st.executeQuery(sql.toString());
+
+                ResultSet pkResultSet = dmd.getPrimaryKeys(null, null, tableName);
+                String pkColumnName = null;
+                if (pkResultSet.next()) {
+                    pkColumnName = pkResultSet.getString("COLUMN_NAME");
+                } else {
+                    throw new RuntimeException("表" + tableName + "没有主键！");
+                }
+
+                while (pkResultSet.next()) {
+                    String columnName = pkResultSet.getString("COLUMN_NAME");
+                    System.out.println("Primary Key Column: " + columnName);
+                }
+
                 int index = 0;
                 Row row0 = sheet.createRow(0);
                 Row row1 = sheet.createRow(1);
@@ -123,7 +137,7 @@ public class MysqlToExcel implements InitializingBean {
                 List<String> dateTypes = new ArrayList<>();
                 while (rs.next()) {
                     String columnName = rs.getString("COLUMN_NAME");
-                    if (columnName.equals("id")) {
+                    if (columnName.equals(pkColumnName)) {// 主键列 放第一行
                         sheet.setColumnWidth(0, 1024 * 4);
                         Cell cell = row0.createCell(0);
                         cell.setCellValue(rs.getString("column_comment"));
@@ -142,6 +156,7 @@ public class MysqlToExcel implements InitializingBean {
                         } else if (type.equals("bigint")) {
                             type = "long";
                         }
+                        type += "!";// 加上!表示主键
                         cell2.setCellValue(type);
                         cell2.setCellStyle(textStyle);
                         Cell cell3 = row3.createCell(0);
