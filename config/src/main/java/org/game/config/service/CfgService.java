@@ -55,7 +55,11 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
             for (ConstraintViolation<Entity> violation : validator.validate(entity)) {
                 throw new ConfigException(getCfgName(entity), entity.getId(), getColumnName(entity, violation.getPropertyPath().toString()), violation.getMessage());
             }
-            check0(entity, config);
+            try {
+                check0(entity, config);
+            } catch (Exception e) {
+                throw new ConfigException(getCfgName(entity), entity.getId(), null, e.getMessage());
+            }
         }
     }
 
@@ -73,5 +77,5 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return persist.getPropertyColumnNames(field)[0];
     }
 
-    protected abstract void check0(Entity entity, Configs config) throws ConfigException;
+    protected abstract void check0(Entity entity, Configs config) throws Exception;
 }
