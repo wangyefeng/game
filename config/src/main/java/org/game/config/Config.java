@@ -1,6 +1,7 @@
 package org.game.config;
 
 import org.game.config.service.CfgService;
+import org.game.config.service.DatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,17 +26,27 @@ public class Config implements InitializingBean {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private DatabaseService databaseService;
+
     @Value("${config.check:false}")
     private boolean checkConfig;
 
     private void initConfig() throws Exception {
-        log.info("开始加载配置表...");
-        long start = System.currentTimeMillis();
-        Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-        Configs.init(cfgServices);
-        log.info("加载配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
-        if (checkConfig) {
-            check(cfgServices);
+        databaseService.lockDatabase();
+        try {
+            log.info("开始加载配置表...");
+            long start = System.currentTimeMillis();
+            Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
+            Configs.init(cfgServices);
+            log.info("加载配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
+            if (checkConfig) {
+                check(cfgServices);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            databaseService.unlockDatabase();
         }
     }
 
