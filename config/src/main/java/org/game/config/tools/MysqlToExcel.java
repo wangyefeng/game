@@ -40,6 +40,7 @@ import java.util.Scanner;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 @ComponentScan(useDefaultFilters = false)
+@Tool
 public class MysqlToExcel implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);

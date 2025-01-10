@@ -7,8 +7,7 @@ import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
 import org.game.config.Configs;
 import org.game.config.service.CfgService;
-import org.game.config.tools.ExcelToMysql;
-import org.game.config.tools.MysqlToExcel;
+import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.activity.ActivityManager;
 import org.game.logic.thread.ThreadPool;
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = ExcelToMysql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
+@ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = Tool.class))
 public class Logic extends Server {
 
     private static final Logger log = LoggerFactory.getLogger(Logic.class);

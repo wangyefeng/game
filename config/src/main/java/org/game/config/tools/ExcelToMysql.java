@@ -36,6 +36,7 @@ import java.util.Map;
 @SpringBootApplication
 @ComponentScan(basePackages = "org.game.config",  // 扫描该包及其子包
         excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class))
+@Tool
 public class ExcelToMysql implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
@@ -77,8 +78,11 @@ public class ExcelToMysql implements InitializingBean {
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
-        String[] tables = file.list((dir, name) -> name != null && name.endsWith(".xlsx"));
-        assert tables != null;
+        String[] tables = file.list((dir, name) -> name != null && (name.endsWith(".xlsx") || name.endsWith(".xls")));
+        if (tables == null || tables.length == 0) {
+            log.info("没有找到Excel文件");
+            return;
+        }
         for (String table : tables) {
             readExcel(path, new File(path + File.separatorChar + table), charset, config);
         }
@@ -306,8 +310,7 @@ public class ExcelToMysql implements InitializingBean {
     }
 
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(ExcelToMysql.class);
-        application.run(args);
+        SpringApplication.run(ExcelToMysql.class, args);
     }
 
     @Override
