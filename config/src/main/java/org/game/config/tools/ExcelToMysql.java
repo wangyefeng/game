@@ -272,6 +272,7 @@ public class ExcelToMysql implements InitializingBean {
             log.info("解析配置表完毕：{}", sheet.getSheetName());
         }
         book.close();
+        log.info("解析所有Excel完毕");
     }
 
     public static boolean containsChinese(String s) {
@@ -322,9 +323,12 @@ public class ExcelToMysql implements InitializingBean {
         ExcelToMysql.common(path, charset, config);
         Connection conn = null;
         try {
+            log.info("开始执行SQL脚本...");
+            long start = System.currentTimeMillis();
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
             executeSQLFile(conn, configPath);
+            log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -357,7 +361,7 @@ public class ExcelToMysql implements InitializingBean {
             if (!statement.trim().isEmpty()) {
                 try (Statement stmt = conn.createStatement()) {
                     stmt.execute(statement.trim());
-                    log.info("执行成功: {}", statement.trim());
+                    log.debug("执行成功: {}", statement.trim());
                 } catch (SQLException e) {
                     log.error("执行失败: {}", statement.trim(), e);
                 }
