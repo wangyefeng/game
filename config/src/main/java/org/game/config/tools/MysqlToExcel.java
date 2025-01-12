@@ -99,15 +99,17 @@ public class MysqlToExcel implements InitializingBean {
 
             List<String> finalTables = tables;
             table.removeIf(tableName -> !finalTables.isEmpty() && !finalTables.contains(tableName));
-            Workbook book = new XSSFWorkbook();
-            CellStyle textStyle = book.createCellStyle();
-            // 获取一个数据格式对象
-            DataFormat dataFormat = book.createDataFormat();
-            // 设置单元格的格式为文本
-            textStyle.setDataFormat(dataFormat.getFormat("@"));
-            textStyle.setAlignment(HorizontalAlignment.CENTER);
+
+
 
             for (String tableName : table) {
+                Workbook book = new XSSFWorkbook();
+                CellStyle textStyle = book.createCellStyle();
+                // 获取一个数据格式对象
+                DataFormat dataFormat = book.createDataFormat();
+                // 设置单元格的格式为文本
+                textStyle.setDataFormat(dataFormat.getFormat("@"));
+                textStyle.setAlignment(HorizontalAlignment.CENTER);
                 log.info("正在生成表:{}.xlsx", tableName);
                 Sheet sheet = book.createSheet(tableName);
                 //声明sql
@@ -227,6 +229,7 @@ public class MysqlToExcel implements InitializingBean {
                     }
                 }
                 book.write(new FileOutputStream(path + "/" + tableName + ".xlsx"));
+                book.close();
                 log.info("生成表:{}.xlsx成功！", tableName);
             }
             conn.close();
