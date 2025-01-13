@@ -15,8 +15,8 @@ public class FunctionInfo extends Entity {
 
     private Set<Integer> functionIds; // 功能ID集合
 
-    public FunctionInfo(int id) {
-        super(id);
+    public FunctionInfo(int playerId) {
+        super(playerId);
         functionIds = new HashSet<>();
     }
 

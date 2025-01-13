@@ -8,7 +8,6 @@ import org.game.logic.player.item.ItemIdConstant;
 import org.game.logic.player.item.ItemType;
 import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
-import org.game.proto.struct.Login.PbLoginReq;
 import org.game.proto.struct.Login.PbLoginResp;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -26,8 +25,8 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     @Override
     public void loginResp(PbLoginResp.Builder loginResp) {
+        loginResp.setId(entity.getPlayerId());
         loginResp.setLevel(entity.getLevel());
-        loginResp.setId(entity.getId());
         loginResp.setName(entity.getName());
     }
 

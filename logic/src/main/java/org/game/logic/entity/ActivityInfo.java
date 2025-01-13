@@ -15,8 +15,8 @@ public class ActivityInfo extends Entity {
 
     private Set<Integer> activityIds; // 功能ID集合
 
-    public ActivityInfo(int id) {
-        super(id);
+    public ActivityInfo(int playerId) {
+        super(playerId);
         this.activityIds = new HashSet<>();
     }
 
