@@ -2,7 +2,7 @@ package org.game.logic.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "player_info")
+@Document
 public class PlayerInfo extends Entity {
 
     private String name;

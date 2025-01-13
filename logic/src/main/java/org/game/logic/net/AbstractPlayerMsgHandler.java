@@ -22,7 +22,8 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
             } catch (Exception e) {
                 log.error("协议处理失败：{}", data, e);
             } finally {
-                long cost = System.currentTimeMillis() - start; if (cost > 1000) {
+                long cost = System.currentTimeMillis() - start;
+                if (cost > 1000) {
                     log.error("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
                 } else if (cost > 100) {
                     log.warn("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));

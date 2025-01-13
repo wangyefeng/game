@@ -358,12 +358,13 @@ public class ExcelToMysql implements InitializingBean {
 
         // 执行 SQL 语句
         for (String statement : statements) {
-            if (!statement.trim().isEmpty()) {
+            String s = statement.trim();
+            if (!s.isEmpty()) {
                 try (Statement stmt = conn.createStatement()) {
-                    stmt.execute(statement.trim());
-                    log.debug("执行成功: {}", statement.trim());
+                    stmt.execute(s);
+                    log.debug("执行成功: {}", s);
                 } catch (SQLException e) {
-                    log.error("执行失败: {}", statement.trim(), e);
+                    log.error("执行失败: {}", s, e);
                 }
             }
         }

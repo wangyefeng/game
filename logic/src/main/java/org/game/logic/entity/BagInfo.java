@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * 背包
  */
-@Document(collection = "bag_info")
+@Document
 public class BagInfo extends Entity {
 
     /**

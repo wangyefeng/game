@@ -5,8 +5,6 @@ import io.netty.util.internal.EmptyArrays;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
-import org.game.config.Configs;
-import org.game.config.service.CfgService;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.activity.ActivityManager;
@@ -53,6 +51,12 @@ public class Logic extends Server {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
+    public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(Logic.class);
+        application.setRegisterShutdownHook(false);// 关闭Spring-boot停服处理策略
+        application.run(args);
+    }
+
     /**
      * 初始化spring容器后，启动服务器
      */
@@ -60,7 +64,6 @@ public class Logic extends Server {
     protected void start0() throws Exception {
         Protocols.init();
         registerHandler();
-        tcpServer.start();
         initGameService();
         ThreadPool.start();
         ActivityManager.getInstance().init();
@@ -73,15 +76,9 @@ public class Logic extends Server {
 
     @Override
     protected void afterStart() throws Exception {
+        tcpServer.start();
         grpcServer.start();
         registerService();
-    }
-
-    private void initConfig() {
-        log.info("开始加载配置表...");
-        long start = System.currentTimeMillis();
-        Configs.init(applicationContext.getBeansOfType(CfgService.class).values());
-        log.info("加载配置完成, 花费: {}毫秒", System.currentTimeMillis() - start);
     }
 
     private void registerService() throws Exception {
@@ -105,11 +102,4 @@ public class Logic extends Server {
         applicationContext.getBeansOfType(MsgHandler.class).values().forEach(MsgHandler::register);// 注册所有handler
         log.info("handler register end");
     }
-
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(Logic.class);
-        application.setRegisterShutdownHook(false);// 关闭Spring-boot停服处理策略
-        application.run(args);
-    }
-
 }
