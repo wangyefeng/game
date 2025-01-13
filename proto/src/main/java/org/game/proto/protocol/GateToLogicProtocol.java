@@ -20,7 +20,7 @@ public enum GateToLogicProtocol implements Protocol {
     }
 
     GateToLogicProtocol(short code, Parser<?> parser) {
-        Assert.isTrue(code >= 0, "协议号必须大于0");
+        Assert.isTrue(code > 0, "协议号必须大于0");
         this.code = code;
         this.parser = parser;
     }

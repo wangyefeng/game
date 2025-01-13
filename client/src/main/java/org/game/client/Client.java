@@ -134,8 +134,8 @@ public class Client implements CommandLineRunner {
             HttpResp<LoginResponse> httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
             });
             if (httpResp.isSuccess()) {
-                token = httpResp.getData().token();
-                playerId = httpResp.getData().userId();
+                token = httpResp.data().token();
+                playerId = httpResp.data().userId();
             } else {
                 String registerResponse = basedUrl.build()
                         .get()
@@ -158,14 +158,14 @@ public class Client implements CommandLineRunner {
                     httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
                     });
                     if (httpResp.isSuccess()) {
-                        token = httpResp.getData().token();
-                        playerId = httpResp.getData().userId();
+                        token = httpResp.data().token();
+                        playerId = httpResp.data().userId();
                     } else {
-                        log.error("登录失败：{}", httpResp.getMsg());
+                        log.error("登录失败：{}", httpResp.msg());
                         return;
                     }
                 } else {
-                    log.error("注册失败：{}", registerResp.getMsg());
+                    log.error("注册失败：{}", registerResp.msg());
                     return;
                 }
             }

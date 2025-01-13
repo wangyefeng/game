@@ -86,6 +86,7 @@ public class ExcelToMysql implements InitializingBean {
         for (String table : tables) {
             readExcel(path, new File(path + File.separatorChar + table), charset, config);
         }
+        log.info("解析所有Excel完毕");
     }
 
     // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
@@ -272,7 +273,6 @@ public class ExcelToMysql implements InitializingBean {
             log.info("解析配置表完毕：{}", sheet.getSheetName());
         }
         book.close();
-        log.info("解析所有Excel完毕");
     }
 
     public static boolean containsChinese(String s) {
