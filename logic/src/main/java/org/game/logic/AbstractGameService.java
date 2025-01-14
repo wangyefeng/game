@@ -4,6 +4,7 @@ import org.game.common.util.JsonUtil;
 import org.game.logic.entity.Entity;
 import org.game.logic.player.Player;
 import org.game.logic.thread.ThreadPool;
+import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +68,10 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
     @Override
     public void init() {
         // do nothing
+    }
+
+    @Override
+    public void register(PbRegisterReq registerMsg) {
+
     }
 }

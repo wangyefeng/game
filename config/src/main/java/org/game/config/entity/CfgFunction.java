@@ -9,8 +9,8 @@ import jakarta.validation.Valid;
 
 @Entity
 @Valid
-@Inheritance(strategy = InheritanceType.JOINED)
-public class CfgFunction implements Cfg<Integer> {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class CfgFunction implements Cfg<Integer> {
 
     @Id
     @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")

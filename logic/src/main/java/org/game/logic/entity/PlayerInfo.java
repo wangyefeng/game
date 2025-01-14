@@ -11,8 +11,8 @@ public class PlayerInfo extends Entity {
 
     private int coin;
 
-    public PlayerInfo(int id, String name) {
-        super(id);
+    public PlayerInfo(int playerId, String name) {
+        super(playerId);
         this.name = name;
         this.level = 1;
     }

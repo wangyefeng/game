@@ -7,7 +7,7 @@ import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
-import org.game.logic.player.activity.ActivityManager;
+import org.game.logic.player.activity.TimeIntervalManager;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
@@ -47,7 +47,7 @@ public class Logic extends Server {
     private io.grpc.Server grpcServer;
 
     @Autowired
-    private ActivityManager activityManager;
+    private TimeIntervalManager timeIntervalManager;
 
     static {
         // 设置netty的资源泄露检测
@@ -69,7 +69,7 @@ public class Logic extends Server {
         registerHandler();
         initGameService();
         ThreadPool.start();
-        activityManager.init();
+        timeIntervalManager.init();
     }
 
     private void initGameService() {

@@ -2,8 +2,8 @@ package org.game.logic.player.activity;
 
 import org.game.config.Config;
 import org.game.config.Configs;
-import org.game.config.entity.CfgActivity;
-import org.game.config.service.CfgActivityService;
+import org.game.config.entity.CfgTimeIntervalFunction;
+import org.game.config.service.CfgTimeIntervalFunctionService;
 import org.game.logic.player.Players;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -21,19 +21,18 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * 活动管理器
+ * 按时间段开启的功能的管理器
  *
  * @author 王叶峰
- * @date 2022年3月18日
  */
 @Component
-public class ActivityManager {
+public class TimeIntervalManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ActivityManager.class);
+    private static final Logger log = LoggerFactory.getLogger(TimeIntervalManager.class);
 
-    private Set<Integer> activityIds = new HashSet<>();
+    private Set<Integer> functionIds = new HashSet<>();
 
-    // 活动全局锁
+    // 全局锁读写锁
     public ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
@@ -44,76 +43,76 @@ public class ActivityManager {
         writeLock.lock();
         try {
             LocalDateTime nowDateTime = LocalDateTime.now();
-            Configs cfg = Configs.getInstance();
-            CfgActivityService cfgActivityService = cfg.get(CfgActivityService.class);
-            cfgActivityService.getAllCfg().forEach(cfgActivity -> {
-                LocalDateTime startTime = cfgActivity.getStartTime();
-                LocalDateTime endTime = cfgActivity.getEndTime();
+            Configs configs = Configs.getInstance();
+            CfgTimeIntervalFunctionService cfgService = configs.get(CfgTimeIntervalFunctionService.class);
+            cfgService.getAllCfg().forEach(cfg -> {
+                LocalDateTime startTime = cfg.getStartTime();
+                LocalDateTime endTime = cfg.getEndTime();
                 if (startTime.isBefore(nowDateTime) && endTime.isAfter(nowDateTime)) {
-                    startActivity(cfgActivity, nowDateTime, endTime);
+                    startActivity(cfg, nowDateTime, endTime);
                 } else if (startTime.isAfter(nowDateTime)) {
-                    // 未开始的活动，延迟开启
+                    // 未开始的功能，延迟开启
                     Duration duration = Duration.between(nowDateTime, startTime);
                     long millis = duration.toMillis();
                     ThreadPool.getScheduledExecutor().schedule(
-                            () -> startActivity(cfgActivity, nowDateTime, endTime),
+                            () -> startActivity(cfg, nowDateTime, endTime),
                             millis,
                             TimeUnit.MILLISECONDS);    // 定时开启活动
                 }
             });
             config.addReloadPublisher((_, _) -> {
-                log.info("活动配置变更，重新加载活动！");
+                log.info("配置变更，重新加载时间段开启的功能！");
             });
         } finally {
             writeLock.unlock();
         }
     }
 
-    private void startActivity(CfgActivity cfgActivity, LocalDateTime nowDateTime, LocalDateTime endTime) {
-        open(cfgActivity);
+    private void startActivity(CfgTimeIntervalFunction cfg, LocalDateTime nowDateTime, LocalDateTime endTime) {
+        open(cfg);
         Duration duration = Duration.between(nowDateTime, endTime);
         long millis = duration.toMillis();
         ThreadPool.getScheduledExecutor().schedule(
-                () -> close(cfgActivity),
+                () -> close(cfg),
                 millis,
                 TimeUnit.MILLISECONDS);    // 定时关闭活动
     }
 
     public boolean isOpen(int id) {
-        return activityIds.contains(id);
+        return functionIds.contains(id);
     }
 
-    public void open(CfgActivity cfg) {
+    public void open(CfgTimeIntervalFunction cfg) {
         log.info("活动{}开启！", cfg.getId());
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            activityIds.add(cfg.getId());
+            functionIds.add(cfg.getId());
         } finally {
             writeLock.unlock();
         }
         Players.getPlayers().values().forEach(player -> {
-            ActivityService activityService = player.getService(ActivityService.class);
-            activityService.checkActivity(cfg, true);
+            TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
+            timeIntervalFunctionService.check(cfg, true);
         });
     }
 
-    public void close(CfgActivity cfg) {
-        log.info("活动{}关闭！", cfg.getId());
+    public void close(CfgTimeIntervalFunction cfg) {
+        log.info("功能{}关闭！", cfg.getId());
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            activityIds.remove(cfg.getId());
+            functionIds.remove(cfg.getId());
         } finally {
             writeLock.unlock();
         }
         Players.getPlayers().values().forEach(player -> {
-            ActivityService activityService = player.getService(ActivityService.class);
-            activityService.checkActivity(cfg, true);
+            TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
+            timeIntervalFunctionService.check(cfg, true);
         });
     }
 
-    public Set<Integer> getActivityIds() {
-        return activityIds;
+    public Set<Integer> getFunctionIds() {
+        return functionIds;
     }
 }

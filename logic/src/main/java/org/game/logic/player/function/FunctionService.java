@@ -38,6 +38,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     }
 
     public void open(CfgFunction cfgFunction, boolean isSend) {
+        log.info("玩家{}打开功能{}", player.getId(), cfgFunction.getId());
         entity.addFunctionId(cfgFunction.getId());
         FunctionEnum functionEnum = FunctionEnum.getByType(cfgFunction.getType());
         for (ModuleEnum moduleEnum : functionEnum.getModules()) {
