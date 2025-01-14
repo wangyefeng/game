@@ -17,7 +17,7 @@ public final class Configs {
         cfgServices.forEach(Configs.instance::add);
     }
 
-    public static void reload(Collection<CfgService> cfgServices) throws Exception {
+    public static void reload(Collection<CfgService> cfgServices) throws ConfigException {
         Map<Class<? extends CfgService>, CfgService> newMap = new HashMap<>(instance.map);
         for (CfgService cfgService : cfgServices) {
             newMap.put(cfgService.getClass(), cfgService);

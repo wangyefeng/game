@@ -9,6 +9,7 @@ import org.game.logic.player.function.FunctionService;
 import org.game.logic.repository.ActivityRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.util.concurrent.locks.Lock;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ActivityService extends AbstractGameService<ActivityInfo, ActivityRepository> {
 
+    @Autowired
+    private ActivityManager activityManager;
+
     @Override
     public void register(PbRegisterReq registerMsg) {
         entity = new ActivityInfo(player.getId());
@@ -32,10 +36,10 @@ public class ActivityService extends AbstractGameService<ActivityInfo, ActivityR
     }
 
     public void checkActivity(boolean isSend) {
-        Lock lock = ActivityManager.getInstance().lock.readLock();
+        Lock lock = activityManager.lock.readLock();
         try {
             lock.lock();
-            Set<Integer> needCheck = new HashSet<>(ActivityManager.getInstance().getActivityIds());
+            Set<Integer> needCheck = new HashSet<>(activityManager.getActivityIds());
             needCheck.addAll(entity.getActivityIds());
             Configs configs = Configs.getInstance();
             CfgActivityService cfgActivityService = configs.get(CfgActivityService.class);
@@ -54,7 +58,7 @@ public class ActivityService extends AbstractGameService<ActivityInfo, ActivityR
     }
 
     public void checkActivity(CfgActivity cfgActivity, boolean isSend) {
-        Lock lock = ActivityManager.getInstance().lock.readLock();
+        Lock lock = activityManager.lock.readLock();
         try {
             lock.lock();
             checkActivityOne(cfgActivity, isSend);
@@ -67,7 +71,7 @@ public class ActivityService extends AbstractGameService<ActivityInfo, ActivityR
 
     private void checkActivityOne(CfgActivity cfgActivity, boolean isSend) {
         int id = cfgActivity.getId();
-        boolean isOpen = ActivityManager.getInstance().isOpen(id);
+        boolean isOpen = activityManager.isOpen(id);
         boolean playerIsOpen = entity.getActivityIds().contains(id);
         FunctionService functionService = player.getService(FunctionService.class);
         if (isOpen != playerIsOpen) {// 状态不一致

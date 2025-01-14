@@ -46,6 +46,9 @@ public class Logic extends Server {
     @Autowired
     private io.grpc.Server grpcServer;
 
+    @Autowired
+    private ActivityManager activityManager;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -66,7 +69,7 @@ public class Logic extends Server {
         registerHandler();
         initGameService();
         ThreadPool.start();
-        ActivityManager.getInstance().init();
+        activityManager.init();
     }
 
     private void initGameService() {

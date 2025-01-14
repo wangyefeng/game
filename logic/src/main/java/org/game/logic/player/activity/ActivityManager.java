@@ -1,5 +1,6 @@
 package org.game.logic.player.activity;
 
+import org.game.config.Config;
 import org.game.config.Configs;
 import org.game.config.entity.CfgActivity;
 import org.game.config.service.CfgActivityService;
@@ -7,6 +8,8 @@ import org.game.logic.player.Players;
 import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,23 +26,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author 王叶峰
  * @date 2022年3月18日
  */
+@Component
 public class ActivityManager {
 
     private static final Logger log = LoggerFactory.getLogger(ActivityManager.class);
-
-    private ActivityManager() {
-    }
-
-    private static ActivityManager instance = new ActivityManager();
 
     private Set<Integer> activityIds = new HashSet<>();
 
     // 活动全局锁
     public ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public static ActivityManager getInstance() {
-        return instance;
-    }
+    @Autowired
+    private Config config;
 
     public void init() {
         Lock writeLock = lock.writeLock();
@@ -62,6 +60,9 @@ public class ActivityManager {
                             millis,
                             TimeUnit.MILLISECONDS);    // 定时开启活动
                 }
+            });
+            config.addReloadPublisher((_, _) -> {
+                log.info("活动配置变更，重新加载活动！");
             });
         } finally {
             writeLock.unlock();

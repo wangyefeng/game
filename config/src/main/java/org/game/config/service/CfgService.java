@@ -5,12 +5,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.game.config.Configs;
 import org.game.config.ConfigException;
+import org.game.config.Configs;
 import org.game.config.entity.Cfg;
 import org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl;
 import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
@@ -57,6 +56,8 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
             }
             try {
                 check0(entity, config);
+            } catch (ConfigException e) {
+                throw e;
             } catch (Exception e) {
                 throw new ConfigException(getCfgName(entity), entity.getId(), null, e.getMessage());
             }
@@ -66,15 +67,15 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     public String getCfgName(Entity entity) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        EntityPersister entityPersister = metaData.entityPersister(entity.getClass());
-        return entityPersister.getIdentifierTableName();
+        AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
+        return persist.getSubclassTableName(0);
     }
 
     public String getColumnName(Entity entity, String field) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
-        return persist.getPropertyColumnNames(field)[0];
+        return persist.toColumns(field)[0];
     }
 
     protected abstract void check0(Entity entity, Configs config) throws Exception;
