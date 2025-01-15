@@ -70,14 +70,7 @@ public class Config implements InitializingBean {
                 if (sb.length() > 0) {
                     sb.append("\n");
                 }
-                sb.append("表：");
-                sb.append(e.getTableName());
-                sb.append(" id: ");
-                sb.append(e.getId());
-                sb.append(" 字段: ");
-                sb.append(e.getFieldName());
-                sb.append(" 说明: ");
-                sb.append(e.getMessage());
+                sb.append(e.toString());
             }
             throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
         }
@@ -93,7 +86,7 @@ public class Config implements InitializingBean {
             reloadPublishers.update(null);
             log.info("配置表重新加载完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
         } catch (ConfigException e) {
-            log.error("配置表重新加载失败 表: {}, id: {}, 字段: {}, 说明: {}", e.getTableName(), e.getId(), e.getFieldName(), e.getMessage(), e);
+            log.error("配置表重新加载失败 {}", e, e);
             throw e;
         } finally {
             databaseService.unlockDatabase();
