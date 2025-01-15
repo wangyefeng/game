@@ -49,13 +49,13 @@ public class TimeIntervalManager {
                 LocalDateTime startTime = cfg.getStartTime();
                 LocalDateTime endTime = cfg.getEndTime();
                 if (startTime.isBefore(nowDateTime) && endTime.isAfter(nowDateTime)) {
-                    startActivity(cfg, nowDateTime, endTime);
+                    start(cfg, nowDateTime, endTime);
                 } else if (startTime.isAfter(nowDateTime)) {
                     // 未开始的功能，延迟开启
                     Duration duration = Duration.between(nowDateTime, startTime);
                     long millis = duration.toMillis();
                     ThreadPool.getScheduledExecutor().schedule(
-                            () -> startActivity(cfg, nowDateTime, endTime),
+                            () -> start(cfg, nowDateTime, endTime),
                             millis,
                             TimeUnit.MILLISECONDS);    // 定时开启活动
                 }
@@ -68,7 +68,7 @@ public class TimeIntervalManager {
         }
     }
 
-    private void startActivity(CfgTimeIntervalFunction cfg, LocalDateTime nowDateTime, LocalDateTime endTime) {
+    private void start(CfgTimeIntervalFunction cfg, LocalDateTime nowDateTime, LocalDateTime endTime) {
         open(cfg);
         Duration duration = Duration.between(nowDateTime, endTime);
         long millis = duration.toMillis();

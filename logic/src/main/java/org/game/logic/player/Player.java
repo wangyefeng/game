@@ -129,6 +129,7 @@ public class Player {
 
     private void init() {
         map.values().forEach(GameService::init);
+        map.values().forEach(GameService::afterInit);
         startSaveTimer();
     }
 

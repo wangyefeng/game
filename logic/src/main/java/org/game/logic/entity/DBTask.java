@@ -1,0 +1,91 @@
+package org.game.logic.entity;
+
+/**
+ * 任务数据
+ */
+public class DBTask implements Cloneable {
+
+    /**
+     * 任务ID
+     */
+    private int id;
+
+    private int functionId;
+
+    /**
+     * 任务进度
+     */
+    private long progress;
+
+    /**
+     * 任务是否完成
+     */
+    private boolean isFinished;
+
+    /**
+     * 任务是否奖励
+     */
+    private boolean isReward;
+
+    public DBTask() {
+    }
+
+    public DBTask(int id, int functionId) {
+        this(id, functionId, 0);
+    }
+
+    public DBTask(int id, int functionId, long progress) {
+        this.id = id;
+        this.functionId = functionId;
+        this.progress = progress;
+        this.isFinished = false;
+        this.isReward = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public long getProgress() {
+        return progress;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public boolean isReward() {
+        return isReward;
+    }
+
+    public void setProgress(long progress) {
+        if (progress < 0) {
+            throw new IllegalArgumentException("progress must be positive");
+        }
+        this.progress = progress;
+    }
+
+    public void addProgress(long progress) {
+        if (progress < 0) {
+            throw new IllegalArgumentException("progress must be positive");
+        }
+        this.progress += progress;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
+    public void setReward(boolean reward) {
+        isReward = reward;
+    }
+
+    public int getFunctionId() {
+        return functionId;
+    }
+
+    @Override
+    public DBTask clone() throws CloneNotSupportedException {
+        return (DBTask) super.clone();
+    }
+}

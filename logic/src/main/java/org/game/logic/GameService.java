@@ -24,6 +24,11 @@ public interface GameService<E extends Entity> {
     void init();
 
     /**
+     * 初始化完成后调用
+     */
+    default void afterInit() {}
+
+    /**
      * 保存游戏数据
      */
     void save();

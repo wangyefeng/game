@@ -3,11 +3,14 @@ package org.game.proto.protocol;
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Task;
 import org.springframework.util.Assert;
 
 public enum LogicToClientProtocol implements Protocol {
 
     LOGIN((short) 1, Login.PbLoginResp.parser()),
+
+    TASK_UPDATE((short) 2, Task.PbTask.parser()),
 
     ;
 

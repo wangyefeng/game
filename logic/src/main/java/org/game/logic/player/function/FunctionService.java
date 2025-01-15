@@ -3,6 +3,7 @@ package org.game.logic.player.function;
 import org.game.config.entity.CfgFunction;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.FunctionInfo;
+import org.game.logic.player.task.TaskService;
 import org.game.logic.repository.FunctionRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
@@ -65,5 +66,11 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
                 }
             }
         }
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        registerModule(player.getService(TaskService.class));
     }
 }

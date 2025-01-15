@@ -1,0 +1,11 @@
+// 通用协议结构
+syntax = "proto3";
+
+package org.game.proto.struct;
+
+message PbTask {
+  int32 id = 1;
+  int64 progress = 2;
+  bool isFinished = 3;
+  bool isReward = 4;
+}

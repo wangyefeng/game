@@ -34,7 +34,7 @@ public class TimeIntervalFunctionService extends AbstractGameService<TimeInterva
     }
 
     @Override
-    public void init() {
+    public void afterInit() {
         check(false);
     }
 
