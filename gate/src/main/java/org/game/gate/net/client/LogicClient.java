@@ -1,5 +1,7 @@
 package org.game.gate.net.client;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -45,8 +47,11 @@ public class LogicClient extends Client {
 
     private Set<Player> players = new HashSet<>();
 
-    public LogicClient(int id, String host, int port) {
+    private ManagedChannel grpcChannel;
+
+    public LogicClient(int id, String host, int port, int rpcPort) {
         super(id, host, port, "logic");
+        grpcChannel = ManagedChannelBuilder.forAddress("localhost", rpcPort).usePlaintext().build();
     }
 
     @Override
@@ -92,6 +97,16 @@ public class LogicClient extends Client {
 
     public void removePlayer(Player player) {
         players.remove(player);
+    }
+
+    public ManagedChannel getGrpcChannel() {
+        return grpcChannel;
+    }
+
+    @Override
+    public void close() throws InterruptedException {
+        super.close();
+        grpcChannel.shutdown();
     }
 }
 

@@ -1,6 +1,5 @@
 package org.game.gate.handler.client;
 
-import io.grpc.ManagedChannel;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.common.util.TokenUtil;
@@ -39,9 +38,6 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
-
-    @Autowired
-    private ManagedChannel grpcClient;
 
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
@@ -85,7 +81,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             channel.attr(AttributeKeys.PLAYER).set(player);
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
             // 创建阻塞式存根
-            PlayerExistServiceBlockingStub blockingStub = PlayerExistServiceGrpc.newBlockingStub(grpcClient);
+            PlayerExistServiceBlockingStub blockingStub = PlayerExistServiceGrpc.newBlockingStub(player.getLogicClient().getGrpcChannel());
             // 创建请求对象
             PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(playerId).build();
             // 调用服务端方法并获取响应

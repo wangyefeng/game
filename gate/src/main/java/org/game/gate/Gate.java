@@ -7,6 +7,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.game.common.Server;
+import org.game.common.util.JsonUtil;
 import org.game.gate.net.TcpServer;
 import org.game.gate.net.client.Client;
 import org.game.gate.net.client.ClientGroup;
@@ -82,9 +83,8 @@ public class Gate extends Server {
                 for (String serverId : serverInfos) {
                     String path = servicePath + "/" + serverId;
                     byte[] data = zkClient.getData().forPath(path);
-                    String serverInfo = new String(data);
-                    String[] logicAddress = serverInfo.split(":");
-                    LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), logicAddress[0], Integer.parseInt(logicAddress[1]));
+                    ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
+                    LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
                     logicClient.start();
                     clientGroup.add(logicClient);
                 }
@@ -98,6 +98,8 @@ public class Gate extends Server {
             throw new RuntimeException("连接逻辑服失败！", e);
         }
     }
+
+    private record ServerInfo(String host, int tcpPort, int rpcPort) {}
 
     private static class LogicWatcher implements Watcher {
 
@@ -128,9 +130,8 @@ public class Gate extends Server {
                         }
                         String path = servicePath + "/" + serverId;
                         byte[] data = zkClient.getData().forPath(path);
-                        String serverInfo = new String(data);
-                        String[] logicAddress = serverInfo.split(":");
-                        LogicClient logicClient = new LogicClient(id, logicAddress[0], Integer.parseInt(logicAddress[1]));
+                        ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
+                        LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
                         logicClient.start();
                         clientGroup.add(logicClient);
                     }

@@ -5,6 +5,7 @@ import io.netty.util.internal.EmptyArrays;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
+import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.activity.TimeIntervalManager;
@@ -42,6 +43,9 @@ public class Logic extends Server {
 
     @Value("${logic.server-id}")
     private int id;
+
+    @Value("${logic.host}")
+    private String host;
 
     @Autowired
     private io.grpc.Server grpcServer;
@@ -89,9 +93,11 @@ public class Logic extends Server {
             zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
         String servicePath = rootPath + "/" + id;
-        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (tcpServer.getHost() + ":" + tcpServer.getPort()).getBytes());
+        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(host, tcpServer.getPort(), grpcServer.getPort()))).getBytes());
         log.info("zookeeper registry service success, path: {}", servicePath);
     }
+
+    private record ServerInfo(String host, int tcpPort, int rpcPort) {}
 
     protected void stop() throws Exception {
         tcpServer.close();
