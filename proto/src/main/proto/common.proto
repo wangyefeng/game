@@ -18,3 +18,7 @@ message PbLong {
 message PbBool {
   bool val = 1;
 }
+
+message PbIntArray {
+  repeated int32 val = 1;
+}

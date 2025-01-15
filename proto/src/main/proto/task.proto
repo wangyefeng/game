@@ -9,3 +9,7 @@ message PbTask {
   bool isFinished = 3;
   bool isReward = 4;
 }
+
+message PbTaskArrays {
+  repeated PbTask tasks = 1;
+}

@@ -66,11 +66,6 @@ public abstract class AbstractGameService<E extends Entity, R extends MongoRepos
     }
 
     @Override
-    public void init() {
-        // do nothing
-    }
-
-    @Override
     public void register(PbRegisterReq registerMsg) {
 
     }

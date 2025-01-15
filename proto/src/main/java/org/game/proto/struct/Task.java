@@ -678,11 +678,756 @@ public final class Task {
 
   }
 
+  public interface PbTaskArraysOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.game.proto.struct.PbTaskArrays)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    java.util.List<org.game.proto.struct.Task.PbTask> 
+        getTasksList();
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    org.game.proto.struct.Task.PbTask getTasks(int index);
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    int getTasksCount();
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    java.util.List<? extends org.game.proto.struct.Task.PbTaskOrBuilder> 
+        getTasksOrBuilderList();
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    org.game.proto.struct.Task.PbTaskOrBuilder getTasksOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code org.game.proto.struct.PbTaskArrays}
+   */
+  public static final class PbTaskArrays extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.game.proto.struct.PbTaskArrays)
+      PbTaskArraysOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 29,
+        /* patch= */ 0,
+        /* suffix= */ "",
+        PbTaskArrays.class.getName());
+    }
+    // Use PbTaskArrays.newBuilder() to construct.
+    private PbTaskArrays(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PbTaskArrays() {
+      tasks_ = java.util.Collections.emptyList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.game.proto.struct.Task.internal_static_org_game_proto_struct_PbTaskArrays_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.game.proto.struct.Task.internal_static_org_game_proto_struct_PbTaskArrays_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.game.proto.struct.Task.PbTaskArrays.class, org.game.proto.struct.Task.PbTaskArrays.Builder.class);
+    }
+
+    public static final int TASKS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private java.util.List<org.game.proto.struct.Task.PbTask> tasks_;
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<org.game.proto.struct.Task.PbTask> getTasksList() {
+      return tasks_;
+    }
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends org.game.proto.struct.Task.PbTaskOrBuilder> 
+        getTasksOrBuilderList() {
+      return tasks_;
+    }
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    @java.lang.Override
+    public int getTasksCount() {
+      return tasks_.size();
+    }
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    @java.lang.Override
+    public org.game.proto.struct.Task.PbTask getTasks(int index) {
+      return tasks_.get(index);
+    }
+    /**
+     * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+     */
+    @java.lang.Override
+    public org.game.proto.struct.Task.PbTaskOrBuilder getTasksOrBuilder(
+        int index) {
+      return tasks_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < tasks_.size(); i++) {
+        output.writeMessage(1, tasks_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < tasks_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, tasks_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.game.proto.struct.Task.PbTaskArrays)) {
+        return super.equals(obj);
+      }
+      org.game.proto.struct.Task.PbTaskArrays other = (org.game.proto.struct.Task.PbTaskArrays) obj;
+
+      if (!getTasksList()
+          .equals(other.getTasksList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getTasksCount() > 0) {
+        hash = (37 * hash) + TASKS_FIELD_NUMBER;
+        hash = (53 * hash) + getTasksList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static org.game.proto.struct.Task.PbTaskArrays parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static org.game.proto.struct.Task.PbTaskArrays parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.game.proto.struct.Task.PbTaskArrays parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.game.proto.struct.Task.PbTaskArrays prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.game.proto.struct.PbTaskArrays}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.game.proto.struct.PbTaskArrays)
+        org.game.proto.struct.Task.PbTaskArraysOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.game.proto.struct.Task.internal_static_org_game_proto_struct_PbTaskArrays_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.game.proto.struct.Task.internal_static_org_game_proto_struct_PbTaskArrays_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.game.proto.struct.Task.PbTaskArrays.class, org.game.proto.struct.Task.PbTaskArrays.Builder.class);
+      }
+
+      // Construct using org.game.proto.struct.Task.PbTaskArrays.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (tasksBuilder_ == null) {
+          tasks_ = java.util.Collections.emptyList();
+        } else {
+          tasks_ = null;
+          tasksBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.game.proto.struct.Task.internal_static_org_game_proto_struct_PbTaskArrays_descriptor;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Task.PbTaskArrays getDefaultInstanceForType() {
+        return org.game.proto.struct.Task.PbTaskArrays.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Task.PbTaskArrays build() {
+        org.game.proto.struct.Task.PbTaskArrays result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.game.proto.struct.Task.PbTaskArrays buildPartial() {
+        org.game.proto.struct.Task.PbTaskArrays result = new org.game.proto.struct.Task.PbTaskArrays(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.game.proto.struct.Task.PbTaskArrays result) {
+        if (tasksBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            tasks_ = java.util.Collections.unmodifiableList(tasks_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.tasks_ = tasks_;
+        } else {
+          result.tasks_ = tasksBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(org.game.proto.struct.Task.PbTaskArrays result) {
+        int from_bitField0_ = bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.game.proto.struct.Task.PbTaskArrays) {
+          return mergeFrom((org.game.proto.struct.Task.PbTaskArrays)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.game.proto.struct.Task.PbTaskArrays other) {
+        if (other == org.game.proto.struct.Task.PbTaskArrays.getDefaultInstance()) return this;
+        if (tasksBuilder_ == null) {
+          if (!other.tasks_.isEmpty()) {
+            if (tasks_.isEmpty()) {
+              tasks_ = other.tasks_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureTasksIsMutable();
+              tasks_.addAll(other.tasks_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.tasks_.isEmpty()) {
+            if (tasksBuilder_.isEmpty()) {
+              tasksBuilder_.dispose();
+              tasksBuilder_ = null;
+              tasks_ = other.tasks_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              tasksBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getTasksFieldBuilder() : null;
+            } else {
+              tasksBuilder_.addAllMessages(other.tasks_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                org.game.proto.struct.Task.PbTask m =
+                    input.readMessage(
+                        org.game.proto.struct.Task.PbTask.parser(),
+                        extensionRegistry);
+                if (tasksBuilder_ == null) {
+                  ensureTasksIsMutable();
+                  tasks_.add(m);
+                } else {
+                  tasksBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<org.game.proto.struct.Task.PbTask> tasks_ =
+        java.util.Collections.emptyList();
+      private void ensureTasksIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          tasks_ = new java.util.ArrayList<org.game.proto.struct.Task.PbTask>(tasks_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.game.proto.struct.Task.PbTask, org.game.proto.struct.Task.PbTask.Builder, org.game.proto.struct.Task.PbTaskOrBuilder> tasksBuilder_;
+
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public java.util.List<org.game.proto.struct.Task.PbTask> getTasksList() {
+        if (tasksBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(tasks_);
+        } else {
+          return tasksBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public int getTasksCount() {
+        if (tasksBuilder_ == null) {
+          return tasks_.size();
+        } else {
+          return tasksBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public org.game.proto.struct.Task.PbTask getTasks(int index) {
+        if (tasksBuilder_ == null) {
+          return tasks_.get(index);
+        } else {
+          return tasksBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder setTasks(
+          int index, org.game.proto.struct.Task.PbTask value) {
+        if (tasksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTasksIsMutable();
+          tasks_.set(index, value);
+          onChanged();
+        } else {
+          tasksBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder setTasks(
+          int index, org.game.proto.struct.Task.PbTask.Builder builderForValue) {
+        if (tasksBuilder_ == null) {
+          ensureTasksIsMutable();
+          tasks_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          tasksBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder addTasks(org.game.proto.struct.Task.PbTask value) {
+        if (tasksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTasksIsMutable();
+          tasks_.add(value);
+          onChanged();
+        } else {
+          tasksBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder addTasks(
+          int index, org.game.proto.struct.Task.PbTask value) {
+        if (tasksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTasksIsMutable();
+          tasks_.add(index, value);
+          onChanged();
+        } else {
+          tasksBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder addTasks(
+          org.game.proto.struct.Task.PbTask.Builder builderForValue) {
+        if (tasksBuilder_ == null) {
+          ensureTasksIsMutable();
+          tasks_.add(builderForValue.build());
+          onChanged();
+        } else {
+          tasksBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder addTasks(
+          int index, org.game.proto.struct.Task.PbTask.Builder builderForValue) {
+        if (tasksBuilder_ == null) {
+          ensureTasksIsMutable();
+          tasks_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          tasksBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder addAllTasks(
+          java.lang.Iterable<? extends org.game.proto.struct.Task.PbTask> values) {
+        if (tasksBuilder_ == null) {
+          ensureTasksIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, tasks_);
+          onChanged();
+        } else {
+          tasksBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder clearTasks() {
+        if (tasksBuilder_ == null) {
+          tasks_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          tasksBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public Builder removeTasks(int index) {
+        if (tasksBuilder_ == null) {
+          ensureTasksIsMutable();
+          tasks_.remove(index);
+          onChanged();
+        } else {
+          tasksBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public org.game.proto.struct.Task.PbTask.Builder getTasksBuilder(
+          int index) {
+        return getTasksFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public org.game.proto.struct.Task.PbTaskOrBuilder getTasksOrBuilder(
+          int index) {
+        if (tasksBuilder_ == null) {
+          return tasks_.get(index);  } else {
+          return tasksBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public java.util.List<? extends org.game.proto.struct.Task.PbTaskOrBuilder> 
+           getTasksOrBuilderList() {
+        if (tasksBuilder_ != null) {
+          return tasksBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(tasks_);
+        }
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public org.game.proto.struct.Task.PbTask.Builder addTasksBuilder() {
+        return getTasksFieldBuilder().addBuilder(
+            org.game.proto.struct.Task.PbTask.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public org.game.proto.struct.Task.PbTask.Builder addTasksBuilder(
+          int index) {
+        return getTasksFieldBuilder().addBuilder(
+            index, org.game.proto.struct.Task.PbTask.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.game.proto.struct.PbTask tasks = 1;</code>
+       */
+      public java.util.List<org.game.proto.struct.Task.PbTask.Builder> 
+           getTasksBuilderList() {
+        return getTasksFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.game.proto.struct.Task.PbTask, org.game.proto.struct.Task.PbTask.Builder, org.game.proto.struct.Task.PbTaskOrBuilder> 
+          getTasksFieldBuilder() {
+        if (tasksBuilder_ == null) {
+          tasksBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.game.proto.struct.Task.PbTask, org.game.proto.struct.Task.PbTask.Builder, org.game.proto.struct.Task.PbTaskOrBuilder>(
+                  tasks_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          tasks_ = null;
+        }
+        return tasksBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbTaskArrays)
+    }
+
+    // @@protoc_insertion_point(class_scope:org.game.proto.struct.PbTaskArrays)
+    private static final org.game.proto.struct.Task.PbTaskArrays DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.game.proto.struct.Task.PbTaskArrays();
+    }
+
+    public static org.game.proto.struct.Task.PbTaskArrays getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PbTaskArrays>
+        PARSER = new com.google.protobuf.AbstractParser<PbTaskArrays>() {
+      @java.lang.Override
+      public PbTaskArrays parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PbTaskArrays> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PbTaskArrays> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.game.proto.struct.Task.PbTaskArrays getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_game_proto_struct_PbTask_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_game_proto_struct_PbTask_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_game_proto_struct_PbTaskArrays_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_game_proto_struct_PbTaskArrays_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -694,8 +1439,9 @@ public final class Task {
     java.lang.String[] descriptorData = {
       "\n\ntask.proto\022\025org.game.proto.struct\"L\n\006P" +
       "bTask\022\n\n\002id\030\001 \001(\005\022\020\n\010progress\030\002 \001(\003\022\022\n\ni" +
-      "sFinished\030\003 \001(\010\022\020\n\010isReward\030\004 \001(\010b\006proto" +
-      "3"
+      "sFinished\030\003 \001(\010\022\020\n\010isReward\030\004 \001(\010\"<\n\014PbT" +
+      "askArrays\022,\n\005tasks\030\001 \003(\0132\035.org.game.prot" +
+      "o.struct.PbTaskb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -707,6 +1453,12 @@ public final class Task {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbTask_descriptor,
         new java.lang.String[] { "Id", "Progress", "IsFinished", "IsReward", });
+    internal_static_org_game_proto_struct_PbTaskArrays_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_game_proto_struct_PbTaskArrays_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_game_proto_struct_PbTaskArrays_descriptor,
+        new java.lang.String[] { "Tasks", });
     descriptor.resolveAllFeaturesImmutable();
   }
 

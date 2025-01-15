@@ -11,13 +11,17 @@ import org.game.logic.player.PlayerEventType;
 import org.game.logic.player.function.Module;
 import org.game.logic.player.function.ModuleEnum;
 import org.game.logic.repository.TaskRepository;
+import org.game.proto.protocol.LogicToClientProtocol;
+import org.game.proto.struct.Common.PbIntArray;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
+import org.game.proto.struct.Task.PbTaskArrays;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,13 +43,19 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
 
     @Override
     public void loginResp(Builder loginResp) {
-        // do nothing
+        for (DBTask task : entity.getTasks().values()) {
+            loginResp.addTasks(TaskUtil.toPbTask(task));
+        }
     }
 
     @Override
     public void open(CfgFunction cfg, boolean isSend) {
         CfgTaskService cfgTaskService = Configs.getInstance().get(CfgTaskService.class);
         List<CfgTask> cfgTasks = cfgTaskService.getCfgByFuncId(cfg.getId());
+        PbTaskArrays.Builder pbTasks = null;
+        if (isSend) {
+            pbTasks = PbTaskArrays.newBuilder();
+        }
         for (CfgTask cfgTask : cfgTasks) {
             PlayerEventType eventType = eventMap.get(cfgTask.getType());
             DBTask task = new DBTask(cfgTask.getId(), cfgTask.getFunctionId());
@@ -57,12 +67,35 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
                 player.addEventListener(eventType, new TaskListenerImpl<>(player, task, cfgTask, eventType));
             }
             entity.addTask(task);
+            if (isSend) {
+                pbTasks.addTasks(TaskUtil.toPbTask(task));
+            }
+        }
+        if (isSend) {
+            player.writeToClient(LogicToClientProtocol.TASK_ADD, pbTasks.build());
         }
     }
 
     @Override
     public void close(CfgFunction cfg, boolean isSend) {
-
+        // 功能关闭时，清除此功能对应的所有任务
+        PbIntArray.Builder pbTasks = null;
+        if (isSend) {
+            pbTasks = PbIntArray.newBuilder();
+        }
+        Iterator<DBTask> iterator = entity.getTasks().values().iterator();
+        while (iterator.hasNext()) {
+            DBTask task = iterator.next();
+            if (task.getFunctionId() == cfg.getId()) {
+                iterator.remove();
+                if (isSend) {
+                    pbTasks.addVal(task.getId());
+                }
+            }
+        }
+        if (isSend) {
+            player.writeToClient(LogicToClientProtocol.TASK_REMOVE, pbTasks.build());
+        }
     }
 
     @Override

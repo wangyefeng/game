@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package org.game.proto.struct;
 
+import "task.proto";
+
 // 认证请求
 message PbAuthReq {
 	int32 id = 1;
@@ -30,4 +32,5 @@ message PbLoginResp {
 	int32 id = 1;
 	string name = 2;
 	int32 level = 3;
+	repeated PbTask tasks = 4;
 }

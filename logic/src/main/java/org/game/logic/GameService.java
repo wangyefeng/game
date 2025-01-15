@@ -21,7 +21,7 @@ public interface GameService<E extends Entity> {
     /**
      * 初始化游戏数据
      */
-    void init();
+    default void init() {}
 
     /**
      * 初始化完成后调用
