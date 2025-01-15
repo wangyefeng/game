@@ -26,4 +26,9 @@ public class ConfigException extends Exception {
     public String getFieldName() {
         return fieldName;
     }
+
+    @Override
+    public String toString() {
+        return String.format("表: %s, id: %s, 字段: %s, 说明: %s", tableName, id.toString(), fieldName, getMessage());
+    }
 }

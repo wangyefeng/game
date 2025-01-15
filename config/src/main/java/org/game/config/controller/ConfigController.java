@@ -18,7 +18,7 @@ public class ConfigController {
         try {
             config.reloadAllConfig();
         } catch (Exception e) {
-            return HttpResp.fail(101, e.getMessage());
+            return HttpResp.fail(101, e.toString());
         }
         return HttpResp.success(null);
     }

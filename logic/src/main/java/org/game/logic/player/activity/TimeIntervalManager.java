@@ -30,7 +30,7 @@ public class TimeIntervalManager {
 
     private static final Logger log = LoggerFactory.getLogger(TimeIntervalManager.class);
 
-    private Set<Integer> functionIds = new HashSet<>();
+    private final Set<Integer> functionIds = new HashSet<>();
 
     // 全局锁读写锁
     public ReadWriteLock lock = new ReentrantReadWriteLock();

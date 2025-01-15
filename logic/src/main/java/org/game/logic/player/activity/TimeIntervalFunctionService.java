@@ -65,8 +65,6 @@ public class TimeIntervalFunctionService extends AbstractGameService<TimeInterva
         try {
             lock.lock();
             checkOne(cfg, isSend);
-        } catch (Exception e) {
-            throw e;
         } finally {
             lock.unlock();
         }

@@ -43,12 +43,10 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
         FunctionEnum functionEnum = FunctionEnum.getByType(cfgFunction.getType());
         for (ModuleEnum moduleEnum : functionEnum.getModules()) {
             Module module = extendModuleMap.get(moduleEnum);
-            if (module != null) {
-                try {
-                    module.open(cfgFunction, isSend);
-                } catch (Exception e) {
-                    log.error("玩家{}打开功能{}失败", player.getId(), cfgFunction.getId(), e);
-                }
+            try {
+                module.open(cfgFunction, isSend);
+            } catch (Exception e) {
+                log.error("玩家{}打开功能{}失败", player.getId(), cfgFunction.getId(), e);
             }
         }
     }
