@@ -8,7 +8,7 @@ import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
-import org.game.logic.player.activity.TimeIntervalManager;
+import org.game.logic.player.function.TimeIntervalManager;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;

@@ -1,4 +1,4 @@
-package org.game.logic.player.activity;
+package org.game.logic.player.function;
 
 import org.game.config.Config;
 import org.game.config.Configs;
@@ -148,8 +148,8 @@ public class TimeIntervalManager {
         log.info("活动{}开启！", cfg.getId());
         functionIds.add(cfg.getId());
         Players.getPlayers().values().forEach(player -> {
-            TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
-            timeIntervalFunctionService.check(cfg, true);
+            FunctionService functionService = player.getService(FunctionService.class);
+            functionService.checkTimeIntervalOne(cfg, true);
         });
     }
 
@@ -168,8 +168,8 @@ public class TimeIntervalManager {
         }
         Players.getPlayers().values().forEach(player -> {
             ThreadPool.getPlayerExecutor(player.getId()).execute(() -> {
-                TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
-                timeIntervalFunctionService.check(cfg, true);
+                FunctionService functionService = player.getService(FunctionService.class);
+                functionService.checkTimeIntervalOne(cfg, true);
             });
         });
     }

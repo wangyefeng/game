@@ -3,8 +3,10 @@ package org.game.logic.player.function;
 import org.game.config.Configs;
 import org.game.config.entity.CfgCyclicFunction;
 import org.game.config.entity.CfgFunction;
+import org.game.config.entity.CfgTimeIntervalFunction;
 import org.game.config.entity.ModuleEnum;
 import org.game.config.service.CfgCyclicFunctionService;
+import org.game.config.service.CfgTimeIntervalFunctionService;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.DbCycleFunction;
 import org.game.logic.entity.FunctionInfo;
@@ -16,6 +18,7 @@ import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -32,6 +38,9 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     private static final Logger log = LoggerFactory.getLogger(FunctionService.class);
 
     private Map<ModuleEnum, Module> extendModuleMap = new HashMap<>();
+
+    @Autowired
+    private TimeIntervalManager timeIntervalManager;
 
     @Override
     public void register(PbRegisterReq registerMsg) {
@@ -78,7 +87,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     }
 
     private static long getCycle(LocalDate date, LocalDate baseDate, int cycle) {
-        return ChronoUnit.DAYS.between(date, baseDate) / cycle;
+        return ChronoUnit.DAYS.between(baseDate, date) / cycle;
     }
 
     @Override
@@ -130,5 +139,44 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     @Override
     public void reset(LocalDate resetDate, boolean isSend) {
         checkCyclicFunction(true);
+    }
+
+    public void checkTimeInterval(boolean isSend) {
+        Lock lock = timeIntervalManager.lock.readLock();
+        try {
+            lock.lock();
+            Set<Integer> needCheck = new HashSet<>(timeIntervalManager.getFunctionIds());
+            needCheck.addAll(entity.getFunctionIds());
+            Configs configs = Configs.getInstance();
+            CfgTimeIntervalFunctionService cfgTimeIntervalFunctionService = configs.get(CfgTimeIntervalFunctionService.class);
+            for (Integer id : needCheck) {
+                CfgTimeIntervalFunction cfg = cfgTimeIntervalFunctionService.getCfg(id);
+                checkTimeIntervalOne(cfg, isSend);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void checkTimeIntervalOne(CfgTimeIntervalFunction cfg, boolean isSend) {
+        Lock writeLock = timeIntervalManager.lock.writeLock();
+        try {
+            writeLock.lock();
+            int id = cfg.getId();
+            boolean isOpen = timeIntervalManager.isOpen(id);
+            boolean playerIsOpen = entity.getFunctionIds().contains(id);
+            FunctionService functionService = player.getService(FunctionService.class);
+            if (isOpen != playerIsOpen) {// 状态不一致
+                if (isOpen) {
+                    functionService.open(cfg, isSend);
+                    entity.getFunctionIds().add(id);
+                } else {
+                    functionService.close(cfg, isSend);
+                    entity.getFunctionIds().remove(id);
+                }
+            }
+        } finally {
+            writeLock.unlock();
+        }
     }
 }

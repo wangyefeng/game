@@ -26,10 +26,16 @@ public class FunctionInfo extends Entity {
      */
     private Map<Integer, DbCycleFunction> cycleFunctions;
 
+    /**
+     * 时间段开启得功能ID集合
+     */
+    private Set<Integer> timeIntervalIds;
+
     public FunctionInfo(int playerId) {
         super(playerId);
         functionIds = new HashSet<>();
         cycleFunctions = new HashMap<>();
+        timeIntervalIds = new HashSet<>();
     }
 
     public void addFunctionId(int functionId) {
@@ -52,6 +58,7 @@ public class FunctionInfo extends Entity {
         for (Entry<Integer, DbCycleFunction> entry : cycleFunctions.entrySet()) {
             clone.cycleFunctions.put(entry.getKey(), entry.getValue().clone());
         }
+        clone.timeIntervalIds = new HashSet<>(timeIntervalIds);
         return clone;
     }
 }
