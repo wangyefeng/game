@@ -15,11 +15,6 @@ public class DBTask implements Cloneable, Task {
     private int id;
 
     /**
-     * 功能ID
-     */
-    private int functionId;
-
-    /**
      * 任务进度
      */
     private long progress;
@@ -40,13 +35,12 @@ public class DBTask implements Cloneable, Task {
     public DBTask() {
     }
 
-    public DBTask(int id, int functionId) {
-        this(id, functionId, 0);
+    public DBTask(int id) {
+        this(id, 0);
     }
 
-    public DBTask(int id, int functionId, long progress) {
+    public DBTask(int id, long progress) {
         this.id = id;
-        this.functionId = functionId;
         this.progress = progress;
         this.isFinished = false;
         this.isReward = false;
@@ -88,10 +82,6 @@ public class DBTask implements Cloneable, Task {
 
     public void setReward(boolean reward) {
         isReward = reward;
-    }
-
-    public int getFunctionId() {
-        return functionId;
     }
 
     public TaskListenerImpl getListener() {

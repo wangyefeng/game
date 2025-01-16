@@ -1,4 +1,4 @@
-package org.game.logic.player;
+package org.game.config.entity;
 
 public enum PlayerEventType {
 

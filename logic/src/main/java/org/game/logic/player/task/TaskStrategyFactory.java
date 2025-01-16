@@ -1,6 +1,6 @@
 package org.game.logic.player.task;
 
-import org.game.logic.player.PlayerEventType;
+import org.game.config.entity.PlayerEventType;
 
 import java.util.EnumMap;
 import java.util.Map;

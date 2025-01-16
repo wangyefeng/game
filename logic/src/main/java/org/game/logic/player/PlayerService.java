@@ -1,6 +1,7 @@
 package org.game.logic.player;
 
 import org.game.config.entity.Item;
+import org.game.config.entity.PlayerEventType;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.PlayerInfo;
 import org.game.logic.player.item.Consumable;

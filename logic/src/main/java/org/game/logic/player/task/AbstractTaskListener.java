@@ -3,7 +3,6 @@ package org.game.logic.player.task;
 import org.game.common.event.Listener;
 import org.game.common.event.Publisher;
 import org.game.config.entity.CfgTask;
-import org.game.logic.player.PlayerEventType;
 
 /**
  * @author ：王叶峰
@@ -17,10 +16,10 @@ public abstract class AbstractTaskListener<Event, T extends Task, K extends CfgT
 
     protected TaskStrategy taskStrategy;
 
-    public AbstractTaskListener(T task, K cfg, PlayerEventType type) {
+    public AbstractTaskListener(T task, K cfg) {
         this.task = task;
         this.cfg = cfg;
-        this.taskStrategy = TaskStrategyFactory.getTaskStrategy(type);
+        this.taskStrategy = TaskStrategyFactory.getTaskStrategy(cfg.getType());
     }
 
     @Override
