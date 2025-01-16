@@ -16,7 +16,7 @@ public class ConfigController {
     @RequestMapping(value = "/reload")
     public HttpResp<?> reload() {
         try {
-            config.reloadAllConfig();
+            config.reload();
         } catch (Exception e) {
             return HttpResp.fail(101, e.toString());
         }

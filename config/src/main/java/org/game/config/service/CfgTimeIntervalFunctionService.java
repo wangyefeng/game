@@ -13,11 +13,5 @@ public class CfgTimeIntervalFunctionService extends CfgService<CfgTimeIntervalFu
 
     @Override
     protected void check0(CfgTimeIntervalFunction cfgFunction, Configs config) throws Exception {
-        System.out.println();
-    }
-
-    @Override
-    protected void init() {
-        super.init();
     }
 }

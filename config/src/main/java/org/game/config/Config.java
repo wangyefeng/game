@@ -14,9 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Component
 @EntityScan(basePackages = "org.game.config.entity")
@@ -31,66 +29,27 @@ public class Config implements InitializingBean {
     @Autowired
     private DatabaseService databaseService;
 
-    @Value("${config.check:false}")
+    @Value("${config.check:true}")
     private boolean checkConfig;
 
     private Publisher<Object> reloadPublishers = new Publisher<>();
 
-    private void initConfig() throws Exception {
+    public void initConfig() throws ConfigException {
         databaseService.lockDatabase();
         try {
             log.info("开始加载配置表...");
             long start = System.currentTimeMillis();
             Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-            Configs.init(cfgServices);
+            Configs.load(cfgServices, checkConfig);
             log.info("加载配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
-            if (checkConfig) {
-                check(cfgServices);
-            }
-        } catch (Exception e) {
-            throw e;
         } finally {
             databaseService.unlockDatabase();
         }
     }
 
-    private void check(Collection<CfgService> cfgServices) throws Exception {
-        log.info("开始检查配置表...");
-        List<ConfigException> configExceptions = new ArrayList<>();
-        for (CfgService cfgService : cfgServices) {
-            try {
-                cfgService.check(Configs.getInstance());
-            } catch (ConfigException e) {
-                configExceptions.add(e);
-            }
-        }
-        if (!configExceptions.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConfigException e : configExceptions) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                sb.append(e.toString());
-            }
-            throw new Exception("配置表校验失败!!! 错误信息如下:\n" + sb);
-        }
-        log.info("检查配置表完成。");
-    }
-
-    public void reloadAllConfig() throws ConfigException {
-        databaseService.lockDatabase();
-        try {
-            long start = System.currentTimeMillis();
-            log.info("开始重新加载配置表...");
-            Configs.reload(applicationContext.getBeansOfType(CfgService.class).values());
-            reloadPublishers.update(null);
-            log.info("配置表重新加载完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
-        } catch (ConfigException e) {
-            log.error("配置表重新加载失败 {}", e, e);
-            throw e;
-        } finally {
-            databaseService.unlockDatabase();
-        }
+    public synchronized void reload() throws ConfigException {
+        initConfig();
+        reloadPublishers.update(null);
     }
 
     @Override

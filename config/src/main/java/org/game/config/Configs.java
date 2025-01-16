@@ -12,20 +12,17 @@ public final class Configs {
 
     private Map<Class<? extends CfgService>, CfgService> map = new HashMap<>();
 
-    public static void init(Collection<CfgService> cfgServices) {
-        Configs.instance = new Configs();
-        cfgServices.forEach(Configs.instance::add);
-    }
-
-    public static void reload(Collection<CfgService> cfgServices) throws ConfigException {
-        Map<Class<? extends CfgService>, CfgService> newMap = new HashMap<>(instance.map);
+    public static void load(Collection<CfgService> cfgServices, boolean check) throws ConfigException {
+        Configs newConfigs = new Configs();
         for (CfgService cfgService : cfgServices) {
-            newMap.put(cfgService.getClass(), cfgService);
+            newConfigs.map.put(cfgService.getClass(), cfgService);
         }
-        for (CfgService cfgService : cfgServices) {
-            cfgService.check(instance);
+        if (check) {
+            for (CfgService cfgService : cfgServices) {
+                cfgService.check(newConfigs);
+            }
         }
-        instance.map = newMap;
+        instance = newConfigs;
     }
 
     private Configs() {
