@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -38,6 +41,12 @@ public class TimeIntervalManager {
     @Autowired
     private Config config;
 
+    // 活动开启定时器
+    private Map<Integer, ScheduledFuture> startScheduledFuture = new HashMap<>();
+
+    // 活动结束定时器
+    private Map<Integer, ScheduledFuture> closeScheduledFuture = new HashMap<>();
+
     public void init() {
         Lock writeLock = lock.writeLock();
         writeLock.lock();
@@ -45,37 +54,90 @@ public class TimeIntervalManager {
             LocalDateTime nowDateTime = LocalDateTime.now();
             Configs configs = Configs.getInstance();
             CfgTimeIntervalFunctionService cfgService = configs.get(CfgTimeIntervalFunctionService.class);
-            cfgService.getAllCfg().forEach(cfg -> {
-                LocalDateTime startTime = cfg.getStartTime();
-                LocalDateTime endTime = cfg.getEndTime();
-                if (startTime.isBefore(nowDateTime) && endTime.isAfter(nowDateTime)) {
-                    start(cfg, nowDateTime, endTime);
-                } else if (startTime.isAfter(nowDateTime)) {
-                    // 未开始的功能，延迟开启
-                    Duration duration = Duration.between(nowDateTime, startTime);
-                    long millis = duration.toMillis();
-                    ThreadPool.getScheduledExecutor().schedule(
-                            () -> start(cfg, nowDateTime, endTime),
-                            millis,
-                            TimeUnit.MILLISECONDS);    // 定时开启活动
+            cfgService.getAllCfg().forEach(cfg -> initActivity(cfg, nowDateTime));
+            config.addReloadPublisher((_, _) -> reload());
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    private void initActivity(CfgTimeIntervalFunction cfg, LocalDateTime nowDateTime) {
+        LocalDateTime startTime = cfg.getStartTime();
+        LocalDateTime endTime = cfg.getEndTime();
+        if (startTime.isBefore(nowDateTime) && endTime.isAfter(nowDateTime)) {
+            start(cfg, nowDateTime, endTime);
+        } else if (startTime.isAfter(nowDateTime)) {
+            // 未开始的功能，延迟开启
+            Duration duration = Duration.between(nowDateTime, startTime);
+            long millis = duration.toMillis();
+            ScheduledFuture<?> schedule = ThreadPool.getScheduledExecutor().schedule(
+                    () -> start(cfg, nowDateTime, endTime),
+                    millis,
+                    TimeUnit.MILLISECONDS);    // 定时开启活动
+            startScheduledFuture.put(cfg.getId(), schedule);
+        }
+    }
+
+    private void reload() {
+        log.info("配置变更，重新检查时间段开启的功能状态！");
+        Lock writeLock = lock.writeLock();
+        writeLock.lock();
+        try {
+            LocalDateTime nowDateTime = LocalDateTime.now();
+            Configs configs = Configs.getInstance();
+            CfgTimeIntervalFunctionService cfgService = configs.get(CfgTimeIntervalFunctionService.class);
+            for (CfgTimeIntervalFunction cfg : cfgService.getAllCfg()) {
+                Integer id = cfg.getId();
+                ScheduledFuture<?> startFuture = startScheduledFuture.remove(id);
+                if (startFuture != null) {
+                    startFuture.cancel(true);
                 }
-            });
-            config.addReloadPublisher((_, _) -> {
-                log.info("配置变更，重新加载时间段开启的功能！");
-            });
+                ScheduledFuture<?> closeFuture = closeScheduledFuture.remove(id);
+                if (closeFuture != null) {// 正在进行中...
+                    closeFuture.cancel(true);
+                    if (nowDateTime.isBefore(cfg.getStartTime())) {
+                        close(cfg);
+                        initActivity(cfg, nowDateTime);
+                    } else if (nowDateTime.isBefore(cfg.getEndTime())) {
+                        Duration duration = Duration.between(nowDateTime, cfg.getEndTime());
+                        long millis = duration.toMillis();
+                        ScheduledFuture<?> schedule = ThreadPool.getScheduledExecutor().schedule(
+                                () -> close(cfg),
+                                millis,
+                                TimeUnit.MILLISECONDS);// 定时关闭活动
+                        closeScheduledFuture.put(cfg.getId(), schedule);
+                    } else {
+                        close(cfg);
+                    }
+                } else {
+                    initActivity(cfg, nowDateTime);
+                }
+            }
         } finally {
             writeLock.unlock();
         }
     }
 
     private void start(CfgTimeIntervalFunction cfg, LocalDateTime nowDateTime, LocalDateTime endTime) {
-        open(cfg);
-        Duration duration = Duration.between(nowDateTime, endTime);
-        long millis = duration.toMillis();
-        ThreadPool.getScheduledExecutor().schedule(
-                () -> close(cfg),
-                millis,
-                TimeUnit.MILLISECONDS);    // 定时关闭活动
+        Lock writeLock = lock.writeLock();
+        try {
+            writeLock.lock();
+            if (Thread.interrupted()) {
+                return;
+            }
+            startScheduledFuture.remove(cfg.getId());
+            open(cfg);
+            Duration duration = Duration.between(nowDateTime, endTime);
+            long millis = duration.toMillis();
+            ScheduledFuture<?> schedule = ThreadPool.getScheduledExecutor().schedule(
+                    () -> close(cfg),
+                    millis,
+                    TimeUnit.MILLISECONDS);// 定时关闭活动
+            closeScheduledFuture.put(cfg.getId(), schedule);
+        } finally {
+            writeLock.unlock();
+        }
+
     }
 
     public boolean isOpen(int id) {
@@ -84,13 +146,7 @@ public class TimeIntervalManager {
 
     public void open(CfgTimeIntervalFunction cfg) {
         log.info("活动{}开启！", cfg.getId());
-        Lock writeLock = lock.writeLock();
-        try {
-            writeLock.lock();
-            functionIds.add(cfg.getId());
-        } finally {
-            writeLock.unlock();
-        }
+        functionIds.add(cfg.getId());
         Players.getPlayers().values().forEach(player -> {
             TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
             timeIntervalFunctionService.check(cfg, true);
@@ -98,10 +154,14 @@ public class TimeIntervalManager {
     }
 
     public void close(CfgTimeIntervalFunction cfg) {
-        log.info("功能{}关闭！", cfg.getId());
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
+            if (Thread.interrupted()) {
+                return;
+            }
+            log.info("功能{}关闭！", cfg.getId());
+            closeScheduledFuture.remove(cfg.getId());
             functionIds.remove(cfg.getId());
         } finally {
             writeLock.unlock();

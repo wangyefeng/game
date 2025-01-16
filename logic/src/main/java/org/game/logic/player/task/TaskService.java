@@ -64,7 +64,9 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             if (task.getProgress() >= cfgTask.getTarget()) {
                 task.setFinished(true);
             } else {
-                player.addEventListener(eventType, new TaskListenerImpl<>(player, task, cfgTask, eventType));
+                TaskListenerImpl<Object> listener = new TaskListenerImpl<>(player, task, cfgTask, eventType);
+                player.addListener(eventType, listener);
+                task.setListener(listener);
             }
             entity.addTask(task);
             if (isSend) {
@@ -78,6 +80,8 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
 
     @Override
     public void close(CfgFunction cfg, boolean isSend) {
+        Configs configs = Configs.getInstance();
+        CfgTaskService cfgTaskService = configs.get(CfgTaskService.class);
         // 功能关闭时，清除此功能对应的所有任务
         PbIntArray.Builder pbTasks = null;
         if (isSend) {
@@ -87,7 +91,12 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
         while (iterator.hasNext()) {
             DBTask task = iterator.next();
             if (task.getFunctionId() == cfg.getId()) {
+                CfgTask cfgTask = cfgTaskService.getCfg(task.getId());
+                PlayerEventType eventType = eventMap.get(cfgTask.getType());
                 iterator.remove();
+                if (task.getListener() != null) {
+                    player.unloadListener(eventType, task.getListener());
+                }
                 if (isSend) {
                     pbTasks.addVal(task.getId());
                 }
@@ -112,7 +121,9 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             CfgTask cfg = cfgTaskService.getCfg(task.getId());
             if (!task.isFinished()) {
                 PlayerEventType eventType = eventMap.get(cfg.getType());
-                player.addEventListener(eventType, new TaskListenerImpl<>(player, task, cfg, eventType));
+                TaskListenerImpl<Object> listener = new TaskListenerImpl<>(player, task, cfg, eventType);
+                player.addListener(eventType, listener);
+                task.setListener(listener);
             }
         }
     }

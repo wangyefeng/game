@@ -99,7 +99,7 @@ public class ListenerTest {
         }
 
         public void addEventListener(PlayerEventType eventType, Listener<?> listener) {
-            publishManager.addEventListener(eventType, listener);
+            publishManager.addListener(eventType, listener);
         }
     }
 

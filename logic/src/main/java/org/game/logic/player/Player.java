@@ -147,12 +147,16 @@ public class Player {
         publishManager.update(eventType, value);
     }
 
-    public <T extends Publisher<?>> T getEventListeners(PlayerEventType eventType) {
+    public void unloadListener(PlayerEventType eventType, Listener<?> listener) {
+        publishManager.unloadListener(eventType, listener);
+    }
+
+    public <T extends Publisher<?>> T getListeners(PlayerEventType eventType) {
         return publishManager.getEventListeners(eventType);
     }
 
-    public void addEventListener(PlayerEventType eventType, Listener<?> listener) {
-        publishManager.addEventListener(eventType, listener);
+    public void addListener(PlayerEventType eventType, Listener<?> listener) {
+        publishManager.addListener(eventType, listener);
     }
 
     public <T extends Item> void addItems(T... items) {

@@ -22,6 +22,9 @@ public class TaskListenerImpl<Event> extends AbstractTaskListener<Event, DBTask,
 
     @Override
     protected void update0(Event event) {
+        if (task.isFinished()) {
+            task.setListener(null);
+        }
         PbTask pbTask = TaskUtil.toPbTask(task);
         player.writeToClient(LogicToClientProtocol.TASK_UPDATE, pbTask);
         log.info("玩家{}任务进度更新 {}", player.getId(), pbTask);

@@ -1,7 +1,7 @@
 package org.game.common.event;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 事件发布者
@@ -13,7 +13,7 @@ public class Publisher<Event> {
     /**
      * 观察者列表
      */
-    private final List<Listener<Event>> listeners = new ArrayList<>();
+    private final Set<Listener<Event>> listeners = new HashSet<>();
 
     public void addListener(Listener<Event> listener) {
         listeners.add(listener);

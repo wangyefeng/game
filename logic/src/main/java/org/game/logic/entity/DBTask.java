@@ -1,15 +1,22 @@
 package org.game.logic.entity;
 
+import org.game.logic.player.task.Task;
+import org.game.logic.player.task.TaskListenerImpl;
+import org.springframework.data.annotation.Transient;
+
 /**
  * 任务数据
  */
-public class DBTask implements Cloneable {
+public class DBTask implements Cloneable, Task {
 
     /**
      * 任务ID
      */
     private int id;
 
+    /**
+     * 功能ID
+     */
     private int functionId;
 
     /**
@@ -26,6 +33,9 @@ public class DBTask implements Cloneable {
      * 任务是否奖励
      */
     private boolean isReward;
+
+    @Transient
+    private TaskListenerImpl listener;
 
     public DBTask() {
     }
@@ -82,6 +92,14 @@ public class DBTask implements Cloneable {
 
     public int getFunctionId() {
         return functionId;
+    }
+
+    public TaskListenerImpl getListener() {
+        return listener;
+    }
+
+    public void setListener(TaskListenerImpl listener) {
+        this.listener = listener;
     }
 
     @Override

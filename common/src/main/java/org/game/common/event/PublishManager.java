@@ -28,8 +28,13 @@ public class PublishManager<EventType extends Enum<EventType>> {
         listenerManager.update(data);
     }
 
-    public void addEventListener(EventType eventType, Listener<?> listener) {
+    public void addListener(EventType eventType, Listener<?> listener) {
         Publisher<Object> listenerManager = getEventListeners(eventType);
         listenerManager.addListener((Listener<Object>) listener);
+    }
+
+    public void unloadListener(EventType eventType, Listener<?> listener) {
+        Publisher<Object> publisher = getEventListeners(eventType);
+        publisher.unload((Listener<Object>) listener);
     }
 }
