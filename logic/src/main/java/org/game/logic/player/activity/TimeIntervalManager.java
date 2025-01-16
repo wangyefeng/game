@@ -167,8 +167,10 @@ public class TimeIntervalManager {
             writeLock.unlock();
         }
         Players.getPlayers().values().forEach(player -> {
-            TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
-            timeIntervalFunctionService.check(cfg, true);
+            ThreadPool.getPlayerExecutor(player.getId()).execute(() -> {
+                TimeIntervalFunctionService timeIntervalFunctionService = player.getService(TimeIntervalFunctionService.class);
+                timeIntervalFunctionService.check(cfg, true);
+            });
         });
     }
 
