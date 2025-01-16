@@ -16,15 +16,9 @@ public class CfgFunction implements Cfg<Integer> {
     @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
     private int id;
 
-    @Column(name = "`type`", columnDefinition = "INT COMMENT '类型'")
-    private int type;
-
     @Override
     public Integer getId() {
         return id;
     }
 
-    public int getType() {
-        return type;
-    }
 }

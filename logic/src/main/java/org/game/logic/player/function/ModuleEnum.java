@@ -10,17 +10,6 @@ public enum ModuleEnum {
     /**
      * 任务模块
      */
-    TASK(1),
-
+    TASK,
     ;
-
-    private final int module;
-
-    ModuleEnum(int module) {
-        this.module = module;
-    }
-
-    public int getModule() {
-        return module;
-    }
 }

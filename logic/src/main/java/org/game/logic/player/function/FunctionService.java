@@ -41,8 +41,8 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void open(CfgFunction cfgFunction, boolean isSend) {
         log.info("玩家{}打开功能{}", player.getId(), cfgFunction.getId());
         entity.addFunctionId(cfgFunction.getId());
-        FunctionEnum functionEnum = FunctionEnum.getByType(cfgFunction.getType());
-        for (ModuleEnum moduleEnum : functionEnum.getModules()) {
+        ModuleEnum[] modules = FunctionFactory.getModules(cfgFunction.getId());
+        for (ModuleEnum moduleEnum : modules) {
             Module module = extendModuleMap.get(moduleEnum);
             try {
                 module.open(cfgFunction, isSend);
@@ -55,8 +55,8 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void close(CfgFunction cfgFunction, boolean isSend) {
         int functionId = cfgFunction.getId();
         entity.getFunctionIds().remove(functionId);
-        FunctionEnum functionEnum = FunctionEnum.getByType(cfgFunction.getType());
-        for (ModuleEnum moduleEnum : functionEnum.getModules()) {
+        ModuleEnum[] modules = FunctionFactory.getModules(cfgFunction.getId());
+        for (ModuleEnum moduleEnum : modules) {
             Module module = extendModuleMap.get(moduleEnum);
             if (module != null) {
                 try {
