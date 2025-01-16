@@ -59,7 +59,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
         for (CfgTask cfgTask : cfgTasks) {
             PlayerEventType eventType = eventMap.get(cfgTask.getType());
             DBTask task = new DBTask(cfgTask.getId(), cfgTask.getFunctionId());
-            TaskStrategy taskStrategy = CommonTaskType.getTaskStrategy(eventType);
+            TaskStrategy<?> taskStrategy = TaskStrategyFactory.getTaskStrategy(eventType);
             task.setProgress(Math.min(cfgTask.getTarget(), taskStrategy.initProgress(player)));
             if (task.getProgress() >= cfgTask.getTarget()) {
                 task.setFinished(true);

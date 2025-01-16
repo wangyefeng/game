@@ -20,7 +20,7 @@ public abstract class AbstractTaskListener<Event, T extends Task, K extends CfgT
     public AbstractTaskListener(T task, K cfg, PlayerEventType type) {
         this.task = task;
         this.cfg = cfg;
-        this.taskStrategy = CommonTaskType.getTaskStrategy(type);
+        this.taskStrategy = TaskStrategyFactory.getTaskStrategy(type);
     }
 
     @Override
