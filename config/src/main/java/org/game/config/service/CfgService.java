@@ -78,5 +78,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return persist.toColumns(field)[0];
     }
 
-    protected abstract void check0(Entity entity, Configs config) throws Exception;
+    protected void check0(Entity entity, Configs config) throws Exception {
+        // 子类自行实现
+    }
 }

@@ -1,6 +1,5 @@
 package org.game.config.service;
 
-import org.game.config.Configs;
 import org.game.config.entity.CfgTask;
 import org.game.config.repository.CfgTaskRepository;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,10 +16,6 @@ import java.util.Map;
 public class CfgTaskService extends CfgService<CfgTask, CfgTaskRepository, Integer> {
 
     private Map<Integer, List<CfgTask>> funcMap = new HashMap<>();
-
-    @Override
-    protected void check0(CfgTask cfg, Configs config) throws Exception {
-    }
 
     @Override
     protected void init() {
