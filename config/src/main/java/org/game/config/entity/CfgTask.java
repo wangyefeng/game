@@ -20,7 +20,7 @@ public abstract class CfgTask implements Cfg<Integer> {
     private int id;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "`type`", columnDefinition = "ENUM COMMENT '任务类型'")
+    @Column(name = "`type`", columnDefinition = "TINYINT UNSIGNED COMMENT '任务类型'")
     private PlayerEventType type;
 
     @JdbcTypeCode(SqlTypes.JSON)

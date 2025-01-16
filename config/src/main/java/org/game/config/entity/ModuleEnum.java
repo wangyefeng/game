@@ -1,4 +1,4 @@
-package org.game.logic.player.function;
+package org.game.config.entity;
 
 /**
  * 模块枚举

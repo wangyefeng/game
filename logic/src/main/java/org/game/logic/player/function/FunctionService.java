@@ -1,6 +1,7 @@
 package org.game.logic.player.function;
 
 import org.game.config.entity.CfgFunction;
+import org.game.config.entity.ModuleEnum;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.FunctionInfo;
 import org.game.logic.player.task.TaskService;
@@ -41,7 +42,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void open(CfgFunction cfgFunction, boolean isSend) {
         log.info("玩家{}打开功能{}", player.getId(), cfgFunction.getId());
         entity.addFunctionId(cfgFunction.getId());
-        ModuleEnum[] modules = FunctionFactory.getModules(cfgFunction.getId());
+        ModuleEnum[] modules = cfgFunction.getModuleEnums();
         for (ModuleEnum moduleEnum : modules) {
             Module module = extendModuleMap.get(moduleEnum);
             try {
@@ -55,7 +56,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void close(CfgFunction cfgFunction, boolean isSend) {
         int functionId = cfgFunction.getId();
         entity.getFunctionIds().remove(functionId);
-        ModuleEnum[] modules = FunctionFactory.getModules(cfgFunction.getId());
+        ModuleEnum[] modules = cfgFunction.getModuleEnums();
         for (ModuleEnum moduleEnum : modules) {
             Module module = extendModuleMap.get(moduleEnum);
             if (module != null) {

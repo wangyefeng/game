@@ -1,6 +1,7 @@
 package org.game.logic.player.function;
 
 import org.game.config.entity.CfgFunction;
+import org.game.config.entity.ModuleEnum;
 
 public interface Module {
 
