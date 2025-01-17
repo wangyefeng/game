@@ -1,6 +1,7 @@
 package org.game.login.service;
 
 import org.game.common.RedisKeys;
+import org.game.common.RedisKeys.Locks;
 import org.game.common.http.HttpResp;
 import org.game.common.util.TokenUtil;
 import org.game.login.AccountType;
@@ -8,6 +9,8 @@ import org.game.login.entity.Account;
 import org.game.login.entity.User;
 import org.game.login.repository.AccountRepository;
 import org.game.login.response.LoginResponse;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +33,9 @@ public class AccountService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     public void save(Account account) {
         accountRepository.save(account);
     }
@@ -39,12 +45,18 @@ public class AccountService {
     }
 
     public HttpResp<?> register(String username, String password) {
-        if (accountRepository.existsById(username)) {
-            return HttpResp.fail(1, "用户名已存在");
+        RLock rLock = redissonClient.getLock(Locks.ACCOUNT_INNER_LOCK);
+        try {
+            rLock.lock();
+            if (accountRepository.existsById(username)) {
+                return HttpResp.fail(1, "用户名已存在");
+            }
+            Account account = new Account(username, passwordEncoder.encode(password), new User(AccountType.INNER, System.currentTimeMillis()));
+            accountRepository.save(account);
+            return HttpResp.SUCCESS;
+        } finally {
+            rLock.unlock();
         }
-        Account account = new Account(username, passwordEncoder.encode(password), new User(AccountType.INNER, System.currentTimeMillis()));
-        accountRepository.save(account);
-        return HttpResp.SUCCESS;
     }
 
     public HttpResp<LoginResponse> login(String username, String password) {

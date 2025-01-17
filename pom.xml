@@ -103,13 +103,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
-            <dependency>
-                <groupId>io.lettuce</groupId>
-                <artifactId>lettuce-core</artifactId>
-                <version>6.5.2.RELEASE</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
@@ -120,6 +113,13 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>6.2.1</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.43.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

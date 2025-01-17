@@ -1,7 +1,6 @@
 package org.game.login.controller;
 
 import org.game.common.http.HttpResp;
-import org.game.login.response.LoginResponse;
 import org.game.login.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
