@@ -8,11 +8,11 @@ import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class AbstractGameService<E extends Entity, R extends MongoRepository<E, Integer>> implements GameService<E> {
+public abstract class AbstractGameService<E extends Entity, R extends CrudRepository<E, Integer>> implements GameService<E> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractGameService.class);
     @Autowired
