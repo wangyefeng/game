@@ -51,7 +51,7 @@ public class LogicClient extends Client {
 
     public LogicClient(int id, String host, int port, int rpcPort) {
         super(id, host, port, "logic");
-        grpcChannel = ManagedChannelBuilder.forAddress("localhost", rpcPort).usePlaintext().build();
+        grpcChannel = ManagedChannelBuilder.forAddress(host, rpcPort).usePlaintext().build();
     }
 
     @Override
