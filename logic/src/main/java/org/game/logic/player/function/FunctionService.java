@@ -51,6 +51,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void afterInit() {
         super.afterInit();
         checkCyclicFunction(false);
+        checkTimeInterval(false);
     }
 
     /**
@@ -75,10 +76,10 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
             cycleFunctions.put(cfgCyclicFunction.getId(), new DbCycleFunction(cfgCyclicFunction.getId(), dailyResetDate));
         } else {
             DbCycleFunction dbCycleFunction = cycleFunctions.get(cfgCyclicFunction.getId());
-            LocalDate baseDate = cfgCyclicFunction.getBaseDate();
+            LocalDate startDate = cfgCyclicFunction.getStartDate();
             int cycle = cfgCyclicFunction.getCycle();
             // 判断是否在同一周期
-            if (getCycle(dailyResetDate, baseDate, cycle) != getCycle(dbCycleFunction.getResetDate(), baseDate, cycle)) {
+            if (getCycle(dailyResetDate, startDate, cycle) != getCycle(dbCycleFunction.getResetDate(), startDate, cycle)) {
                 close(cfgCyclicFunction, isSend);
                 open(cfgCyclicFunction, isSend);
                 dbCycleFunction.setResetDate(dailyResetDate);
@@ -86,8 +87,8 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
         }
     }
 
-    private static long getCycle(LocalDate date, LocalDate baseDate, int cycle) {
-        return ChronoUnit.DAYS.between(baseDate, date) / cycle;
+    private static long getCycle(LocalDate date, LocalDate startDate, int cycle) {
+        return ChronoUnit.DAYS.between(startDate, date) / cycle;
     }
 
     @Override
@@ -142,12 +143,12 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     }
 
     public void checkTimeInterval(boolean isSend) {
+        Configs configs = Configs.getInstance();
         Lock lock = timeIntervalManager.lock.readLock();
         try {
             lock.lock();
             Set<Integer> needCheck = new HashSet<>(timeIntervalManager.getFunctionIds());
-            needCheck.addAll(entity.getFunctionIds());
-            Configs configs = Configs.getInstance();
+            needCheck.addAll(entity.getTimeIntervalIds());
             CfgTimeIntervalFunctionService cfgTimeIntervalFunctionService = configs.get(CfgTimeIntervalFunctionService.class);
             for (Integer id : needCheck) {
                 CfgTimeIntervalFunction cfg = cfgTimeIntervalFunctionService.getCfg(id);
@@ -159,7 +160,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     }
 
     public void checkTimeIntervalOne(CfgTimeIntervalFunction cfg, boolean isSend) {
-        Lock writeLock = timeIntervalManager.lock.writeLock();
+        Lock writeLock = timeIntervalManager.lock.readLock();
         try {
             writeLock.lock();
             int id = cfg.getId();

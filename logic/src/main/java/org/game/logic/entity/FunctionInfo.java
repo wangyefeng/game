@@ -50,6 +50,10 @@ public class FunctionInfo extends Entity {
         return cycleFunctions;
     }
 
+    public Set<Integer> getTimeIntervalIds() {
+        return timeIntervalIds;
+    }
+
     @Override
     public FunctionInfo clone() throws CloneNotSupportedException {
         FunctionInfo clone = (FunctionInfo) super.clone();
