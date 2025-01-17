@@ -71,6 +71,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
                 player.setChannel(channel);
             } else {
                 if (clientGroup.getClients().isEmpty()) {
+                    log.error("当前没有可用的logic服务器，请检查logic服务器是否正常启动！！！");
                     channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
                     channel.close();
                     return;
