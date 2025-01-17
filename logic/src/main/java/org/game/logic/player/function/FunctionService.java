@@ -147,8 +147,15 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
         Lock lock = timeIntervalManager.lock.readLock();
         try {
             lock.lock();
+            // 交集
+            Set<Integer> intersection = new HashSet<>(timeIntervalManager.getFunctionIds());
+            intersection.retainAll(entity.getTimeIntervalIds());
+
+            // 需要检查的功能 取并集后去掉交集
             Set<Integer> needCheck = new HashSet<>(timeIntervalManager.getFunctionIds());
             needCheck.addAll(entity.getTimeIntervalIds());
+            needCheck.removeAll(intersection);
+
             CfgTimeIntervalFunctionService cfgTimeIntervalFunctionService = configs.get(CfgTimeIntervalFunctionService.class);
             for (Integer id : needCheck) {
                 CfgTimeIntervalFunction cfg = cfgTimeIntervalFunctionService.getCfg(id);
@@ -170,10 +177,10 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
             if (isOpen != playerIsOpen) {// 状态不一致
                 if (isOpen) {
                     functionService.open(cfg, isSend);
-                    entity.getFunctionIds().add(id);
+                    entity.getTimeIntervalIds().add(id);
                 } else {
                     functionService.close(cfg, isSend);
-                    entity.getFunctionIds().remove(id);
+                    entity.getTimeIntervalIds().remove(id);
                 }
             }
         } finally {
