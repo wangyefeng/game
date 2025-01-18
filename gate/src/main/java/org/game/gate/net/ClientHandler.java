@@ -66,6 +66,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             player.getExecutor().submit(() -> {
                 Players.removePlayer(player.getId());
                 player.writeToLogic(GateToLogicProtocol.LOGOUT, player.getId());
+                log.info("玩家退出游戏, 玩家ID: {} channel: {}", player.getId(), c.id());
                 player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().remove((Integer) player.getId());
             }).get();
         }
