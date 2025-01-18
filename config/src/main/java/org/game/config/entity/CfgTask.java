@@ -19,8 +19,8 @@ public abstract class CfgTask implements Cfg<Integer> {
     @Id
     private int id;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "`type`", columnDefinition = "TINYINT UNSIGNED COMMENT '任务类型'")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "`type`", columnDefinition = "VARCHAR(50) UNSIGNED COMMENT '任务类型'")
     private PlayerEventType type;
 
     @JdbcTypeCode(SqlTypes.JSON)
