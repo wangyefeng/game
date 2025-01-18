@@ -1,19 +1,19 @@
 package org.game.logic.player.task;
 
-import org.game.config.entity.PlayerEventType;
+import org.game.config.entity.PlayerEvent;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public abstract class TaskStrategyFactory {
 
-    private static final Map<PlayerEventType, LevelTaskStrategy> taskStrategyMap = new EnumMap<>(PlayerEventType.class);
+    private static final Map<PlayerEvent, LevelTaskStrategy> taskStrategyMap = new EnumMap<>(PlayerEvent.class);
 
     static {
-        taskStrategyMap.put(PlayerEventType.LEVEL_UP, new LevelTaskStrategy());
+        taskStrategyMap.put(PlayerEvent.LEVEL_UP, new LevelTaskStrategy());
     }
 
-    public static TaskStrategy<?> getTaskStrategy(PlayerEventType type) {
+    public static TaskStrategy<?> getTaskStrategy(PlayerEvent type) {
         TaskStrategy<?> strategy = taskStrategyMap.get(type);
 
         if (strategy == null) {

@@ -1,7 +1,7 @@
 package org.game.logic.player;
 
 import org.game.config.entity.Item;
-import org.game.config.entity.PlayerEventType;
+import org.game.config.entity.PlayerEvent;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.PlayerInfo;
 import org.game.logic.player.item.Consumable;
@@ -37,7 +37,7 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     public void levelUp() {
         entity.setLevel(entity.getLevel() + 1);
-        player.updateEvent(PlayerEventType.LEVEL_UP, entity.getLevel());
+        player.updateEvent(PlayerEvent.LEVEL_UP, entity.getLevel());
     }
 
     @Override

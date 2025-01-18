@@ -12,7 +12,7 @@ public enum ModuleEnum {
     /**
      * 任务模块
      */
-    TASK(0),
+    TASK(1),
     ;
 
     private final int code;

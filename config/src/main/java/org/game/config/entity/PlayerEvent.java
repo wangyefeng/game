@@ -1,6 +1,6 @@
 package org.game.config.entity;
 
-public enum PlayerEventType {
+public enum PlayerEvent {
 
     LEVEL_UP,
 }

@@ -4,7 +4,7 @@ import org.game.config.Configs;
 import org.game.config.entity.CfgFunction;
 import org.game.config.entity.CfgSimpleTask;
 import org.game.config.entity.ModuleEnum;
-import org.game.config.entity.PlayerEventType;
+import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgSimpleTaskService;
 import org.game.logic.AbstractGameService;
 import org.game.logic.entity.DBTask;
@@ -49,7 +49,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             pbTasks = PbTaskArrays.newBuilder();
         }
         for (CfgSimpleTask cfgTask : cfgTasks) {
-            PlayerEventType eventType = cfgTask.getType();
+            PlayerEvent eventType = cfgTask.getEvent();
             TaskStrategy<?> taskStrategy = TaskStrategyFactory.getTaskStrategy(eventType);
             DBTask task = new DBTask(cfgTask.getId(), Math.min(cfgTask.getTarget(), taskStrategy.initProgress(player)));
             if (task.getProgress() >= cfgTask.getTarget()) {
@@ -83,7 +83,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             DBTask task = iterator.next();
             CfgSimpleTask cfgTask = cfgSimpleTaskService.getCfg(task.getId());
             if (cfgTask.getFunctionId() == cfg.getId()) {
-                PlayerEventType eventType = cfgTask.getType();
+                PlayerEvent eventType = cfgTask.getEvent();
                 iterator.remove();
                 if (task.getListener() != null) {
                     player.unloadListener(eventType, task.getListener());
@@ -113,7 +113,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             CfgSimpleTask cfg = cfgSimpleTaskService.getCfg(task.getId());
             if (!task.isFinished()) {
                 TaskListenerImpl<Object> listener = new TaskListenerImpl<>(player, task, cfg);
-                player.addListener(cfg.getType(), listener);
+                player.addListener(cfg.getEvent(), listener);
                 task.setListener(listener);
             }
         }

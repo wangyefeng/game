@@ -20,8 +20,8 @@ public abstract class CfgTask implements Cfg<Integer> {
     private int id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "`type`", columnDefinition = "VARCHAR(50) UNSIGNED COMMENT '任务类型'")
-    private PlayerEventType type;
+    @Column(name = "`event`", columnDefinition = "VARCHAR(50) UNSIGNED COMMENT '任务类型'")
+    private PlayerEvent event;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "args", columnDefinition = "JSON COMMENT '任务参数'")
@@ -35,8 +35,8 @@ public abstract class CfgTask implements Cfg<Integer> {
         return id;
     }
 
-    public PlayerEventType getType() {
-        return type;
+    public PlayerEvent getEvent() {
+        return event;
     }
 
     public String[] getArgs() {

@@ -8,7 +8,7 @@ import org.game.common.event.Publisher;
 import org.game.config.Configs;
 import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
-import org.game.config.entity.PlayerEventType;
+import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgItemService;
 import org.game.logic.GameService;
 import org.game.logic.entity.PlayerInfo;
@@ -58,7 +58,7 @@ public class Player {
     /**
      * 监听器管理者
      */
-    private PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
+    private PublishManager<PlayerEvent> publishManager = new PublishManager<>(PlayerEvent.values());
 
     private List<DailyReset> dailyResetServices = new ArrayList<>();
 
@@ -154,19 +154,19 @@ public class Player {
         return ThreadPool.scheduleAtFixedRate(() -> ThreadPool.getPlayerExecutor(id).execute(runnable), initialDelay, period, unit);
     }
 
-    public void updateEvent(PlayerEventType eventType, Object value) {
+    public void updateEvent(PlayerEvent eventType, Object value) {
         publishManager.update(eventType, value);
     }
 
-    public void unloadListener(PlayerEventType eventType, Listener<?> listener) {
+    public void unloadListener(PlayerEvent eventType, Listener<?> listener) {
         publishManager.unloadListener(eventType, listener);
     }
 
-    public <T extends Publisher<?>> T getListeners(PlayerEventType eventType) {
+    public <T extends Publisher<?>> T getListeners(PlayerEvent eventType) {
         return publishManager.getEventListeners(eventType);
     }
 
-    public void addListener(PlayerEventType eventType, Listener<?> listener) {
+    public void addListener(PlayerEvent eventType, Listener<?> listener) {
         publishManager.addListener(eventType, listener);
     }
 
