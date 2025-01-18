@@ -12,11 +12,10 @@ import java.util.List;
 @Valid
 public class CfgSimpleTask extends CfgTask {
 
-    @Column(name = "function_id", columnDefinition = "INT UNSIGNED COMMENT '所属功能ID'")
+    @Column(columnDefinition = "INT COMMENT '所属功能ID'")
     private int functionId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "rewards", columnDefinition = "JSON COMMENT '奖励'")
     private List<SimpleItem> rewards;
 
     public List<SimpleItem> getRewards() {

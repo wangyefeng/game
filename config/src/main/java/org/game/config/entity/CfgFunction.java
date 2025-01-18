@@ -15,11 +15,10 @@ import org.hibernate.type.SqlTypes;
 public abstract class CfgFunction implements Cfg<Integer> {
 
     @Id
-    @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
+    @Column(columnDefinition = "INT COMMENT '唯一ID'")
     private int id;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "modules", columnDefinition = "JSON COMMENT '功能模块集合'")
     private ModuleEnum[] modules;
 
     @Override

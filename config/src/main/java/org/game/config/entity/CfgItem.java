@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Min;
 public class CfgItem implements Cfg<Integer> {
 
     @Id
-    @Column(name = "`id`", columnDefinition = "INT COMMENT '唯一id'")
+    @Column(columnDefinition = "INT COMMENT '唯一id'")
     private int id;
 
     @Min(0)

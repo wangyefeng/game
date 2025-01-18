@@ -17,17 +17,17 @@ import org.hibernate.type.SqlTypes;
 public abstract class CfgTask implements Cfg<Integer> {
 
     @Id
+    @Column(columnDefinition = "INT COMMENT '唯一ID'")
     private int id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "`event`", columnDefinition = "VARCHAR(50) UNSIGNED COMMENT '任务类型'")
+    @Enumerated(EnumType.ORDINAL)
+    @Column(columnDefinition = "INT COMMENT '事件类型'")
     private PlayerEvent event;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "args", columnDefinition = "JSON COMMENT '任务参数'")
     private String[] args;
 
-    @Column(name = "target", columnDefinition = "BIGINT UNSIGNED COMMENT '任务目标'")
+    @Column(columnDefinition = "BIGINT COMMENT '任务目标'")
     private long target;
 
     @Override

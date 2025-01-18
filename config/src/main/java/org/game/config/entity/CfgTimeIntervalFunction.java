@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Valid
 public abstract class CfgTimeIntervalFunction extends CfgFunction {
 
-    @Column(name = "`start_time`", columnDefinition = "DATETIME COMMENT '开始时间'")
+    @Column(columnDefinition = "DATETIME COMMENT '开始时间'")
     @NotNull
     private LocalDateTime startTime;
 
-    @Column(name = "`end_time`", columnDefinition = "DATETIME COMMENT '结束时间'")
+    @Column(columnDefinition = "DATETIME COMMENT '结束时间'")
     @NotNull
     private LocalDateTime endTime;
 
