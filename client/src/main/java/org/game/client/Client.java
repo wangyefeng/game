@@ -121,8 +121,6 @@ public class Client implements CommandLineRunner {
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";
-            String token;
-            int playerId;
             HttpResp<LoginResponse> loginResponse = login(client, username, password);
             if (!loginResponse.isSuccess()) {// 登录失败，尝试注册
                 HttpResp<Void> registerResp = register(client, username, password);
@@ -134,8 +132,8 @@ public class Client implements CommandLineRunner {
             if (!loginResponse.isSuccess()) {
                 throw new RuntimeException("登录失败：" + loginResponse.msg());
             }
-            token = loginResponse.data().token();
-            playerId = loginResponse.data().userId();
+            String token = loginResponse.data().token();
+            int playerId = loginResponse.data().userId();
             log.info("登录成功，token：{}", token);
             run(playerId, token);
         }
