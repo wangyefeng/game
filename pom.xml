@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
     </parent>
 
     <groupId>org.wangyefeng</groupId>
@@ -28,8 +28,8 @@
     <properties>
         <java.version>22</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <protobuf.version>4.29.0</protobuf.version>
-        <grpc.version>1.69.0</grpc.version>
+        <protobuf.version>4.29.3</protobuf.version>
+        <grpc.version>1.69.1</grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -37,7 +37,7 @@
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
-                <version>8.2.0</version>
+                <version>9.1.0</version>
             </dependency>
 
             <dependency>
