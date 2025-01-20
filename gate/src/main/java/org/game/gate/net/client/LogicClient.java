@@ -55,6 +55,8 @@ public class LogicClient extends Client {
         eventLoopGroup = new NioEventLoopGroup(1);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
+        GateCodeEncode gateCodeEncode = new GateCodeEncode();
+        GatePlayerEncode gatePlayerEncode = new GatePlayerEncode();
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
             @Override
@@ -64,7 +66,7 @@ public class LogicClient extends Client {
                 cp.addLast(heartBeatHandler);
                 cp.addLast(new LengthFieldBasedFrameDecoder(LENGTH_LIMIT, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                 cp.addLast(new LogicDecoder());
-                cp.addLast(new GateClientEncode());
+                cp.addLast(gateCodeEncode, gatePlayerEncode);// 自定义编码器
                 cp.addLast(handler);
             }
         });

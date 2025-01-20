@@ -15,10 +15,10 @@ public class LogoutMsgHandler extends PlayerHandler<Message> {
 
     @Override
     protected void handle(Player player, Message message, Configs config) {
-        player.logout();
-        Players.removePlayer(player.getId());
         log.info("玩家{}退出游戏", player.getId());
+        Players.removePlayer(player.getId());
         player.getChannel().attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) player.getId());
+        player.logout();
     }
 
     @Override

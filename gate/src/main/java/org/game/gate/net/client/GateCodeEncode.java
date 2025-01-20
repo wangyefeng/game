@@ -16,7 +16,7 @@ import static org.game.proto.protocol.Protocol.FRAME_LENGTH;
  * @description 客户端消息编码器
  */
 @ChannelHandler.Sharable
-public class GateClientEncode extends MessageToByteEncoder<MessageCode<?>> {
+public class GateCodeEncode extends MessageToByteEncoder<MessageCode<?>> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, ByteBuf out) throws Exception {
