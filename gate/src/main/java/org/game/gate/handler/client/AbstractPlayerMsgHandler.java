@@ -4,10 +4,11 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.gate.net.AttributeKeys;
 import org.game.gate.player.Player;
+import org.game.proto.CodeMsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractPlayerMsgHandler<T extends Message> implements ClientMsgHandler<T> {
+public abstract class AbstractPlayerMsgHandler<T extends Message> implements CodeMsgHandler<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPlayerMsgHandler.class);
 

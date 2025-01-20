@@ -6,7 +6,7 @@ import org.game.config.Configs;
 import org.game.proto.CodeMsgHandler;
 import org.game.proto.protocol.GateToLogicProtocol;
 
-public abstract class GateMsgHandler<T extends Message> implements CodeMsgHandler<T> {
+public abstract class AbstractCodeMsgHandler<T extends Message> implements CodeMsgHandler<T> {
 
     @Override
     public void handle(Channel channel, T data) throws Exception {

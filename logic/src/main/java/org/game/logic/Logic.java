@@ -9,8 +9,6 @@ import org.game.config.Configs;
 import org.game.config.service.CfgService;
 import org.game.config.tools.ExcelToMysql;
 import org.game.config.tools.MysqlToExcel;
-import org.game.logic.net.ClientMsgHandler;
-import org.game.logic.net.GateMsgHandler;
 import org.game.logic.net.TcpServer;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
@@ -26,8 +24,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
-import java.util.Collection;
-
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = ExcelToMysql.class), @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class)})
 public class Logic extends Server {
@@ -36,12 +32,6 @@ public class Logic extends Server {
 
     @Autowired
     private TcpServer tcpServer;
-
-    @Autowired
-    private Collection<GateMsgHandler<?>> gateMsgHandlers;
-
-    @Autowired
-    private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     @Autowired
     private CuratorFramework zkClient;
@@ -111,8 +101,7 @@ public class Logic extends Server {
 
     private void registerHandler() {
         log.info("handler registering...");
-        gateMsgHandlers.forEach(MsgHandler::register);// 注册gate handler
-        clientMsgHandlers.forEach(MsgHandler::register);// 注册client handler
+        applicationContext.getBeansOfType(MsgHandler.class).values().forEach(MsgHandler::register);// 注册所有handler
         log.info("handler register end");
     }
 

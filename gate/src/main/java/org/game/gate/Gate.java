@@ -7,8 +7,6 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.game.common.Server;
-import org.game.gate.handler.client.ClientMsgHandler;
-import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.net.TcpServer;
 import org.game.gate.net.client.Client;
 import org.game.gate.net.client.ClientGroup;
@@ -26,7 +24,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,12 +40,6 @@ public class Gate extends Server {
 
     @Autowired
     private TcpServer tcpServer;
-
-    @Autowired
-    private Collection<LogicMsgHandler<?>> logicMsgHandlers;
-
-    @Autowired
-    private Collection<ClientMsgHandler<?>> clientMsgHandlers;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -181,8 +172,7 @@ public class Gate extends Server {
 
     private void registerHandler() {
         log.info("handler registering...");
-        logicMsgHandlers.forEach(MsgHandler::register);
-        clientMsgHandlers.forEach(MsgHandler::register);
+        applicationContext.getBeansOfType(MsgHandler.class).values().forEach(MsgHandler::register);// 注册所有handler
         log.info("handler register end");
     }
 

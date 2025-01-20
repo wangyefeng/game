@@ -5,14 +5,13 @@ import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.PlayerMsgHandler;
-import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ClientMsgHandler<T extends Message> implements PlayerMsgHandler<T> {
+public abstract class AbstractPlayerMsgHandler<T extends Message> implements PlayerMsgHandler<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(ClientMsgHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractPlayerMsgHandler.class);
 
     @Override
     public void handle(Channel channel, int playerId, T data) {
@@ -36,8 +35,5 @@ public abstract class ClientMsgHandler<T extends Message> implements PlayerMsgHa
         });
     }
 
-    protected abstract void handle0(Channel channel, int playerId, T data, Configs config);
-
-    @Override
-    public abstract ClientToLogicProtocol getProtocol();
+    protected abstract void handle0(Channel channel, int playerId, T data, Configs configs);
 }

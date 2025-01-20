@@ -3,7 +3,7 @@ package org.game.logic.player;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
-import org.game.logic.net.ClientMsgHandler;
+import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -17,10 +17,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterHandler extends ClientMsgHandler<PbRegisterReq> {
+public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> {
 
 
-    private static final Logger log = LoggerFactory.getLogger(RegisterHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(RegisterMsgHandler.class);
 
     @Autowired
     private ApplicationContext applicationContext;

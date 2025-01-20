@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LevelUpHandler extends PlayerHandler<PbInt> {
+public class LevelUpMsgHandlerAb extends PlayerHandler<PbInt> {
 
-    private static final Logger log = LoggerFactory.getLogger(LevelUpHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LevelUpMsgHandlerAb.class);
 
     @Override
     protected void handle(Player player, PbInt data, Configs config) {

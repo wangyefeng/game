@@ -9,7 +9,6 @@ import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.proto.CodeMsgHandler;
-import org.game.proto.CommonPbUtil;
 import org.game.proto.MessageCode;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.GateToLogicProtocol;
@@ -66,7 +65,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
         if (player != null) {
             player.getExecutor().submit(() -> {
                 Players.removePlayer(player.getId());
-                player.writeToLogic(GateToLogicProtocol.LOGOUT, CommonPbUtil.parse(player.getId()));
+                player.writeToLogic(GateToLogicProtocol.LOGOUT, player.getId());
                 player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().remove((Integer) player.getId());
             }).get();
         }

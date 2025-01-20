@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.gate.net.client.LogicClient;
 import org.game.proto.MessageCode;
+import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.protocol.GateToLogicProtocol;
 
@@ -77,11 +78,19 @@ public class Player {
         channel.writeAndFlush(new MessageCode<>(protocol, message));
     }
 
+    public void writeToLogic(GateToLogicProtocol protocol) {
+        writeToLogic(protocol, null);
+    }
+
     public void writeToLogic(GateToLogicProtocol protocol, Message message) {
         getLogicClient().getChannel().writeAndFlush(new MessageCode<>(protocol, message));
     }
 
-    public void writeToLogic(GateToLogicProtocol protocol) {
-        writeToLogic(protocol, null);
+    public void writeToLogic(GateToLogicProtocol protocol, int playerId) {
+        writeToLogic(protocol, playerId, null);
+    }
+
+    public void writeToLogic(GateToLogicProtocol protocol, int playerId, Message message) {
+        getLogicClient().getChannel().writeAndFlush(new MessagePlayer<>(playerId, protocol, message));
     }
 }

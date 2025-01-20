@@ -1,0 +1,28 @@
+package org.game.logic.player;
+
+import com.google.protobuf.Message;
+import org.game.config.Configs;
+import org.game.logic.net.ChannelKeys;
+import org.game.proto.protocol.GateToLogicProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@Component
+public class LogoutMsgHandler extends PlayerHandler<Message> {
+
+    private static final Logger log = LoggerFactory.getLogger(LogoutMsgHandler.class);
+
+    @Override
+    protected void handle(Player player, Message message, Configs config) {
+        player.logout();
+        Players.removePlayer(player.getId());
+        log.info("玩家{}退出游戏", player.getId());
+        player.getChannel().attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) player.getId());
+    }
+
+    @Override
+    public GateToLogicProtocol getProtocol() {
+        return GateToLogicProtocol.LOGOUT;
+    }
+}

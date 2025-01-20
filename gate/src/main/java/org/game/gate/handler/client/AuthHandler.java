@@ -11,10 +11,12 @@ import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.gate.thread.ThreadPool;
+import org.game.proto.CodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbAuthReq;
 import org.game.proto.struct.PlayerExistServiceGrpc;
 import org.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
 import org.game.proto.struct.Rpc.PbPlayerExistReq;
@@ -28,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
-public final class AuthHandler implements ClientMsgHandler<Login.PbAuthReq> {
+public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
 
     private static final Logger log = LoggerFactory.getLogger(AuthHandler.class);
 

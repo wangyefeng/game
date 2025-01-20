@@ -1,14 +1,13 @@
 package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
-import org.game.proto.struct.Common;
 import org.game.proto.Topic;
 import org.springframework.util.Assert;
 
 public enum GateToLogicProtocol implements Protocol {
     PING((short) 0),
 
-    LOGOUT((short) 1, Common.PbInt.parser()),
+    LOGOUT((short) 1),
     ;
 
 

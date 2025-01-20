@@ -3,11 +3,12 @@ package org.game.logic.player;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.logic.net.ChannelKeys;
-import org.game.logic.net.ClientMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbLoginReq;
 import org.game.proto.struct.Login.PbLoginResp;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.slf4j.Logger;
@@ -17,10 +18,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoginHandler extends ClientMsgHandler<Login.PbLoginReq> {
+public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
 
 
-    private static final Logger log = LoggerFactory.getLogger(LoginHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginMsgHandler.class);
 
     @Autowired
     private ApplicationContext applicationContext;
