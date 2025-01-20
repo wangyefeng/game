@@ -1,6 +1,5 @@
 package org.game.client;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -15,7 +14,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import org.game.common.http.HttpResp;
 import org.game.common.random.RandomUtil;
-import org.game.common.util.JsonUtil;
 import org.game.proto.CodeMsgEncode;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
@@ -30,9 +28,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import java.io.File;
 
@@ -118,60 +116,36 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
-        Builder basedUrl = WebClient.builder().baseUrl("http://game.wangyefeng.fun/auth");
+        WebClient client = WebClient.builder().baseUrl("http://game.wangyefeng.fun/auth").build();
         int num = 1;
         for (int i = 1; i <= num; i++) {
-            int finalI = i;
+            String username = "user" + i;
+            String password = "123456";
             String token;
             int playerId;
-            String loginResponse = basedUrl.build()
-                    .get()
-                    .uri(uriBuilder -> uriBuilder.path("/login")
-                            .queryParam("username", "user" + finalI) // 查询参数
-                            .queryParam("password", "123456")
-                            .build()) // 请求的 URI
-                    .retrieve() // 发起请求
-                    .bodyToMono(String.class).block();
-            HttpResp<LoginResponse> httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
-            });
-            if (httpResp.isSuccess()) {
-                token = httpResp.data().token();
-                playerId = httpResp.data().userId();
-            } else {
-                String registerResponse = basedUrl.build()
-                        .get()
-                        .uri(uriBuilder -> uriBuilder.path("/register")
-                                .queryParam("username", "user" + finalI) // 查询参数
-                                .queryParam("password", "123456")
-                                .build()) // 请求的 URI
-                        .retrieve() // 发起请求
-                        .bodyToMono(String.class).block();
-                HttpResp<?> registerResp = JsonUtil.parseJson(registerResponse, HttpResp.class);
-                if (registerResp.isSuccess()) {
-                    loginResponse = basedUrl.build()
-                            .get()
-                            .uri(uriBuilder -> uriBuilder.path("/login")
-                                    .queryParam("username", "user" + finalI) // 查询参数
-                                    .queryParam("password", "123456")
-                                    .build()) // 请求的 URI
-                            .retrieve() // 发起请求
-                            .bodyToMono(String.class).block();
-                    httpResp = JsonUtil.parseJson(loginResponse, new TypeReference<>() {
-                    });
-                    if (httpResp.isSuccess()) {
-                        token = httpResp.data().token();
-                        playerId = httpResp.data().userId();
-                    } else {
-                        log.error("登录失败：{}", httpResp.msg());
-                        return;
-                    }
-                } else {
-                    log.error("注册失败：{}", registerResp.msg());
-                    return;
+            HttpResp<LoginResponse> loginResponse = login(client, username, password);
+            if (!loginResponse.isSuccess()) {// 登录失败，尝试注册
+                HttpResp<Void> registerResp = register(client, username, password);
+                if (!registerResp.isSuccess()) {// 注册成功，继续登录
+                    throw new RuntimeException("注册失败：" + registerResp.msg());
                 }
+                loginResponse = login(client, username, password);
             }
+            if (!loginResponse.isSuccess()) {
+                throw new RuntimeException("登录失败：" + loginResponse.msg());
+            }
+            token = loginResponse.data().token();
+            playerId = loginResponse.data().userId();
             log.info("登录成功，token：{}", token);
             run(playerId, token);
         }
+    }
+
+    private static HttpResp<LoginResponse> login(WebClient client, String username, String password) {
+        return client.get().uri(uriBuilder -> uriBuilder.path("/login").queryParam("username", username).queryParam("password", password).build()).retrieve().bodyToMono(new ParameterizedTypeReference<HttpResp<LoginResponse>>() {}).block();
+    }
+
+    private static HttpResp<Void> register(WebClient client, String username, String password) {
+        return client.get().uri(uriBuilder -> uriBuilder.path("/register").queryParam("username", username).queryParam("password", password).build()).retrieve().bodyToMono(new ParameterizedTypeReference<HttpResp<Void>>() {}).block();
     }
 }
