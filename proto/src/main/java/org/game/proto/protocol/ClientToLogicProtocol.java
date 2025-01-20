@@ -2,13 +2,13 @@ package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
-import org.game.proto.struct.Common.PbInt;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbLoginReq;
 import org.springframework.util.Assert;
 
 public enum ClientToLogicProtocol implements Protocol {
 
-    LOGIN((short) 1, PbInt.parser()),
+    LOGIN((short) 1, PbLoginReq.parser()),
 
     REGISTER((short) 3, Login.PbRegisterReq.parser()),
 

@@ -39,7 +39,7 @@ public interface MsgHandler {
                         Object invoke = method.invoke(null);
                         if (invoke!= handler.getProtocol().parser()) {
                             String aClass = handler.getProtocol().parser().getClass().toString();
-                            throw new InitializationException("处理器" + handler.getClass().getSimpleName() + "的消息类型和协议的解析器类型不匹配！正确的消息类型是" + aClass.substring(aClass.indexOf('$') + 1, aClass.lastIndexOf('$')));
+                            throw new InitializationException("处理器 " + handler.getClass().getSimpleName() + " 的消息类型和协议的解析器类型不匹配！正确的消息类型是：" + aClass.substring(aClass.indexOf('$') + 1, aClass.lastIndexOf('$')));
                         }
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to call parser method of " + actualTypeArguments, e);
