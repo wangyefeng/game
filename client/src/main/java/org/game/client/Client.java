@@ -122,9 +122,9 @@ public class Client implements CommandLineRunner {
             String username = "user" + i;
             String password = "123456";
             HttpResp<LoginResponse> loginResponse = login(client, username, password);
-            if (!loginResponse.isSuccess()) {// 登录失败，尝试注册
+            if (!loginResponse.isSuccess() && loginResponse.code() == 1) {// 用户不存在，尝试注册
                 HttpResp<Void> registerResp = register(client, username, password);
-                if (!registerResp.isSuccess()) {// 注册成功，继续登录
+                if (!registerResp.isSuccess()) {
                     throw new RuntimeException("注册失败：" + registerResp.msg());
                 }
                 loginResponse = login(client, username, password);
