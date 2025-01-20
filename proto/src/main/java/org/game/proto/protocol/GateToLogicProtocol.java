@@ -5,9 +5,9 @@ import org.game.proto.Topic;
 import org.springframework.util.Assert;
 
 public enum GateToLogicProtocol implements Protocol {
-    PING((short) 0),
+    PING((short) 1),
 
-    LOGOUT((short) 1),
+    LOGOUT((short) 2),
     ;
 
 

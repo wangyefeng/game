@@ -8,10 +8,10 @@ import org.springframework.util.Assert;
 public enum ClientToGateProtocol implements Protocol {
 
     // 心跳
-    PING((short) 0),
+    PING((short) 1),
 
     // 玩家验证
-    AUTH((short) 1, Login.PbAuthReq.parser()),
+    AUTH((short) 2, Login.PbAuthReq.parser()),
     ;
 
 

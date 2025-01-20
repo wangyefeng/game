@@ -6,7 +6,7 @@ import org.game.proto.struct.Login;
 import org.springframework.util.Assert;
 
 public enum GateToClientProtocol implements Protocol {
-    PONG((short) 0),
+    PONG((short) 1),
 
     KICK_OUT((short) 2),
 
