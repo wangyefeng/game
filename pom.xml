@@ -26,7 +26,7 @@
     </modules>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>23</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <protobuf.version>4.29.3</protobuf.version>
         <grpc.version>1.69.1</grpc.version>
