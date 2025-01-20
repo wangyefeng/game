@@ -117,7 +117,7 @@ public class MysqlToExcel implements InitializingBean {
                 rs = st.executeQuery(sql.toString());
 
                 ResultSet pkResultSet = dmd.getPrimaryKeys(null, null, tableName);
-                String pkColumnName = null;
+                String pkColumnName;
                 if (pkResultSet.next()) {
                     pkColumnName = pkResultSet.getString("COLUMN_NAME");
                 } else {
