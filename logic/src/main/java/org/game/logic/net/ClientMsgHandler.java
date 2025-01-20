@@ -3,24 +3,41 @@ package org.game.logic.net;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
+import org.game.logic.thread.ThreadPool;
+import org.game.proto.PlayerMsgHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
+import org.game.proto.protocol.Protocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+public abstract class ClientMsgHandler<T extends Message> implements PlayerMsgHandler<T> {
 
-public interface ClientMsgHandler<T extends Message> {
+    private static final Logger log = LoggerFactory.getLogger(ClientMsgHandler.class);
 
-    Map<ClientToLogicProtocol, ClientMsgHandler<Message>> handlers = new HashMap<>();
-
-    static void register(ClientMsgHandler<? extends Message> handler) {
-        handlers.put(handler.getProtocol(), (ClientMsgHandler<Message>) handler);
+    @Override
+    public void handle(Channel channel, int playerId, T data) {
+        ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+            long start = System.currentTimeMillis();
+            try {
+                handle0(channel, playerId, data, Configs.getInstance());
+            } catch (Exception e) {
+                log.error("协议处理失败：{}", data, e);
+            } finally {
+                long cost = System.currentTimeMillis() - start; if (cost > 1000) {
+                    log.error("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
+                } else if (cost > 100) {
+                    log.warn("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
+                } else if (cost > 50) {
+                    log.info("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
+                } else {
+                    log.debug("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
+                }
+            }
+        });
     }
 
-    static ClientMsgHandler<Message> getHandler(ClientToLogicProtocol protocol) {
-        return handlers.get(protocol);
-    }
+    protected abstract void handle0(Channel channel, int playerId, T data, Configs config);
 
-    void handle(Channel channel, int playerId, T data, Configs config);
-
-    ClientToLogicProtocol getProtocol();
+    @Override
+    public abstract ClientToLogicProtocol getProtocol();
 }

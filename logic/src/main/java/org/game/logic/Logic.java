@@ -7,12 +7,13 @@ import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
 import org.game.config.Configs;
 import org.game.config.service.CfgService;
-import org.game.config.tools.MysqlToExcel;
 import org.game.config.tools.ExcelToMysql;
+import org.game.config.tools.MysqlToExcel;
 import org.game.logic.net.ClientMsgHandler;
 import org.game.logic.net.GateMsgHandler;
 import org.game.logic.net.TcpServer;
 import org.game.logic.thread.ThreadPool;
+import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,8 +111,8 @@ public class Logic extends Server {
 
     private void registerHandler() {
         log.info("handler registering...");
-        gateMsgHandlers.forEach(GateMsgHandler::register);// 注册gate handler
-        clientMsgHandlers.forEach(ClientMsgHandler::register);// 注册client handler
+        gateMsgHandlers.forEach(MsgHandler::register);// 注册gate handler
+        clientMsgHandlers.forEach(MsgHandler::register);// 注册client handler
         log.info("handler register end");
     }
 

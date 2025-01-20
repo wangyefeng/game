@@ -1,16 +1,16 @@
 package org.game.gate.net.client;
 
-import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import org.game.common.Server;
-import org.game.gate.handler.logic.LogicMsgHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.gate.thread.ThreadPool;
+import org.game.proto.CodeMsgHandler;
 import org.game.proto.MessageCode;
+import org.game.proto.MsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,16 +37,16 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
-        LogicMsgHandler<Message> logicMsgHandler = LogicMsgHandler.getHandler(message.getCode());
-        if (logicMsgHandler == null) {
-            log.warn("illegal message code: {}", message.getCode());
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
+        MsgHandler handler = MsgHandler.getHandler(message.getProtocol());
+        if (handler == null) {
+            log.warn("illegal message : {}", message);
             return;
         }
-        try {
-            logicMsgHandler.handle(ctx.channel(), message.getData());
-        } catch (Exception e) {
-            log.error("处理logic消息{}时发生异常", message, e);
+        if (handler instanceof CodeMsgHandler codeMsgHandler) {
+            codeMsgHandler.handle(ctx.channel(), message.getData());
+        } else {
+            log.error("illegal handler : {}", handler.getClass().getSimpleName());
         }
     }
 

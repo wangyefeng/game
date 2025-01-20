@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  * @author wangyefeng
  * @date 2024-07-17
  */
-public abstract class PlayerHandler<T extends Message> implements ClientMsgHandler<T> {
+public abstract class PlayerHandler<T extends Message> extends ClientMsgHandler<T> {
 
 
     private static final Logger log = LoggerFactory.getLogger(PlayerHandler.class);
 
     @Override
-    public void handle(Channel channel, int playerId, T data, Configs config) {
+    public void handle0(Channel channel, int playerId, T data, Configs config) {
         Player player = Players.getPlayer(playerId);
         if (player == null) {
             log.warn("协议处理失败 玩家{}未登录，协议:{} 数据：{}", playerId, getProtocol(), data);

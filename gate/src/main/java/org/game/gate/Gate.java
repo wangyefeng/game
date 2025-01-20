@@ -15,6 +15,7 @@ import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
 import org.game.gate.zookepper.ZookeeperProperties;
+import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,8 +181,8 @@ public class Gate extends Server {
 
     private void registerHandler() {
         log.info("handler registering...");
-        logicMsgHandlers.forEach(LogicMsgHandler::register);
-        clientMsgHandlers.forEach(ClientMsgHandler::register);
+        logicMsgHandlers.forEach(MsgHandler::register);
+        clientMsgHandlers.forEach(MsgHandler::register);
         log.info("handler register end");
     }
 

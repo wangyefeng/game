@@ -11,6 +11,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.game.proto.CommonDecoder;
+import org.game.proto.MessageCodeDecoder;
+import org.game.proto.MessagePlayerDecoder;
 import org.game.proto.PlayerMsgEncode;
 import org.game.proto.Topic;
 import org.slf4j.Logger;
@@ -70,9 +72,8 @@ public class TcpServer {
         group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            ClientHandler clientHandler = new ClientHandler();
+            TcpHandler tcpHandler = new TcpHandler();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
-            GateHandler gateHandler = new GateHandler();
             HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
@@ -85,8 +86,7 @@ public class TcpServer {
                     commonDecoder.registerDecoder(new MessageCodeDecoder());
                     commonDecoder.registerDecoder(new MessagePlayerDecoder());
                     pipeline.addLast(commonDecoder);
-                    pipeline.addLast(clientHandler);
-                    pipeline.addLast(gateHandler);
+                    pipeline.addLast(tcpHandler);
                     pipeline.addLast(playerMsgEncode);
                 }
             });

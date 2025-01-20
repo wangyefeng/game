@@ -1,17 +1,17 @@
 package org.game.gate.net;
 
-import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
-import org.game.gate.handler.client.ClientMsgHandler;
 import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
+import org.game.proto.CodeMsgHandler;
 import org.game.proto.CommonPbUtil;
 import org.game.proto.MessageCode;
+import org.game.proto.MsgHandler;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,16 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
-        ClientMsgHandler<Message> handler = ClientMsgHandler.getHandler(message.getCode());
+        MsgHandler handler = MsgHandler.getHandler(message.getProtocol());
         if (handler == null) {
-            log.warn("illegal message code: {}", message.getCode());
+            log.error("illegal message code: {}", message.getCode());
             return;
         }
-        handler.handle(ctx.channel(), message.getData());
+        if (!(handler instanceof CodeMsgHandler codeMsgHandler)) {
+            log.error("illegal message code: {}", message.getCode());
+            return;
+        }
+        codeMsgHandler.handle(ctx.channel(), message.getData());
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
+public class RegisterHandler extends ClientMsgHandler<PbRegisterReq> {
 
 
     private static final Logger log = LoggerFactory.getLogger(RegisterHandler.class);
@@ -26,7 +26,7 @@ public class RegisterHandler implements ClientMsgHandler<PbRegisterReq> {
     private ApplicationContext applicationContext;
 
     @Override
-    public void handle(Channel channel, int playerId, Login.PbRegisterReq data, Configs config) {
+    public void handle0(Channel channel, int playerId, Login.PbRegisterReq data, Configs config) {
         log.info("玩家{}注册 信息: {}", playerId, data);
         Player player = Players.getPlayer(playerId);
         if (player != null) {

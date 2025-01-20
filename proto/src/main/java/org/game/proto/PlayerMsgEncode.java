@@ -18,7 +18,7 @@ public class PlayerMsgEncode extends MessageToByteEncoder<MessagePlayer> {
     @Override
     protected void encode(ChannelHandlerContext ctx, MessagePlayer msg, ByteBuf out) throws Exception {
         if (msg.getData() != null) {
-            out.writeInt(0);// 协议长度占位
+            out.writeInt(0);// 协议长度，占位
             out.writeByte(DecoderType.MESSAGE_PLAYER.getCode());// 协议类型
             out.writeByte(msg.getProtocol().to().getCode());
             out.writeInt(msg.getPlayerId());// 玩家ID

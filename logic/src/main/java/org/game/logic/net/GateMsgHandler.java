@@ -3,25 +3,17 @@ package org.game.logic.net;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
+import org.game.proto.CodeMsgHandler;
 import org.game.proto.protocol.GateToLogicProtocol;
 
-import java.util.HashMap;
-import java.util.Map;
+public abstract class GateMsgHandler<T extends Message> implements CodeMsgHandler<T> {
 
-public interface GateMsgHandler<T extends Message> {
-
-    Map<GateToLogicProtocol, GateMsgHandler<Message>> handlers = new HashMap<>();
-
-    static void register(GateMsgHandler<? extends Message> handler) {
-        handlers.put(handler.getProtocol(), (GateMsgHandler<Message>) handler);
+    @Override
+    public void handle(Channel channel, T data) throws Exception {
+        handle0(channel, data, Configs.getInstance());
     }
 
-    static GateMsgHandler<Message> getHandler(GateToLogicProtocol protocol) {
-        return handlers.get(protocol);
-    }
+    protected abstract void handle0(Channel channel, T data, Configs configs) throws Exception;
 
-    void handle(Channel channel, T data, Configs config);
-
-    GateToLogicProtocol getProtocol();
-
+    public abstract GateToLogicProtocol getProtocol();
 }

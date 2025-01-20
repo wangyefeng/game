@@ -29,7 +29,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
             byte type = in.readByte();
             Decoder decoder = decoders.get(type);
             if (decoder == null) {
-                throw new IllegalArgumentException("非法消息类型: " + type);
+                throw new IllegalArgumentException("非法协议类型: " + type);
             }
             Object message = decoder.decode(in, to);
             out.add(message);

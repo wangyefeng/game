@@ -3,8 +3,8 @@ package org.game.logic.player;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.net.ChannelKeys;
 import org.game.logic.net.ClientMsgHandler;
-import org.game.logic.net.GateHandler;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
+public class LoginHandler extends ClientMsgHandler<Login.PbLoginReq> {
 
 
     private static final Logger log = LoggerFactory.getLogger(LoginHandler.class);
@@ -26,7 +26,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
     private ApplicationContext applicationContext;
 
     @Override
-    public void handle(Channel channel, int playerId, Login.PbLoginReq data, Configs config) {
+    public void handle0(Channel channel, int playerId, Login.PbLoginReq data, Configs config) {
         log.info("玩家{}登录游戏", playerId);
         Player player = Players.getPlayer(playerId);
         if (player == null) {
@@ -38,7 +38,7 @@ public class LoginHandler implements ClientMsgHandler<Login.PbLoginReq> {
             }
             player.login(data);
             Players.addPlayer(player);
-            channel.attr(GateHandler.PLAYERS_KEY).get().add(player.getId());
+            channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
         } else {
             player.setChannel(channel);
         }
