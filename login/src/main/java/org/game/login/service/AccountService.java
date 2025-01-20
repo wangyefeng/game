@@ -45,7 +45,7 @@ public class AccountService {
     }
 
     public HttpResp<?> register(String username, String password) {
-        RLock rLock = redissonClient.getLock(Locks.ACCOUNT_INNER_LOCK);
+        RLock rLock = redissonClient.getLock(Locks.ACCOUNT_LOCK_PREFIX + AccountType.INNER.toString().toLowerCase());
         try {
             rLock.lock();
             if (accountRepository.existsById(username)) {
