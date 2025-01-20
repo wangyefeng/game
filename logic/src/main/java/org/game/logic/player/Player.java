@@ -11,6 +11,7 @@ import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEventType;
 import org.game.config.service.CfgItemService;
 import org.game.logic.GameService;
+import org.game.logic.entity.PlayerInfo;
 import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
 import org.game.logic.player.item.Consumable;
@@ -21,8 +22,11 @@ import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.protocol.LogicToGateProtocol;
 import org.game.proto.struct.Login;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +60,8 @@ public class Player {
      */
     private PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
 
+    private List<DailyReset> dailyResetServices = new ArrayList<>();
+
     public Player(int id, Collection<GameService> gameServices, Channel channel) {
         this.id = id;
         this.channel = channel;
@@ -67,6 +73,9 @@ public class Player {
                 if (gameService instanceof Consumable consumable) {
                     consumableService.put(consumable.getType(), consumable);
                 }
+            }
+            if (gameService instanceof DailyReset dailyReset) {
+                dailyResetServices.add(dailyReset);
             }
         }
     }
@@ -126,6 +135,7 @@ public class Player {
     public void login(Login.PbLoginReq loginMsg) {
         map.values().forEach(GameService::load);
         init();
+        dailyReset(false);
     }
 
     private void init() {
@@ -261,5 +271,17 @@ public class Player {
             result.get(item.id()).add(item.num());
         }
         return result.values();
+    }
+
+    public void dailyReset(boolean isSend) {
+        LocalDate now = LocalDate.now();
+        PlayerService playerService = getService(PlayerService.class);
+        PlayerInfo playerInfo = playerService.getEntity();
+        LocalDate dailyResetDate = playerInfo.getDailyResetDate();
+        if (now.isEqual(dailyResetDate)) {
+            return;
+        }
+        playerInfo.setDailyResetDate(now);
+        dailyResetServices.forEach(dailyReset -> dailyReset.reset(dailyResetDate, isSend));
     }
 }

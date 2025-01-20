@@ -2,6 +2,8 @@ package org.game.logic.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document
 public class PlayerInfo extends Entity {
 
@@ -11,10 +13,13 @@ public class PlayerInfo extends Entity {
 
     private int coin;
 
+    private LocalDate dailyResetDate;
+
     public PlayerInfo(int playerId, String name) {
         super(playerId);
         this.name = name;
         this.level = 1;
+        this.dailyResetDate = LocalDate.now();
     }
 
     public String getName() {
@@ -47,5 +52,13 @@ public class PlayerInfo extends Entity {
             throw new IllegalArgumentException("金币不能为负数。");
         }
         this.coin = coin;
+    }
+
+    public LocalDate getDailyResetDate() {
+        return dailyResetDate;
+    }
+
+    public void setDailyResetDate(LocalDate dailyResetDate) {
+        this.dailyResetDate = dailyResetDate;
     }
 }
