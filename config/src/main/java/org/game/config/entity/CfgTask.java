@@ -20,8 +20,8 @@ public abstract class CfgTask implements Cfg<Integer> {
     @Column(columnDefinition = "INT COMMENT '唯一ID'")
     private int id;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(columnDefinition = "INT COMMENT '事件类型'")
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20) COMMENT '事件类型'")
     private PlayerEvent event;
 
     @JdbcTypeCode(SqlTypes.JSON)
