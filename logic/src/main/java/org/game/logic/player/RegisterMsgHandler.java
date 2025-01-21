@@ -30,16 +30,19 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
         log.info("玩家{}注册 信息: {}", playerId, data);
         Player player = Players.getPlayer(playerId);
         if (player != null) {
+            log.info("玩家{}已经存在，不能重复注册", playerId);
             return;
         }
         player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
         PlayerService playerService = player.getService(PlayerService.class);
         if (playerService.playerExists()) {
+            log.info("玩家{}已经存在，不能重复注册", playerId);
             return;
         }
         player.register(data);
         Players.addPlayer(player);
         Builder resp = PbLoginResp.newBuilder();
+        resp.setIsNew(true);
         player.loginResp(resp);
         player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
     }

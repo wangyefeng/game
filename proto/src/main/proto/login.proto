@@ -7,20 +7,20 @@ import "task.proto";
 
 // 认证请求
 message PbAuthReq {
-	int32 id = 1;
-	string token = 2;
+  int32 id = 1;
+  string token = 2;
 }
 
 // 认证返回
 message PbAuthResp {
-	bool success = 1;
-	int32 id = 2;
-	bool isRegistered  = 3;
+  bool success = 1;
+  int32 id = 2;
+  bool isRegistered = 3;
 }
 
 // 注册请求
 message PbRegisterReq {
-	string name = 1;
+  string name = 1;
 }
 
 // 登录请求
@@ -29,8 +29,9 @@ message PbLoginReq {
 
 // 登录返回
 message PbLoginResp {
-	int32 id = 1;
-	string name = 2;
-	int32 level = 3;
-	repeated PbTask tasks = 4;
+  int32 id = 1;
+  string name = 2;
+  int32 level = 3;
+  repeated PbTask tasks = 4;
+  bool isNew = 5;
 }

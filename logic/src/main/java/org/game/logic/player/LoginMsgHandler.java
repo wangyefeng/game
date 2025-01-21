@@ -44,6 +44,7 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
             player.setChannel(channel);
         }
         Builder resp = PbLoginResp.newBuilder();
+        resp.setIsNew(false);
         player.loginResp(resp);
         player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
     }

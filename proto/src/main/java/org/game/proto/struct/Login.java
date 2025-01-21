@@ -2135,6 +2135,12 @@ public final class Login {
      */
     org.game.proto.struct.Task.PbTaskOrBuilder getTasksOrBuilder(
         int index);
+
+    /**
+     * <code>bool isNew = 5;</code>
+     * @return The isNew.
+     */
+    boolean getIsNew();
   }
   /**
    * <pre>
@@ -2281,6 +2287,17 @@ public final class Login {
       return tasks_.get(index);
     }
 
+    public static final int ISNEW_FIELD_NUMBER = 5;
+    private boolean isNew_ = false;
+    /**
+     * <code>bool isNew = 5;</code>
+     * @return The isNew.
+     */
+    @java.lang.Override
+    public boolean getIsNew() {
+      return isNew_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2307,6 +2324,9 @@ public final class Login {
       for (int i = 0; i < tasks_.size(); i++) {
         output.writeMessage(4, tasks_.get(i));
       }
+      if (isNew_ != false) {
+        output.writeBool(5, isNew_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2331,6 +2351,10 @@ public final class Login {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, tasks_.get(i));
       }
+      if (isNew_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(5, isNew_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2354,6 +2378,8 @@ public final class Login {
           != other.getLevel()) return false;
       if (!getTasksList()
           .equals(other.getTasksList())) return false;
+      if (getIsNew()
+          != other.getIsNew()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2375,6 +2401,9 @@ public final class Login {
         hash = (37 * hash) + TASKS_FIELD_NUMBER;
         hash = (53 * hash) + getTasksList().hashCode();
       }
+      hash = (37 * hash) + ISNEW_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsNew());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2520,6 +2549,7 @@ public final class Login {
           tasksBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
+        isNew_ = false;
         return this;
       }
 
@@ -2575,6 +2605,9 @@ public final class Login {
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.level_ = level_;
         }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.isNew_ = isNew_;
+        }
       }
 
       @java.lang.Override
@@ -2625,6 +2658,9 @@ public final class Login {
               tasksBuilder_.addAllMessages(other.tasks_);
             }
           }
+        }
+        if (other.getIsNew() != false) {
+          setIsNew(other.getIsNew());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -2680,6 +2716,11 @@ public final class Login {
                 }
                 break;
               } // case 34
+              case 40: {
+                isNew_ = input.readBool();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -3073,6 +3114,38 @@ public final class Login {
         return tasksBuilder_;
       }
 
+      private boolean isNew_ ;
+      /**
+       * <code>bool isNew = 5;</code>
+       * @return The isNew.
+       */
+      @java.lang.Override
+      public boolean getIsNew() {
+        return isNew_;
+      }
+      /**
+       * <code>bool isNew = 5;</code>
+       * @param value The isNew to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsNew(boolean value) {
+
+        isNew_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isNew = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsNew() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        isNew_ = false;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbLoginResp)
     }
 
@@ -3162,10 +3235,11 @@ public final class Login {
       "sk.proto\"&\n\tPbAuthReq\022\n\n\002id\030\001 \001(\005\022\r\n\005tok" +
       "en\030\002 \001(\t\"?\n\nPbAuthResp\022\017\n\007success\030\001 \001(\010\022" +
       "\n\n\002id\030\002 \001(\005\022\024\n\014isRegistered\030\003 \001(\010\"\035\n\rPbR" +
-      "egisterReq\022\014\n\004name\030\001 \001(\t\"\014\n\nPbLoginReq\"d" +
+      "egisterReq\022\014\n\004name\030\001 \001(\t\"\014\n\nPbLoginReq\"s" +
       "\n\013PbLoginResp\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022" +
       "\r\n\005level\030\003 \001(\005\022,\n\005tasks\030\004 \003(\0132\035.org.game" +
-      ".proto.struct.PbTaskb\006proto3"
+      ".proto.struct.PbTask\022\r\n\005isNew\030\005 \001(\010b\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3201,7 +3275,7 @@ public final class Login {
     internal_static_org_game_proto_struct_PbLoginResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbLoginResp_descriptor,
-        new java.lang.String[] { "Id", "Name", "Level", "Tasks", });
+        new java.lang.String[] { "Id", "Name", "Level", "Tasks", "IsNew", });
     descriptor.resolveAllFeaturesImmutable();
     org.game.proto.struct.Task.getDescriptor();
   }
