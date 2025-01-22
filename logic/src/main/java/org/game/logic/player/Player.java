@@ -170,7 +170,7 @@ public class Player {
         publishManager.addListener(eventType, listener);
     }
 
-    public <T extends Item> void addItems(T... items) {
+    public final void addItems(Item... items) {
         for (Item item : items) {
             addItem(item);
         }
@@ -192,7 +192,7 @@ public class Player {
         addable.add(item);
     }
 
-    public <T extends Item> boolean itemsEnough(T... items) {
+    public boolean itemsEnough(Item... items) {
         Collection<AddableItem> mergedItems = mergeItems(items);
         return mergedItemsEnough(mergedItems);
     }
@@ -264,7 +264,7 @@ public class Player {
         return result.values();
     }
 
-    public <T extends Item> Collection<AddableItem> mergeItems(T... items) {
+    public Collection<AddableItem> mergeItems(Item[] items) {
         Map<Integer, AddableItem> result = new HashMap<>();
         for (Item item : items) {
             result.computeIfAbsent(item.id(), _ -> new AddableItem(item.id(), item.num()));

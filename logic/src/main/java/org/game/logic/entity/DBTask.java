@@ -30,7 +30,7 @@ public class DBTask implements Cloneable, Task {
     private boolean isReward;
 
     @Transient
-    private TaskListenerImpl listener;
+    private TaskListenerImpl<?> listener;
 
     public DBTask() {
     }
@@ -84,11 +84,11 @@ public class DBTask implements Cloneable, Task {
         isReward = reward;
     }
 
-    public TaskListenerImpl getListener() {
+    public TaskListenerImpl<?> getListener() {
         return listener;
     }
 
-    public void setListener(TaskListenerImpl listener) {
+    public void setListener(TaskListenerImpl<?> listener) {
         this.listener = listener;
     }
 

@@ -42,10 +42,10 @@ public class TimeIntervalManager {
     private Config config;
 
     // 活动开启定时器
-    private Map<Integer, ScheduledFuture> startScheduledFuture = new HashMap<>();
+    private Map<Integer, ScheduledFuture<?>> startScheduledFuture = new HashMap<>();
 
     // 活动结束定时器
-    private Map<Integer, ScheduledFuture> closeScheduledFuture = new HashMap<>();
+    private Map<Integer, ScheduledFuture<?>> closeScheduledFuture = new HashMap<>();
 
     public void init() {
         Lock writeLock = lock.writeLock();
