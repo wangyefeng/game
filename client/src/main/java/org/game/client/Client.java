@@ -16,6 +16,7 @@ import org.game.common.http.HttpResp;
 import org.game.common.random.RandomUtil;
 import org.game.proto.CodeMsgEncode;
 import org.game.proto.CommonDecoder;
+import org.game.proto.MessageCode;
 import org.game.proto.MessageCodeDecoder;
 import org.game.proto.MessagePlayerDecoder;
 import org.game.proto.Topic;
@@ -73,7 +74,7 @@ public class Client implements CommandLineRunner {
         try {
             Bootstrap bootstrap = new Bootstrap();
             ClientHandler handler = new ClientHandler(playerId, token);
-            MessageToByteEncoder encode = new CodeMsgEncode();
+            MessageToByteEncoder<MessageCode<?>> encode = new CodeMsgEncode();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<SocketChannel>() {

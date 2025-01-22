@@ -14,12 +14,13 @@ public abstract class AbstractTaskListener<Event, T extends Task, K extends CfgT
 
     protected K cfg;
 
-    protected TaskStrategy taskStrategy;
+    protected TaskStrategy<Event> taskStrategy;
 
+    @SuppressWarnings("unchecked")
     public AbstractTaskListener(T task, K cfg) {
         this.task = task;
         this.cfg = cfg;
-        this.taskStrategy = TaskStrategyFactory.getTaskStrategy(cfg.getEvent());
+        this.taskStrategy = (TaskStrategy<Event>) TaskStrategyFactory.getTaskStrategy(cfg.getEvent());
     }
 
     @Override
