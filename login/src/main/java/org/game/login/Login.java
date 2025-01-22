@@ -1,8 +1,6 @@
 package org.game.login;
 
 import org.game.common.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class Login extends Server {
 
-    private static final Logger log = LoggerFactory.getLogger(Login.class);
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -23,7 +20,6 @@ public class Login extends Server {
 
     @Override
     protected void start0() throws Exception {
-        log.info("login test !!!");
     }
 
     @Override
