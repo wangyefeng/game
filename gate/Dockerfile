@@ -1,4 +1,4 @@
-FROM openjdk:22-jdk-slim
+FROM openjdk:23-jdk-slim
 
 # 将本地的 JAR 文件复制到容器中的工作目录
 COPY target/gate-1.0.0-SNAPSHOT.jar /app/gate.jar
