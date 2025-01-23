@@ -55,7 +55,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
             if (task.getProgress() >= cfgTask.getTarget()) {
                 task.setFinished(true);
             } else {
-                TaskListenerImpl<Object> listener = new TaskListenerImpl<>(player, task, cfgTask);
+                TaskListenerImpl<?> listener = new TaskListenerImpl<>(player, task, cfgTask);
                 player.addListener(eventType, listener);
                 task.setListener(listener);
             }

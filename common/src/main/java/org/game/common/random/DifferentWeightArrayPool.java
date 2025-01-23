@@ -32,6 +32,7 @@ public class DifferentWeightArrayPool<E> {
         return new DifferentWeightArrayPool<>(elements, IWeight::weight);
     }
 
+    @SuppressWarnings("unchecked")
     public DifferentWeightArrayPool(E[] elements, WeightCalculator<E> calculator) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.length];
@@ -44,6 +45,7 @@ public class DifferentWeightArrayPool<E> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public DifferentWeightArrayPool(Collection<E> elements, WeightCalculator<E> calculator) {
         Assert.notEmpty(elements, "随机池不能为空！");
         this.randomPool = new EWeight[elements.size()];

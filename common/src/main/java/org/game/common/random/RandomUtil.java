@@ -232,7 +232,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T randomByWeight(Collection<T> pool, WeightCalculator<T> weightCalculator) {
-        WeightArrayPool<T> weightArrayPool = new WeightArrayPool(pool, weightCalculator);
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool<>(pool, weightCalculator);
         return weightArrayPool.random();
     }
 
@@ -284,7 +284,7 @@ public class RandomUtil {
      * @throws IllegalArgumentException 当c中元素通过权重计算器得到的权重为负数时
      */
     public static <T> T randomByWeight(T[] pool, WeightCalculator<T> weightCalculator) {
-        WeightArrayPool<T> weightArrayPool = new WeightArrayPool(pool, weightCalculator);
+        WeightArrayPool<T> weightArrayPool = new WeightArrayPool<>(pool, weightCalculator);
         return weightArrayPool.random();
     }
 

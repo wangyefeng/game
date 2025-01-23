@@ -4,19 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public record HttpResp<T>(int code, String msg, T data) {
 
-    public static final HttpResp SUCCESS = new HttpResp(0, "成功");
+    public static final HttpResp<Void> SUCCESS = new HttpResp<>(0, "成功");
 
     public HttpResp(int code, String msg) {
         this(code, msg, null);
     }
 
     public static <T> HttpResp<T> success(T data) {
-        HttpResp result = new HttpResp(0, "成功", data);
-        return result;
+        return new HttpResp<>(0, "成功", data);
     }
-
+    
     public static <T> HttpResp<T> fail(int code, String msg) {
-        return new HttpResp(code, msg);
+        return new HttpResp<>(code, msg, null);
     }
 
     public static <T> HttpResp<T> fail(int code) {

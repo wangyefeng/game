@@ -22,11 +22,11 @@ public class ListenerTest {
         Assertions.assertTrue(listener1.progress == 10);
         Assertions.assertFalse(listener2.isFinished);
         Assertions.assertTrue(listener2.progress == 11);
-        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 1);
+        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize() == 1);
         player.levelUp();
         Assertions.assertTrue(listener2.isFinished);
         Assertions.assertTrue(listener2.progress == 12);
-        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).size() == 0);
+        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize() == 0);
 
         player.rename("John");
         Assertions.assertTrue(listener3.isFinished);

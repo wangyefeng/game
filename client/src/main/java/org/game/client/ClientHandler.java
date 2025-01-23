@@ -39,7 +39,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
         log.info("player: {}, Received message: {}", playerId, message);
         Message data = message.getData();
         if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {

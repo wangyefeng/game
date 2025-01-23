@@ -23,6 +23,7 @@ public class Publisher<Event> {
         listeners.remove(listener);
     }
 
+    @SuppressWarnings("unchecked")
     public void update(Event event) {
         Listener<Event>[] arrLocal = listeners.toArray(new Listener[0]);
         for (Listener<Event> listener : arrLocal) {
@@ -30,11 +31,15 @@ public class Publisher<Event> {
         }
     }
 
-    public void clear() {
+    public void clearListeners() {
         listeners.clear();
     }
 
-    public int size() {
+    public int listenersSize() {
         return listeners.size();
+    }
+
+    public boolean listenersEmpty() {
+        return listeners.isEmpty();
     }
 }

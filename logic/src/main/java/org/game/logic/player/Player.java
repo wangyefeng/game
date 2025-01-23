@@ -109,13 +109,13 @@ public class Player {
     }
 
     public void asyncSave() {
-        for (GameService gameService : map.values()) {
+        for (GameService<?> gameService : map.values()) {
             gameService.asyncSave();
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends GameService> T getService(Class<T> playerServiceClass) {
+    public <T extends GameService<?>> T getService(Class<T> playerServiceClass) {
         return (T) map.get(playerServiceClass);
     }
 

@@ -19,6 +19,7 @@ public class PublishManager<EventType extends Enum<EventType>> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Publisher<?>> T getEventListeners(EventType eventType) {
         return (T) publishers.get(eventType);
     }
@@ -28,11 +29,13 @@ public class PublishManager<EventType extends Enum<EventType>> {
         listenerManager.update(data);
     }
 
+    @SuppressWarnings("unchecked")
     public void addListener(EventType eventType, Listener<?> listener) {
         Publisher<Object> listenerManager = getEventListeners(eventType);
         listenerManager.addListener((Listener<Object>) listener);
     }
 
+    @SuppressWarnings("unchecked")
     public void unloadListener(EventType eventType, Listener<?> listener) {
         Publisher<Object> publisher = getEventListeners(eventType);
         publisher.unload((Listener<Object>) listener);

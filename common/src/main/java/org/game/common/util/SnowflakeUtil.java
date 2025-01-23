@@ -1,8 +1,5 @@
 package org.game.common.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -21,9 +18,6 @@ import java.net.NetworkInterface;
  */
 public abstract class SnowflakeUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(SnowflakeUtil.class);
-
-    // ==============================Fields===========================================
     /**
      * 开始时间截 (2015-01-01)
      */

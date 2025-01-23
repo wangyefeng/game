@@ -78,7 +78,7 @@ public class ExcelToMysql implements InitializingBean {
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
-        String[] tables = file.list((dir, name) -> name != null && (name.endsWith(".xlsx") || name.endsWith(".xls")));
+        String[] tables = file.list((_, name) -> (name.endsWith(".xlsx") || name.endsWith(".xls")));
         if (tables == null || tables.length == 0) {
             log.info("没有找到Excel文件");
             return;
