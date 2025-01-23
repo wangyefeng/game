@@ -13,10 +13,10 @@ import org.game.proto.protocol.Protocol;
  * @description 客户端消息编码器
  */
 @ChannelHandler.Sharable
-public class PlayerMsgEncode extends MessageToByteEncoder<MessagePlayer> {
+public class PlayerMsgEncode extends MessageToByteEncoder<MessagePlayer<?>> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, MessagePlayer msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessagePlayer<?> msg, ByteBuf out) throws Exception {
         if (msg.getData() != null) {
             out.writeInt(0);// 协议长度，占位
             out.writeByte(DecoderType.MESSAGE_PLAYER.getCode());// 协议类型

@@ -41,13 +41,14 @@ public abstract class AbstractGameService<E extends Entity, R extends CrudReposi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void asyncSave() {
         if (entity == null) {
             return;
         }
         E copy;
         try {
-            copy = (E) entity.clone();// 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
+            copy = (E) entity.clone(); // 复制对象，防止DB线程保存数据的同时，主线程修改数据，造成数据不一致
         } catch (CloneNotSupportedException e) {
             log.error("克隆对象失败，entity: {} {}", entity.getClass().getSimpleName(), JsonUtil.toJson(entity), e);
             copy = entity;

@@ -27,7 +27,7 @@ public interface MsgHandler {
             for (Type type : types) {
                 if (type instanceof ParameterizedType parameterizedType) {
                     Type actualTypeArguments = parameterizedType.getActualTypeArguments()[0];
-                    if (actualTypeArguments instanceof Class clazz && Message.class.isAssignableFrom(clazz)) {
+                    if (actualTypeArguments instanceof Class<?> clazz && Message.class.isAssignableFrom(clazz)) {
                         try {
                             Method method = clazz.getMethod("parser");
                             Object invoke = method.invoke(null);

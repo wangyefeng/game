@@ -15,6 +15,8 @@ import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.Message;
+
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
 import java.util.Vector;
@@ -37,6 +39,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, Object message) throws OperationNotSupportedException {
         if (message instanceof MessagePlayer<?> messagePlayer) {
             MsgHandler handler = MsgHandler.getHandler(messagePlayer.getProtocol());
@@ -49,7 +52,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
                 return;
             }
             try {
-                playerMsgHandler.handle(ctx.channel(), messagePlayer.getPlayerId(), messagePlayer.getData());
+                ((PlayerMsgHandler<Message>) playerMsgHandler).handle(ctx.channel(), messagePlayer.getPlayerId(), messagePlayer.getData());
             } catch (Exception e) {
                 log.error("协议处理失败 message：{}", message, e);
             }

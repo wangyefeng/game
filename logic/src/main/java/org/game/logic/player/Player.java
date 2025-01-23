@@ -39,7 +39,7 @@ public class Player {
     /**
      * 服务模块集合
      */
-    private final Map<Class<? extends GameService>, GameService> map = new HashMap<>();
+    private final Map<Class<? extends GameService<?>>, GameService<?>> map = new HashMap<>();
 
     private final Map<ItemType, Addable> addableService = new HashMap<>();
 
@@ -62,12 +62,12 @@ public class Player {
 
     private List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    public Player(int id, Collection<GameService> gameServices, Channel channel) {
+    public Player(int id, Collection<GameService<?>> gameServices, Channel channel) {
         this.id = id;
         this.channel = channel;
-        for (GameService gameService : gameServices) {
+        for (GameService<?> gameService : gameServices) {
             gameService.setPlayer(this);
-            map.put(gameService.getClass(), gameService);
+            map.put((Class<? extends GameService<?>>) gameService.getClass(), gameService);
             if (gameService instanceof Addable addable) {
                 addableService.put(addable.getType(), addable);
                 if (gameService instanceof Consumable consumable) {
