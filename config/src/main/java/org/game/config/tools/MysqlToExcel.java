@@ -217,12 +217,7 @@ public class MysqlToExcel implements InitializingBean {
                             String val = rs.getString(m + 1);
                             //声明列
                             Cell cel = row.createCell(m);
-                            //放数据
-                            if (dateTypes.get(m).equals("json")) {
-                                if ("null".equals(val) || val == null || "".equals(val)) {
-                                    val = "[]";
-                                }
-                            }
+                            //设置列的值
                             cel.setCellValue(val);
                             cel.setCellStyle(textStyle);
                         }
