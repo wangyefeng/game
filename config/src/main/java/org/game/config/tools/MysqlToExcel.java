@@ -135,7 +135,6 @@ public class MysqlToExcel implements InitializingBean {
                     Row row3 = sheet.createRow(3);
 
                     List<String> columnNames = new ArrayList<>();
-                    List<String> dateTypes = new ArrayList<>();
                     while (rs.next()) {
                         String columnName = rs.getString("COLUMN_NAME");
                         if (columnName.equals(pkColumnName)) {// 主键列 放第一行
@@ -144,19 +143,17 @@ public class MysqlToExcel implements InitializingBean {
                             cell.setCellValue(rs.getString("column_comment"));
                             cell.setCellStyle(textStyle);
                             Cell cell1 = row1.createCell(0);
-                            columnNames.add(0, columnName);
+                            columnNames.addFirst(columnName);
                             cell1.setCellValue(columnName);
                             cell1.setCellStyle(textStyle);
                             Cell cell2 = row2.createCell(0);
                             String type = rs.getString("DATA_TYPE");
-                            dateTypes.add(0, type);
-                            if (type.equals("varchar")) {
-                                type = "string";
-                            } else if (type.equals("bit")) {
-                                type = "bool";
-                            } else if (type.equals("bigint")) {
-                                type = "long";
-                            }
+                            type = switch (type) {
+                                case "varchar" -> "string";
+                                case "bit" -> "bool";
+                                case "bigint" -> "long";
+                                default -> type;
+                            };
                             type += "!";// 加上!表示主键
                             cell2.setCellValue(type);
                             cell2.setCellStyle(textStyle);
@@ -175,14 +172,12 @@ public class MysqlToExcel implements InitializingBean {
                             cell1.setCellValue(columnName);
                             Cell cell2 = row2.createCell(index);
                             String type = rs.getString("DATA_TYPE");
-                            dateTypes.add(type);
-                            if (type.equals("varchar")) {
-                                type = "string";
-                            } else if (type.equals("bit")) {
-                                type = "bool";
-                            } else if (type.equals("bigint")) {
-                                type = "long";
-                            }
+                            type = switch (type) {
+                                case "varchar" -> "string";
+                                case "bit" -> "bool";
+                                case "bigint" -> "long";
+                                default -> type;
+                            };
                             cell2.setCellValue(type);
                             cell2.setCellStyle(textStyle);
                             Cell cell3 = row3.createCell(index);
@@ -240,7 +235,7 @@ public class MysqlToExcel implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         getConnectionCentenForm();
     }
 }

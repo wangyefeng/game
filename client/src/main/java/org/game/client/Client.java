@@ -118,8 +118,8 @@ public class Client implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Protocols.init();
         WebClient client = WebClient.builder().baseUrl("http://game.wangyefeng.fun/auth").build();
-        int num = 1;
-        for (int i = 1; i <= num; i++) {
+        int num = 10;
+        for (int i = 10; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";
             HttpResp<LoginResponse> loginResponse = login(client, username, password);

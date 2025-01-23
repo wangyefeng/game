@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public abstract class Entity implements Cloneable {
 
     @Id
-    private int playerId;
+    private final int playerId;
 
     public Entity(int playerId) {
         this.playerId = playerId;
