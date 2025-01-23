@@ -62,7 +62,7 @@ public class Player {
 
     private List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    public Player(int id, Collection<GameService<?>> gameServices, Channel channel) {
+    public Player(int id, Collection<GameService> gameServices, Channel channel) {
         this.id = id;
         this.channel = channel;
         for (GameService<?> gameService : gameServices) {
