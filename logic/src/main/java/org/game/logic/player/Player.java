@@ -58,9 +58,9 @@ public class Player {
     /**
      * 监听器管理者
      */
-    private PublishManager<PlayerEvent> publishManager = new PublishManager<>(PlayerEvent.values());
+    private final PublishManager<PlayerEvent> publishManager = new PublishManager<>(PlayerEvent.values());
 
-    private List<DailyReset> dailyResetServices = new ArrayList<>();
+    private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
     public Player(int id, Collection<GameService> gameServices, Channel channel) {
         this.id = id;

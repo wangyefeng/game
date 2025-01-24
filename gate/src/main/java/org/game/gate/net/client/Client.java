@@ -12,7 +12,7 @@ public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
 
-    private int id;
+    private final int id;
 
     protected String host;
 
@@ -54,6 +54,7 @@ public abstract class Client {
     }
 
     public void close() throws InterruptedException {
+        log.info("关闭连接客户端连接： {}", this);
         if (reconnectThread != null) {
             reconnectThread.interrupt();
         }
@@ -86,7 +87,7 @@ public abstract class Client {
                 log.info("重连线程被中断！{} 停止重连1...", this);
                 break;
             } catch (Exception e) {
-                log.error("连接服务器失败，原因: {} 正在重试...", e.getMessage());
+                log.error("连接服务器失败，正在重试...", e);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e1) {
