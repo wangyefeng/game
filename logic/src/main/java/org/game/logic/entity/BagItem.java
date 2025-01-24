@@ -5,7 +5,7 @@ import org.game.config.entity.Item;
 /**
  * 背包中的物品
  */
-public class BagItem implements Cloneable {
+public class BagItem implements Cloneable, Item {
     private int id;
     private int num;
 
@@ -60,5 +60,15 @@ public class BagItem implements Cloneable {
     @Override
     protected BagItem clone() throws CloneNotSupportedException {
         return (BagItem) super.clone();
+    }
+
+    @Override
+    public int id() {
+        return id;
+    }
+
+    @Override
+    public int num() {
+        return num;
     }
 }
