@@ -13,7 +13,6 @@
     <name>proto</name>
 
     <properties>
-        <protobuf.version>4.29.3</protobuf.version>
         <grpc.version>1.70.0</grpc.version>
     </properties>
 
@@ -33,7 +32,6 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
