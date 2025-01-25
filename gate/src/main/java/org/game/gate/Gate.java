@@ -9,7 +9,6 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.gate.net.TcpServer;
-import org.game.gate.net.client.Client;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
@@ -46,7 +45,7 @@ public class Gate extends Server {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private ClientGroup clientGroup;
+    private ClientGroup<LogicClient> clientGroup;
 
     @Autowired
     private CuratorFramework zkClient;
@@ -101,62 +100,49 @@ public class Gate extends Server {
 
     private record ServerInfo(String host, int tcpPort, int rpcPort) {}
 
-    private static class LogicWatcher implements Watcher {
-
-        private CuratorFramework zkClient;
-
-        private ClientGroup clientGroup;
-
-        private String servicePath;
-
-        public LogicWatcher(CuratorFramework zkClient, ClientGroup clientGroup, String servicePath) {
-            this.zkClient = zkClient;
-            this.clientGroup = clientGroup;
-            this.servicePath = servicePath;
-        }
+    private record LogicWatcher(CuratorFramework zkClient, ClientGroup<LogicClient> clientGroup, String servicePath) implements Watcher {
 
         @Override
-        public void process(WatchedEvent event) {
-            try {
-                if (event.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                    log.info("逻辑服务器节点发生变化，进行相关处理....");
-                    List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
-                    Set<Integer> nodes = new HashSet<>(serviceNodes.size());
-                    for (String serverId : serviceNodes) {
-                        int id = Integer.parseInt(serverId);
-                        nodes.add(id);
-                        if (clientGroup.contains(id)) {
-                            continue;
-                        }
-                        String path = servicePath + "/" + serverId;
-                        byte[] data = zkClient.getData().forPath(path);
-                        ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
-                        LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
-                        logicClient.start();
-                        clientGroup.add(logicClient);
-                    }
-                    clientGroup.getClients().values().removeIf(o -> {
-                        Client client = (Client) o;
-                        if (!nodes.contains(client.getId())) {
-                            try {
-                                client.close();
-                            } catch (Exception e) {
-                                log.error("关闭逻辑服务器{}异常", client.getId(), e);
+            public void process(WatchedEvent event) {
+                try {
+                    if (event.getType() == Event.EventType.NodeChildrenChanged) {
+                        log.info("逻辑服务器节点发生变化，进行相关处理....");
+                        List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
+                        Set<Integer> nodes = new HashSet<>(serviceNodes.size());
+                        for (String serverId : serviceNodes) {
+                            int id = Integer.parseInt(serverId);
+                            nodes.add(id);
+                            if (clientGroup.contains(id)) {
+                                continue;
                             }
-                            return true;
+                            String path = servicePath + "/" + serverId;
+                            byte[] data = zkClient.getData().forPath(path);
+                            ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
+                            LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
+                            logicClient.start();
+                            clientGroup.add(logicClient);
                         }
-                        return false;
-                    });
+                        clientGroup.getClients().values().removeIf(client -> {
+                            if (!nodes.contains(client.getId())) {
+                                try {
+                                    client.close();
+                                } catch (Exception e) {
+                                    log.error("关闭逻辑服务器{}异常", client.getId(), e);
+                                }
+                                return true;
+                            }
+                            return false;
+                        });
+                    }
+                    if (event.getState() != KeeperState.Closed) {
+                        // 重新注册 Watcher 以继续监听节点变化
+                        zkClient.getChildren().usingWatcher(this).forPath(servicePath);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-                if (event.getState() != KeeperState.Closed) {
-                    // 重新注册 Watcher 以继续监听节点变化
-                    zkClient.getChildren().usingWatcher(this).forPath(servicePath);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
-    }
 
     @Override
     protected void afterStart() {
