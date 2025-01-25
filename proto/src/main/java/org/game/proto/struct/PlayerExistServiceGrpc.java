@@ -5,7 +5,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.69.0)",
+    value = "by gRPC proto compiler (version 1.70.0)",
     comments = "Source: rpc.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class PlayerExistServiceGrpc {
@@ -58,6 +58,21 @@ public final class PlayerExistServiceGrpc {
         }
       };
     return PlayerExistServiceStub.newStub(factory, channel);
+  }
+
+  /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static PlayerExistServiceBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<PlayerExistServiceBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<PlayerExistServiceBlockingV2Stub>() {
+        @java.lang.Override
+        public PlayerExistServiceBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new PlayerExistServiceBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return PlayerExistServiceBlockingV2Stub.newStub(factory, channel);
   }
 
   /**
@@ -140,6 +155,30 @@ public final class PlayerExistServiceGrpc {
 
   /**
    * A stub to allow clients to do synchronous rpc calls to service PlayerExistService.
+   */
+  public static final class PlayerExistServiceBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<PlayerExistServiceBlockingV2Stub> {
+    private PlayerExistServiceBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected PlayerExistServiceBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new PlayerExistServiceBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     */
+    public org.game.proto.struct.Rpc.PbPlayerExistResp exists(org.game.proto.struct.Rpc.PbPlayerExistReq request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getExistsMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service PlayerExistService.
    */
   public static final class PlayerExistServiceBlockingStub
       extends io.grpc.stub.AbstractBlockingStub<PlayerExistServiceBlockingStub> {
