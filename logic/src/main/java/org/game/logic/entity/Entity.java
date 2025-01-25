@@ -7,6 +7,9 @@ public abstract class Entity implements Cloneable {
     @Id
     private int id;
 
+    protected Entity() {
+    }
+
     public Entity(int id) {
         this.id = id;
     }

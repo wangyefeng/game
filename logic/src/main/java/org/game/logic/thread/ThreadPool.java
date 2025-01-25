@@ -57,4 +57,8 @@ public abstract class ThreadPool {
     public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
         return playerDBExecutors[playerId % EXECUTOR_SIZE];
     }
+
+    public static ScheduledExecutorService getScheduledExecutor() {
+        return scheduledExecutor;
+    }
 }

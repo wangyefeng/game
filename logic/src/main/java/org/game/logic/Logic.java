@@ -10,6 +10,7 @@ import org.game.config.service.CfgService;
 import org.game.config.tools.ExcelToMysql;
 import org.game.config.tools.MysqlToExcel;
 import org.game.logic.net.TcpServer;
+import org.game.logic.player.activity.ActivityManager;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
@@ -63,6 +64,7 @@ public class Logic extends Server {
         tcpServer.start();
         initGameService();
         ThreadPool.start();
+        ActivityManager.getInstance().init();
     }
 
     private void initGameService() {

@@ -77,7 +77,7 @@ public class Config implements InitializingBean {
     public void reloadConfig(String... tableNames) {
         Collection<CfgService> cfgServices = new ArrayList<>();
         for (String tableName : tableNames) {
-            CfgService cfgService = applicationContext.getBean(tableName, CfgService.class);
+            CfgService cfgService = applicationContext.getBean(tableName + "_cfgService", CfgService.class);
             cfgServices.add(cfgService);
         }
         try {
