@@ -1,7 +1,10 @@
 FROM openjdk:23-jdk-slim
 
 # 将本地的 JAR 文件复制到容器中的工作目录
-COPY target/login-1.0.0-SNAPSHOT.jar /app/login.jar
+COPY login/target/login-1.0.0-SNAPSHOT.jar /app/login.jar
+
+# 将arthas-bin目录复制到容器的/app/arthas-bin目录下
+COPY arthas-bin/ /app/arthas-bin/
 
 EXPOSE 80
 
