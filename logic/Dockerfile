@@ -15,4 +15,4 @@ EXPOSE 8080 50051 9999
 WORKDIR /app
 
 # 容器启动时执行的命令
-CMD ["java", "-jar", "logic.jar"]
+CMD ["java", "-javaagent:arthas-bin/arthas-agent.jar", "-jar", "logic.jar"]
