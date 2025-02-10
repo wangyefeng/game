@@ -1,10 +1,13 @@
 FROM openjdk:23-jdk-slim
 
-# 将本地的 JAR 文件复制到容器中的工作目录
-COPY logic/target/logic-1.0.0-SNAPSHOT.jar /app/logic.jar
+# 安装curl
+RUN apt-get update && apt-get install -y curl
 
 # 将arthas-bin目录复制到容器的/app/arthas-bin目录下
 COPY arthas-bin/ /app/arthas-bin/
+
+# 将本地的 JAR 文件复制到容器中的工作目录
+COPY logic/target/logic-1.0.0-SNAPSHOT.jar /app/logic.jar
 
 EXPOSE 8080 50051 9999
 
