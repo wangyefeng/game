@@ -6,7 +6,7 @@ COPY login/target/login-1.0.0-SNAPSHOT.jar /app/login.jar
 # 将arthas-bin目录复制到容器的/app/arthas-bin目录下
 COPY arthas-bin/ /app/arthas-bin/
 
-EXPOSE 80
+EXPOSE 443
 
 # 设置工作目录
 WORKDIR /app
