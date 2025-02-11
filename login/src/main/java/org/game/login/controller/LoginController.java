@@ -24,7 +24,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login")
     public HttpResp<?> login(String username, String password) {
-        log.info("登录账号 username:{}, password:{} 测试热更新 测试热更新脚本", username, password);
+        log.info("登录账号 username:{}, password:{}", username, password);
         return accountService.login(username, password);
     }
 
