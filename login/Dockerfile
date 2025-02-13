@@ -16,4 +16,4 @@ EXPOSE 443
 WORKDIR /app
 
 # 容器启动时执行的命令
-CMD ["java", "-Xms64m", "-javaagent:arthas-bin/arthas-agent.jar", "-jar", "login.jar"]
+CMD ["java", "-javaagent:arthas-bin/arthas-agent.jar", "-jar", "login.jar"]
