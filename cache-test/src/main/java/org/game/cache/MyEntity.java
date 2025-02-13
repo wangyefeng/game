@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -15,7 +14,6 @@ import java.util.Map;
 
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@DynamicUpdate
 public class MyEntity extends GameEntity {
 
     @Id
