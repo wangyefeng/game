@@ -117,7 +117,7 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
-        WebClient client = WebClient.builder().baseUrl("http://game.wangyefeng.fun/auth").build();
+        WebClient client = WebClient.builder().baseUrl("http://127.0.0.1/auth").build();
         int num = 10;
         for (int i = 10; i <= num; i++) {
             String username = "user" + i;
