@@ -1,4 +1,4 @@
-FROM openjdk:23-jdk-slim
+FROM openjdk:24-jdk-slim
 
 # 安装curl
 RUN apt-get update && apt-get install -y curl
