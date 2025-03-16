@@ -37,7 +37,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
 
     private static final Logger log = LoggerFactory.getLogger(FunctionService.class);
 
-    private Map<ModuleEnum, Module> extendModuleMap = new HashMap<>();
+    private final Map<ModuleEnum, Module> extendModuleMap = new HashMap<>();
 
     @Autowired
     private TimeIntervalManager timeIntervalManager;
@@ -50,7 +50,6 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     @Override
     public void afterInit() {
         super.afterInit();
-        checkCyclicFunction(false);
         checkTimeInterval(false);
     }
 
@@ -70,19 +69,38 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     private void checkCyclicFunctionOne(CfgCyclicFunction cfgCyclicFunction, boolean isSend) {
         PlayerService playerService = player.getService(PlayerService.class);
         LocalDate dailyResetDate = playerService.getEntity().getDailyResetDate();
+        LocalDate startDate = cfgCyclicFunction.getStartDate();
+        long betweenDays = ChronoUnit.DAYS.between(startDate, dailyResetDate);
+        boolean isOpen;
+        if (betweenDays < 0) {
+            isOpen = false;
+        } else {
+            isOpen = betweenDays % cfgCyclicFunction.getCycle() < cfgCyclicFunction.getOpenDays();
+        }
+
         Map<Integer, DbCycleFunction> cycleFunctions = entity.getCycleFunctions();
         if (!cycleFunctions.containsKey(cfgCyclicFunction.getId())) {
-            open(cfgCyclicFunction, isSend);
-            cycleFunctions.put(cfgCyclicFunction.getId(), new DbCycleFunction(cfgCyclicFunction.getId(), dailyResetDate));
+            if (isOpen) {
+                open(cfgCyclicFunction, isSend);
+                cycleFunctions.put(cfgCyclicFunction.getId(), new DbCycleFunction(cfgCyclicFunction.getId(), dailyResetDate));
+            }
         } else {
             DbCycleFunction dbCycleFunction = cycleFunctions.get(cfgCyclicFunction.getId());
-            LocalDate startDate = cfgCyclicFunction.getStartDate();
             int cycle = cfgCyclicFunction.getCycle();
             // 判断是否在同一周期
-            if (getCycle(dailyResetDate, startDate, cycle) != getCycle(dbCycleFunction.getResetDate(), startDate, cycle)) {
+            if (getCycle(dailyResetDate, startDate, cycle) != getCycle(dbCycleFunction.getResetDate(), startDate, cycle)) {// 不在同一周期
                 close(cfgCyclicFunction, isSend);
-                open(cfgCyclicFunction, isSend);
-                dbCycleFunction.setResetDate(dailyResetDate);
+                if (isOpen) {
+                    open(cfgCyclicFunction, isSend);
+                    dbCycleFunction.setResetDate(dailyResetDate);
+                } else {
+                    cycleFunctions.remove(cfgCyclicFunction.getId());
+                }
+            } else {// 在同一周期
+                if (!isOpen) {// 关闭
+                    close(cfgCyclicFunction, isSend);
+                    cycleFunctions.remove(cfgCyclicFunction.getId());
+                }
             }
         }
     }

@@ -13,6 +13,9 @@ public class CfgCyclicFunction extends CfgFunction {
     @Column(columnDefinition = "INT COMMENT '周期天数'")
     private int cycle;
 
+    @Column(columnDefinition = "INT COMMENT '开启天数'")
+    private int openDays;
+
     @Column(columnDefinition = "DATE COMMENT '开始日期'")
     private LocalDate startDate;
 
@@ -22,5 +25,9 @@ public class CfgCyclicFunction extends CfgFunction {
 
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    public int getOpenDays() {
+        return openDays;
     }
 }
