@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
     @Autowired
     private AccountService accountService;
 
