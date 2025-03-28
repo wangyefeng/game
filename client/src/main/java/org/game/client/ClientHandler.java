@@ -31,7 +31,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setId(playerId).setToken(token).build()));
+        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setPlayerId(playerId).setToken(token).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("player: {}, ping", playerId);
             ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));

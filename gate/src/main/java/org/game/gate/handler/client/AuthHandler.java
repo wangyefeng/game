@@ -49,7 +49,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             return;
         }
 
-        int playerId = msg.getId();
+        int playerId = msg.getPlayerId();
         String token = msg.getToken();
         DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
         Claim claim = d1.getClaim("playerId");
@@ -100,7 +100,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(playerId).build();
             // 调用服务端方法并获取响应
             PbPlayerExistResp response = blockingStub.exists(request);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setId(playerId).setIsRegistered(response.getExist()).build()));
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setPlayerId(playerId).setIsRegistered(response.getExist()).build()));
         }).get();
     }
 

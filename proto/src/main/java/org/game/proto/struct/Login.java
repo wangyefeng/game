@@ -30,10 +30,10 @@ public final class Login {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
+     * <code>int32 playerId = 1;</code>
+     * @return The playerId.
      */
-    int getId();
+    int getPlayerId();
 
     /**
      * <code>string token = 2;</code>
@@ -89,15 +89,15 @@ public final class Login {
               org.game.proto.struct.Login.PbAuthReq.class, org.game.proto.struct.Login.PbAuthReq.Builder.class);
     }
 
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_ = 0;
+    public static final int PLAYERID_FIELD_NUMBER = 1;
+    private int playerId_ = 0;
     /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
+     * <code>int32 playerId = 1;</code>
+     * @return The playerId.
      */
     @java.lang.Override
-    public int getId() {
-      return id_;
+    public int getPlayerId() {
+      return playerId_;
     }
 
     public static final int TOKEN_FIELD_NUMBER = 2;
@@ -153,8 +153,8 @@ public final class Login {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (id_ != 0) {
-        output.writeInt32(1, id_);
+      if (playerId_ != 0) {
+        output.writeInt32(1, playerId_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 2, token_);
@@ -168,9 +168,9 @@ public final class Login {
       if (size != -1) return size;
 
       size = 0;
-      if (id_ != 0) {
+      if (playerId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
+          .computeInt32Size(1, playerId_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(2, token_);
@@ -190,8 +190,8 @@ public final class Login {
       }
       org.game.proto.struct.Login.PbAuthReq other = (org.game.proto.struct.Login.PbAuthReq) obj;
 
-      if (getId()
-          != other.getId()) return false;
+      if (getPlayerId()
+          != other.getPlayerId()) return false;
       if (!getToken()
           .equals(other.getToken())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -205,8 +205,8 @@ public final class Login {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
+      hash = (37 * hash) + PLAYERID_FIELD_NUMBER;
+      hash = (53 * hash) + getPlayerId();
       hash = (37 * hash) + TOKEN_FIELD_NUMBER;
       hash = (53 * hash) + getToken().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -344,7 +344,7 @@ public final class Login {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        id_ = 0;
+        playerId_ = 0;
         token_ = "";
         return this;
       }
@@ -380,7 +380,7 @@ public final class Login {
       private void buildPartial0(org.game.proto.struct.Login.PbAuthReq result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
+          result.playerId_ = playerId_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.token_ = token_;
@@ -399,8 +399,8 @@ public final class Login {
 
       public Builder mergeFrom(org.game.proto.struct.Login.PbAuthReq other) {
         if (other == org.game.proto.struct.Login.PbAuthReq.getDefaultInstance()) return this;
-        if (other.getId() != 0) {
-          setId(other.getId());
+        if (other.getPlayerId() != 0) {
+          setPlayerId(other.getPlayerId());
         }
         if (!other.getToken().isEmpty()) {
           token_ = other.token_;
@@ -434,7 +434,7 @@ public final class Login {
                 done = true;
                 break;
               case 8: {
-                id_ = input.readInt32();
+                playerId_ = input.readInt32();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 8
@@ -460,34 +460,34 @@ public final class Login {
       }
       private int bitField0_;
 
-      private int id_ ;
+      private int playerId_ ;
       /**
-       * <code>int32 id = 1;</code>
-       * @return The id.
+       * <code>int32 playerId = 1;</code>
+       * @return The playerId.
        */
       @java.lang.Override
-      public int getId() {
-        return id_;
+      public int getPlayerId() {
+        return playerId_;
       }
       /**
-       * <code>int32 id = 1;</code>
-       * @param value The id to set.
+       * <code>int32 playerId = 1;</code>
+       * @param value The playerId to set.
        * @return This builder for chaining.
        */
-      public Builder setId(int value) {
+      public Builder setPlayerId(int value) {
 
-        id_ = value;
+        playerId_ = value;
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 id = 1;</code>
+       * <code>int32 playerId = 1;</code>
        * @return This builder for chaining.
        */
-      public Builder clearId() {
+      public Builder clearPlayerId() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
+        playerId_ = 0;
         onChanged();
         return this;
       }
@@ -626,10 +626,10 @@ public final class Login {
     boolean getSuccess();
 
     /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
+     * <code>int32 playerId = 2;</code>
+     * @return The playerId.
      */
-    int getId();
+    int getPlayerId();
 
     /**
      * <code>bool isRegistered = 3;</code>
@@ -689,15 +689,15 @@ public final class Login {
       return success_;
     }
 
-    public static final int ID_FIELD_NUMBER = 2;
-    private int id_ = 0;
+    public static final int PLAYERID_FIELD_NUMBER = 2;
+    private int playerId_ = 0;
     /**
-     * <code>int32 id = 2;</code>
-     * @return The id.
+     * <code>int32 playerId = 2;</code>
+     * @return The playerId.
      */
     @java.lang.Override
-    public int getId() {
-      return id_;
+    public int getPlayerId() {
+      return playerId_;
     }
 
     public static final int ISREGISTERED_FIELD_NUMBER = 3;
@@ -728,8 +728,8 @@ public final class Login {
       if (success_ != false) {
         output.writeBool(1, success_);
       }
-      if (id_ != 0) {
-        output.writeInt32(2, id_);
+      if (playerId_ != 0) {
+        output.writeInt32(2, playerId_);
       }
       if (isRegistered_ != false) {
         output.writeBool(3, isRegistered_);
@@ -747,9 +747,9 @@ public final class Login {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(1, success_);
       }
-      if (id_ != 0) {
+      if (playerId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, id_);
+          .computeInt32Size(2, playerId_);
       }
       if (isRegistered_ != false) {
         size += com.google.protobuf.CodedOutputStream
@@ -772,8 +772,8 @@ public final class Login {
 
       if (getSuccess()
           != other.getSuccess()) return false;
-      if (getId()
-          != other.getId()) return false;
+      if (getPlayerId()
+          != other.getPlayerId()) return false;
       if (getIsRegistered()
           != other.getIsRegistered()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -790,8 +790,8 @@ public final class Login {
       hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getSuccess());
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
+      hash = (37 * hash) + PLAYERID_FIELD_NUMBER;
+      hash = (53 * hash) + getPlayerId();
       hash = (37 * hash) + ISREGISTERED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getIsRegistered());
@@ -931,7 +931,7 @@ public final class Login {
         super.clear();
         bitField0_ = 0;
         success_ = false;
-        id_ = 0;
+        playerId_ = 0;
         isRegistered_ = false;
         return this;
       }
@@ -970,7 +970,7 @@ public final class Login {
           result.success_ = success_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.id_ = id_;
+          result.playerId_ = playerId_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.isRegistered_ = isRegistered_;
@@ -992,8 +992,8 @@ public final class Login {
         if (other.getSuccess() != false) {
           setSuccess(other.getSuccess());
         }
-        if (other.getId() != 0) {
-          setId(other.getId());
+        if (other.getPlayerId() != 0) {
+          setPlayerId(other.getPlayerId());
         }
         if (other.getIsRegistered() != false) {
           setIsRegistered(other.getIsRegistered());
@@ -1030,7 +1030,7 @@ public final class Login {
                 break;
               } // case 8
               case 16: {
-                id_ = input.readInt32();
+                playerId_ = input.readInt32();
                 bitField0_ |= 0x00000002;
                 break;
               } // case 16
@@ -1088,34 +1088,34 @@ public final class Login {
         return this;
       }
 
-      private int id_ ;
+      private int playerId_ ;
       /**
-       * <code>int32 id = 2;</code>
-       * @return The id.
+       * <code>int32 playerId = 2;</code>
+       * @return The playerId.
        */
       @java.lang.Override
-      public int getId() {
-        return id_;
+      public int getPlayerId() {
+        return playerId_;
       }
       /**
-       * <code>int32 id = 2;</code>
-       * @param value The id to set.
+       * <code>int32 playerId = 2;</code>
+       * @param value The playerId to set.
        * @return This builder for chaining.
        */
-      public Builder setId(int value) {
+      public Builder setPlayerId(int value) {
 
-        id_ = value;
+        playerId_ = value;
         bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 id = 2;</code>
+       * <code>int32 playerId = 2;</code>
        * @return This builder for chaining.
        */
-      public Builder clearId() {
+      public Builder clearPlayerId() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        id_ = 0;
+        playerId_ = 0;
         onChanged();
         return this;
       }
@@ -2089,10 +2089,10 @@ public final class Login {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
+     * <code>int32 playerId = 1;</code>
+     * @return The playerId.
      */
-    int getId();
+    int getPlayerId();
 
     /**
      * <code>string name = 2;</code>
@@ -2185,15 +2185,15 @@ public final class Login {
               org.game.proto.struct.Login.PbLoginResp.class, org.game.proto.struct.Login.PbLoginResp.Builder.class);
     }
 
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_ = 0;
+    public static final int PLAYERID_FIELD_NUMBER = 1;
+    private int playerId_ = 0;
     /**
-     * <code>int32 id = 1;</code>
-     * @return The id.
+     * <code>int32 playerId = 1;</code>
+     * @return The playerId.
      */
     @java.lang.Override
-    public int getId() {
-      return id_;
+    public int getPlayerId() {
+      return playerId_;
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
@@ -2312,8 +2312,8 @@ public final class Login {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (id_ != 0) {
-        output.writeInt32(1, id_);
+      if (playerId_ != 0) {
+        output.writeInt32(1, playerId_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 2, name_);
@@ -2336,9 +2336,9 @@ public final class Login {
       if (size != -1) return size;
 
       size = 0;
-      if (id_ != 0) {
+      if (playerId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
+          .computeInt32Size(1, playerId_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(2, name_);
@@ -2370,8 +2370,8 @@ public final class Login {
       }
       org.game.proto.struct.Login.PbLoginResp other = (org.game.proto.struct.Login.PbLoginResp) obj;
 
-      if (getId()
-          != other.getId()) return false;
+      if (getPlayerId()
+          != other.getPlayerId()) return false;
       if (!getName()
           .equals(other.getName())) return false;
       if (getLevel()
@@ -2391,8 +2391,8 @@ public final class Login {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
+      hash = (37 * hash) + PLAYERID_FIELD_NUMBER;
+      hash = (53 * hash) + getPlayerId();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + LEVEL_FIELD_NUMBER;
@@ -2539,7 +2539,7 @@ public final class Login {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        id_ = 0;
+        playerId_ = 0;
         name_ = "";
         level_ = 0;
         if (tasksBuilder_ == null) {
@@ -2597,7 +2597,7 @@ public final class Login {
       private void buildPartial0(org.game.proto.struct.Login.PbLoginResp result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
+          result.playerId_ = playerId_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.name_ = name_;
@@ -2622,8 +2622,8 @@ public final class Login {
 
       public Builder mergeFrom(org.game.proto.struct.Login.PbLoginResp other) {
         if (other == org.game.proto.struct.Login.PbLoginResp.getDefaultInstance()) return this;
-        if (other.getId() != 0) {
-          setId(other.getId());
+        if (other.getPlayerId() != 0) {
+          setPlayerId(other.getPlayerId());
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
@@ -2689,7 +2689,7 @@ public final class Login {
                 done = true;
                 break;
               case 8: {
-                id_ = input.readInt32();
+                playerId_ = input.readInt32();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 8
@@ -2738,34 +2738,34 @@ public final class Login {
       }
       private int bitField0_;
 
-      private int id_ ;
+      private int playerId_ ;
       /**
-       * <code>int32 id = 1;</code>
-       * @return The id.
+       * <code>int32 playerId = 1;</code>
+       * @return The playerId.
        */
       @java.lang.Override
-      public int getId() {
-        return id_;
+      public int getPlayerId() {
+        return playerId_;
       }
       /**
-       * <code>int32 id = 1;</code>
-       * @param value The id to set.
+       * <code>int32 playerId = 1;</code>
+       * @param value The playerId to set.
        * @return This builder for chaining.
        */
-      public Builder setId(int value) {
+      public Builder setPlayerId(int value) {
 
-        id_ = value;
+        playerId_ = value;
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 id = 1;</code>
+       * <code>int32 playerId = 1;</code>
        * @return This builder for chaining.
        */
-      public Builder clearId() {
+      public Builder clearPlayerId() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
+        playerId_ = 0;
         onChanged();
         return this;
       }
@@ -3232,14 +3232,14 @@ public final class Login {
   static {
     java.lang.String[] descriptorData = {
       "\n\013login.proto\022\025org.game.proto.struct\032\nta" +
-      "sk.proto\"&\n\tPbAuthReq\022\n\n\002id\030\001 \001(\005\022\r\n\005tok" +
-      "en\030\002 \001(\t\"?\n\nPbAuthResp\022\017\n\007success\030\001 \001(\010\022" +
-      "\n\n\002id\030\002 \001(\005\022\024\n\014isRegistered\030\003 \001(\010\"\035\n\rPbR" +
-      "egisterReq\022\014\n\004name\030\001 \001(\t\"\014\n\nPbLoginReq\"s" +
-      "\n\013PbLoginResp\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022" +
-      "\r\n\005level\030\003 \001(\005\022,\n\005tasks\030\004 \003(\0132\035.org.game" +
-      ".proto.struct.PbTask\022\r\n\005isNew\030\005 \001(\010b\006pro" +
-      "to3"
+      "sk.proto\",\n\tPbAuthReq\022\020\n\010playerId\030\001 \001(\005\022" +
+      "\r\n\005token\030\002 \001(\t\"E\n\nPbAuthResp\022\017\n\007success\030" +
+      "\001 \001(\010\022\020\n\010playerId\030\002 \001(\005\022\024\n\014isRegistered\030" +
+      "\003 \001(\010\"\035\n\rPbRegisterReq\022\014\n\004name\030\001 \001(\t\"\014\n\n" +
+      "PbLoginReq\"y\n\013PbLoginResp\022\020\n\010playerId\030\001 " +
+      "\001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005level\030\003 \001(\005\022,\n\005task" +
+      "s\030\004 \003(\0132\035.org.game.proto.struct.PbTask\022\r" +
+      "\n\005isNew\030\005 \001(\010b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3251,13 +3251,13 @@ public final class Login {
     internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbAuthReq_descriptor,
-        new java.lang.String[] { "Id", "Token", });
+        new java.lang.String[] { "PlayerId", "Token", });
     internal_static_org_game_proto_struct_PbAuthResp_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbAuthResp_descriptor,
-        new java.lang.String[] { "Success", "Id", "IsRegistered", });
+        new java.lang.String[] { "Success", "PlayerId", "IsRegistered", });
     internal_static_org_game_proto_struct_PbRegisterReq_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_org_game_proto_struct_PbRegisterReq_fieldAccessorTable = new
@@ -3275,7 +3275,7 @@ public final class Login {
     internal_static_org_game_proto_struct_PbLoginResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbLoginResp_descriptor,
-        new java.lang.String[] { "Id", "Name", "Level", "Tasks", "IsNew", });
+        new java.lang.String[] { "PlayerId", "Name", "Level", "Tasks", "IsNew", });
     descriptor.resolveAllFeaturesImmutable();
     org.game.proto.struct.Task.getDescriptor();
   }
