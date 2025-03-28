@@ -10,7 +10,6 @@ import java.util.Collection;
  *
  * @param <E> 元素类型
  * @author 王叶峰
- * @date 2024-07-29
  */
 public class DifferentWeightArrayPool<E> {
 
@@ -122,8 +121,6 @@ public class DifferentWeightArrayPool<E> {
 
     /**
      * 随机不同的元素
-     *
-     * @return 随机不同的元素列表
      */
     public void randomDifferent(int count, Collection<E> result) {
         Assert.isTrue(count <= randomPool.length, "结果数组长度不能大于随机池长度！");

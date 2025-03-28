@@ -63,7 +63,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
         } else if (!token.equals(tokenInRedis)) {
             DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
-            if (d2.getIssuedAtAsInstant().isBefore(d1.getIssuedAtAsInstant())) {
+            if (d1.getIssuedAtAsInstant().isBefore(d2.getIssuedAtAsInstant())) {// 新生成的token，替换原token
                 redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
             } else {
                 log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
