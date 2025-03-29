@@ -1,6 +1,5 @@
 package org.game.config.tools;
 
-import cn.hutool.extra.pinyin.PinyinUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -100,7 +99,7 @@ public class ExcelToMysql implements InitializingBean {
             if (book.isSheetHidden(k)) {
                 continue;
             }
-            if (containsChinese(sheet.getSheetName())) {
+            if (!sheet.getSheetName().startsWith("cfg_")) {
                 continue;
             }
             Row row0 = sheet.getRow(0);// 字段名
@@ -273,19 +272,6 @@ public class ExcelToMysql implements InitializingBean {
             log.info("解析配置表完毕：{}", sheet.getSheetName());
         }
         book.close();
-    }
-
-    public static boolean containsChinese(String s) {
-        if (s == null || s.isEmpty()) {
-            return false;
-        }
-        char[] chars = s.toCharArray();
-        for (char c : chars) {
-            if (PinyinUtil.isChinese(c)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

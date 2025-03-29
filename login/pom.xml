@@ -51,7 +51,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.game.login.Login</mainClass><!-- 启动类 -->
+                    <mainClass>org.game.login.Login</mainClass>
                 </configuration>
                 <executions>
                     <execution>
