@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.management.timer.Timer;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +30,6 @@ public class AccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -69,8 +67,7 @@ public class AccountService {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
-        String playerToken = TokenUtil.token(id, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
-        redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + id, playerToken, 30, TimeUnit.DAYS);
+        String playerToken = TokenUtil.token(Map.of("playerId", id), TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
         return HttpResp.success(new LoginResponse(id, playerToken));
     }
 }

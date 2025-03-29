@@ -1,5 +1,7 @@
 package org.game.gate.handler.client;
 
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.common.util.TokenUtil;
@@ -27,6 +29,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
@@ -48,17 +51,27 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
 
         int playerId = msg.getId();
         String token = msg.getToken();
-        if (!TokenUtil.verify(token, playerId, TokenUtil.PLAYER_TOKEN_SECRET)) {
+        DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
+        Claim claim = d1.getClaim("playerId");
+        if (claim.isNull() || !claim.asString().equals(String.valueOf(playerId))) {
             log.warn("玩家{}认证失败", playerId);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
         String tokenInRedis = redisTemplate.opsForValue().get(RedisKeys.PLAYER_TOKEN_PREFIX + playerId);
-        if (!token.equals(tokenInRedis)) {
-            log.info("玩家{}认证失败,token已失效", playerId);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
-            return;
+        if (tokenInRedis == null) {
+            redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
+        } else if (!token.equals(tokenInRedis)) {
+            DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
+            if (d2.getIssuedAtAsInstant().isBefore(d1.getIssuedAtAsInstant())) {
+                redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
+            } else {
+                log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
+                channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+                return;
+            }
         }
+
         ThreadPoolExecutor playerExecutor = ThreadPool.getPlayerExecutor(playerId);
         playerExecutor.submit(() -> {
             log.info("玩家{}认证成功 channel:{}", playerId, channel);
