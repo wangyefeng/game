@@ -2,7 +2,8 @@ package org.game.proto.protocol;
 
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
-import org.game.proto.struct.Login;
+import org.game.proto.struct.Login.PbAuthResp;
+import org.game.proto.struct.System.PbGetServerTimeResp;
 import org.springframework.util.Assert;
 
 public enum GateToClientProtocol implements Protocol {
@@ -10,7 +11,10 @@ public enum GateToClientProtocol implements Protocol {
 
     KICK_OUT((short) 2),
 
-    PLAYER_TOKEN_VALIDATE((short) 3, Login.PbAuthResp.parser()),
+    PLAYER_TOKEN_VALIDATE((short) 3, PbAuthResp.parser()),
+
+    // 获取服务器时间
+    GET_SERVER_TIME((short) 4, PbGetServerTimeResp.parser()),
 
     ;
 

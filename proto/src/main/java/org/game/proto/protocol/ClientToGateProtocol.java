@@ -3,6 +3,7 @@ package org.game.proto.protocol;
 import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 import org.game.proto.struct.Login;
+import org.game.proto.struct.System.PbGetServerTimeReq;
 import org.springframework.util.Assert;
 
 public enum ClientToGateProtocol implements Protocol {
@@ -12,6 +13,9 @@ public enum ClientToGateProtocol implements Protocol {
 
     // 玩家验证
     AUTH((short) 2, Login.PbAuthReq.parser()),
+
+    // 获取服务器时间
+    GET_SERVER_TIME((short) 3, PbGetServerTimeReq.parser()),
     ;
 
 

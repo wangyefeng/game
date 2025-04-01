@@ -1,0 +1,13 @@
+// 通用协议结构
+syntax = "proto3";
+
+package org.game.proto.struct;
+
+// 请求服务器时间
+message PbGetServerTimeReq {
+}
+
+// 返回服务器时间
+message PbGetServerTimeResp {
+  int64 currentTimeMillis = 1;// 当前毫秒时间戳
+}
