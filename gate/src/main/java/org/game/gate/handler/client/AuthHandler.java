@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
+import org.game.common.RedisKeys.Locks;
 import org.game.common.util.TokenUtil;
 import org.game.gate.net.AttributeKeys;
 import org.game.gate.net.client.ClientGroup;
@@ -22,6 +23,8 @@ import org.game.proto.struct.PlayerExistServiceGrpc;
 import org.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
 import org.game.proto.struct.Rpc.PbPlayerExistReq;
 import org.game.proto.struct.Rpc.PbPlayerExistResp;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,9 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
         if (channel.hasAttr(AttributeKeys.PLAYER)) {
@@ -51,25 +57,39 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
 
         String token = msg.getToken();
         DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
+        if (d1.getIssuedAtAsInstant() == null) {
+            log.warn("token{}认证失败，token中不包含创建时间信息！", token);
+            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+            return;
+        }
+
         Claim claim = d1.getClaim("playerId");
         if (claim.isNull()) {
-            log.warn("token{}认证失败", token);
+            log.warn("token{}认证失败，token中不包含playerId！", token);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
         int playerId = claim.asInt();
-        String tokenInRedis = redisTemplate.opsForValue().get(RedisKeys.PLAYER_TOKEN_PREFIX + playerId);
-        if (tokenInRedis == null) {
-            redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
-        } else if (!token.equals(tokenInRedis)) {
-            DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
-            if (d1.getIssuedAtAsInstant().isBefore(d2.getIssuedAtAsInstant())) {// 新生成的token，替换原token
-                redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);
-            } else {
-                log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
-                channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
-                return;
+        String key = RedisKeys.PLAYER_TOKEN_PREFIX + playerId;
+        String lockKey = Locks.TOKEN_LOCK_PREFIX + playerId;
+        RLock rLock = redissonClient.getLock(lockKey);
+        try {
+            rLock.lock();
+            String tokenInRedis = redisTemplate.opsForValue().get(key);
+            if (tokenInRedis == null) {
+                redisTemplate.opsForValue().set(key, token, 30, TimeUnit.DAYS);
+            } else if (!token.equals(tokenInRedis)) {
+                DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
+                if (d1.getIssuedAtAsInstant().isAfter(d2.getIssuedAtAsInstant())) {// 新生成的token，替换原token
+                    redisTemplate.opsForValue().set(key, token, 30, TimeUnit.DAYS);
+                } else {
+                    log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
+                    channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+                    return;
+                }
             }
+        } finally {
+            rLock.unlock();
         }
 
         ThreadPoolExecutor playerExecutor = ThreadPool.getPlayerExecutor(playerId);

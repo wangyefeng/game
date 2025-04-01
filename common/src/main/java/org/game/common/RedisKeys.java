@@ -7,5 +7,7 @@ public abstract class RedisKeys {
     public static abstract class Locks {
 
         public static final String ACCOUNT_LOCK_PREFIX = "account_lock:";
+
+        public static final String TOKEN_LOCK_PREFIX = "token_lock:";
     }
 }
