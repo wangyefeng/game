@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
@@ -47,6 +47,11 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    /**
+     * token有效期
+     */
+    private static final Duration TOKEN_TIMEOUT = Duration.ofDays(30);
 
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
@@ -77,11 +82,11 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             rLock.lock();
             String tokenInRedis = redisTemplate.opsForValue().get(key);
             if (tokenInRedis == null) {
-                redisTemplate.opsForValue().set(key, token, 30, TimeUnit.DAYS);
+                redisTemplate.opsForValue().set(key, token, TOKEN_TIMEOUT);
             } else if (!token.equals(tokenInRedis)) {
                 DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
                 if (d1.getIssuedAt().after(d2.getIssuedAt())) {// 新生成的token，替换原token
-                    redisTemplate.opsForValue().set(key, token, 30, TimeUnit.DAYS);
+                    redisTemplate.opsForValue().set(key, token, TOKEN_TIMEOUT);
                 } else {
                     log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
                     channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
