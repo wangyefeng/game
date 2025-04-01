@@ -1,6 +1,5 @@
 package org.game.login.service;
 
-import org.game.common.RedisKeys;
 import org.game.common.RedisKeys.Locks;
 import org.game.common.http.HttpResp;
 import org.game.common.util.TokenUtil;
@@ -12,15 +11,12 @@ import org.game.login.response.LoginResponse;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.management.timer.Timer;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -67,7 +63,7 @@ public class AccountService {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
-        String playerToken = TokenUtil.token(Map.of("playerId", id), TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
+        String playerToken = TokenUtil.token(id, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
         return HttpResp.success(new LoginResponse(id, playerToken));
     }
 }

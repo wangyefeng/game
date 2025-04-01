@@ -26,7 +26,6 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     @Override
     public void loginResp(PbLoginResp.Builder loginResp) {
-        loginResp.setPlayerId(entity.getPlayerId());
         loginResp.setLevel(entity.getLevel());
         loginResp.setName(entity.getName());
     }

@@ -30,18 +30,12 @@ public final class Login {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 playerId = 1;</code>
-     * @return The playerId.
-     */
-    int getPlayerId();
-
-    /**
-     * <code>string token = 2;</code>
+     * <code>string token = 1;</code>
      * @return The token.
      */
     java.lang.String getToken();
     /**
-     * <code>string token = 2;</code>
+     * <code>string token = 1;</code>
      * @return The bytes for token.
      */
     com.google.protobuf.ByteString
@@ -89,22 +83,11 @@ public final class Login {
               org.game.proto.struct.Login.PbAuthReq.class, org.game.proto.struct.Login.PbAuthReq.Builder.class);
     }
 
-    public static final int PLAYERID_FIELD_NUMBER = 1;
-    private int playerId_ = 0;
-    /**
-     * <code>int32 playerId = 1;</code>
-     * @return The playerId.
-     */
-    @java.lang.Override
-    public int getPlayerId() {
-      return playerId_;
-    }
-
-    public static final int TOKEN_FIELD_NUMBER = 2;
+    public static final int TOKEN_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
     private volatile java.lang.Object token_ = "";
     /**
-     * <code>string token = 2;</code>
+     * <code>string token = 1;</code>
      * @return The token.
      */
     @java.lang.Override
@@ -121,7 +104,7 @@ public final class Login {
       }
     }
     /**
-     * <code>string token = 2;</code>
+     * <code>string token = 1;</code>
      * @return The bytes for token.
      */
     @java.lang.Override
@@ -153,11 +136,8 @@ public final class Login {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (playerId_ != 0) {
-        output.writeInt32(1, playerId_);
-      }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 2, token_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, token_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -168,12 +148,8 @@ public final class Login {
       if (size != -1) return size;
 
       size = 0;
-      if (playerId_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, playerId_);
-      }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, token_);
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, token_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -190,8 +166,6 @@ public final class Login {
       }
       org.game.proto.struct.Login.PbAuthReq other = (org.game.proto.struct.Login.PbAuthReq) obj;
 
-      if (getPlayerId()
-          != other.getPlayerId()) return false;
       if (!getToken()
           .equals(other.getToken())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -205,8 +179,6 @@ public final class Login {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + PLAYERID_FIELD_NUMBER;
-      hash = (53 * hash) + getPlayerId();
       hash = (37 * hash) + TOKEN_FIELD_NUMBER;
       hash = (53 * hash) + getToken().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -344,7 +316,6 @@ public final class Login {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        playerId_ = 0;
         token_ = "";
         return this;
       }
@@ -380,9 +351,6 @@ public final class Login {
       private void buildPartial0(org.game.proto.struct.Login.PbAuthReq result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.playerId_ = playerId_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
           result.token_ = token_;
         }
       }
@@ -399,12 +367,9 @@ public final class Login {
 
       public Builder mergeFrom(org.game.proto.struct.Login.PbAuthReq other) {
         if (other == org.game.proto.struct.Login.PbAuthReq.getDefaultInstance()) return this;
-        if (other.getPlayerId() != 0) {
-          setPlayerId(other.getPlayerId());
-        }
         if (!other.getToken().isEmpty()) {
           token_ = other.token_;
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -433,16 +398,11 @@ public final class Login {
               case 0:
                 done = true;
                 break;
-              case 8: {
-                playerId_ = input.readInt32();
+              case 10: {
+                token_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000001;
                 break;
-              } // case 8
-              case 18: {
-                token_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
+              } // case 10
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -460,41 +420,9 @@ public final class Login {
       }
       private int bitField0_;
 
-      private int playerId_ ;
-      /**
-       * <code>int32 playerId = 1;</code>
-       * @return The playerId.
-       */
-      @java.lang.Override
-      public int getPlayerId() {
-        return playerId_;
-      }
-      /**
-       * <code>int32 playerId = 1;</code>
-       * @param value The playerId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPlayerId(int value) {
-
-        playerId_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 playerId = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPlayerId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        playerId_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object token_ = "";
       /**
-       * <code>string token = 2;</code>
+       * <code>string token = 1;</code>
        * @return The token.
        */
       public java.lang.String getToken() {
@@ -510,7 +438,7 @@ public final class Login {
         }
       }
       /**
-       * <code>string token = 2;</code>
+       * <code>string token = 1;</code>
        * @return The bytes for token.
        */
       public com.google.protobuf.ByteString
@@ -527,7 +455,7 @@ public final class Login {
         }
       }
       /**
-       * <code>string token = 2;</code>
+       * <code>string token = 1;</code>
        * @param value The token to set.
        * @return This builder for chaining.
        */
@@ -535,22 +463,22 @@ public final class Login {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         token_ = value;
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>string token = 2;</code>
+       * <code>string token = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearToken() {
         token_ = getDefaultInstance().getToken();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>string token = 2;</code>
+       * <code>string token = 1;</code>
        * @param value The bytes for token to set.
        * @return This builder for chaining.
        */
@@ -559,7 +487,7 @@ public final class Login {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         token_ = value;
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -2089,10 +2017,14 @@ public final class Login {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 playerId = 1;</code>
-     * @return The playerId.
+     * <pre>
+     * 是否是新注册的用户
+     * </pre>
+     *
+     * <code>bool isNew = 1;</code>
+     * @return The isNew.
      */
-    int getPlayerId();
+    boolean getIsNew();
 
     /**
      * <code>string name = 2;</code>
@@ -2135,12 +2067,6 @@ public final class Login {
      */
     org.game.proto.struct.Task.PbTaskOrBuilder getTasksOrBuilder(
         int index);
-
-    /**
-     * <code>bool isNew = 5;</code>
-     * @return The isNew.
-     */
-    boolean getIsNew();
   }
   /**
    * <pre>
@@ -2185,15 +2111,19 @@ public final class Login {
               org.game.proto.struct.Login.PbLoginResp.class, org.game.proto.struct.Login.PbLoginResp.Builder.class);
     }
 
-    public static final int PLAYERID_FIELD_NUMBER = 1;
-    private int playerId_ = 0;
+    public static final int ISNEW_FIELD_NUMBER = 1;
+    private boolean isNew_ = false;
     /**
-     * <code>int32 playerId = 1;</code>
-     * @return The playerId.
+     * <pre>
+     * 是否是新注册的用户
+     * </pre>
+     *
+     * <code>bool isNew = 1;</code>
+     * @return The isNew.
      */
     @java.lang.Override
-    public int getPlayerId() {
-      return playerId_;
+    public boolean getIsNew() {
+      return isNew_;
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
@@ -2287,17 +2217,6 @@ public final class Login {
       return tasks_.get(index);
     }
 
-    public static final int ISNEW_FIELD_NUMBER = 5;
-    private boolean isNew_ = false;
-    /**
-     * <code>bool isNew = 5;</code>
-     * @return The isNew.
-     */
-    @java.lang.Override
-    public boolean getIsNew() {
-      return isNew_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2312,8 +2231,8 @@ public final class Login {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (playerId_ != 0) {
-        output.writeInt32(1, playerId_);
+      if (isNew_ != false) {
+        output.writeBool(1, isNew_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 2, name_);
@@ -2324,9 +2243,6 @@ public final class Login {
       for (int i = 0; i < tasks_.size(); i++) {
         output.writeMessage(4, tasks_.get(i));
       }
-      if (isNew_ != false) {
-        output.writeBool(5, isNew_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2336,9 +2252,9 @@ public final class Login {
       if (size != -1) return size;
 
       size = 0;
-      if (playerId_ != 0) {
+      if (isNew_ != false) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, playerId_);
+          .computeBoolSize(1, isNew_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(name_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(2, name_);
@@ -2350,10 +2266,6 @@ public final class Login {
       for (int i = 0; i < tasks_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, tasks_.get(i));
-      }
-      if (isNew_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(5, isNew_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2370,16 +2282,14 @@ public final class Login {
       }
       org.game.proto.struct.Login.PbLoginResp other = (org.game.proto.struct.Login.PbLoginResp) obj;
 
-      if (getPlayerId()
-          != other.getPlayerId()) return false;
+      if (getIsNew()
+          != other.getIsNew()) return false;
       if (!getName()
           .equals(other.getName())) return false;
       if (getLevel()
           != other.getLevel()) return false;
       if (!getTasksList()
           .equals(other.getTasksList())) return false;
-      if (getIsNew()
-          != other.getIsNew()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2391,8 +2301,9 @@ public final class Login {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + PLAYERID_FIELD_NUMBER;
-      hash = (53 * hash) + getPlayerId();
+      hash = (37 * hash) + ISNEW_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsNew());
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + LEVEL_FIELD_NUMBER;
@@ -2401,9 +2312,6 @@ public final class Login {
         hash = (37 * hash) + TASKS_FIELD_NUMBER;
         hash = (53 * hash) + getTasksList().hashCode();
       }
-      hash = (37 * hash) + ISNEW_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIsNew());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2539,7 +2447,7 @@ public final class Login {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        playerId_ = 0;
+        isNew_ = false;
         name_ = "";
         level_ = 0;
         if (tasksBuilder_ == null) {
@@ -2549,7 +2457,6 @@ public final class Login {
           tasksBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
-        isNew_ = false;
         return this;
       }
 
@@ -2597,16 +2504,13 @@ public final class Login {
       private void buildPartial0(org.game.proto.struct.Login.PbLoginResp result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.playerId_ = playerId_;
+          result.isNew_ = isNew_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.name_ = name_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.level_ = level_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.isNew_ = isNew_;
         }
       }
 
@@ -2622,8 +2526,8 @@ public final class Login {
 
       public Builder mergeFrom(org.game.proto.struct.Login.PbLoginResp other) {
         if (other == org.game.proto.struct.Login.PbLoginResp.getDefaultInstance()) return this;
-        if (other.getPlayerId() != 0) {
-          setPlayerId(other.getPlayerId());
+        if (other.getIsNew() != false) {
+          setIsNew(other.getIsNew());
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
@@ -2659,9 +2563,6 @@ public final class Login {
             }
           }
         }
-        if (other.getIsNew() != false) {
-          setIsNew(other.getIsNew());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2689,7 +2590,7 @@ public final class Login {
                 done = true;
                 break;
               case 8: {
-                playerId_ = input.readInt32();
+                isNew_ = input.readBool();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 8
@@ -2716,11 +2617,6 @@ public final class Login {
                 }
                 break;
               } // case 34
-              case 40: {
-                isNew_ = input.readBool();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 40
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2738,34 +2634,46 @@ public final class Login {
       }
       private int bitField0_;
 
-      private int playerId_ ;
+      private boolean isNew_ ;
       /**
-       * <code>int32 playerId = 1;</code>
-       * @return The playerId.
+       * <pre>
+       * 是否是新注册的用户
+       * </pre>
+       *
+       * <code>bool isNew = 1;</code>
+       * @return The isNew.
        */
       @java.lang.Override
-      public int getPlayerId() {
-        return playerId_;
+      public boolean getIsNew() {
+        return isNew_;
       }
       /**
-       * <code>int32 playerId = 1;</code>
-       * @param value The playerId to set.
+       * <pre>
+       * 是否是新注册的用户
+       * </pre>
+       *
+       * <code>bool isNew = 1;</code>
+       * @param value The isNew to set.
        * @return This builder for chaining.
        */
-      public Builder setPlayerId(int value) {
+      public Builder setIsNew(boolean value) {
 
-        playerId_ = value;
+        isNew_ = value;
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 playerId = 1;</code>
+       * <pre>
+       * 是否是新注册的用户
+       * </pre>
+       *
+       * <code>bool isNew = 1;</code>
        * @return This builder for chaining.
        */
-      public Builder clearPlayerId() {
+      public Builder clearIsNew() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        playerId_ = 0;
+        isNew_ = false;
         onChanged();
         return this;
       }
@@ -3114,38 +3022,6 @@ public final class Login {
         return tasksBuilder_;
       }
 
-      private boolean isNew_ ;
-      /**
-       * <code>bool isNew = 5;</code>
-       * @return The isNew.
-       */
-      @java.lang.Override
-      public boolean getIsNew() {
-        return isNew_;
-      }
-      /**
-       * <code>bool isNew = 5;</code>
-       * @param value The isNew to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIsNew(boolean value) {
-
-        isNew_ = value;
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool isNew = 5;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearIsNew() {
-        bitField0_ = (bitField0_ & ~0x00000010);
-        isNew_ = false;
-        onChanged();
-        return this;
-      }
-
       // @@protoc_insertion_point(builder_scope:org.game.proto.struct.PbLoginResp)
     }
 
@@ -3232,14 +3108,13 @@ public final class Login {
   static {
     java.lang.String[] descriptorData = {
       "\n\013login.proto\022\025org.game.proto.struct\032\nta" +
-      "sk.proto\",\n\tPbAuthReq\022\020\n\010playerId\030\001 \001(\005\022" +
-      "\r\n\005token\030\002 \001(\t\"E\n\nPbAuthResp\022\017\n\007success\030" +
-      "\001 \001(\010\022\020\n\010playerId\030\002 \001(\005\022\024\n\014isRegistered\030" +
-      "\003 \001(\010\"\035\n\rPbRegisterReq\022\014\n\004name\030\001 \001(\t\"\014\n\n" +
-      "PbLoginReq\"y\n\013PbLoginResp\022\020\n\010playerId\030\001 " +
-      "\001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005level\030\003 \001(\005\022,\n\005task" +
-      "s\030\004 \003(\0132\035.org.game.proto.struct.PbTask\022\r" +
-      "\n\005isNew\030\005 \001(\010b\006proto3"
+      "sk.proto\"\032\n\tPbAuthReq\022\r\n\005token\030\001 \001(\t\"E\n\n" +
+      "PbAuthResp\022\017\n\007success\030\001 \001(\010\022\020\n\010playerId\030" +
+      "\002 \001(\005\022\024\n\014isRegistered\030\003 \001(\010\"\035\n\rPbRegiste" +
+      "rReq\022\014\n\004name\030\001 \001(\t\"\014\n\nPbLoginReq\"g\n\013PbLo" +
+      "ginResp\022\r\n\005isNew\030\001 \001(\010\022\014\n\004name\030\002 \001(\t\022\r\n\005" +
+      "level\030\003 \001(\005\022,\n\005tasks\030\004 \003(\0132\035.org.game.pr" +
+      "oto.struct.PbTaskb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3251,7 +3126,7 @@ public final class Login {
     internal_static_org_game_proto_struct_PbAuthReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbAuthReq_descriptor,
-        new java.lang.String[] { "PlayerId", "Token", });
+        new java.lang.String[] { "Token", });
     internal_static_org_game_proto_struct_PbAuthResp_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_game_proto_struct_PbAuthResp_fieldAccessorTable = new
@@ -3275,7 +3150,7 @@ public final class Login {
     internal_static_org_game_proto_struct_PbLoginResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_game_proto_struct_PbLoginResp_descriptor,
-        new java.lang.String[] { "PlayerId", "Name", "Level", "Tasks", "IsNew", });
+        new java.lang.String[] { "IsNew", "Name", "Level", "Tasks", });
     descriptor.resolveAllFeaturesImmutable();
     org.game.proto.struct.Task.getDescriptor();
   }

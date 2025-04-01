@@ -15,7 +15,7 @@ public class TokenUtil {
     // token秘钥
     public static final Algorithm PLAYER_TOKEN_SECRET = Algorithm.HMAC256("365zb5t3e4vb65%$#2390nb");
 
-    public static String token(Map<String, Object> claims, Algorithm secret, Date expiresAt) {
+    public static String token(int playerId, Algorithm secret, Date expiresAt) {
         try {
             //设置头部信息
             Map<String, Object> header = new HashMap<>();
@@ -23,7 +23,7 @@ public class TokenUtil {
             header.put("alg", "HS256");
             //携带claims信息，生成签名
             Builder builder = JWT.create().withHeader(header);
-            claims.forEach((k, v) -> builder.withClaim(k, v.toString()));
+            builder.withClaim("playerId", playerId);
             return builder.withExpiresAt(expiresAt).withIssuedAt(new Date()).sign(secret);
         } catch (Exception e) {
             throw new RuntimeException(e);

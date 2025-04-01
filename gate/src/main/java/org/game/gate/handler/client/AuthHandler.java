@@ -49,15 +49,15 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             return;
         }
 
-        int playerId = msg.getPlayerId();
         String token = msg.getToken();
         DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
         Claim claim = d1.getClaim("playerId");
-        if (claim.isNull() || !claim.asString().equals(String.valueOf(playerId))) {
-            log.warn("玩家{}认证失败", playerId);
+        if (claim.isNull()) {
+            log.warn("token{}认证失败", token);
             channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
+        int playerId = claim.asInt();
         String tokenInRedis = redisTemplate.opsForValue().get(RedisKeys.PLAYER_TOKEN_PREFIX + playerId);
         if (tokenInRedis == null) {
             redisTemplate.opsForValue().set(RedisKeys.PLAYER_TOKEN_PREFIX + playerId, token, 30, TimeUnit.DAYS);

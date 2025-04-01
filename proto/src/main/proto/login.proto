@@ -7,8 +7,7 @@ import "task.proto";
 
 // 认证请求
 message PbAuthReq {
-  int32 playerId = 1;
-  string token = 2;
+  string token = 1;
 }
 
 // 认证返回
@@ -29,9 +28,8 @@ message PbLoginReq {
 
 // 登录返回
 message PbLoginResp {
-  int32 playerId = 1;
+  bool isNew = 1;// 是否是新注册的用户
   string name = 2;
   int32 level = 3;
   repeated PbTask tasks = 4;
-  bool isNew = 5;
 }
