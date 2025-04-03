@@ -23,9 +23,6 @@
         <module>config</module>
         <module>cache-test</module>
         <module>login</module>
-        <module>oauth2-auth-server</module>
-        <module>oauth2-client</module>
-        <module>oauth2-resource-server</module>
     </modules>
 
     <properties>
