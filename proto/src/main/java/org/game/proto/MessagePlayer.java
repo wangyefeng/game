@@ -1,9 +1,8 @@
 package org.game.proto;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import com.google.protobuf.util.JsonFormat;
 import org.game.proto.protocol.Protocol;
+import org.game.proto.util.ProtobufJsonUtil;
 
 public class MessagePlayer<T extends Message> {
 
@@ -49,11 +48,7 @@ public class MessagePlayer<T extends Message> {
                 .append(protocol);
 
         if (data != null) {
-            try {
-                sb.append(", data=").append(JsonFormat.printer().print(data));
-            } catch (InvalidProtocolBufferException e) {
-                throw new RuntimeException("Failed to serialize data", e);
-            }
+            sb.append(", data=").append(ProtobufJsonUtil.serializeMessage(data));
         }
 
         return sb.toString();

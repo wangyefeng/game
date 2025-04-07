@@ -1,9 +1,9 @@
-package org.game.client;
+package org.game.proto.util;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 
-public class ProtoBufJsonUtil {
+public class ProtobufJsonUtil {
 
     private static final ThreadLocal<JsonFormat.Printer> printerThreadLocal =
         ThreadLocal.withInitial(() -> JsonFormat.printer().includingDefaultValueFields());
