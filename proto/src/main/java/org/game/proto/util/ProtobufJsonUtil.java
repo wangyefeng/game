@@ -6,7 +6,7 @@ import com.google.protobuf.util.JsonFormat;
 public class ProtobufJsonUtil {
 
     private static final ThreadLocal<JsonFormat.Printer> printerThreadLocal =
-        ThreadLocal.withInitial(() -> JsonFormat.printer().includingDefaultValueFields());
+        ThreadLocal.withInitial(() -> JsonFormat.printer().alwaysPrintFieldsWithNoPresence());
 
     public static String serializeMessage(Message message) {
         JsonFormat.Printer printer = printerThreadLocal.get();
