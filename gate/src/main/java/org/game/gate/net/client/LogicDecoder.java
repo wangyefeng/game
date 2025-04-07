@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
+import org.game.proto.MsgHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.game.gate.thread.ThreadPool;
@@ -52,13 +53,9 @@ public class LogicDecoder extends ByteToMessageDecoder {
 
         if (type == DecoderType.MESSAGE_CODE.getCode()) {
             if (to == Topic.GATE.getCode()) {
-                if (protocol.parser() != null) {
-                    ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                    Message message = (Message) protocol.parser().parseFrom(inputStream);
-                    out.add(new MessageCode<>(protocol, message));
-                } else {
-                    out.add(new MessageCode<>(protocol));
-                }
+                ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
+                out.add(new MessageCode<>(protocol, message));
             } else {
                 log.warn("目前不支持 消息类型：MESSAGE_CODE 转发消息给{} 敬请期待！", to);
                 in.skipBytes(in.readableBytes());

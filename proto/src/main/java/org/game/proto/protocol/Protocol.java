@@ -1,6 +1,5 @@
 package org.game.proto.protocol;
 
-import com.google.protobuf.Parser;
 import org.game.proto.Topic;
 
 /**
@@ -34,13 +33,6 @@ public interface Protocol {
      * @return 协议号
      */
     short getCode();
-
-    /**
-     * 获取protobuf解析器
-     *
-     * @return 解析器
-     */
-    Parser<?> parser();
 
     static String toString(Protocol protocol) {
         return protocol.getClass().getSimpleName() + "." + protocol;

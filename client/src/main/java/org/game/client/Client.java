@@ -12,6 +12,12 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import org.game.client.handler.LoginHandler;
+import org.game.client.handler.PlayerTokenValidateHandler;
+import org.game.client.handler.PongHandler;
+import org.game.client.handler.TaskAddHandler;
+import org.game.client.handler.TaskRemoveHandler;
+import org.game.client.handler.TaskUpdateHandler;
 import org.game.common.http.HttpResp;
 import org.game.common.random.RandomUtil;
 import org.game.proto.CodeMsgEncode;
@@ -19,6 +25,7 @@ import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCode;
 import org.game.proto.MessageCodeDecoder;
 import org.game.proto.MessagePlayerDecoder;
+import org.game.proto.MsgHandler;
 import org.game.proto.Topic;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
@@ -117,9 +124,15 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
+        MsgHandler.register(new PongHandler());
+        MsgHandler.register(new PlayerTokenValidateHandler());
+        MsgHandler.register(new LoginHandler());
+        MsgHandler.register(new TaskUpdateHandler());
+        MsgHandler.register(new TaskAddHandler());
+        MsgHandler.register(new TaskRemoveHandler());
         WebClient client = WebClient.builder().baseUrl("http://127.0.0.1/auth").build();
-        int num = 10;
-        for (int i = 10; i <= num; i++) {
+        int num = 1;
+        for (int i = 1; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";
             HttpResp<LoginResponse> loginResponse = login(client, username, password);

@@ -1,6 +1,6 @@
 package org.game.gate.handler.logic;
 
-import com.google.protobuf.Message;
+import com.google.protobuf.Empty;
 import io.netty.channel.Channel;
 import org.game.proto.CodeMsgHandler;
 import org.game.proto.protocol.LogicToGateProtocol;
@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PongHandler implements CodeMsgHandler<Message> {
+public class PongHandler implements CodeMsgHandler<Empty> {
 
     private static final Logger log = LoggerFactory.getLogger(PongHandler.class);
 
     @Override
-    public void handle(Channel channel, Message message) {
+    public void handle(Channel channel, Empty message) {
         log.debug("Received a pong message from logic.");
     }
 

@@ -11,6 +11,7 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import org.game.gate.player.Player;
 import org.game.proto.DecoderType;
 import org.game.proto.MessageCode;
+import org.game.proto.MsgHandler;
 import org.game.proto.Topic;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
@@ -65,13 +66,9 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
                 return;
             }
             if (to == Topic.GATE.getCode()) { // gate
-                if (protocol.parser() != null) {
-                    ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                    Message message = (Message) protocol.parser().parseFrom(inputStream);
-                    out.add(new MessageCode<>(protocol, message));
-                } else {
-                    out.add(new MessageCode<>(protocol));
-                }
+                ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
+                out.add(new MessageCode<>(protocol, message));
             } else if (to == Topic.LOGIC.getCode()) {// logic
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
                 if (player != null && player.getLogicClient().isRunning()) {
