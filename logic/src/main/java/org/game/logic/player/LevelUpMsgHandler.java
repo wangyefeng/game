@@ -1,15 +1,16 @@
 package org.game.logic.player;
 
+import com.google.protobuf.Empty;
+import com.google.protobuf.Int32Value;
 import org.game.config.Configs;
 import org.game.proto.protocol.ClientToLogicProtocol;
-import org.game.proto.struct.Common.PbInt;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LevelUpMsgHandler extends PlayerHandler<PbInt> {
+public class LevelUpMsgHandler extends PlayerHandler<Empty> {
 
     @Override
-    protected void handle(Player player, PbInt data, Configs config) {
+    protected void handle(Player player, Empty data, Configs config) {
         PlayerService playerService = player.getService(PlayerService.class);
         playerService.levelUp();
     }

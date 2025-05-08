@@ -1,10 +1,10 @@
 package org.game.proto;
 
-import org.game.proto.struct.Common.PbInt;
+import com.google.protobuf.Int32Value;
 
 public abstract class CommonPbUtil {
 
-    public static PbInt parse(int val) {
-        return PbInt.newBuilder().setVal(val).build();
+    public static Int32Value parse(int val) {
+        return Int32Value.newBuilder().setValue(val).build();
     }
 }
