@@ -1,0 +1,8 @@
+// 通用协议结构
+syntax = "proto3";
+
+package org.game.proto.struct;
+
+message PbIntArray {
+  repeated int32 val = 1;
+}
