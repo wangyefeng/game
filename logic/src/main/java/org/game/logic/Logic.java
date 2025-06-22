@@ -80,7 +80,7 @@ public class Logic extends Server {
      * 初始化spring容器后，启动服务器
      */
     @Override
-    protected void start0() throws Exception {
+    protected void start0() {
         checkMongo();
         Protocols.init();
         registerHandler();
