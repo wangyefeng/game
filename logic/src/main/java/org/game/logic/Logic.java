@@ -4,6 +4,7 @@ import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.EmptyArrays;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
+import org.bson.Document;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
@@ -22,7 +23,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.List;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = Tool.class))
@@ -55,6 +59,12 @@ public class Logic extends Server {
     @Autowired
     private TimeIntervalManager timeIntervalManager;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private List<MsgHandler<?>> msgHandlers;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -71,11 +81,22 @@ public class Logic extends Server {
      */
     @Override
     protected void start0() throws Exception {
+        checkMongo();
         Protocols.init();
         registerHandler();
         initGameService();
         ThreadPool.start();
         timeIntervalManager.init();
+    }
+
+    /**
+     * 检查mongo是否可用
+     */
+    public void checkMongo() {
+        Document ping = mongoTemplate.executeCommand("{ping:1}");
+        if (ping.getDouble("ok") != 1.0) {
+            throw new RuntimeException("MongoDB not available");
+        }
     }
 
     private void initGameService() {
@@ -110,7 +131,7 @@ public class Logic extends Server {
 
     private void registerHandler() {
         log.info("handler registering...");
-        applicationContext.getBeansOfType(MsgHandler.class).values().forEach(MsgHandler::register);// 注册所有handler
+        msgHandlers.forEach(MsgHandler::register);// 注册所有handler
         log.info("handler register end");
     }
 }
