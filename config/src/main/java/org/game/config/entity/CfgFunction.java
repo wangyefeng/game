@@ -11,7 +11,7 @@ import org.hibernate.type.SqlTypes;
 
 @Entity
 @Valid
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class CfgFunction implements Cfg<Integer> {
 
     @Id
