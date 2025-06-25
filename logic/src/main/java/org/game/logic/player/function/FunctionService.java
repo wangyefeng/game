@@ -51,6 +51,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     public void afterInit() {
         super.afterInit();
         checkTimeInterval(false);
+        checkCyclicFunction(false);
     }
 
     /**
