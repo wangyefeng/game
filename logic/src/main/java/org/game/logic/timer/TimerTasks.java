@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
  * 定时器集中管理
  * 
  * @author 王叶峰
- * @date 2021年7月6日
  *
  */
 @Component
@@ -29,7 +28,7 @@ public class TimerTasks {
 	public void playerResetData() {
 		log.info("0点重置数据");
 		for (Player player : Players.getPlayers().values()) {
-			ThreadPool.getPlayerExecutor(player.getId()).execute(() -> player.dailyReset(true));
+			ThreadPool.executePlayerAction(player.getId(), () -> player.dailyReset(true));
 		}
 	}
 

@@ -148,10 +148,11 @@ public class Player {
         saveFuture.cancel(true);
         asyncSave();
         channel = null;
+        ThreadPool.closePlayerActor(getId());
     }
 
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
-        return ThreadPool.scheduleAtFixedRate(() -> ThreadPool.getPlayerExecutor(id).execute(runnable), initialDelay, period, unit);
+        return ThreadPool.scheduleAtFixedRate(() -> ThreadPool.executePlayerAction(getId(), runnable), initialDelay, period, unit);
     }
 
     public void updateEvent(PlayerEvent eventType, Object value) {

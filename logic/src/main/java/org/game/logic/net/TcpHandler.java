@@ -82,7 +82,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
         List<Integer> players = ctx.channel().attr(ChannelKeys.PLAYERS_KEY).get();
         for (Integer playerId : players) {
             if (Players.containsPlayer(playerId)) {
-                ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+                ThreadPool.executePlayerAction(playerId, () -> {
                     Player player = Players.getPlayer(playerId);
                     if (player == null) {
                         log.info("玩家{}退出游戏，但玩家不在线", playerId);

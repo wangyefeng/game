@@ -15,7 +15,7 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
 
     @Override
     public void handle(Channel channel, int playerId, T data) {
-        ThreadPool.getPlayerExecutor(playerId).execute(() -> {
+        ThreadPool.executePlayerAction(playerId, () -> {
             long start = System.currentTimeMillis();
             try {
                 handle0(channel, playerId, data, Configs.getInstance());
@@ -29,7 +29,7 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
                     log.warn("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
                 } else if (cost > 50) {
                     log.info("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
-                } else {
+                } else if (log.isDebugEnabled()){
                     log.debug("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
                 }
             }
