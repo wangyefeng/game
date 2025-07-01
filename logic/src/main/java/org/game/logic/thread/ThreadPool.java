@@ -1,36 +1,30 @@
 package org.game.logic.thread;
 
+import akka.Done;
+import akka.actor.CoordinatedShutdown;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.javadsl.Behaviors;
 import org.game.logic.player.Players;
-import org.game.logic.thread.actor.PlayerActorBehavior;
-import org.game.logic.thread.actor.PlayerActorMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public abstract class ThreadPool {
 
     private static final Logger log = LoggerFactory.getLogger(ThreadPool.class);
 
-    public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors();
-
     public static ThreadPoolExecutor[] playerDBExecutors;
 
-    private final static ActorSystem<PlayerActorMsg> PLAYER_ACTOR_SYSTEM = ActorSystem.create(Behaviors.setup(PlayerActorBehavior::new), "player-actor");
+    private static ActorSystem<PlayerActorBehavior.Command> playerActorSystem;
 
     public static ScheduledExecutorService scheduledExecutor;
 
-
     public static void start() {
-        playerDBExecutors = new ThreadPoolExecutor[EXECUTOR_SIZE];
-        for (int i = 0; i < EXECUTOR_SIZE; i++) {
+        playerActorSystem = ActorSystem.create(Behaviors.setup(PlayerActorBehavior::new), "player-actor");
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        playerDBExecutors = new ThreadPoolExecutor[availableProcessors];
+        for (int i = 0; i < playerDBExecutors.length; i++) {
             final int k = i;
             playerDBExecutors[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-db-thread-" + k));
         }
@@ -38,12 +32,25 @@ public abstract class ThreadPool {
         scheduledExecutor.scheduleAtFixedRate(() -> log.debug("实时在线玩家数量{}", Players.getPlayers().size()), 10, 10, TimeUnit.SECONDS);
     }
 
+    private static class JVMShutdown implements CoordinatedShutdown.Reason {
+        @Override
+        public String toString() {
+            return "JVM shutdown";
+        }
+    }
+
     public static void shutdown() {
-        PLAYER_ACTOR_SYSTEM.terminate();
+        CompletableFuture<Done> future = CoordinatedShutdown.get(playerActorSystem).runAll(new JVMShutdown()).toCompletableFuture();
+        try {
+            future.get(1L, TimeUnit.DAYS);
+        } catch (Exception e) {
+            log.error("shutdown error", e);
+        }
+        log.info("player actor system shutdown");
         for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
             executor.close();
         }
-        log.info("thread pool shutdown");
+        log.info("player db thread pool shutdown");
     }
 
     public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {
@@ -51,15 +58,15 @@ public abstract class ThreadPool {
     }
 
     public static void executePlayerAction(int playerId, Runnable action) {
-        PLAYER_ACTOR_SYSTEM.tell(new PlayerActorMsg(playerId, action));
+        playerActorSystem.tell(new PlayerActorBehavior.PlayerActorMsg(playerId, action));
     }
 
     public static void closePlayerActor(int playerId) {
-        PLAYER_ACTOR_SYSTEM.tell(new PlayerActorMsg(playerId, null, true));
+        playerActorSystem.tell(new PlayerActorBehavior.ShutdownMsg(playerId));
     }
 
     public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
-        return playerDBExecutors[playerId % EXECUTOR_SIZE];
+        return playerDBExecutors[playerId % playerDBExecutors.length];
     }
 
     public static ScheduledExecutorService getScheduledExecutor() {
