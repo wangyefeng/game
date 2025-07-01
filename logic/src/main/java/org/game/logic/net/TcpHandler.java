@@ -3,6 +3,7 @@ package org.game.logic.net;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import jakarta.annotation.Nonnull;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.thread.ThreadPool;
@@ -22,9 +23,9 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ *
+ * 处理消息的handler
  * @author wangyefeng
- * @date 2024-07-08
- * @description 处理消息的handler
  */
 @ChannelHandler.Sharable
 public class TcpHandler extends SimpleChannelInboundHandler<Object> {
@@ -32,7 +33,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger log = LoggerFactory.getLogger(TcpHandler.class);
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         ctx.channel().attr(ChannelKeys.PLAYERS_KEY).set(new Vector<>());
         log.info("client channel active: {}", ctx.channel().remoteAddress());
@@ -77,22 +78,20 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         List<Integer> players = ctx.channel().attr(ChannelKeys.PLAYERS_KEY).get();
         for (Integer playerId : players) {
-            if (Players.containsPlayer(playerId)) {
-                ThreadPool.executePlayerAction(playerId, () -> {
-                    Player player = Players.getPlayer(playerId);
-                    if (player == null) {
-                        log.info("玩家{}退出游戏，但玩家不在线", playerId);
-                        return;
-                    }
-                    player.logout();
-                    Players.removePlayer(playerId);
-                    log.info("玩家{}退出游戏", playerId);
-                });
-            }
+            ThreadPool.executePlayerAction(playerId, () -> {
+                Player player = Players.getPlayer(playerId);
+                if (player == null) {
+                    log.info("玩家{}退出游戏，但玩家不在线", playerId);
+                    return;
+                }
+                player.logout();
+                Players.removePlayer(playerId);
+                log.info("玩家{}退出游戏", playerId);
+            });
         }
         log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());
     }

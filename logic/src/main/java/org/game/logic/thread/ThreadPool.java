@@ -23,7 +23,7 @@ public abstract class ThreadPool {
 
     public static ThreadPoolExecutor[] playerDBExecutors;
 
-    private final static ActorSystem<PlayerActorMsg> playerActor = ActorSystem.create(Behaviors.setup(PlayerActorBehavior::new), "player-actor");
+    private final static ActorSystem<PlayerActorMsg> PLAYER_ACTOR_SYSTEM = ActorSystem.create(Behaviors.setup(PlayerActorBehavior::new), "player-actor");
 
     public static ScheduledExecutorService scheduledExecutor;
 
@@ -39,6 +39,7 @@ public abstract class ThreadPool {
     }
 
     public static void shutdown() {
+        PLAYER_ACTOR_SYSTEM.terminate();
         for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
             executor.close();
         }
@@ -50,11 +51,11 @@ public abstract class ThreadPool {
     }
 
     public static void executePlayerAction(int playerId, Runnable action) {
-        playerActor.tell(new PlayerActorMsg(playerId, action));
+        PLAYER_ACTOR_SYSTEM.tell(new PlayerActorMsg(playerId, action));
     }
 
     public static void closePlayerActor(int playerId) {
-        playerActor.tell(new PlayerActorMsg(playerId, null, true));
+        PLAYER_ACTOR_SYSTEM.tell(new PlayerActorMsg(playerId, null, true));
     }
 
     public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {

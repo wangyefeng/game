@@ -285,4 +285,8 @@ public class Player {
         playerInfo.setDailyResetDate(now);
         dailyResetServices.forEach(dailyReset -> dailyReset.reset(dailyResetDate, isSend));
     }
+
+    public void execute(Runnable action) {
+        ThreadPool.executePlayerAction(getId(), action);
+    }
 }

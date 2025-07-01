@@ -2,7 +2,6 @@ package org.game.logic.thread.actor;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
-import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -45,15 +44,15 @@ public class PlayerActorBehavior extends AbstractBehavior<PlayerActorMsg> {
             ActorRef<Runnable> userActor = playerActors.computeIfAbsent(playerId, id -> {
                 log.debug("创建actor player-{}", id);
 
-                Behavior<Runnable> behavior = Behaviors.receive((ctx, runnable) -> {
-                    runnable.run();
+                Behavior<Runnable> behavior = Behaviors.receive((_, action) -> {
+                    try {
+                        action.run();
+                    } catch (Exception e) {
+                        log.error("执行玩家{}的行为失败", playerId, e);
+                    }
                     return Behaviors.same();
                 });
-
-                // 加入监督策略：异常重启
-                behavior = Behaviors.supervise(behavior).onFailure(SupervisorStrategy.restart());
-
-                return getContext().spawn(behavior, "user-" + id);
+                return getContext().spawn(behavior, "player-" + id);
             });
             userActor.tell(msg.getAction());
         }

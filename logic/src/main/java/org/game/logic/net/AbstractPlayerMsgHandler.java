@@ -36,5 +36,5 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
         });
     }
 
-    protected abstract void handle0(Channel channel, int playerId, T data, Configs configs);
+    protected abstract void handle0(Channel channel, int playerId, T data, Configs configs) throws Exception;
 }

@@ -42,10 +42,10 @@ public class TimeIntervalManager {
     private Config config;
 
     // 活动开启定时器
-    private Map<Integer, ScheduledFuture<?>> startScheduledFuture = new HashMap<>();
+    private final Map<Integer, ScheduledFuture<?>> startScheduledFuture = new HashMap<>();
 
     // 活动结束定时器
-    private Map<Integer, ScheduledFuture<?>> closeScheduledFuture = new HashMap<>();
+    private final Map<Integer, ScheduledFuture<?>> closeScheduledFuture = new HashMap<>();
 
     public void init() {
         Lock writeLock = lock.writeLock();
@@ -147,10 +147,12 @@ public class TimeIntervalManager {
     public void open(CfgTimeIntervalFunction cfg) {
         log.info("活动{}开启！", cfg.getId());
         functionIds.add(cfg.getId());
-        Players.getPlayers().values().forEach(player -> {
-            FunctionService functionService = player.getService(FunctionService.class);
-            functionService.checkTimeIntervalOne(cfg, true);
-        });
+        synchronized (Players.class) {
+            Players.getPlayers().values().forEach(player -> {
+                FunctionService functionService = player.getService(FunctionService.class);
+                functionService.checkTimeIntervalOne(cfg, true);
+            });
+        }
     }
 
     public void close(CfgTimeIntervalFunction cfg) {
@@ -166,12 +168,12 @@ public class TimeIntervalManager {
         } finally {
             writeLock.unlock();
         }
-        Players.getPlayers().values().forEach(player -> {
-            ThreadPool.executePlayerAction(player.getId(), () -> {
+        synchronized (Players.class) {
+            Players.getPlayers().values().forEach(player -> player.execute(() -> {
                 FunctionService functionService = player.getService(FunctionService.class);
                 functionService.checkTimeIntervalOne(cfg, true);
-            });
-        });
+            }));
+        }
     }
 
     public Set<Integer> getFunctionIds() {

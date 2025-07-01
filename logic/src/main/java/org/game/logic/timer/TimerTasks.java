@@ -2,7 +2,6 @@ package org.game.logic.timer;
 
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
-import org.game.logic.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -27,8 +26,10 @@ public class TimerTasks {
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void playerResetData() {
 		log.info("0点重置数据");
-		for (Player player : Players.getPlayers().values()) {
-			ThreadPool.executePlayerAction(player.getId(), () -> player.dailyReset(true));
+		synchronized (Players.getPlayers()) {
+			for (Player player : Players.getPlayers().values()) {
+				player.execute(() -> player.dailyReset(true));
+			}
 		}
 	}
 
