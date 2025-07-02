@@ -219,7 +219,7 @@ public class MysqlToExcel implements InitializingBean {
                     }
                     book.write(fos);
                 }
-                log.info("生成表:{}.xlsx成功！", tableName);
+                log.info("生成表:{}.xlsx成功！ 路径：{}", tableName, path + "\\" + tableName + ".xlsx");
             }
             conn.close();
         } catch (Exception e) {
