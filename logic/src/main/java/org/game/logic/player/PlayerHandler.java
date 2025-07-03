@@ -26,7 +26,7 @@ public abstract class PlayerHandler<T extends Message> extends AbstractPlayerMsg
             log.warn("协议处理失败 玩家{}未登录，协议:{} 数据：{}", playerId, getProtocol(), data);
             return;
         }
-        handle(player, data, config);
+        player.execute(() -> handle(player, data, config));
     }
 
     /**

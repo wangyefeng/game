@@ -1,10 +1,13 @@
 package org.game.logic.player;
 
+import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
 import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.logic.net.ChannelKeys;
+import org.game.logic.thread.PlayerActorBehavior;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -29,24 +32,27 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
     @Override
     public void handle0(Channel channel, int playerId, Login.PbLoginReq data, Configs config) {
         log.info("玩家{}登录游戏", playerId);
-        Player player = Players.getPlayer(playerId);
-        if (player == null) {
-            player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
-            PlayerService playerService = player.getService(PlayerService.class);
-            if (!playerService.playerExists()) {
-                log.warn("玩家登录失败，玩家 {}不存在", playerId);
-                return;
+        ActorRef<PlayerActorBehavior.Command> playerActor = ThreadPool.createPlayerActor(playerId);
+        playerActor.tell((PlayerActorBehavior.PlayerAction) () -> {
+            Player player = Players.getPlayer(playerId);
+            if (player == null) {
+                player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
+                PlayerService playerService = player.getService(PlayerService.class);
+                if (!playerService.playerExists()) {
+                    log.warn("玩家登录失败，玩家 {}不存在", playerId);
+                    return;
+                }
+                player.login(data);
+                Players.addPlayer(player);
+                channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
+            } else {
+                player.setChannel(channel);
             }
-            player.login(data);
-            Players.addPlayer(player);
-            channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
-        } else {
-            player.setChannel(channel);
-        }
-        Builder resp = PbLoginResp.newBuilder();
-        resp.setIsNew(false);
-        player.loginResp(resp);
-        player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
+            Builder resp = PbLoginResp.newBuilder();
+            resp.setIsNew(false);
+            player.loginResp(resp);
+            player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
+        });
     }
 
     @Override

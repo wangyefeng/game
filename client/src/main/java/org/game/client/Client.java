@@ -131,7 +131,7 @@ public class Client implements CommandLineRunner {
         MsgHandler.register(new TaskAddHandler());
         MsgHandler.register(new TaskRemoveHandler());
         WebClient client = WebClient.builder().baseUrl("http://127.0.0.1/auth").build();
-        int num = 1;
+        int num = 100;
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";

@@ -1,9 +1,12 @@
 package org.game.logic.player;
 
+import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
 import org.game.logic.net.AbstractPlayerMsgHandler;
+import org.game.logic.thread.PlayerActorBehavior;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -28,23 +31,26 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
     @Override
     public void handle0(Channel channel, int playerId, Login.PbRegisterReq data, Configs config) {
         log.info("玩家{}注册 信息: {}", playerId, data);
-        Player player = Players.getPlayer(playerId);
-        if (player != null) {
-            log.info("玩家{}已经存在，不能重复注册", playerId);
-            return;
-        }
-        player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel);
-        PlayerService playerService = player.getService(PlayerService.class);
-        if (playerService.playerExists()) {
-            log.info("玩家{}已经存在，不能重复注册", playerId);
-            return;
-        }
-        player.register(data);
-        Players.addPlayer(player);
-        Builder resp = PbLoginResp.newBuilder();
-        resp.setIsNew(true);
-        player.loginResp(resp);
-        player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
+        ActorRef<PlayerActorBehavior.Command> playerActor = ThreadPool.createPlayerActor(playerId);
+        playerActor.tell((PlayerActorBehavior.PlayerAction) (() -> {
+            Player player = Players.getPlayer(playerId);
+            if (player != null) {
+                log.info("玩家{}已经存在，不能重复注册", playerId);
+                return;
+            }
+            player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
+            PlayerService playerService = player.getService(PlayerService.class);
+            if (playerService.playerExists()) {
+                log.info("玩家{}已经存在，不能重复注册", playerId);
+                return;
+            }
+            player.register(data);
+            Players.addPlayer(player);
+            Builder resp = PbLoginResp.newBuilder();
+            resp.setIsNew(true);
+            player.loginResp(resp);
+            player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
+        }));
     }
 
     @Override

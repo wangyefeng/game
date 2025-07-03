@@ -1,5 +1,6 @@
 package org.game.logic.player;
 
+import akka.actor.typed.ActorRef;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.common.event.Listener;
@@ -16,6 +17,7 @@ import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemType;
+import org.game.logic.thread.PlayerActorBehavior;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -62,9 +64,16 @@ public class Player {
 
     private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    public Player(int id, Collection<GameService> gameServices, Channel channel) {
+    private final ActorRef<PlayerActorBehavior.Command> actor;
+
+    public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<PlayerActorBehavior.Command> actor) {
         this.id = id;
         this.channel = channel;
+        initService(gameServices);
+        this.actor = actor;
+    }
+
+    private void initService(Collection<GameService> gameServices) {
         for (GameService<?> gameService : gameServices) {
             gameService.setPlayer(this);
             map.put((Class<? extends GameService<?>>) gameService.getClass(), gameService);
@@ -148,11 +157,11 @@ public class Player {
         saveFuture.cancel(true);
         asyncSave();
         channel = null;
-        ThreadPool.closePlayerActor(getId());
+        actor.tell(PlayerActorBehavior.ShutdownMsg.INSTANCE);
     }
 
-    public ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
-        return ThreadPool.scheduleAtFixedRate(() -> ThreadPool.executePlayerAction(getId(), runnable), initialDelay, period, unit);
+    public ScheduledFuture<?> scheduleAtFixedRate(PlayerActorBehavior.PlayerAction action, long initialDelay, long period, TimeUnit unit) {
+        return ThreadPool.scheduleAtFixedRate(() -> execute(action), initialDelay, period, unit);
     }
 
     public void updateEvent(PlayerEvent eventType, Object value) {
@@ -286,7 +295,11 @@ public class Player {
         dailyResetServices.forEach(dailyReset -> dailyReset.reset(dailyResetDate, isSend));
     }
 
-    public void execute(Runnable action) {
-        ThreadPool.executePlayerAction(getId(), action);
+    public void execute(PlayerActorBehavior.PlayerAction action) {
+        actor.tell(action);
+    }
+
+    public boolean isOnline() {
+        return channel == null;
     }
 }

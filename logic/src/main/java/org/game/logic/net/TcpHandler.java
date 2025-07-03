@@ -6,7 +6,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import jakarta.annotation.Nonnull;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
-import org.game.logic.thread.ThreadPool;
 import org.game.proto.CodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.MessagePlayer;
@@ -23,8 +22,8 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- *
  * 处理消息的handler
+ *
  * @author wangyefeng
  */
 @ChannelHandler.Sharable
@@ -82,15 +81,16 @@ public class TcpHandler extends SimpleChannelInboundHandler<Object> {
         super.channelInactive(ctx);
         List<Integer> players = ctx.channel().attr(ChannelKeys.PLAYERS_KEY).get();
         for (Integer playerId : players) {
-            ThreadPool.executePlayerAction(playerId, () -> {
-                Player player = Players.getPlayer(playerId);
-                if (player == null) {
-                    log.info("玩家{}退出游戏，但玩家不在线", playerId);
-                    return;
+            Player player = Players.getPlayer(playerId);
+            if (player == null) {
+                continue;
+            }
+            player.execute(() -> {
+                if (player.isOnline()) {
+                    player.logout();
+                    Players.removePlayer(playerId);
+                    log.info("玩家{}退出游戏", playerId);
                 }
-                player.logout();
-                Players.removePlayer(playerId);
-                log.info("玩家{}退出游戏", playerId);
             });
         }
         log.info("与客户端连接断开, 地址：{}", ctx.channel().remoteAddress());

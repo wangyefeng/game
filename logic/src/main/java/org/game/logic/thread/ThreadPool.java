@@ -2,7 +2,9 @@ package org.game.logic.thread;
 
 import akka.Done;
 import akka.actor.CoordinatedShutdown;
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
+import akka.actor.typed.MailboxSelector;
 import akka.actor.typed.javadsl.Behaviors;
 import org.game.logic.player.Players;
 import org.slf4j.Logger;
@@ -16,12 +18,12 @@ public abstract class ThreadPool {
 
     public static ThreadPoolExecutor[] playerDBExecutors;
 
-    private static ActorSystem<PlayerActorBehavior.Command> playerActorSystem;
+    private static ActorSystem<PlayerActorBehavior.Command> system;
 
     public static ScheduledExecutorService scheduledExecutor;
 
     public static void start() {
-        playerActorSystem = ActorSystem.create(Behaviors.setup(PlayerActorBehavior::new), "player-actor");
+        system = ActorSystem.create(Behaviors.empty(), "system");
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         playerDBExecutors = new ThreadPoolExecutor[availableProcessors];
         for (int i = 0; i < playerDBExecutors.length; i++) {
@@ -32,7 +34,7 @@ public abstract class ThreadPool {
         scheduledExecutor.scheduleAtFixedRate(() -> log.debug("实时在线玩家数量{}", Players.getPlayers().size()), 10, 10, TimeUnit.SECONDS);
     }
 
-    private static class JVMShutdown implements CoordinatedShutdown.Reason {
+    public static class JVMShutdown implements CoordinatedShutdown.Reason {
         @Override
         public String toString() {
             return "JVM shutdown";
@@ -40,7 +42,7 @@ public abstract class ThreadPool {
     }
 
     public static void shutdown() {
-        CompletableFuture<Done> future = CoordinatedShutdown.get(playerActorSystem).runAll(new JVMShutdown()).toCompletableFuture();
+        CompletableFuture<Done> future = CoordinatedShutdown.get(system).runAll(new JVMShutdown()).toCompletableFuture();
         try {
             future.get(1L, TimeUnit.DAYS);
         } catch (Exception e) {
@@ -57,12 +59,8 @@ public abstract class ThreadPool {
         return scheduledExecutor.scheduleAtFixedRate(runnable, delay, period, unit);
     }
 
-    public static void executePlayerAction(int playerId, Runnable action) {
-        playerActorSystem.tell(new PlayerActorBehavior.PlayerActorMsg(playerId, action));
-    }
-
-    public static void closePlayerActor(int playerId) {
-        playerActorSystem.tell(new PlayerActorBehavior.ShutdownMsg(playerId));
+    public static ActorRef<PlayerActorBehavior.Command> createPlayerActor(int playerId) {
+        return system.systemActorOf(Behaviors.setup(PlayerActorBehavior::new), "player-" + playerId, MailboxSelector.bounded(500));
     }
 
     public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
