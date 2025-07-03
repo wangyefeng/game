@@ -64,14 +64,14 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         }
     }
 
-    public String getCfgName(Entity entity) {
+    private String getCfgName(Entity entity) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
         return persist.getSubclassTableName(0);
     }
 
-    public String getColumnName(Entity entity, String field) {
+    private String getColumnName(Entity entity, String field) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
         AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
