@@ -4,10 +4,12 @@ import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.actor.Action;
+import org.game.logic.actor.Command;
 import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.logic.net.ChannelKeys;
-import org.game.logic.thread.PlayerActorBehavior;
-import org.game.logic.thread.ThreadPool;
+import org.game.logic.actor.PlayerActorBehavior;
+import org.game.logic.actor.PlayerActorService;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -29,11 +31,14 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private PlayerActorService playerActorService;
+
     @Override
     public void handle0(Channel channel, int playerId, Login.PbLoginReq data, Configs config) {
         log.info("玩家{}登录游戏", playerId);
-        ActorRef<PlayerActorBehavior.Command> playerActor = ThreadPool.createPlayerActor(playerId);
-        playerActor.tell((PlayerActorBehavior.PlayerAction) () -> {
+        ActorRef<Command> playerActor = playerActorService.createActor(playerId);
+        playerActor.tell((Action) () -> {
             Player player = Players.getPlayer(playerId);
             if (player == null) {
                 player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);

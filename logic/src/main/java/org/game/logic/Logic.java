@@ -10,6 +10,7 @@ import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.function.TimeIntervalManager;
+import org.game.logic.actor.PlayerActorService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
@@ -64,6 +65,9 @@ public class Logic extends Server {
 
     @Autowired
     private List<MsgHandler<?>> msgHandlers;
+
+    @Autowired
+    private PlayerActorService playerActorService;
 
     static {
         // 设置netty的资源泄露检测
@@ -125,6 +129,7 @@ public class Logic extends Server {
     protected void stop() throws Exception {
         tcpServer.close();
         grpcServer.shutdown();
+        playerActorService.close();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
     }

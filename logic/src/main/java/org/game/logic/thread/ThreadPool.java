@@ -18,12 +18,9 @@ public abstract class ThreadPool {
 
     public static ThreadPoolExecutor[] playerDBExecutors;
 
-    private static ActorSystem<PlayerActorBehavior.Command> system;
-
     public static ScheduledExecutorService scheduledExecutor;
 
     public static void start() {
-        system = ActorSystem.create(Behaviors.empty(), "system");
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         playerDBExecutors = new ThreadPoolExecutor[availableProcessors];
         for (int i = 0; i < playerDBExecutors.length; i++) {
@@ -34,21 +31,7 @@ public abstract class ThreadPool {
         scheduledExecutor.scheduleAtFixedRate(() -> log.debug("实时在线玩家数量{}", Players.getPlayers().size()), 10, 10, TimeUnit.SECONDS);
     }
 
-    public static class JVMShutdown implements CoordinatedShutdown.Reason {
-        @Override
-        public String toString() {
-            return "JVM shutdown";
-        }
-    }
-
     public static void shutdown() {
-        CompletableFuture<Done> future = CoordinatedShutdown.get(system).runAll(new JVMShutdown()).toCompletableFuture();
-        try {
-            future.get(1L, TimeUnit.DAYS);
-        } catch (Exception e) {
-            log.error("shutdown error", e);
-        }
-        log.info("player actor system shutdown");
         for (ThreadPoolExecutor executor : ThreadPool.playerDBExecutors) {
             executor.close();
         }
@@ -57,10 +40,6 @@ public abstract class ThreadPool {
 
     public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {
         return scheduledExecutor.scheduleAtFixedRate(runnable, delay, period, unit);
-    }
-
-    public static ActorRef<PlayerActorBehavior.Command> createPlayerActor(int playerId) {
-        return system.systemActorOf(Behaviors.setup(PlayerActorBehavior::new), "player-" + playerId, MailboxSelector.bounded(500));
     }
 
     public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {

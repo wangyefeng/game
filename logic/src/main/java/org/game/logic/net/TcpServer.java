@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import jakarta.annotation.Nonnull;
 import org.game.proto.CommonDecoder;
 import org.game.proto.MessageCodeDecoder;
 import org.game.proto.MessagePlayerDecoder;
@@ -67,7 +68,7 @@ public class TcpServer {
             HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                public void initChannel(SocketChannel ch) {
+                public void initChannel(@Nonnull SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new IdleStateHandler(READER_IDLE_TIME, WRITER_IDLE_TIME, 0, TimeUnit.SECONDS));// 设置读超时时间为20秒
                     pipeline.addLast(heartBeatHandler);
