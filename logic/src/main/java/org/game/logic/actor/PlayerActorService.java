@@ -1,17 +1,13 @@
 package org.game.logic.actor;
 
-import akka.Done;
-import akka.actor.CoordinatedShutdown;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.MailboxSelector;
 import akka.actor.typed.javadsl.Behaviors;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service
