@@ -17,7 +17,7 @@ public class PlayerActorService {
 
     private final ActorSystem<Void> playerActorSystem = ActorSystem.create(Behaviors.empty(), "player");
 
-    public ActorRef<Command> createActor(int playerId) {
+    public ActorRef<Action> createActor(int playerId) {
         return playerActorSystem.systemActorOf(Behaviors.setup(PlayerActorBehavior::new), String.valueOf(playerId), MailboxSelector.defaultMailbox());
     }
 

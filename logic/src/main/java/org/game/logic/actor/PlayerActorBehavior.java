@@ -5,32 +5,29 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PlayerActorBehavior extends AbstractBehavior<Command> {
+public class PlayerActorBehavior extends AbstractBehavior<Action> {
 
-    private final static Logger log = LoggerFactory.getLogger(PlayerActorBehavior.class);
-
-    public PlayerActorBehavior(ActorContext<Command> context) {
+    public PlayerActorBehavior(ActorContext<Action> context) {
         super(context);
     }
 
     @Override
-    public Receive<Command> createReceive() {
-        return newReceiveBuilder().onMessage(Action.class, this::onPlayerMessage).onMessage(ShutdownAction.class, this::onShutdown).build();
+    public Receive<Action> createReceive() {
+        return newReceiveBuilder().onMessage(PlayerAction.class, this::onPlayerMessage).onMessage(ShutdownAction.class, this::onShutdown).build();
     }
 
-    private Behavior<Command> onShutdown(ShutdownAction action) {
+    private Behavior<Action> onShutdown(ShutdownAction action) {
         getContext().getLog().debug("{} actor shutdown", getContext().getSelf().path().name());
         return Behaviors.stopped();
     }
 
-    private Behavior<Command> onPlayerMessage(Action msg) {
+    private Behavior<Action> onPlayerMessage(PlayerAction msg) {
         try {
+            getContext().getLog().info("player action: {}", msg.getClass().getSimpleName());
             msg.run();
         } catch (Exception e) {
-            log.error("player action error", e);
+            getContext().getLog().error("player action error", e);
         }
         return this;
     }

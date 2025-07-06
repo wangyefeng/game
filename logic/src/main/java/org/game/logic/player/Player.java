@@ -12,15 +12,14 @@ import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgItemService;
 import org.game.logic.GameService;
+import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.Action;
-import org.game.logic.actor.Command;
 import org.game.logic.actor.ShutdownAction;
 import org.game.logic.entity.PlayerInfo;
 import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.actor.PlayerActorBehavior;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -67,9 +66,9 @@ public class Player {
 
     private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    private final ActorRef<Command> actor;
+    private final ActorRef<Action> actor;
 
-    public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<Command> actor) {
+    public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<Action> actor) {
         this.id = id;
         this.channel = channel;
         initService(gameServices);
@@ -163,7 +162,7 @@ public class Player {
         actor.tell(ShutdownAction.INSTANCE);
     }
 
-    public ScheduledFuture<?> scheduleAtFixedRate(Action action, long initialDelay, long period, TimeUnit unit) {
+    public ScheduledFuture<?> scheduleAtFixedRate(PlayerAction action, long initialDelay, long period, TimeUnit unit) {
         return ThreadPool.scheduleAtFixedRate(() -> execute(action), initialDelay, period, unit);
     }
 
@@ -298,7 +297,7 @@ public class Player {
         dailyResetServices.forEach(dailyReset -> dailyReset.reset(dailyResetDate, isSend));
     }
 
-    public void execute(Action action) {
+    public void execute(PlayerAction action) {
         actor.tell(action);
     }
 

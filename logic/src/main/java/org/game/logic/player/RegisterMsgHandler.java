@@ -4,10 +4,9 @@ import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.config.Configs;
 import org.game.logic.GameService;
+import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.Action;
-import org.game.logic.actor.Command;
 import org.game.logic.net.AbstractPlayerMsgHandler;
-import org.game.logic.actor.PlayerActorBehavior;
 import org.game.logic.actor.PlayerActorService;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -36,8 +35,8 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
     @Override
     public void handle0(Channel channel, int playerId, Login.PbRegisterReq data, Configs config) {
         log.info("玩家{}注册 信息: {}", playerId, data);
-        ActorRef<Command> playerActor = playerActorService.createActor(playerId);
-        playerActor.tell((Action) (() -> {
+        ActorRef<Action> playerActor = playerActorService.createActor(playerId);
+        playerActor.tell((PlayerAction) (() -> {
             Player player = Players.getPlayer(playerId);
             if (player != null) {
                 log.info("玩家{}已经存在，不能重复注册", playerId);
