@@ -24,7 +24,7 @@ public class PlayerActorService {
     public void close() throws Exception {
         log.info("player actor system starting shutdown");
         playerActorSystem.terminate();
-        playerActorSystem.getWhenTerminated().toCompletableFuture().get(1L, TimeUnit.DAYS);
+        playerActorSystem.getWhenTerminated().toCompletableFuture().get(10L, TimeUnit.MINUTES);
         log.info("player actor system shutdown");
     }
 }
