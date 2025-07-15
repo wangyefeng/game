@@ -27,7 +27,7 @@ public interface MsgHandler<T extends Message> {
         }
     }
 
-    static MsgHandler<? extends Message> getHandler(Protocol protocol) {
+    static MsgHandler<?> getHandler(Protocol protocol) {
         return handlers.get(protocol).handler;
     }
 

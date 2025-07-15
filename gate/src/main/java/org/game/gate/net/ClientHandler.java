@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
+import jakarta.annotation.Nonnull;
 import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
@@ -26,14 +27,15 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         log.info("客户端连接TCP建立，channel:{}", ctx.channel());
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
-        MsgHandler handler = MsgHandler.getHandler(message.getProtocol());
+    @SuppressWarnings("unchecked")
+    protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) throws Exception {
+        MsgHandler<?> handler = MsgHandler.getHandler(message.getProtocol());
         if (handler == null) {
             log.error("illegal message code: {}", message.getCode());
             return;
