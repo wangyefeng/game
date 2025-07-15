@@ -63,7 +63,8 @@ public class TcpServer {
         group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            TcpHandler tcpHandler = new TcpHandler();
+            TcpCodeMsgHandler codeMsgHandler = new TcpCodeMsgHandler();
+            TcpPlayerMsgHandler playerMsgHandler = new TcpPlayerMsgHandler();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
@@ -77,7 +78,8 @@ public class TcpServer {
                     commonDecoder.registerDecoder(new MessageCodeDecoder());
                     commonDecoder.registerDecoder(new MessagePlayerDecoder());
                     pipeline.addLast(commonDecoder);
-                    pipeline.addLast(tcpHandler);
+                    pipeline.addLast(codeMsgHandler);
+                    pipeline.addLast(playerMsgHandler);
                     pipeline.addLast(playerMsgEncode);
                 }
             });
