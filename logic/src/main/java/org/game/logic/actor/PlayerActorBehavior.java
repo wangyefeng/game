@@ -18,13 +18,12 @@ public class PlayerActorBehavior extends AbstractBehavior<Action> {
     }
 
     private Behavior<Action> onShutdown(ShutdownAction action) {
-        getContext().getLog().debug("{} actor shutdown", getContext().getSelf().path().name());
+        getContext().getLog().debug("player {} actor shutdown", getContext().getSelf().path().name());
         return Behaviors.stopped();
     }
 
     private Behavior<Action> onPlayerMessage(PlayerAction msg) {
         try {
-            getContext().getLog().info("player action: {}", msg.getClass().getSimpleName());
             msg.run();
         } catch (Exception e) {
             getContext().getLog().error("player action error", e);

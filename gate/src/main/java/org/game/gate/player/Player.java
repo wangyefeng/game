@@ -26,9 +26,9 @@ public class Player {
     /**
      * 绑定的业务线程
      */
-    private ThreadPoolExecutor executor;
+    private final ThreadPoolExecutor executor;
 
-    private LogicClient logicClient;
+    private final LogicClient logicClient;
 
     public Player(int id, Channel channel, ThreadPoolExecutor executor, LogicClient logicClient) {
         this.id = id;
@@ -61,36 +61,43 @@ public class Player {
         return executor;
     }
 
-    @Override
-    public String toString() {
-        return id + "";
-    }
-
     public LogicClient getLogicClient() {
         return logicClient;
     }
 
     public void writeToClient(GateToClientProtocol protocol) {
-        writeToClient(protocol, null);
+        writeToClient(MessageCode.of(protocol));
     }
 
-    public void writeToClient(GateToClientProtocol protocol, Message message) {
-        channel.writeAndFlush(new MessageCode<>(protocol, message));
+    public void writeToClient(GateToClientProtocol protocol, Message data) {
+        writeToClient(MessageCode.of(protocol, data));
+    }
+
+    private void writeToClient(MessageCode<? extends Message> message) {
+        channel.writeAndFlush(message);
     }
 
     public void writeToLogic(GateToLogicProtocol protocol) {
-        writeToLogic(protocol, null);
+        writeToLogic(MessageCode.of(protocol));
     }
 
-    public void writeToLogic(GateToLogicProtocol protocol, Message message) {
-        getLogicClient().getChannel().writeAndFlush(new MessageCode<>(protocol, message));
+    public void writeToLogic(GateToLogicProtocol protocol, Message data) {
+        writeToLogic(MessageCode.of(protocol, data));
+    }
+
+    private void writeToLogic(MessageCode<? extends Message> message) {
+        getLogicClient().getChannel().writeAndFlush(message);
+    }
+
+    public void writeToLogic(GateToLogicProtocol protocol, int playerId, Message data) {
+        writeToLogic(MessagePlayer.of(playerId, protocol, data));
     }
 
     public void writeToLogic(GateToLogicProtocol protocol, int playerId) {
-        writeToLogic(protocol, playerId, null);
+        writeToLogic(MessagePlayer.of(playerId, protocol));
     }
 
-    public void writeToLogic(GateToLogicProtocol protocol, int playerId, Message message) {
-        getLogicClient().getChannel().writeAndFlush(new MessagePlayer<>(playerId, protocol, message));
+    private void writeToLogic(MessagePlayer<? extends Message> message) {
+        getLogicClient().getChannel().writeAndFlush(message);
     }
 }

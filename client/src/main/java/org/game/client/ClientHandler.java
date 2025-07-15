@@ -31,10 +31,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setToken(token).build()));
+        ctx.channel().writeAndFlush(MessageCode.of(ClientToGateProtocol.AUTH, Login.PbAuthReq.newBuilder().setToken(token).build()));
         ctx.executor().scheduleAtFixedRate(() -> {
             log.info("player: {}, ping", playerId);
-            ctx.channel().writeAndFlush(new MessageCode<>(ClientToGateProtocol.PING));
+            ctx.channel().writeAndFlush(MessageCode.of(ClientToGateProtocol.PING));
         }, 5, 5, TimeUnit.SECONDS);
     }
 
@@ -46,12 +46,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             Login.PbAuthResp loginResponse = (Login.PbAuthResp) data;
             if (loginResponse.getSuccess()) {
                 if (loginResponse.getIsRegistered()) {
-                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));
+                    ctx.channel().writeAndFlush(MessageCode.of(ClientToLogicProtocol.LOGIN, Login.PbLoginReq.newBuilder().build()));
                 } else {
-                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.REGISTER, Login.PbRegisterReq.newBuilder().setName("test" + playerId).build()));
+                    ctx.channel().writeAndFlush(MessageCode.of(ClientToLogicProtocol.REGISTER, Login.PbRegisterReq.newBuilder().setName("test" + playerId).build()));
                 }
                 ctx.executor().scheduleAtFixedRate(() -> {
-                    ctx.channel().writeAndFlush(new MessageCode<>(ClientToLogicProtocol.LEVEL_UP));
+                    ctx.channel().writeAndFlush(MessageCode.of(ClientToLogicProtocol.LEVEL_UP));
                 }, 5, 5, TimeUnit.SECONDS);
             }
         }

@@ -64,14 +64,14 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
         DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
         if (d1.getIssuedAtAsInstant() == null) {
             log.warn("token{}认证失败，token中不包含创建时间信息！", token);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
 
         Claim claim = d1.getClaim("playerId");
         if (claim.isNull()) {
             log.warn("token{}认证失败，token中不包含playerId！", token);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
         int playerId = claim.asInt();
@@ -89,7 +89,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
                     redisTemplate.opsForValue().set(key, token, TOKEN_TIMEOUT);
                 } else {
                     log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
-                    channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
                     return;
                 }
             }
@@ -110,7 +110,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             } else {
                 if (clientGroup.getClients().isEmpty()) {
                     log.error("当前没有可用的logic服务器，请检查logic服务器是否正常启动！！！");
-                    channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.KICK_OUT));
+                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.KICK_OUT));
                     channel.close();
                     return;
                 }
@@ -125,7 +125,7 @@ public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
             PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(playerId).build();
             // 调用服务端方法并获取响应
             PbPlayerExistResp response = blockingStub.exists(request);
-            channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setPlayerId(playerId).setIsRegistered(response.getExist()).build()));
+            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setPlayerId(playerId).setIsRegistered(response.getExist()).build()));
         }).get();
     }
 

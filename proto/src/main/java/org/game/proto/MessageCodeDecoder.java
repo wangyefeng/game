@@ -23,7 +23,7 @@ public class MessageCodeDecoder implements Decoder {
         Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
         ByteBufInputStream inputStream = new ByteBufInputStream(msg);
         Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
-        return new MessageCode<>(protocol, message);
+        return MessageCode.of(protocol, message);
     }
 
     @Override

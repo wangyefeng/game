@@ -14,7 +14,7 @@ public final class GetServerTimeHandler implements CodeMsgHandler<Empty> {
 
     @Override
     public void handle(Channel channel, Empty message) {
-        channel.writeAndFlush(new MessageCode<>(GateToClientProtocol.GET_SERVER_TIME, PbGetServerTimeResp.newBuilder().setCurrentTimeMillis(System.currentTimeMillis()).build()));
+        channel.writeAndFlush(MessageCode.of(GateToClientProtocol.GET_SERVER_TIME, PbGetServerTimeResp.newBuilder().setCurrentTimeMillis(System.currentTimeMillis()).build()));
     }
 
     @Override

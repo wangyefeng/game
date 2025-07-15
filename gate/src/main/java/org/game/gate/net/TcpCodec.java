@@ -20,31 +20,24 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class TcpCodec extends ByteToMessageCodec<MessageCode> {
+public class TcpCodec extends ByteToMessageCodec<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
 
-    private LeakyBucket leakyBucket = new LeakyBucket(20, 10);
+    private final LeakyBucket leakyBucket = new LeakyBucket(20, 10);
 
     public TcpCodec() {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, MessageCode msg, ByteBuf out) throws Exception {
-        if (msg.getData() != null) {
-            out.writeInt(0);
-            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
-            out.writeByte(msg.getProtocol().from().getCode());
-            out.writeShort(msg.getProtocol().getCode());
-            ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
-            msg.getData().writeTo(outputStream);
-            out.setInt(0, out.readableBytes() - 4);
-        } else {
-            out.writeInt(4);
-            out.writeByte(DecoderType.MESSAGE_CODE.getCode());
-            out.writeByte(msg.getProtocol().from().getCode());
-            out.writeShort(msg.getProtocol().getCode());
-        }
+    protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, ByteBuf out) throws Exception {
+        out.writeInt(0);
+        out.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        out.writeByte(msg.getProtocol().from().getCode());
+        out.writeShort(msg.getProtocol().getCode());
+        ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
+        msg.getData().writeTo(outputStream);
+        out.setInt(0, out.readableBytes() - 4);
     }
 
     @Override
@@ -68,7 +61,7 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode> {
             if (to == Topic.GATE.getCode()) { // gate
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);
                 Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
-                out.add(new MessageCode<>(protocol, message));
+                out.add(MessageCode.of(protocol, message));
             } else if (to == Topic.LOGIC.getCode()) {// logic
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
                 if (player != null && player.getLogicClient().isRunning()) {

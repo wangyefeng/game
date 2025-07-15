@@ -55,7 +55,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
             if (to == Topic.GATE.getCode()) {
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);
                 Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
-                out.add(new MessageCode<>(protocol, message));
+                out.add(MessageCode.of(protocol, message));
             } else {
                 log.warn("目前不支持 消息类型：MESSAGE_CODE 转发消息给{} 敬请期待！", to);
                 in.skipBytes(in.readableBytes());

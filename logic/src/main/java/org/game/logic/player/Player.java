@@ -104,7 +104,7 @@ public class Player {
     }
 
     public void writeToClient(LogicToClientProtocol protocol, Message message) {
-        channel.writeAndFlush(new MessagePlayer<>(getId(), protocol, message));
+        channel.writeAndFlush(MessagePlayer.of(getId(), protocol, message));
     }
 
     public void writeToClient(LogicToClientProtocol protocol) {
@@ -112,7 +112,7 @@ public class Player {
     }
 
     public void writeToGate(LogicToGateProtocol protocol, Message message) {
-        channel.writeAndFlush(new MessagePlayer<>(getId(), protocol, message));
+        channel.writeAndFlush(MessagePlayer.of(getId(), protocol, message));
     }
 
     public void writeToGate(LogicToGateProtocol protocol) {

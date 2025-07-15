@@ -1,32 +1,40 @@
 package org.game.proto;
 
+import com.google.protobuf.Empty;
 import com.google.protobuf.Message;
+import jakarta.annotation.Nonnull;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.util.ProtobufJsonUtil;
 
-public class MessagePlayer<T extends Message> {
+import java.util.Objects;
 
-    private int playerId;
+public final class MessagePlayer<T extends Message> {
 
-    private Protocol protocol;
+    private final int playerId;
 
-    private T data;
+    private final Protocol protocol;
 
-    public MessagePlayer(int playerId, Protocol protocol, T message) {
+    private final T data;
+
+    private MessagePlayer(int playerId, Protocol protocol, T message) {
         this.playerId = playerId;
-        this.protocol = protocol;
-        this.data = message;
+        this.protocol = Objects.requireNonNull(protocol);
+        this.data = Objects.requireNonNull(message);
     }
 
-    public MessagePlayer(int playerId, Protocol protocol) {
-        this(playerId, protocol, null);
+    public static <T extends Message> MessagePlayer<T> of(int playerId, @Nonnull Protocol protocol, @Nonnull T message) {
+        return new MessagePlayer<>(playerId, protocol, message);
+    }
+
+    public static MessagePlayer<Empty> of(int playerId, @Nonnull Protocol protocol) {
+        return new MessagePlayer<>(playerId, protocol, Empty.getDefaultInstance());
     }
 
     public short getCode() {
         return protocol.getCode();
     }
 
-    public T getData() {
+    public @Nonnull T getData() {
         return data;
     }
 
@@ -34,23 +42,17 @@ public class MessagePlayer<T extends Message> {
         return playerId;
     }
 
-    public Protocol getProtocol() {
+    public @Nonnull Protocol getProtocol() {
         return protocol;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("playerId=")
-                .append(playerId)
-                .append(", protocol=")
-                .append(protocol.getClass().getSimpleName())
-                .append(".")
-                .append(protocol);
-
-        if (data != null) {
-            sb.append(", data=").append(ProtobufJsonUtil.serializeMessage(data));
-        }
-
-        return sb.toString();
+        return "playerId=" +
+                playerId +
+                ", protocol=" +
+                protocol.getClass().getSimpleName() +
+                "." +
+                protocol + ", data=" + ProtobufJsonUtil.serializeMessage(data);
     }
 }
