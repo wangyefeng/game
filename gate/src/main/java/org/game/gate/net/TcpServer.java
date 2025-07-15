@@ -12,6 +12,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import jakarta.annotation.Nonnull;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class TcpServer {
             ClientHandler clientHandler = new ClientHandler();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                public void initChannel(SocketChannel ch) {
+                public void initChannel(@Nonnull SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
                     SslContext sslContext = sslConfig.getSslContext();
                     if (sslContext != null) {
