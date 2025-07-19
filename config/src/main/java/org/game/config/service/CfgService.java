@@ -10,6 +10,8 @@ import org.game.config.entity.Cfg;
 import org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.CrudRepository;
 
 import java.lang.reflect.ParameterizedType;
@@ -40,6 +42,13 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
 
     public void init() {
         tableName = getCfgName();
+        Scope scope = getClass().getAnnotation(Scope.class);
+        if (scope == null) {
+            throw new IllegalArgumentException(getClass().getName() + " 未找到 Scope 注解");
+        }
+        if (!ConfigurableBeanFactory.SCOPE_PROTOTYPE.equals(scope.value())) {
+            throw new IllegalArgumentException(getClass().getName() + " 的 Scope 注解值必须为 prototype");
+        }
         repository.findAll().forEach(cfg -> map.put(cfg.getId(), cfg));
     }
 
