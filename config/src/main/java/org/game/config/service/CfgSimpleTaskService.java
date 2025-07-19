@@ -15,10 +15,10 @@ import java.util.Map;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTaskRepository, Integer> {
 
-    private Map<Integer, List<CfgSimpleTask>> funcMap = new HashMap<>();
+    private final Map<Integer, List<CfgSimpleTask>> funcMap = new HashMap<>();
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         for (CfgSimpleTask cfgTask : getAllCfg()) {
             funcMap.computeIfAbsent(cfgTask.getFunctionId(), _ -> new ArrayList<>());
@@ -29,4 +29,6 @@ public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTas
     public List<CfgSimpleTask> getCfgByFuncId(int funcId) {
         return funcMap.get(funcId);
     }
+
+
 }

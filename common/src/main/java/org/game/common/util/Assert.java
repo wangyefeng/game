@@ -131,7 +131,7 @@ public abstract class Assert {
         }
     }
 
-    public static void notEmpty(Collection<? extends Object> elements, String s) {
+    public static void notEmpty(Collection<?> elements, String s) {
         if (elements == null || elements.isEmpty()) {
             throw new IllegalArgumentException(s);
         }

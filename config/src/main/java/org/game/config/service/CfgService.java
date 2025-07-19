@@ -1,6 +1,5 @@
 package org.game.config.service;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.validation.ConstraintViolation;
@@ -13,6 +12,8 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +36,10 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     @Autowired
     protected EntityManager entityManager;
 
-    @PostConstruct
-    protected void init() {
+    protected String tableName;
+
+    public void init() {
+        tableName = getCfgName();
         repository.findAll().forEach(cfg -> map.put(cfg.getId(), cfg));
     }
 
@@ -48,26 +51,33 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return map.values();
     }
 
-    public void check(Configs config) throws ConfigException {
+    public void validate(Configs configsContext) throws ConfigException {
         for (Entity entity : map.values()) {
             // 执行验证
             for (ConstraintViolation<Entity> violation : validator.validate(entity)) {
-                throw new ConfigException(getCfgName(entity), entity.getId(), getColumnName(entity, violation.getPropertyPath().toString()), violation.getMessage());
+                throw new ConfigException(tableName, entity.getId(), getColumnName(entity, violation.getPropertyPath().toString()), violation.getMessage());
             }
             try {
-                check0(entity, config);
-            } catch (ConfigException e) {
-                throw e;
+                entity.validate();
+            } catch (ConfigException configException) {
+                throw configException;
             } catch (Exception e) {
-                throw new ConfigException(getCfgName(entity), entity.getId(), null, e.getMessage());
+                throw new ConfigException(tableName, entity.getId(), e);
             }
+        }
+        try {
+            validate0(configsContext);
+        } catch (ConfigException configException) {
+            throw configException;
+        } catch (Exception e) {
+            throw new ConfigException(tableName, e);
         }
     }
 
-    private String getCfgName(Entity entity) {
+    private String getCfgName(String entityName) {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
+        AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entityName);
         return persist.getSubclassTableName(0);
     }
 
@@ -78,7 +88,26 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return persist.toColumns(field)[0];
     }
 
-    protected void check0(Entity entity, Configs config) throws Exception {
-        // 子类自行实现
+    /**
+     * 子类可重写此方法，实现自定义验证逻辑
+     *
+     * @param configsContext 配置上下文
+     * @throws ConfigException 验证异常
+     */
+    protected void validate0(Configs configsContext) throws ConfigException {
+        // 子类可重写此方法
+    }
+
+    private String getCfgName() {
+        Type genericSuperclass = getClass().getGenericSuperclass();
+        if (genericSuperclass.getTypeName().startsWith(CfgService.class.getName())) {
+            Type[] actualTypes = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
+            return getCfgName(actualTypes[0].getTypeName());
+        }
+        throw new IllegalArgumentException("未找到父类泛型参数");
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 }

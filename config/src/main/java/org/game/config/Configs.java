@@ -10,16 +10,21 @@ public final class Configs {
 
     private static volatile Configs instance;
 
-    private Map<Class<? extends CfgService>, CfgService> map = new HashMap<>();
+    private final Map<Class<? extends CfgService>, CfgService> map = new HashMap<>();
 
-    public static void load(Collection<CfgService> cfgServices, boolean check) throws ConfigException {
-        Configs newConfigs = new Configs();
+    public static void reload(Collection<CfgService> cfgServices, boolean check) throws ConfigException {
         for (CfgService cfgService : cfgServices) {
-            newConfigs.map.put(cfgService.getClass(), cfgService);
+            try {
+                cfgService.init();
+            } catch (Exception e) {
+                throw new ConfigException(cfgService.getTableName(), e.getMessage());
+            }
         }
+        Configs newConfigs = new Configs();
+        cfgServices.forEach(cfgService -> newConfigs.map.put(cfgService.getClass(), cfgService));
         if (check) {
             for (CfgService cfgService : cfgServices) {
-                cfgService.check(newConfigs);
+                cfgService.validate(newConfigs);
             }
         }
         instance = newConfigs;
@@ -33,11 +38,7 @@ public final class Configs {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends CfgService> T get(Class<T> clazz) {
+    public <T extends CfgService<?, ?, ?>> T get(Class<T> clazz) {
         return (T) map.get(clazz);
-    }
-
-    private void add(CfgService cfgService) {
-        map.put(cfgService.getClass(), cfgService);
     }
 }

@@ -32,7 +32,7 @@ public class Config implements InitializingBean {
     @Value("${config.check:true}")
     private boolean checkConfig;
 
-    private Publisher<Object> reloadPublishers = new Publisher<>();
+    private final Publisher<Object> reloadPublishers = new Publisher<>();
 
     public void initConfig() throws ConfigException {
         databaseService.lockDatabase();
@@ -40,7 +40,7 @@ public class Config implements InitializingBean {
             log.info("开始加载配置表...");
             long start = System.currentTimeMillis();
             Collection<CfgService> cfgServices = applicationContext.getBeansOfType(CfgService.class).values();
-            Configs.load(cfgServices, checkConfig);
+            Configs.reload(cfgServices, checkConfig);
             log.info("加载配置表完成, 耗时: {}毫秒", System.currentTimeMillis() - start);
         } finally {
             databaseService.unlockDatabase();
