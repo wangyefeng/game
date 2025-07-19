@@ -5,8 +5,6 @@ import org.game.config.Configs;
 import org.game.config.entity.CfgSimpleTask;
 import org.game.config.entity.SimpleItem;
 import org.game.config.repository.CfgSimpleTaskRepository;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTaskRepository, Integer> {
 
     private final Map<Integer, List<CfgSimpleTask>> funcMap = new HashMap<>();

@@ -43,11 +43,8 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     public void init() {
         tableName = getCfgName();
         Scope scope = getClass().getAnnotation(Scope.class);
-        if (scope == null) {
-            throw new IllegalArgumentException(getClass().getName() + " 未找到 Scope 注解");
-        }
-        if (!ConfigurableBeanFactory.SCOPE_PROTOTYPE.equals(scope.value())) {
-            throw new IllegalArgumentException(getClass().getName() + " 的 Scope 注解值必须为 prototype");
+        if (scope != null && !ConfigurableBeanFactory.SCOPE_PROTOTYPE.equals(scope.value())) {
+            throw new IllegalArgumentException(getClass().getName() + " must use prototype scope");
         }
         repository.findAll().forEach(cfg -> map.put(cfg.getId(), cfg));
     }
