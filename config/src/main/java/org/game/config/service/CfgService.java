@@ -51,6 +51,10 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         return map.values();
     }
 
+    public boolean exists(ID id) {
+        return map.containsKey(id);
+    }
+
     public void validate(Configs configsContext) throws ConfigException {
         for (Entity entity : map.values()) {
             // 执行验证

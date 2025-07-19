@@ -1,6 +1,9 @@
 package org.game.config.service;
 
+import org.game.config.ConfigException;
+import org.game.config.Configs;
 import org.game.config.entity.CfgSimpleTask;
+import org.game.config.entity.SimpleItem;
 import org.game.config.repository.CfgSimpleTaskRepository;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -30,5 +33,17 @@ public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTas
         return funcMap.get(funcId);
     }
 
+    @Override
+    protected void validate0(Configs configsContext) throws ConfigException {
+        super.validate0(configsContext);
+        CfgItemService cfgItemService = configsContext.get(CfgItemService.class);
+        for (CfgSimpleTask cfgSimpleTask : map.values()) {
+            for (SimpleItem reward : cfgSimpleTask.getRewards()) {
+                if (!cfgItemService.exists(reward.id())) {
+                    throw new ConfigException(tableName, cfgSimpleTask.getId(), "rewards", "奖励配置错误，不存在的奖励物品ID：" + reward.id());
+                }
+            }
 
+        }
+    }
 }

@@ -3,11 +3,9 @@ package org.game.config.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 @Entity
-@Valid
 public class CfgItem implements Cfg<Integer> {
 
     @Id
