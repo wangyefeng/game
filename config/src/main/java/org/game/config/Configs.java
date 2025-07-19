@@ -33,12 +33,11 @@ public final class Configs {
     private Configs() {
     }
 
-    public static Configs getInstance() {
-        return instance;
+    public static <T extends CfgService<?, ?, ?>> T of(Class<T> clazz) {
+        return instance.getCfgService(clazz);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends CfgService<?, ?, ?>> T get(Class<T> clazz) {
+    public  <T extends CfgService<?, ?, ?>> T getCfgService(Class<T> clazz) {
         return (T) map.get(clazz);
     }
 }

@@ -42,7 +42,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
 
     @Override
     public void open(CfgFunction cfg, boolean isSend) {
-        CfgSimpleTaskService cfgSimpleTaskService = Configs.getInstance().get(CfgSimpleTaskService.class);
+        CfgSimpleTaskService cfgSimpleTaskService = Configs.of(CfgSimpleTaskService.class);
         List<CfgSimpleTask> cfgTasks = cfgSimpleTaskService.getCfgByFuncId(cfg.getId());
         PbTaskArrays.Builder pbTasks = null;
         if (isSend) {
@@ -71,8 +71,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
 
     @Override
     public void close(CfgFunction cfg, boolean isSend) {
-        Configs configs = Configs.getInstance();
-        CfgSimpleTaskService cfgSimpleTaskService = configs.get(CfgSimpleTaskService.class);
+        CfgSimpleTaskService cfgSimpleTaskService = Configs.of(CfgSimpleTaskService.class);
         // 功能关闭时，清除此功能对应的所有任务
         PbIntArray.Builder pbTasks = null;
         if (isSend) {
@@ -106,8 +105,7 @@ public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> i
     @Override
     public void init() {
         super.init();
-        Configs configs = Configs.getInstance();
-        CfgSimpleTaskService cfgSimpleTaskService = configs.get(CfgSimpleTaskService.class);
+        CfgSimpleTaskService cfgSimpleTaskService = Configs.of(CfgSimpleTaskService.class);
         for (Entry<Integer, DBTask> entry : entity.getTasks().entrySet()) {
             DBTask task = entry.getValue();
             CfgSimpleTask cfg = cfgSimpleTaskService.getCfg(task.getId());

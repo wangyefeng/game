@@ -33,7 +33,7 @@ public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTas
     @Override
     protected void validate0(Configs configsContext) throws ConfigException {
         super.validate0(configsContext);
-        CfgItemService cfgItemService = configsContext.get(CfgItemService.class);
+        CfgItemService cfgItemService = configsContext.getCfgService(CfgItemService.class);
         for (CfgSimpleTask cfgSimpleTask : map.values()) {
             for (SimpleItem reward : cfgSimpleTask.getRewards()) {
                 if (!cfgItemService.exists(reward.id())) {

@@ -195,8 +195,9 @@ public class Player {
     }
 
     public void addItem(Item item) {
-        Configs config = Configs.getInstance();
-        ItemType type = getItemType(item, config);
+        CfgItemService cfgItemService = Configs.of(CfgItemService.class);
+        CfgItem cfg = cfgItemService.getCfg(item.id());
+        ItemType type = ItemType.getType(cfg.getType());
         Addable addable = addableService.get(type);
         if (addable == null) {
             throw new IllegalArgumentException("addable item type not found: " + type);
@@ -224,8 +225,9 @@ public class Player {
     }
 
     public boolean itemEnough(Item item) {
-        Configs config = Configs.getInstance();
-        ItemType type = getItemType(item, config);
+        CfgItemService cfgItemService = Configs.of(CfgItemService.class);
+        CfgItem cfg = cfgItemService.getCfg(item.id());
+        ItemType type = ItemType.getType(cfg.getType());
         Consumable consumable = consumableService.get(type);
         if (consumable == null) {
             throw new IllegalArgumentException("consumable item type not found: " + type);
@@ -234,8 +236,9 @@ public class Player {
     }
 
     public void consumeItem(Item item) {
-        Configs config = Configs.getInstance();
-        ItemType type = getItemType(item, config);
+        CfgItemService cfgItemService = Configs.of(CfgItemService.class);
+        CfgItem cfg = cfgItemService.getCfg(item.id());
+        ItemType type = ItemType.getType(cfg.getType());
         Consumable consumable = consumableService.get(type);
         if (consumable == null) {
             throw new IllegalArgumentException("consumable item type not found: " + type);
@@ -243,17 +246,6 @@ public class Player {
         consumable.consume(item);
     }
 
-    private static ItemType getItemType(Item item, Configs config) {
-        CfgItem cfgItem = config.get(CfgItemService.class).getCfg(item.id());
-        if (cfgItem == null) {
-            throw new IllegalArgumentException("item id not found: " + item.id());
-        }
-        ItemType type = ItemType.getType(cfgItem.getType());
-        if (type == null) {
-            throw new IllegalArgumentException("item type not found: " + cfgItem.getType());
-        }
-        return type;
-    }
 
     public void consumeItems(Item... items) {
         for (Item item : items) {

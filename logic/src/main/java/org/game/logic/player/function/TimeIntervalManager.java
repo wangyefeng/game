@@ -52,8 +52,7 @@ public class TimeIntervalManager {
         writeLock.lock();
         try {
             LocalDateTime nowDateTime = LocalDateTime.now();
-            Configs configs = Configs.getInstance();
-            CfgTimeIntervalFunctionService cfgService = configs.get(CfgTimeIntervalFunctionService.class);
+            CfgTimeIntervalFunctionService cfgService = Configs.of(CfgTimeIntervalFunctionService.class);
             cfgService.getAllCfg().forEach(cfg -> initActivity(cfg, nowDateTime));
             config.addReloadPublisher((_, _) -> reload());
         } finally {
@@ -84,8 +83,7 @@ public class TimeIntervalManager {
         writeLock.lock();
         try {
             LocalDateTime nowDateTime = LocalDateTime.now();
-            Configs configs = Configs.getInstance();
-            CfgTimeIntervalFunctionService cfgService = configs.get(CfgTimeIntervalFunctionService.class);
+            CfgTimeIntervalFunctionService cfgService = Configs.of(CfgTimeIntervalFunctionService.class);
             for (CfgTimeIntervalFunction cfg : cfgService.getAllCfg()) {
                 Integer id = cfg.getId();
                 ScheduledFuture<?> startFuture = startScheduledFuture.remove(id);

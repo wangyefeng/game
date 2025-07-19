@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class LevelUpMsgHandler extends PlayerHandler<Empty> {
 
     @Override
-    protected void handle(Player player, Empty data, Configs config) {
+    protected void handle(Player player, Empty data) {
         PlayerService playerService = player.getService(PlayerService.class);
         playerService.levelUp();
     }

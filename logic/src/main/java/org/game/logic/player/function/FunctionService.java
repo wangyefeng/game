@@ -60,8 +60,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
      * @param isSend 是否需要推送客户端
      */
     public void checkCyclicFunction(boolean isSend) {
-        Configs configs = Configs.getInstance();
-        CfgCyclicFunctionService cfgCyclicFunctionService = configs.get(CfgCyclicFunctionService.class);
+        CfgCyclicFunctionService cfgCyclicFunctionService = Configs.of(CfgCyclicFunctionService.class);
         for (CfgCyclicFunction cfgCyclicFunction : cfgCyclicFunctionService.getAllCfg()) {
             checkCyclicFunctionOne(cfgCyclicFunction, isSend);
         }
@@ -162,7 +161,6 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     }
 
     public void checkTimeInterval(boolean isSend) {
-        Configs configs = Configs.getInstance();
         Lock lock = timeIntervalManager.lock.readLock();
         try {
             lock.lock();
@@ -175,7 +173,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
             needCheck.addAll(entity.getTimeIntervalIds());
             needCheck.removeAll(intersection);
 
-            CfgTimeIntervalFunctionService cfgTimeIntervalFunctionService = configs.get(CfgTimeIntervalFunctionService.class);
+            CfgTimeIntervalFunctionService cfgTimeIntervalFunctionService = Configs.of(CfgTimeIntervalFunctionService.class);
             for (Integer id : needCheck) {
                 CfgTimeIntervalFunction cfg = cfgTimeIntervalFunctionService.getCfg(id);
                 checkTimeIntervalOne(cfg, isSend);

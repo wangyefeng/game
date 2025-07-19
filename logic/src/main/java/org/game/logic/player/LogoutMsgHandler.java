@@ -1,7 +1,6 @@
 package org.game.logic.player;
 
 import com.google.protobuf.Empty;
-import org.game.config.Configs;
 import org.game.logic.net.ChannelKeys;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ public class LogoutMsgHandler extends PlayerHandler<Empty> {
     private static final Logger log = LoggerFactory.getLogger(LogoutMsgHandler.class);
 
     @Override
-    protected void handle(Player player, Empty message, Configs config) {
+    protected void handle(Player player, Empty message) {
         log.info("玩家{}退出游戏", player.getId());
         if (player.isOnline()) {
             return;

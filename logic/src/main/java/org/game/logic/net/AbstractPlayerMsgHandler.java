@@ -2,8 +2,6 @@ package org.game.logic.net;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.game.config.Configs;
-import org.game.logic.thread.ThreadPool;
 import org.game.proto.PlayerMsgHandler;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
@@ -17,7 +15,7 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
     public void handle(Channel channel, int playerId, T data) {
         long start = System.currentTimeMillis();
         try {
-            handle0(channel, playerId, data, Configs.getInstance());
+            handle0(channel, playerId, data);
         } catch (Exception e) {
             log.error("协议处理失败：{}", data, e);
         } finally {
@@ -34,5 +32,5 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
         }
     }
 
-    protected abstract void handle0(Channel channel, int playerId, T data, Configs configs) throws Exception;
+    protected abstract void handle0(Channel channel, int playerId, T data) throws Exception;
 }
