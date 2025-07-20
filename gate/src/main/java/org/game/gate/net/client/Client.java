@@ -63,6 +63,7 @@ public abstract class Client {
         }
         if (!eventLoopGroup.isShutdown()) {
             eventLoopGroup.shutdownGracefully().sync();
+            log.info("关闭连接客户端连接完成！{}", eventLoopGroup.isShutdown());
         }
     }
 
@@ -75,7 +76,7 @@ public abstract class Client {
     }
 
     public void connect() {
-        while (!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted() && !eventLoopGroup.isShutdown()) {
             try {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channel = channelFuture.channel();

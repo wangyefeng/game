@@ -88,7 +88,6 @@ public class Logic extends Server {
         checkMongo();
         Protocols.init();
         registerHandler();
-        initGameService();
         ThreadPool.start();
         timeIntervalManager.init();
     }
@@ -103,28 +102,51 @@ public class Logic extends Server {
         }
     }
 
-    private void initGameService() {
-        // 主动触发GameService的初始化，防止延迟初始化多线程安全问题
-        applicationContext.getBeansOfType(GameService.class);
-    }
-
     @Override
     protected void afterStart() throws Exception {
         tcpServer.start();
         grpcServer.start();
-        registerService();
+        initZkService();
     }
 
-    private void registerService() throws Exception {
+    private void initZkService() throws Exception {
+        registerZkService();
+        addZkListener();
+    }
+
+    private void registerZkService() throws Exception {
         if (zkClient.checkExists().forPath(rootPath) == null) {
             zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
         String servicePath = rootPath + "/" + id;
-        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(host, tcpServer.getPort(), grpcServer.getPort()))).getBytes());
-        log.info("zookeeper registry service success, path: {}", servicePath);
+        if (zkClient.checkExists().forPath(servicePath) == null) {
+            zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(host, tcpServer.getPort(), grpcServer.getPort()))).getBytes());
+            log.info("zookeeper registry service success, path: {}", servicePath);
+        }
     }
 
-    private record ServerInfo(String host, int tcpPort, int rpcPort) {}
+    private void addZkListener() {
+        zkClient.getConnectionStateListenable().addListener((_, state) -> {
+            switch (state) {
+                case RECONNECTED:
+                    log.info("zookeeper 断线重连成功，开始恢复业务...");
+                    try {
+                        registerZkService();
+                    } catch (Exception e) {
+                        log.error("zookeeper 注册服务失败", e);
+                    }
+                    break;
+                case SUSPENDED:
+                    log.info("zookeeper 连接断开，等待重连...");
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private record ServerInfo(String host, int tcpPort, int rpcPort) {
+    }
 
     protected void stop() throws Exception {
         tcpServer.close();
