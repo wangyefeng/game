@@ -1,7 +1,7 @@
 package org.game.logic.player;
 
 import io.grpc.stub.StreamObserver;
-import org.game.logic.repository.PlayerRepository;
+import org.game.logic.database.repository.PlayerRepository;
 import org.game.proto.struct.PlayerExistServiceGrpc;
 import org.game.proto.struct.Rpc.PbPlayerExistReq;
 import org.game.proto.struct.Rpc.PbPlayerExistResp;

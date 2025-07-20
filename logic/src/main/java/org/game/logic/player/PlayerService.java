@@ -2,12 +2,12 @@ package org.game.logic.player;
 
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
-import org.game.logic.AbstractGameService;
-import org.game.logic.entity.PlayerInfo;
+import org.game.config.entity.SimpleItem;
+import org.game.logic.database.entity.PlayerInfo;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemIdConstant;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.repository.PlayerRepository;
+import org.game.logic.database.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.game.proto.struct.Login.PbLoginResp;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,10 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
     public void levelUp() {
         entity.setLevel(entity.getLevel() + 1);
         player.updateEvent(PlayerEvent.LEVEL_UP, entity.getLevel());
+        if (entity.getLevel() % 5 == 0) {
+            player.addItem(new SimpleItem(10, 100));
+            player.addItem(new SimpleItem(1, 1000));
+        }
     }
 
     @Override

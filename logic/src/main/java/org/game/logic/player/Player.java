@@ -11,11 +11,10 @@ import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgItemService;
-import org.game.logic.GameService;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.ShutdownAction;
-import org.game.logic.entity.PlayerInfo;
+import org.game.logic.database.entity.PlayerInfo;
 import org.game.logic.player.item.Addable;
 import org.game.logic.player.item.AddableItem;
 import org.game.logic.player.item.Consumable;
@@ -115,9 +114,9 @@ public class Player {
         writeToGate(protocol, null);
     }
 
-    public void asyncSave() {
+    public void asyncSave(boolean cacheEvict) {
         for (GameService<?> gameService : map.values()) {
-            gameService.asyncSave();
+            gameService.asyncSave(cacheEvict);
         }
     }
 
@@ -132,7 +131,7 @@ public class Player {
     }
 
     private void startSaveTimer() {
-        saveFuture = scheduleAtFixedRate(this::asyncSave, 0, 1, TimeUnit.MINUTES);
+        saveFuture = scheduleAtFixedRate(() -> asyncSave(false), 0, 20, TimeUnit.SECONDS);
     }
 
     public void loginResp(Login.PbLoginResp.Builder loginResp) {
@@ -153,7 +152,7 @@ public class Player {
 
     public void logout() {
         saveFuture.cancel(true);
-        asyncSave();
+        asyncSave(true);
         channel = null;
         actor.tell(ShutdownAction.INSTANCE);
     }

@@ -8,12 +8,12 @@ public enum ItemType {
     /**
      * 货币
      */
-    CURRENCY(10),
+    CURRENCY(1),
 
     /**
      * 背包
      */
-    BAG(100),
+    BAG(2),
     ;
 
     private final int type;

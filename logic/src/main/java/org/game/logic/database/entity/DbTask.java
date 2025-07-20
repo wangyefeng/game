@@ -1,17 +1,27 @@
-package org.game.logic.entity;
+package org.game.logic.database.entity;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.game.logic.player.task.Task;
 import org.game.logic.player.task.TaskListenerImpl;
-import org.springframework.data.annotation.Transient;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 任务数据
  */
-public class DBTask implements Cloneable, Task {
+@Entity
+@IdClass(DbTask.PK.class)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class DbTask implements Cloneable, Task {
+
+    @Id
+    private int playerId;
 
     /**
      * 任务ID
      */
+    @Id
     private int id;
 
     /**
@@ -32,18 +42,15 @@ public class DBTask implements Cloneable, Task {
     @Transient
     private TaskListenerImpl<?> listener;
 
-    public DBTask() {
+    public DbTask() {
     }
 
-    public DBTask(int id) {
-        this(id, 0);
-    }
-
-    public DBTask(int id, long progress) {
+    public DbTask(int playerId, int id, long progress) {
         this.id = id;
         this.progress = progress;
         this.isFinished = false;
         this.isReward = false;
+        this.playerId = playerId;
     }
 
     public int getId() {
@@ -93,7 +100,10 @@ public class DBTask implements Cloneable, Task {
     }
 
     @Override
-    public DBTask clone() throws CloneNotSupportedException {
-        return (DBTask) super.clone();
+    public DbTask clone() throws CloneNotSupportedException {
+        return (DbTask) super.clone();
+    }
+
+    public record PK(int playerId, int id) {
     }
 }

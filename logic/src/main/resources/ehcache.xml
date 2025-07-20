@@ -1,0 +1,31 @@
+<config xmlns='http://www.ehcache.org/v3'>
+
+    <!-- 默认的hibernate缓存配置 -->
+    <cache alias="default-update-timestamps-region">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap>1000000</heap>
+    </cache>
+
+    <!-- 默认的hibernate查询结果缓存配置 -->
+    <cache alias="default-query-results-region">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap>1000000</heap>
+    </cache>
+
+    <!-- entity缓存配置模板 -->
+    <cache-template name="entity">
+        <heap>6000000</heap>
+    </cache-template>
+
+    <cache alias="org.game.logic.database.entity.PlayerInfo" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.BagInfo" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.BagInfo.items" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.FunctionInfo" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.FunctionInfo.cycleFunctions" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.TaskInfo" uses-template="entity"/>
+    <cache alias="org.game.logic.database.entity.DbTask" uses-template="entity"/>
+</config>

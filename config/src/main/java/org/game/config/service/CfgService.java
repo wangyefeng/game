@@ -2,6 +2,7 @@ package org.game.config.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.game.config.ConfigException;
@@ -35,7 +36,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
     @Autowired
     protected Validator validator;
 
-    @Autowired
+    @PersistenceContext(unitName = "configPersistenceUnit")
     protected EntityManager entityManager;
 
     protected String tableName;

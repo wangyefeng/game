@@ -1,6 +1,5 @@
 package org.game.logic.player;
 
-import org.game.logic.GameService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

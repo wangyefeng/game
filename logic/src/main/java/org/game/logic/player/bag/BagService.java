@@ -1,14 +1,16 @@
 package org.game.logic.player.bag;
 
 import org.game.config.entity.Item;
-import org.game.logic.AbstractGameService;
-import org.game.logic.entity.BagInfo;
-import org.game.logic.entity.BagItem;
+import org.game.logic.database.entity.BagInfo;
+import org.game.logic.database.entity.BagItem;
+import org.game.logic.database.repository.BagItemRepository;
+import org.game.logic.database.repository.BagRepository;
+import org.game.logic.player.AbstractGameService;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.repository.BagRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -16,9 +18,26 @@ import java.util.Map;
 @Service
 public class BagService extends AbstractGameService<BagInfo, BagRepository> implements Consumable {
 
+    @Autowired
+    private BagItemRepository bagItemRepository;
+
+    @Override
+    public void load() {
+        super.load();
+        entity.init(bagItemRepository.findByPlayerId(player.getId()));
+    }
+
+    @Override
+    protected void save(BagInfo entity, boolean cacheEvict) {
+        super.save(entity, cacheEvict);
+        for (BagItem item : entity.getItems().values()) {
+            bagItemRepository.save(item, cacheEvict);
+        }
+    }
+
     @Override
     public void register(PbRegisterReq registerMsg) {
-        entity = new BagInfo(player.getId());
+        entity = new BagInfo(player.getId(), 10);
     }
 
     @Override
@@ -54,7 +73,7 @@ public class BagService extends AbstractGameService<BagInfo, BagRepository> impl
         if (it != null) {
             it.addNum(item.num());
         } else {
-            items.put(item.id(), new BagItem(item));
+            items.put(item.id(), new BagItem(player.getId(), item));
         }
     }
 

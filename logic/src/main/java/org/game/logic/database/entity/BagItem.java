@@ -1,35 +1,47 @@
-package org.game.logic.entity;
+package org.game.logic.database.entity;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.game.config.entity.Item;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 背包中的物品
  */
+@Entity
+@IdClass(BagItem.PK.class)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class BagItem implements Cloneable, Item {
-    private int id;
+
+    @Id
+    private int playerId;
+
+    @Id
+    @Column(name = "item_id", columnDefinition = "INT COMMENT '物品id'")
+    private int itemId;
+
     private int num;
 
-    BagItem() {
+    private BagItem() {
+        // for JPA
     }
 
-    public BagItem(Item item) {
-        this(item.id(), item.num());
+    public BagItem(int playerId, Item item) {
+        this(playerId, item.id(), item.num());
     }
 
-    public BagItem(int id, int num) {
+    public BagItem(int playerId, int itemId, int num) {
         if (num < 0) {
             throw new IllegalArgumentException("num must be non-negative");
         }
-        this.id = id;
+        this.itemId = itemId;
         this.num = num;
+        this.playerId = playerId;
     }
 
     public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        return itemId;
     }
 
     public int getNum() {
@@ -64,11 +76,14 @@ public class BagItem implements Cloneable, Item {
 
     @Override
     public int id() {
-        return id;
+        return itemId;
     }
 
     @Override
     public int num() {
         return num;
+    }
+
+    public record PK(int playerId, int itemId) {
     }
 }

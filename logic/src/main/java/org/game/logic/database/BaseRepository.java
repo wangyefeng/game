@@ -1,4 +1,4 @@
-package org.game.cache;
+package org.game.logic.database;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -9,20 +9,30 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 @Transactional
-public class BaseDao<T, ID> extends SimpleJpaRepository<T, ID> implements Dao<T, ID> {
+public class BaseRepository<T, ID> extends SimpleJpaRepository<T, ID> implements Repository<T, ID> {
 
     private final Session session;
 
     private final JpaEntityInformation<T, ?> entityInformation;
 
-    public BaseDao(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
+    public BaseRepository(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
         super(entityInformation, em);
-        session = em.unwrap(Session.class);
+        this.session = em.unwrap(Session.class);
         this.entityInformation = entityInformation;
     }
 
     @Override
     public <S extends T> void cacheEvict(S entity) {
-        session.getFactory().getCache().evict(entity.getClass(), entityInformation.getId(entity));
+        Object id = entityInformation.getId(entity);
+        session.getFactory().getCache().evict(entity.getClass(), id);
+    }
+
+    @Override
+    @Transactional
+    public <S extends T> void save(S entity, boolean cacheEvict) {
+        super.save(entity);
+        if (cacheEvict) {
+            cacheEvict(entity);
+        }
     }
 }

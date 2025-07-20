@@ -2,7 +2,7 @@ package org.game.logic.player;
 
 import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
-import org.game.logic.GameService;
+import org.game.config.entity.SimpleItem;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.PlayerActorService;
@@ -51,6 +51,7 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
             Players.addPlayer(player);
             Builder resp = PbLoginResp.newBuilder();
             resp.setIsNew(true);
+            player.addItem(new SimpleItem(1, 10));
             player.loginResp(resp);
             player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
         }));

@@ -1,18 +1,17 @@
-package org.game.logic;
+package org.game.logic.player;
 
 import org.game.common.util.JsonUtil;
-import org.game.logic.entity.Entity;
-import org.game.logic.player.Player;
+import org.game.logic.database.Repository;
+import org.game.logic.database.entity.Entity;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class AbstractGameService<E extends Entity, R extends CrudRepository<E, Integer>> implements GameService<E> {
+public abstract class AbstractGameService<E extends Entity, R extends Repository<E, Integer>> implements GameService<E> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractGameService.class);
     @Autowired
@@ -33,16 +32,16 @@ public abstract class AbstractGameService<E extends Entity, R extends CrudReposi
     }
 
     @Override
-    public void save() {
+    public void save(boolean cacheEvict) {
         if (entity == null) {
             return;
         }
-        save(entity);
+        save(entity, cacheEvict);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void asyncSave() {
+    public void asyncSave(boolean cacheEvict) {
         if (entity == null) {
             return;
         }
@@ -54,11 +53,11 @@ public abstract class AbstractGameService<E extends Entity, R extends CrudReposi
             copy = entity;
         }
         final E finalCopy = copy;
-        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(finalCopy));
+        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(finalCopy, cacheEvict));
     }
 
-    public void save(E entity) {
-        repository.save(entity);
+    protected void save(E entity, boolean cacheEvict) {
+        repository.save(entity, cacheEvict);
     }
 
     @Override
@@ -68,6 +67,5 @@ public abstract class AbstractGameService<E extends Entity, R extends CrudReposi
 
     @Override
     public void register(PbRegisterReq registerMsg) {
-
     }
 }

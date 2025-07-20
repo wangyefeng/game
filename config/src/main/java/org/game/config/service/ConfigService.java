@@ -9,16 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 @Service
-@EntityScan(basePackages = "org.game.config.entity")
-@EnableJpaRepositories({"org.game.config.repository"})
 public class ConfigService implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigService.class);
