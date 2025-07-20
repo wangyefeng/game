@@ -6,18 +6,15 @@ import org.game.config.entity.CfgSimpleTask;
 import org.game.config.entity.ModuleEnum;
 import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgSimpleTaskService;
-import org.game.logic.AbstractGameService;
 import org.game.logic.entity.DBTask;
 import org.game.logic.entity.TaskInfo;
-import org.game.logic.player.function.Module;
+import org.game.logic.player.function.AbstractModuleService;
 import org.game.logic.repository.TaskRepository;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Common.PbIntArray;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.game.proto.struct.Task.PbTaskArrays;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -25,8 +22,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TaskService extends AbstractGameService<TaskInfo, TaskRepository> implements Module {
+public class TaskService extends AbstractModuleService<TaskInfo, TaskRepository> {
 
     @Override
     public void register(PbRegisterReq registerMsg) {

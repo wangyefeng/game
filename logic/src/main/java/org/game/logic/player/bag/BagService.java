@@ -9,14 +9,11 @@ import org.game.logic.player.item.ItemType;
 import org.game.logic.repository.BagRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BagService extends AbstractGameService<BagInfo, BagRepository> implements Consumable {
 
     @Override

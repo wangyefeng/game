@@ -10,12 +10,9 @@ import org.game.logic.player.item.ItemType;
 import org.game.logic.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.game.proto.struct.Login.PbLoginResp;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> implements Consumable {
 
 

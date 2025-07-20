@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 玩家服务接口
+ * 交由spring管理的服务接口，默认是scope=prototype， 每个玩家一个实例
  *
  * @author 王叶峰
  */
@@ -21,12 +22,14 @@ public interface GameService<E extends Entity> {
     /**
      * 初始化游戏数据
      */
-    default void init() {}
+    default void init() {
+    }
 
     /**
      * 初始化完成后调用
      */
-    default void afterInit() {}
+    default void afterInit() {
+    }
 
     /**
      * 保存游戏数据

@@ -12,15 +12,12 @@ import org.game.logic.entity.DbCycleFunction;
 import org.game.logic.entity.FunctionInfo;
 import org.game.logic.player.DailyReset;
 import org.game.logic.player.PlayerService;
-import org.game.logic.player.task.TaskService;
 import org.game.logic.repository.FunctionRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FunctionService extends AbstractGameService<FunctionInfo, FunctionRepository> implements DailyReset {
 
     private static final Logger log = LoggerFactory.getLogger(FunctionService.class);
@@ -147,12 +143,6 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
                 }
             }
         }
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        registerModule(player.getService(TaskService.class));
     }
 
     @Override
