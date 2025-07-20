@@ -1,9 +1,9 @@
-package org.game.config;
+package org.game.config.service;
 
 import org.game.common.event.Listener;
 import org.game.common.event.Publisher;
-import org.game.config.service.CfgService;
-import org.game.config.service.DatabaseService;
+import org.game.config.ConfigException;
+import org.game.config.Configs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -12,16 +12,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
-@Component
+@Service
 @EntityScan(basePackages = "org.game.config.entity")
 @EnableJpaRepositories({"org.game.config.repository"})
-public class Config implements InitializingBean {
+public class ConfigService implements InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(Config.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigService.class);
 
     @Autowired
     private ApplicationContext applicationContext;

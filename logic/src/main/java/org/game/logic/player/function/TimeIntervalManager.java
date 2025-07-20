@@ -1,6 +1,6 @@
 package org.game.logic.player.function;
 
-import org.game.config.Config;
+import org.game.config.service.ConfigService;
 import org.game.config.Configs;
 import org.game.config.entity.CfgTimeIntervalFunction;
 import org.game.config.service.CfgTimeIntervalFunctionService;
@@ -36,10 +36,10 @@ public class TimeIntervalManager {
     private final Set<Integer> functionIds = new HashSet<>();
 
     // 全局锁读写锁
-    public ReadWriteLock lock = new ReentrantReadWriteLock();
+    public final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
-    private Config config;
+    private ConfigService configService;
 
     // 活动开启定时器
     private final Map<Integer, ScheduledFuture<?>> startScheduledFuture = new HashMap<>();
@@ -54,7 +54,7 @@ public class TimeIntervalManager {
             LocalDateTime nowDateTime = LocalDateTime.now();
             CfgTimeIntervalFunctionService cfgService = Configs.of(CfgTimeIntervalFunctionService.class);
             cfgService.getAllCfg().forEach(cfg -> initActivity(cfg, nowDateTime));
-            config.addReloadPublisher((_, _) -> reload());
+            configService.addReloadPublisher((_, _) -> reload());
         } finally {
             writeLock.unlock();
         }
