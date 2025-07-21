@@ -45,11 +45,11 @@ public class LogicClient extends Client {
      */
     private static final int LENGTH_LIMIT = 1024 * 1024;
 
-    private Set<Player> players = new HashSet<>();
+    private final Set<Player> players = new HashSet<>();
 
-    private ManagedChannel grpcChannel;
+    private final ManagedChannel grpcChannel;
 
-    public LogicClient(int id, String host, int port, int rpcPort) {
+    public LogicClient(String id, String host, int port, int rpcPort) {
         super(id, host, port, "logic");
         grpcChannel = ManagedChannelBuilder.forAddress(host, rpcPort).usePlaintext().build();
     }

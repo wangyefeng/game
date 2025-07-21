@@ -12,7 +12,7 @@ public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
 
-    private final int id;
+    private final String id;
 
     protected String host;
 
@@ -30,7 +30,7 @@ public abstract class Client {
 
     private Thread reconnectThread;
 
-    public Client(int id, String host, int port, String name) {
+    public Client(String id, String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
         Assert.isTrue(port > 0, "端口号必须大于0!");
         this.id = id;
@@ -54,7 +54,7 @@ public abstract class Client {
     }
 
     public void close() throws InterruptedException {
-        log.info("关闭连接客户端连接： {}", this);
+        log.info("关闭客户端连接： {}", this);
         if (reconnectThread != null) {
             reconnectThread.interrupt();
         }
@@ -63,7 +63,7 @@ public abstract class Client {
         }
         if (!eventLoopGroup.isShutdown()) {
             eventLoopGroup.shutdownGracefully().sync();
-            log.info("关闭连接客户端连接完成！{}", eventLoopGroup.isShutdown());
+            log.info("关闭客户端连接完成！");
         }
     }
 
@@ -85,14 +85,14 @@ public abstract class Client {
                 reconnectThread = null;
                 break;
             } catch (InterruptedException e) {
-                log.info("重连线程被中断！{} 停止重连1...", this);
+                log.info("重连线程被中断！{} 停止重连......", this);
                 break;
             } catch (Exception e) {
                 log.error("连接服务器失败，正在重试...", e);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e1) {
-                    log.info("重连线程被中断！{} 停止重连2...", this);
+                    log.info("重连线程被中断！{} 停止重连...", this);
                     break;
                 }
             }
@@ -118,7 +118,7 @@ public abstract class Client {
         return name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 }

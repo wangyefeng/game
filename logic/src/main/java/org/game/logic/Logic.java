@@ -110,8 +110,8 @@ public class Logic extends Server {
     }
 
     private void initZkService() throws Exception {
-        registerZkService();
         addZkListener();
+        registerZkService();
     }
 
     private void registerZkService() throws Exception {

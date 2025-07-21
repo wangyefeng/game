@@ -14,13 +14,13 @@ import java.util.Map;
 @Component
 public class ClientGroup<C extends Client> {
 
-    private final Map<Integer, C> clients = new HashMap<>();
+    private final Map<String, C> clients = new HashMap<>();
 
     public ClientGroup() {
     }
 
-    public void remove(Integer id) {
-        clients.remove(id);
+    public C remove(String id) {
+        return clients.remove(id);
     }
 
     public void add(C client) {
@@ -37,7 +37,7 @@ public class ClientGroup<C extends Client> {
         }
     }
 
-    public C get(Integer id) {
+    public C get(String id) {
         return clients.get(id);
     }
 
@@ -49,7 +49,7 @@ public class ClientGroup<C extends Client> {
         return clients.containsKey(id);
     }
 
-    public Map<Integer, C> getClients() {
+    public Map<String, C> getClients() {
         return clients;
     }
 }

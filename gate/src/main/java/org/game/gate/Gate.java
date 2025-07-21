@@ -3,9 +3,10 @@ package org.game.gate;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetector.Level;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.Watcher.Event.KeeperState;
+import org.apache.curator.framework.recipes.cache.ChildData;
+import org.apache.curator.framework.recipes.cache.CuratorCache;
+import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
+import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.gate.net.TcpServer;
@@ -23,10 +24,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author wangyefeng
@@ -63,86 +60,42 @@ public class Gate extends Server {
         ThreadPool.start();
         Protocols.init();
         registerHandler();
-        connectLogic();
+        initLogicClient();
     }
 
-    private void connectLogic() {
-        try {
-            // 连接逻辑服
-            try {
-                List<String> serverInfos = zkClient.getChildren().forPath(servicePath);
-                if (serverInfos.isEmpty()) {
-                    log.warn("没有发现逻辑服节点，等待中！");
-                    while (serverInfos.isEmpty()) {
-                        Thread.sleep(1000);
-                        serverInfos = zkClient.getChildren().forPath(servicePath);
+    /**
+     * 初始化LogicClient连接
+     */
+    private void initLogicClient() {
+        // 创建缓存
+        CuratorCache cache = CuratorCache.build(zkClient, servicePath);
+        // 添加监听器
+        CuratorCacheListener listener = CuratorCacheListener.builder()
+                .forPathChildrenCache(servicePath, zkClient, (_, event) -> {
+                    PathChildrenCacheEvent.Type type = event.getType();
+                    if (type == PathChildrenCacheEvent.Type.CHILD_ADDED) {
+                        // 新增节点
+                        ChildData childData = event.getData();
+                        log.info("新增logic服务器节点：{}", childData.getPath());
+                        ServerInfo serverInfo = JsonUtil.parseJson(new String(childData.getData()), ServerInfo.class);
+                        LogicClient logicClient = new LogicClient(childData.getPath(), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
+                        logicClient.start();
+                        clientGroup.add(logicClient);
+                    } else if (type == PathChildrenCacheEvent.Type.CHILD_REMOVED) {
+                        // 删除节点
+                        log.info("删除logic服务器节点：{}", event.getData().getPath());
+                        LogicClient client = clientGroup.remove(event.getData().getPath());
+                        client.close();
                     }
-                    log.info("发现逻辑服节点：{}个 继续启动....", serverInfos.size());
-                }
-                for (String serverId : serverInfos) {
-                    String path = servicePath + "/" + serverId;
-                    byte[] data = zkClient.getData().forPath(path);
-                    ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
-                    LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
-                    logicClient.start();
-                    clientGroup.add(logicClient);
-                }
-                Watcher w = new LogicWatcher(zkClient, clientGroup, servicePath);
-                zkClient.getChildren().usingWatcher(w).forPath(servicePath);
-                log.info("连接ZooKeeper成功！！");
-            } catch (Exception e) {
-                throw new IllegalStateException("初始化ZooKeeper连接异常....", e);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("连接逻辑服失败！", e);
-        }
+
+                })
+                .build();
+        cache.listenable().addListener(listener);
+        cache.start(); // 启动缓存监听
     }
 
-    private record ServerInfo(String host, int tcpPort, int rpcPort) {}
-
-    private record LogicWatcher(CuratorFramework zkClient, ClientGroup<LogicClient> clientGroup, String servicePath) implements Watcher {
-
-        @Override
-            public void process(WatchedEvent event) {
-                try {
-                    if (event.getType() == Event.EventType.NodeChildrenChanged) {
-                        log.info("逻辑服务器节点发生变化，进行相关处理....");
-                        List<String> serviceNodes = zkClient.getChildren().forPath(servicePath);
-                        Set<Integer> nodes = new HashSet<>(serviceNodes.size());
-                        for (String serverId : serviceNodes) {
-                            int id = Integer.parseInt(serverId);
-                            nodes.add(id);
-                            if (clientGroup.contains(id)) {
-                                continue;
-                            }
-                            String path = servicePath + "/" + serverId;
-                            byte[] data = zkClient.getData().forPath(path);
-                            ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
-                            LogicClient logicClient = new LogicClient(Integer.parseInt(serverId), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
-                            logicClient.start();
-                            clientGroup.add(logicClient);
-                        }
-                        clientGroup.getClients().values().removeIf(client -> {
-                            if (!nodes.contains(client.getId())) {
-                                try {
-                                    client.close();
-                                } catch (Exception e) {
-                                    log.error("关闭逻辑服务器{}异常", client.getId(), e);
-                                }
-                                return true;
-                            }
-                            return false;
-                        });
-                    }
-                    if (event.getState() != KeeperState.Closed) {
-                        // 重新注册 Watcher 以继续监听节点变化
-                        zkClient.getChildren().usingWatcher(this).forPath(servicePath);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+    private record ServerInfo(String host, int tcpPort, int rpcPort) {
+    }
 
     @Override
     protected void afterStart() {

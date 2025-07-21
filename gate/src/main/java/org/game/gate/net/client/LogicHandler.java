@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
+import jakarta.annotation.Nonnull;
 import org.game.common.Server;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
@@ -51,7 +52,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
         logicClient.setRunning(false);
