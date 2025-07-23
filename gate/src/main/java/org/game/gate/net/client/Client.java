@@ -121,4 +121,8 @@ public abstract class Client {
     public String getId() {
         return id;
     }
+
+    public boolean isClose() {
+        return eventLoopGroup.isShutdown();
+    }
 }

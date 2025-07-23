@@ -3,10 +3,8 @@ package org.game.gate;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetector.Level;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
 import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.gate.net.TcpServer;
@@ -24,10 +22,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author wangyefeng
@@ -64,92 +58,43 @@ public class Gate extends Server {
         ThreadPool.start();
         Protocols.init();
         registerHandler();
-        addZkListener();
-        initLogicClient();
-    }
-
-    private void addZkListener() {
-        zkClient.getConnectionStateListenable().addListener((_, state) -> {
-            switch (state) {
-                case RECONNECTED:
-                    log.info("zookeeper 断线重连成功，开始恢复业务...");
-                    try {
-                        registerZkService();
-                    } catch (Exception e) {
-                        log.error("zookeeper 注册服务失败", e);
-                    }
-                    break;
-                case SUSPENDED:
-                    log.info("zookeeper 连接断开，等待重连...");
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-
-    private void registerZkService() {
-        // 连接逻辑服
-        try {
-            List<String> serverInfos = zkClient.getChildren().forPath(servicePath);
-            Set<String> serverIdSet = new HashSet<>(serverInfos);
-            for (String serverId : serverInfos) {
-                String id = servicePath + "/" + serverId;
-                serverIdSet.add(id);
-                if (clientGroup.contains(id)) {
-                    continue;
-                }
-                byte[] data = zkClient.getData().forPath(id);
-                ServerInfo serverInfo = JsonUtil.parseJson(new String(data), ServerInfo.class);
-                LogicClient logicClient = new LogicClient(id, serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
-                logicClient.start();
-                clientGroup.add(logicClient);
-            }
-            clientGroup.getClients().values().removeIf(logicClient -> {
-                if (serverIdSet.contains(logicClient.getId())) {
-                    try {
-                        logicClient.close();
-                    } catch (InterruptedException e) {
-                        log.error("关闭logic客户端异常", e);
-                    }
-                    return true;
-                }
-                return false;
-            });
-        } catch (Exception e) {
-            throw new IllegalStateException("重建ZooKeeper连接异常....", e);
-        }
+        startZkServiceListener();
     }
 
     /**
-     * 初始化LogicClient连接
+     * 启动zookeeper服务发现监听器
      */
-    private void initLogicClient() {
+    private void startZkServiceListener() {
         // 创建缓存
         CuratorCache cache = CuratorCache.build(zkClient, servicePath);
         // 添加监听器
         CuratorCacheListener listener = CuratorCacheListener.builder()
-                .forPathChildrenCache(servicePath, zkClient, (_, event) -> {
-                    PathChildrenCacheEvent.Type type = event.getType();
-                    if (type == PathChildrenCacheEvent.Type.CHILD_ADDED) {
+                .forCreates(childData -> {
+                    if (!servicePath.equals(childData.getPath())) {// 过滤掉非服务节点
                         // 新增节点
-                        ChildData childData = event.getData();
                         log.info("新增logic服务器节点：{}", childData.getPath());
                         ServerInfo serverInfo = JsonUtil.parseJson(new String(childData.getData()), ServerInfo.class);
                         LogicClient logicClient = new LogicClient(childData.getPath(), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
                         logicClient.start();
                         clientGroup.add(logicClient);
-                    } else if (type == PathChildrenCacheEvent.Type.CHILD_REMOVED) {
-                        // 删除节点
-                        log.info("删除logic服务器节点：{}", event.getData().getPath());
-                        LogicClient client = clientGroup.remove(event.getData().getPath());
-                        client.close();
                     }
-
+                })
+                .forDeletes(childData -> {
+                    if (!servicePath.equals(childData.getPath())) {// 过滤掉非服务节点
+                        // 删除节点
+                        log.info("删除logic服务器节点：{}", childData.getPath());
+                        LogicClient client = clientGroup.remove(childData.getPath());
+                        try {
+                            client.close();
+                        } catch (InterruptedException e) {
+                            log.error("关闭LogicClient异常", e);
+                        }
+                    }
                 })
                 .build();
         cache.listenable().addListener(listener);
-        cache.start(); // 启动缓存监听
+        // 启动缓存监听
+        cache.start();
     }
 
     private record ServerInfo(String host, int tcpPort, int rpcPort) {

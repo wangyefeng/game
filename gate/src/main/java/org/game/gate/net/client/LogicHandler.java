@@ -65,7 +65,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
                 }
             });
         }
-        if (!Server.isStopping()) {
+        if (!Server.isStopping() && !logicClient.isClose()) {
             log.info("尝试重新连接逻辑服务器{}...", ctx.channel().remoteAddress());
             logicClient.reconnect();
         }
