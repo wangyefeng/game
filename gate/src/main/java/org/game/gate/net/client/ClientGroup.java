@@ -45,7 +45,7 @@ public class ClientGroup<C extends Client> {
         return RandomUtil.random(clients.values());
     }
 
-    public boolean contains(int id) {
+    public boolean contains(String id) {
         return clients.containsKey(id);
     }
 
