@@ -1,14 +1,20 @@
-version: '3.8'
-
 services:
-  zookeeper:
-    image: zookeeper:3.9.3
-    container_name: zookeeper
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
     ports:
-      - "2181:2181"
+      - "3306:3306"
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --lower_case_table_names=0
     restart: always
+    networks:
+      - my-net
   redis:
-    image: redis:7.4.2
+    image: redis:8.0.3
     container_name: redis
     volumes:
       - /etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
@@ -16,45 +22,33 @@ services:
       - "6379:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     restart: always
-  mongo:
-    image: mongo:8.0.4
-    container_name: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: wangyefeng@19920124
-    ports:
-      - "27017:27017"
-    restart: always
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: WangTang@19920124
-    ports:
-      - "3306:3306"
-    restart: always
-  game-login:
-    image: game-login:latest
-    container_name: game-login
-    volumes:
-      - /home/game/login/logs/:/app/logs/
-      - /home/game/login/hotfix/:/app/hotfix/
-    environment:
-      TZ: Asia/Shanghai
-    restart: always
+    networks:
+      - my-net
+  nacos:
+    image: nacos/nacos-server:v3.0.2
+    container_name: nacos
     depends_on:
-      - redis
-      - mongo
       - mysql
-      - zookeeper
-  nginx:
-    image: nginx:1.27.4
-    container_name: nginx
-    volumes:
-      - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /home/client/:/usr/share/nginx/client/
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=nacos
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=123456
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      - PREFER_HOST_MODE=hostname
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+      - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
     ports:
-      - "80:80"
+      - "8080:8080"
+      - "8848:8848"
+      - "9848:9848"
     restart: always
-    depends_on:
-      - game-login
+    networks:
+      - my-net
+
+networks:
+  my-net:
+    driver: bridge

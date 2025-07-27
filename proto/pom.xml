@@ -13,7 +13,7 @@
     <name>proto</name>
 
     <properties>
-        <grpc.version>1.70.0</grpc.version>
+        <grpc.version>1.73.0</grpc.version>
     </properties>
 
     <dependencyManagement>

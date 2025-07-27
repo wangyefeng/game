@@ -17,7 +17,7 @@ public class KickOutHandler implements CodeMsgHandler<Int32Value> {
     private static final Logger log = LoggerFactory.getLogger(KickOutHandler.class);
 
     @Override
-    public void handle(Channel channel, Int32Value msg) throws Exception {
+    public void handle(Channel channel, Int32Value msg) {
         int playerId = msg.getValue();
         Player player = Players.getPlayer(playerId);
         if (player != null) {
