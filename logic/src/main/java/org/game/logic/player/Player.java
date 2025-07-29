@@ -289,6 +289,6 @@ public class Player {
     }
 
     public boolean isOnline() {
-        return channel == null;
+        return channel != null;
     }
 }
