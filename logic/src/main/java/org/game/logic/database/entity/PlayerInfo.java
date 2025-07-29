@@ -1,7 +1,5 @@
 package org.game.logic.database.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -11,11 +9,7 @@ import java.time.LocalDate;
 @jakarta.persistence.Entity
 @Table
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class PlayerInfo extends Entity {
-
-    @Id
-    @Column(nullable = false)
-    private int playerId;
+public class PlayerInfo extends BaseInfo {
 
     private String name;
 
@@ -30,7 +24,7 @@ public class PlayerInfo extends Entity {
     }
 
     public PlayerInfo(int playerId, String name) {
-        this.playerId = playerId;
+        super(playerId);
         this.name = name;
         this.level = 1;
         this.dailyResetDate = LocalDate.now();
@@ -74,10 +68,5 @@ public class PlayerInfo extends Entity {
 
     public void setDailyResetDate(LocalDate dailyResetDate) {
         this.dailyResetDate = dailyResetDate;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
     }
 }

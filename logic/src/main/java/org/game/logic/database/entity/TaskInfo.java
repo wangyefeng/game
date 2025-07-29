@@ -15,11 +15,7 @@ import java.util.Map.Entry;
 @jakarta.persistence.Entity
 @Table
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class TaskInfo extends Entity {
-
-    @Id
-    @Column(nullable = false)
-    private int playerId;
+public class TaskInfo extends BaseInfo {
 
     /**
      * 任务列表
@@ -32,7 +28,7 @@ public class TaskInfo extends Entity {
     }
 
     public TaskInfo(int playerId) {
-        this.playerId = playerId;
+        super(playerId);
     }
 
     public void init(Collection<DbTask> tasks) {
@@ -61,10 +57,5 @@ public class TaskInfo extends Entity {
 
     public Map<Integer, DbTask> getTasks() {
         return tasks;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
     }
 }

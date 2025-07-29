@@ -12,14 +12,10 @@ import java.util.Map;
 /**
  * 背包
  */
-@jakarta.persistence.Entity
+@Entity
 @Table
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class BagInfo extends Entity {
-
-    @Id
-    @Column(nullable = false)
-    private int playerId;
+public class BagInfo extends BaseInfo {
 
     /**
      * 道具
@@ -37,8 +33,7 @@ public class BagInfo extends Entity {
     }
 
     public BagInfo(int playerId, int capacity) {
-        super();
-        this.playerId = playerId;
+        super(playerId);
         this.capacity = capacity;
     }
 
@@ -58,11 +53,6 @@ public class BagInfo extends Entity {
             copy.items.put(item.getId(), item.clone());
         }
         return copy;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
     }
 
     public void init(Collection<BagItem> bagItems) {

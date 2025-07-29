@@ -1,6 +1,6 @@
 package org.game.logic.player;
 
-import org.game.logic.database.entity.Entity;
+import org.game.logic.database.entity.BaseInfo;
 import org.game.proto.struct.Login;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @author 王叶峰
  */
 @Service
-public interface GameService<E extends Entity> {
+public interface GameService<E extends BaseInfo> {
 
     /**
      * 加载游戏数据

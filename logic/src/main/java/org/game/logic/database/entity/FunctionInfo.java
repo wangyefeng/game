@@ -14,14 +14,10 @@ import java.util.Map.Entry;
  *
  * @author 王叶峰
  */
-@jakarta.persistence.Entity
+@Entity
 @Table
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class FunctionInfo extends Entity {
-
-    @Id
-    @Column(nullable = false)
-    private int playerId;
+public class FunctionInfo extends BaseInfo {
 
     /**
      * 功能ID集合
@@ -46,7 +42,7 @@ public class FunctionInfo extends Entity {
     }
 
     public FunctionInfo(int playerId) {
-        this.playerId = playerId;
+        super(playerId);
     }
 
     public void init(Collection<CycleFunction> cycleFunctions) {
@@ -81,10 +77,5 @@ public class FunctionInfo extends Entity {
         }
         clone.timeIntervalIds = new HashSet<>(timeIntervalIds);
         return clone;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
     }
 }
