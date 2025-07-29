@@ -7,13 +7,12 @@ import org.game.config.entity.CfgTimeIntervalFunction;
 import org.game.config.entity.ModuleEnum;
 import org.game.config.service.CfgCyclicFunctionService;
 import org.game.config.service.CfgTimeIntervalFunctionService;
-import org.game.logic.database.repository.CycleFunctionRepository;
-import org.game.logic.player.AbstractGameService;
-import org.game.logic.database.entity.CycleFunction;
-import org.game.logic.database.entity.FunctionInfo;
+import org.game.logic.AbstractGameService;
+import org.game.logic.entity.DbCycleFunction;
+import org.game.logic.entity.FunctionInfo;
 import org.game.logic.player.DailyReset;
 import org.game.logic.player.PlayerService;
-import org.game.logic.database.repository.FunctionRepository;
+import org.game.logic.repository.FunctionRepository;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
 import org.game.proto.struct.Login.PbRegisterReq;
 import org.slf4j.Logger;
@@ -37,24 +36,7 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
     private final Map<ModuleEnum, Module> extendModuleMap = new HashMap<>();
 
     @Autowired
-    private CycleFunctionRepository cycleFunctionRepository;
-
-    @Autowired
     private TimeIntervalManager timeIntervalManager;
-
-    @Override
-    public void load() {
-        super.load();
-        entity.init(cycleFunctionRepository.findByPlayerId(player.getId()));
-    }
-
-    @Override
-    protected void save(FunctionInfo entity, boolean cacheEvict) {
-        super.save(entity, cacheEvict);
-        for (CycleFunction cycleFunction : entity.getCycleFunctions().values()) {
-            cycleFunctionRepository.save(cycleFunction, cacheEvict);
-        }
-    }
 
     @Override
     public void register(PbRegisterReq registerMsg) {
@@ -92,21 +74,21 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
             isOpen = betweenDays % cfgCyclicFunction.getCycle() < cfgCyclicFunction.getOpenDays();
         }
 
-        Map<Integer, CycleFunction> cycleFunctions = entity.getCycleFunctions();
+        Map<Integer, DbCycleFunction> cycleFunctions = entity.getCycleFunctions();
         if (!cycleFunctions.containsKey(cfgCyclicFunction.getId())) {
             if (isOpen) {
                 open(cfgCyclicFunction, isSend);
-                cycleFunctions.put(cfgCyclicFunction.getId(), new CycleFunction(player.getId(), cfgCyclicFunction.getId(), dailyResetDate));
+                cycleFunctions.put(cfgCyclicFunction.getId(), new DbCycleFunction(cfgCyclicFunction.getId(), dailyResetDate));
             }
         } else {
-            CycleFunction cycleFunction = cycleFunctions.get(cfgCyclicFunction.getId());
+            DbCycleFunction dbCycleFunction = cycleFunctions.get(cfgCyclicFunction.getId());
             int cycle = cfgCyclicFunction.getCycle();
             // 判断是否在同一周期
-            if (getCycle(dailyResetDate, startDate, cycle) != getCycle(cycleFunction.getResetDate(), startDate, cycle)) {// 不在同一周期
+            if (getCycle(dailyResetDate, startDate, cycle) != getCycle(dbCycleFunction.getResetDate(), startDate, cycle)) {// 不在同一周期
                 close(cfgCyclicFunction, isSend);
                 if (isOpen) {
                     open(cfgCyclicFunction, isSend);
-                    cycleFunction.setResetDate(dailyResetDate);
+                    dbCycleFunction.setResetDate(dailyResetDate);
                 } else {
                     cycleFunctions.remove(cfgCyclicFunction.getId());
                 }

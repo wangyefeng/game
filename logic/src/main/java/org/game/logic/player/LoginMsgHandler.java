@@ -2,6 +2,7 @@ package org.game.logic.player;
 
 import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
+import org.game.logic.GameService;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.PlayerActorService;

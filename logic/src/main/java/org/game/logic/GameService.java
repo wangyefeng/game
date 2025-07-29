@@ -1,6 +1,7 @@
-package org.game.logic.player;
+package org.game.logic;
 
-import org.game.logic.database.entity.Entity;
+import org.game.logic.entity.Entity;
+import org.game.logic.player.Player;
 import org.game.proto.struct.Login;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public interface GameService<E extends Entity> {
     /**
      * 保存游戏数据
      */
-    void save(boolean cacheEvict);
+    void save();
 
     /**
      * 获取实体对象
@@ -44,9 +45,8 @@ public interface GameService<E extends Entity> {
 
     /**
      * 异步保存游戏数据
-     * @param cacheEvict 是否清理缓存
      */
-    void asyncSave(boolean cacheEvict);
+    void asyncSave();
 
     /**
      * 设置玩家对象

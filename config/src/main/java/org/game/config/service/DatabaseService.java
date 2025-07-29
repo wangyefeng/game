@@ -2,22 +2,22 @@ package org.game.config.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DatabaseService {
 
-    @PersistenceContext(unitName = "configPersistenceUnit")
+    @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional("configTransactionManager")
+    @Transactional
     public void lockDatabase() {
         // 执行原生 SQL 语句
         entityManager.createNativeQuery("FLUSH TABLES WITH READ LOCK").executeUpdate();
     }
 
-    @Transactional("configTransactionManager")
+    @Transactional
     public void unlockDatabase() {
         // 解锁数据库
         entityManager.createNativeQuery("UNLOCK TABLES").executeUpdate();

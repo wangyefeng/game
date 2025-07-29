@@ -4,13 +4,13 @@ import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.EmptyArrays;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
+import org.bson.Document;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
-import org.game.logic.actor.PlayerActorService;
 import org.game.logic.net.TcpServer;
-import org.game.logic.player.GameService;
 import org.game.logic.player.function.TimeIntervalManager;
+import org.game.logic.actor.PlayerActorService;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
@@ -60,6 +61,9 @@ public class Logic extends Server {
     private TimeIntervalManager timeIntervalManager;
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
     private List<MsgHandler<?>> msgHandlers;
 
     @Autowired
@@ -81,12 +85,22 @@ public class Logic extends Server {
      */
     @Override
     protected void start0() {
+        checkMongo();
         Protocols.init();
         registerHandler();
         ThreadPool.start();
         timeIntervalManager.init();
     }
 
+    /**
+     * 检查mongo是否可用
+     */
+    public void checkMongo() {
+        Document ping = mongoTemplate.executeCommand("{ping:1}");
+        if (ping.getDouble("ok") != 1.0) {
+            throw new RuntimeException("MongoDB not available");
+        }
+    }
 
     @Override
     protected void afterStart() throws Exception {

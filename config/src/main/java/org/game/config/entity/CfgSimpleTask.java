@@ -2,6 +2,7 @@ package org.game.config.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -12,6 +13,7 @@ public class CfgSimpleTask extends CfgTask {
     private int functionId;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @NotEmpty(message = "奖励不能为空")
     @Column(columnDefinition = "JSON COMMENT '奖励'")
     private SimpleItem[] rewards;
 
