@@ -53,6 +53,9 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     @Override
     public void consume(Item item) {
+        if (!enough(item)) {
+            throw new IllegalArgumentException("Not enough item, id:" + item.id() + " num:" + item.num());
+        }
         int id = item.id();
         switch (id) {
             case ItemIdConstant.COIN -> entity.setCoin(entity.getCoin() - item.num());

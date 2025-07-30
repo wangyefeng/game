@@ -6,6 +6,7 @@ import io.netty.channel.Channel;
 import org.game.common.event.Listener;
 import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
+import org.game.common.util.Assert;
 import org.game.config.Configs;
 import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
@@ -15,10 +16,7 @@ import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.ShutdownAction;
 import org.game.logic.database.entity.PlayerInfo;
-import org.game.logic.player.item.Addable;
-import org.game.logic.player.item.AddableItem;
-import org.game.logic.player.item.Consumable;
-import org.game.logic.player.item.ItemType;
+import org.game.logic.player.item.*;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -201,16 +199,16 @@ public class Player {
     }
 
     public boolean itemsEnough(Item... items) {
-        Collection<AddableItem> mergedItems = mergeItems(items);
+        Collection<AddableItem> mergedItems = ItemUtil.mergeItems(items);
         return mergedItemsEnough(mergedItems);
     }
 
     public <T extends Item> boolean itemsEnough(Collection<T> items) {
-        Collection<AddableItem> mergedItems = mergeItems(items);
+        Collection<AddableItem> mergedItems = ItemUtil.mergeItems(items);
         return mergedItemsEnough(mergedItems);
     }
 
-    private <T extends Item> boolean mergedItemsEnough(Collection<T> mergedItems) {
+    private boolean mergedItemsEnough(Collection<? extends Item> mergedItems) {
         for (Item item : mergedItems) {
             if (!itemEnough(item)) {
                 return false;
@@ -227,10 +225,10 @@ public class Player {
         if (consumable == null) {
             throw new IllegalArgumentException("consumable item type not found: " + type);
         }
-        return consumable.enough(item);
+        return !consumable.enough(item);
     }
 
-    public void consumeItem(Item item) {
+    private void consumeItem(Item item) {
         CfgItemService cfgItemService = Configs.of(CfgItemService.class);
         CfgItem cfg = cfgItemService.getCfg(item.id());
         ItemType type = ItemType.getType(cfg.getType());
@@ -241,35 +239,27 @@ public class Player {
         consumable.consume(item);
     }
 
+    private void checkItemsEnough(Collection<? extends Item> items) {
+        for (Item item : items) {
+            Assert.isTrue(itemEnough(item), "item not enough, id" + item.id() + " num:" + item.num());
+        }
+    }
+
 
     public void consumeItems(Item... items) {
-        for (Item item : items) {
+        Collection<AddableItem> mergeItems = ItemUtil.mergeItems(items);
+        checkItemsEnough(mergeItems);
+        for (Item item : mergeItems) {
             consumeItem(item);
         }
     }
 
     public void consumeItems(Collection<Item> items) {
-        for (Item item : items) {
+        Collection<AddableItem> mergeItems = ItemUtil.mergeItems(items);
+        checkItemsEnough(mergeItems);
+        for (Item item : mergeItems) {
             consumeItem(item);
         }
-    }
-
-    public <T extends Item> Collection<AddableItem> mergeItems(Collection<T> items) {
-        Map<Integer, AddableItem> result = new HashMap<>();
-        for (Item item : items) {
-            result.computeIfAbsent(item.id(), _ -> new AddableItem(item.id(), item.num()));
-            result.get(item.id()).add(item.num());
-        }
-        return result.values();
-    }
-
-    public Collection<AddableItem> mergeItems(Item[] items) {
-        Map<Integer, AddableItem> result = new HashMap<>();
-        for (Item item : items) {
-            result.computeIfAbsent(item.id(), _ -> new AddableItem(item.id(), item.num()));
-            result.get(item.id()).add(item.num());
-        }
-        return result.values();
     }
 
     public void dailyReset(boolean isSend) {
