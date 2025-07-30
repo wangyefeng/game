@@ -5,7 +5,7 @@
         <expiry>
             <none/>
         </expiry>
-        <heap>1000000</heap>
+        <heap>10000</heap>
     </cache>
 
     <!-- 默认的hibernate查询结果缓存配置 -->
@@ -13,12 +13,12 @@
         <expiry>
             <none/>
         </expiry>
-        <heap>1000000</heap>
+        <heap>10000</heap>
     </cache>
 
-    <!-- entity缓存配置模板 -->
+    <!-- entity缓存配置模板 程序自己会管理缓存的生效和失效 这里只配置一个保底，时机上没有太大的意义 -->
     <cache-template name="entity">
-        <heap>6000000</heap>
+        <heap>500000</heap>
     </cache-template>
 
     <cache alias="org.game.logic.database.entity.PlayerInfo" uses-template="entity"/>
