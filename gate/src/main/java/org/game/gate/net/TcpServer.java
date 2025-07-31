@@ -13,6 +13,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import jakarta.annotation.Nonnull;
+import org.game.proto.MsgHandlerFactory;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class TcpServer {
     @Autowired
     private SslConfig sslConfig;
 
+    @Autowired
+    private MsgHandlerFactory msgHandlerFactory;
+
     private EventLoopGroup bossGroup;
 
     private EventLoopGroup workerGroup;
@@ -49,7 +53,7 @@ public class TcpServer {
         workerGroup = new NioEventLoopGroup(); // 用于读写流处理
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            ClientHandler clientHandler = new ClientHandler();
+            ClientHandler clientHandler = new ClientHandler(msgHandlerFactory);
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(@Nonnull SocketChannel ch) {
@@ -60,7 +64,7 @@ public class TcpServer {
                     }
                     pipeline.addLast(new ReadTimeoutHandler(20));
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
-                    pipeline.addLast(new TcpCodec());
+                    pipeline.addLast(new TcpCodec(msgHandlerFactory));
                     pipeline.addLast(clientHandler);
                 }
             });

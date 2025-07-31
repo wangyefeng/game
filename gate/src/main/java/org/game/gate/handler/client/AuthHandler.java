@@ -13,7 +13,7 @@ import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.gate.thread.ThreadPool;
-import org.game.proto.CodeMsgHandler;
+import org.game.proto.AbstractCodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
 import org.game.proto.protocol.GateToClientProtocol;
@@ -35,7 +35,7 @@ import java.time.Duration;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
-public final class AuthHandler implements CodeMsgHandler<PbAuthReq> {
+public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
 
     private static final Logger log = LoggerFactory.getLogger(AuthHandler.class);
 

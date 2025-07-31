@@ -12,6 +12,7 @@ import org.game.gate.thread.ThreadPool;
 import org.game.proto.CodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.MsgHandler;
+import org.game.proto.MsgHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +24,15 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
-    private LogicClient logicClient;
+    private final LogicClient logicClient;
+
+    private final MsgHandlerFactory msgHandlerFactory;
 
     public static final AttributeKey<List<Integer>> PLAYERS_KEY = AttributeKey.newInstance("players");
 
-    public LogicHandler(LogicClient logicClient) {
+    public LogicHandler(LogicClient logicClient, MsgHandlerFactory msgHandlerFactory) {
         this.logicClient = logicClient;
+        this.msgHandlerFactory = msgHandlerFactory;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
-        MsgHandler handler = MsgHandler.getHandler(message.getProtocol());
+        MsgHandler handler = msgHandlerFactory.getHandler(message.getProtocol());
         if (handler == null) {
             log.warn("illegal message : {}", message);
             return;

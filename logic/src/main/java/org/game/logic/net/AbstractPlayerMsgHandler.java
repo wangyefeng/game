@@ -2,12 +2,13 @@ package org.game.logic.net;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
+import org.game.proto.AbstractMsgHandler;
 import org.game.proto.PlayerMsgHandler;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractPlayerMsgHandler<T extends Message> implements PlayerMsgHandler<T> {
+public abstract class AbstractPlayerMsgHandler<T extends Message> extends AbstractMsgHandler<T> implements PlayerMsgHandler<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPlayerMsgHandler.class);
 
@@ -26,7 +27,7 @@ public abstract class AbstractPlayerMsgHandler<T extends Message> implements Pla
                 log.warn("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
             } else if (cost > 50) {
                 log.info("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
-            } else if (log.isDebugEnabled()){
+            } else if (log.isDebugEnabled()) {
                 log.debug("处理协议耗时：{}毫秒 协议：{}", cost, Protocol.toString(getProtocol()));
             }
         }

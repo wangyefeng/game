@@ -9,21 +9,24 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
-import org.game.proto.MsgHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.game.gate.thread.ThreadPool;
-import org.game.proto.DecoderType;
-import org.game.proto.MessageCode;
-import org.game.proto.Topic;
+import org.game.proto.*;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class LogicDecoder extends ByteToMessageDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(LogicDecoder.class);
+
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    public LogicDecoder(MsgHandlerFactory msgHandlerFactory) {
+        this.msgHandlerFactory = msgHandlerFactory;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -54,7 +57,7 @@ public class LogicDecoder extends ByteToMessageDecoder {
         if (type == DecoderType.MESSAGE_CODE.getCode()) {
             if (to == Topic.GATE.getCode()) {
                 ByteBufInputStream inputStream = new ByteBufInputStream(in);
-                Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
+                Message message = msgHandlerFactory.getHandler(protocol).parseFrom(inputStream);
                 out.add(MessageCode.of(protocol, message));
             } else {
                 log.warn("目前不支持 消息类型：MESSAGE_CODE 转发消息给{} 敬请期待！", to);

@@ -12,21 +12,9 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import org.game.client.handler.LoginHandler;
-import org.game.client.handler.PlayerTokenValidateHandler;
-import org.game.client.handler.PongHandler;
-import org.game.client.handler.TaskAddHandler;
-import org.game.client.handler.TaskRemoveHandler;
-import org.game.client.handler.TaskUpdateHandler;
 import org.game.common.http.HttpResp;
 import org.game.common.random.RandomUtil;
-import org.game.proto.CodeMsgEncode;
-import org.game.proto.CommonDecoder;
-import org.game.proto.MessageCode;
-import org.game.proto.MessageCodeDecoder;
-import org.game.proto.MessagePlayerDecoder;
-import org.game.proto.MsgHandler;
-import org.game.proto.Topic;
+import org.game.proto.*;
 import org.game.proto.protocol.Protocol;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
@@ -59,6 +47,9 @@ public class Client implements CommandLineRunner {
     private ResourceLoader resourceLoader;
 
     private SslContext sslContext;
+
+    @Autowired
+    private MsgHandlerFactory msgHandlerFactory;
 
     public Client() {
         this.host = "localhost";
@@ -93,8 +84,8 @@ public class Client implements CommandLineRunner {
                             }
                             pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
                             CommonDecoder commonDecoder = new CommonDecoder(Topic.CLIENT.getCode());
-                            commonDecoder.registerDecoder(new MessageCodeDecoder());
-                            commonDecoder.registerDecoder(new MessagePlayerDecoder());
+                            commonDecoder.registerDecoder(new MessageCodeDecoder(msgHandlerFactory));
+                            commonDecoder.registerDecoder(new MessagePlayerDecoder(msgHandlerFactory));
                             pipeline.addLast(commonDecoder);
                             pipeline.addLast(encode);
                             pipeline.addLast(handler);
@@ -124,12 +115,6 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
-        MsgHandler.register(new PongHandler());
-        MsgHandler.register(new PlayerTokenValidateHandler());
-        MsgHandler.register(new LoginHandler());
-        MsgHandler.register(new TaskUpdateHandler());
-        MsgHandler.register(new TaskAddHandler());
-        MsgHandler.register(new TaskRemoveHandler());
         WebClient client = WebClient.builder().baseUrl("http://127.0.0.1/auth").build();
         int num = 1;
         for (int i = 1; i <= num; i++) {

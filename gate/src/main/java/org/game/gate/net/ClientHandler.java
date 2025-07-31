@@ -12,18 +12,26 @@ import org.game.gate.player.Players;
 import org.game.proto.CodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.MsgHandler;
+import org.game.proto.MsgHandlerFactory;
 import org.game.proto.protocol.GateToLogicProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.SocketException;
 
 @ChannelHandler.Sharable
+@Component
 public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
-    public ClientHandler() {
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    @Autowired
+    public ClientHandler(MsgHandlerFactory msgHandlerFactory) {
+        this.msgHandlerFactory = msgHandlerFactory;
     }
 
     @Override
@@ -35,7 +43,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) throws Exception {
-        MsgHandler<?> handler = MsgHandler.getHandler(message.getProtocol());
+        MsgHandler<?> handler = msgHandlerFactory.getHandler(message.getProtocol());
         if (handler == null) {
             log.error("illegal message code: {}", message.getCode());
             return;

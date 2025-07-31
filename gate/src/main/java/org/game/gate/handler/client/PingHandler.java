@@ -4,7 +4,7 @@ import com.google.protobuf.Empty;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import org.game.proto.CodeMsgHandler;
+import org.game.proto.AbstractCodeMsgHandler;
 import org.game.proto.DecoderType;
 import org.game.proto.Topic;
 import org.game.proto.protocol.ClientToGateProtocol;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class PingHandler implements CodeMsgHandler<Empty> {
+public final class PingHandler extends AbstractCodeMsgHandler<Empty> {
 
     private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
 

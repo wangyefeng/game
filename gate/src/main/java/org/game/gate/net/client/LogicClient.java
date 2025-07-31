@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.game.gate.player.Player;
+import org.game.proto.MsgHandlerFactory;
 import org.game.proto.protocol.Protocol;
 
 import java.util.HashSet;
@@ -49,14 +50,17 @@ public class LogicClient extends Client {
 
     private final ManagedChannel grpcChannel;
 
-    public LogicClient(String id, String host, int port, int rpcPort) {
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    public LogicClient(String id, String host, int port, int rpcPort, MsgHandlerFactory msgHandlerFactory) {
         super(id, host, port, "logic");
         grpcChannel = ManagedChannelBuilder.forAddress(host, rpcPort).usePlaintext().build();
+        this.msgHandlerFactory = msgHandlerFactory;
     }
 
     @Override
     public void init() {
-        ChannelHandler handler = new LogicHandler(this);
+        ChannelHandler handler = new LogicHandler(this, msgHandlerFactory);
         eventLoopGroup = new NioEventLoopGroup(1);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
@@ -70,7 +74,7 @@ public class LogicClient extends Client {
                 cp.addLast(new IdleStateHandler(READER_IDLE_TIME, WRITER_IDLE_TIME, 0, TimeUnit.SECONDS));
                 cp.addLast(heartBeatHandler);
                 cp.addLast(new LengthFieldBasedFrameDecoder(LENGTH_LIMIT, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
-                cp.addLast(new LogicDecoder());
+                cp.addLast(new LogicDecoder(msgHandlerFactory));
                 cp.addLast(gateCodeEncode, gatePlayerEncode);// 自定义编码器
                 cp.addLast(handler);
             }

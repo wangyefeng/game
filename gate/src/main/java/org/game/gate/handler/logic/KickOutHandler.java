@@ -4,7 +4,7 @@ import com.google.protobuf.Int32Value;
 import io.netty.channel.Channel;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
-import org.game.proto.CodeMsgHandler;
+import org.game.proto.AbstractCodeMsgHandler;
 import org.game.proto.protocol.GateToClientProtocol;
 import org.game.proto.protocol.LogicToGateProtocol;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KickOutHandler implements CodeMsgHandler<Int32Value> {
+public class KickOutHandler extends AbstractCodeMsgHandler<Int32Value> {
 
     private static final Logger log = LoggerFactory.getLogger(KickOutHandler.class);
 

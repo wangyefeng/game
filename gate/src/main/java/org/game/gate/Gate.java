@@ -12,7 +12,7 @@ import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
 import org.game.gate.zookepper.ZookeeperProperties;
-import org.game.proto.MsgHandler;
+import org.game.proto.MsgHandlerFactory;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +48,9 @@ public class Gate extends Server {
     @Value("${zookeeper.root-path}")
     private String servicePath;
 
+    @Autowired
+    private MsgHandlerFactory msgHandlerFactory;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(Level.PARANOID);
@@ -57,7 +60,6 @@ public class Gate extends Server {
     protected void start0() {
         ThreadPool.start();
         Protocols.init();
-        registerHandler();
         startZkServiceListener();
     }
 
@@ -74,7 +76,7 @@ public class Gate extends Server {
                         // 新增节点
                         log.info("新增logic服务器节点：{}", childData.getPath());
                         ServerInfo serverInfo = JsonUtil.parseJson(new String(childData.getData()), ServerInfo.class);
-                        LogicClient logicClient = new LogicClient(childData.getPath(), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort);
+                        LogicClient logicClient = new LogicClient(childData.getPath(), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort, msgHandlerFactory);
                         logicClient.start();
                         clientGroup.add(logicClient);
                     }
@@ -113,11 +115,6 @@ public class Gate extends Server {
         SpringApplication.exit(applicationContext);
     }
 
-    private void registerHandler() {
-        log.info("handler registering...");
-        applicationContext.getBeansOfType(MsgHandler.class).values().forEach(MsgHandler::register);// 注册所有handler
-        log.info("handler register end");
-    }
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Gate.class);

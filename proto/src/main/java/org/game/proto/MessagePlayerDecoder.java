@@ -12,7 +12,10 @@ import org.springframework.util.Assert;
  */
 public class MessagePlayerDecoder implements Decoder {
 
-    public MessagePlayerDecoder() {
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    public MessagePlayerDecoder(MsgHandlerFactory msgHandlerFactory) {
+        this.msgHandlerFactory = msgHandlerFactory;
     }
 
     @Override
@@ -23,7 +26,7 @@ public class MessagePlayerDecoder implements Decoder {
         Protocol protocol = Protocols.getProtocol(from, to, code);
         Assert.notNull(protocol, "No protocol found for from: " + from + ", to: " + to + ", code: " + code);
         ByteBufInputStream inputStream = new ByteBufInputStream(msg);
-        Message message = (Message) MsgHandler.getParser(protocol).parseFrom(inputStream);
+        Message message = msgHandlerFactory.getHandler(protocol).parseFrom(inputStream);
         return MessagePlayer.of(playerId, protocol, message);
     }
 

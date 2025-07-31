@@ -9,10 +9,8 @@ import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
 import org.game.logic.actor.PlayerActorService;
 import org.game.logic.net.TcpServer;
-import org.game.logic.player.GameService;
 import org.game.logic.player.function.TimeIntervalManager;
 import org.game.logic.thread.ThreadPool;
-import org.game.proto.MsgHandler;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +23,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.List;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = Tool.class))
@@ -60,9 +56,6 @@ public class Logic extends Server {
     private TimeIntervalManager timeIntervalManager;
 
     @Autowired
-    private List<MsgHandler<?>> msgHandlers;
-
-    @Autowired
     private PlayerActorService playerActorService;
 
     static {
@@ -82,7 +75,6 @@ public class Logic extends Server {
     @Override
     protected void start0() {
         Protocols.init();
-        registerHandler();
         ThreadPool.start();
         timeIntervalManager.init();
     }
@@ -140,11 +132,5 @@ public class Logic extends Server {
         playerActorService.close();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
-    }
-
-    private void registerHandler() {
-        log.info("handler registering...");
-        msgHandlers.forEach(MsgHandler::register);// 注册所有handler
-        log.info("handler register end");
     }
 }

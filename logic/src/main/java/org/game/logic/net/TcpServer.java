@@ -11,13 +11,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.annotation.Nonnull;
-import org.game.proto.CommonDecoder;
-import org.game.proto.MessageCodeDecoder;
-import org.game.proto.MessagePlayerDecoder;
-import org.game.proto.PlayerMsgEncode;
-import org.game.proto.Topic;
+import org.game.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +49,15 @@ public class TcpServer {
 
     private NioEventLoopGroup group;
 
+    @Autowired
+    private MsgHandlerFactory msgHandlerFactory;
+
+    @Autowired
+    private TcpCodeMsgHandler codeMsgHandler;
+
+    @Autowired
+    private TcpPlayerMsgHandler playerMsgHandler;
+
     public TcpServer(@Value("${logic.tcp-port}") int port) {
         this.port = port;
     }
@@ -63,8 +69,6 @@ public class TcpServer {
         group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            TcpCodeMsgHandler codeMsgHandler = new TcpCodeMsgHandler();
-            TcpPlayerMsgHandler playerMsgHandler = new TcpPlayerMsgHandler();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
@@ -75,8 +79,8 @@ public class TcpServer {
                     pipeline.addLast(heartBeatHandler);
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));
                     CommonDecoder commonDecoder = new CommonDecoder(Topic.LOGIC.getCode());
-                    commonDecoder.registerDecoder(new MessageCodeDecoder());
-                    commonDecoder.registerDecoder(new MessagePlayerDecoder());
+                    commonDecoder.registerDecoder(new MessageCodeDecoder(msgHandlerFactory));
+                    commonDecoder.registerDecoder(new MessagePlayerDecoder(msgHandlerFactory));
                     pipeline.addLast(commonDecoder);
                     pipeline.addLast(codeMsgHandler);
                     pipeline.addLast(playerMsgHandler);

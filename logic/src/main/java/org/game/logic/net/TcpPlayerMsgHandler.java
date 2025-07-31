@@ -6,10 +6,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.game.proto.MessagePlayer;
 import org.game.proto.MsgHandler;
+import org.game.proto.MsgHandlerFactory;
 import org.game.proto.PlayerMsgHandler;
 import org.game.proto.protocol.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 玩家消息处理器
@@ -17,14 +20,18 @@ import org.slf4j.LoggerFactory;
  * @author wangyefeng
  */
 @ChannelHandler.Sharable
+@Component
 public class TcpPlayerMsgHandler extends SimpleChannelInboundHandler<MessagePlayer<?>> {
+
+    @Autowired
+    private MsgHandlerFactory msgHandlerFactory;
 
     private static final Logger log = LoggerFactory.getLogger(TcpPlayerMsgHandler.class);
 
     @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, MessagePlayer<?> message) {
-        MsgHandler<? extends Message> handler = MsgHandler.getHandler(message.getProtocol());
+        MsgHandler<? extends Message> handler = msgHandlerFactory.getHandler(message.getProtocol());
         if (handler == null) {
             log.error("协议未定义处理器：{}", Protocol.toString(message.getProtocol()));
             return;
