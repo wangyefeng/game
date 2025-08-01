@@ -3,7 +3,7 @@ package org.game.proto;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 
-public interface CodeMsgHandler<T extends Message> extends MsgHandler<T> {
+public interface CodeMsgHandler<M extends Message> extends MsgHandler<M> {
 
-    void handle(Channel channel, T msg) throws Exception;
+    void handle(Channel channel, M msg) throws Exception;
 }

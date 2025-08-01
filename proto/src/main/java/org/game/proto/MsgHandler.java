@@ -6,10 +6,10 @@ import org.game.proto.protocol.Protocol;
 
 import java.io.InputStream;
 
-public interface MsgHandler<T extends Message> {
+public interface MsgHandler<M extends Message> {
 
     Protocol getProtocol();
 
-    T parseFrom(InputStream input) throws InvalidProtocolBufferException;
+    M parseFrom(InputStream input) throws InvalidProtocolBufferException;
 
 }
