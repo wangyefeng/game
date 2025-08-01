@@ -75,7 +75,7 @@ public class MsgHandlerResolver {
                     }
                 }
 
-                return resolveGenericTypeRecursive(rawClass.getGenericSuperclass(), targetInterface, new HashMap<>(typeMap));
+                return resolveGenericTypeRecursive(rawClass.getGenericSuperclass(), targetInterface, typeMap);
             }
         }
 
