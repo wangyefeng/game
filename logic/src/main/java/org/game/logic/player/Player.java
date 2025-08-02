@@ -26,7 +26,9 @@ import org.game.proto.struct.Login;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Player {
@@ -62,11 +64,18 @@ public class Player {
 
     private final ActorRef<Action> actor;
 
+    /**
+     * 数据库异步执行器
+     */
+    private final Executor dbExecutor;
+
     public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<Action> actor) {
         this.id = id;
         this.channel = channel;
         initService(gameServices);
         this.actor = actor;
+        ThreadPoolExecutor[] playerDBExecutors = ThreadPool.getPlayerDBExecutors();
+        this.dbExecutor = playerDBExecutors[id % playerDBExecutors.length];
     }
 
     private void initService(Collection<GameService> gameServices) {
@@ -288,6 +297,6 @@ public class Player {
     }
 
     public void dbExecute(PlayerAction action) {
-        ThreadPool.getPlayerDBExecutor(id).execute(action);
+        dbExecutor.execute(action);
     }
 }

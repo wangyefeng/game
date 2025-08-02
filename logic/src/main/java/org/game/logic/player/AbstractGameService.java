@@ -53,7 +53,7 @@ public abstract class AbstractGameService<E extends BaseInfo, R extends Reposito
             copy = entity;
         }
         final E finalCopy = copy;
-        ThreadPool.getPlayerDBExecutor(player.getId()).execute(() -> save(finalCopy, cacheEvict));
+        player.dbExecute(() -> save(finalCopy, cacheEvict));
     }
 
     protected void save(E entity, boolean cacheEvict) {

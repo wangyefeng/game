@@ -42,11 +42,11 @@ public abstract class ThreadPool {
         return scheduledExecutor.scheduleAtFixedRate(runnable, delay, period, unit);
     }
 
-    public static ThreadPoolExecutor getPlayerDBExecutor(int playerId) {
-        return playerDBExecutors[playerId % playerDBExecutors.length];
-    }
-
     public static ScheduledExecutorService getScheduledExecutor() {
         return scheduledExecutor;
+    }
+
+    public static ThreadPoolExecutor[] getPlayerDBExecutors() {
+        return playerDBExecutors;
     }
 }
