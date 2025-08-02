@@ -38,7 +38,7 @@ public class TimerTasks {
     @Async
     @Scheduled(cron = "*/10 * * * * ?")
     public void log() {
-        log.info("在线玩家数量{}", Players.getPlayers().size());
+        log.debug("在线玩家数量{}", Players.getPlayers().size());
     }
 
 }
