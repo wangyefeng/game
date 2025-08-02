@@ -4,5 +4,5 @@ public interface Item {
 
     int id();
 
-    int num();
+    long num();
 }

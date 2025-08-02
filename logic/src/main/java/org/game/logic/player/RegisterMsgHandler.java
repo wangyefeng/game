@@ -51,7 +51,6 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
             Players.addPlayer(player);
             Builder resp = PbLoginResp.newBuilder();
             resp.setIsNew(true);
-            player.addItem(new SimpleItem(1, 10));
             player.loginResp(resp);
             player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
         }));

@@ -11,6 +11,7 @@ import org.game.logic.database.entity.TaskInfo;
 import org.game.logic.database.repository.DbTaskRepository;
 import org.game.logic.database.repository.TaskRepository;
 import org.game.logic.player.function.AbstractModuleService;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Common.PbIntArray;
 import org.game.proto.struct.Login.PbLoginResp.Builder;
@@ -107,6 +108,7 @@ public class TaskService extends AbstractModuleService<TaskInfo, TaskRepository>
                 if (isSend) {
                     pbTasks.addVal(task.getId());
                 }
+                player.execute(() -> dbTaskRepository.delete(task));
             }
         }
         if (isSend) {

@@ -35,8 +35,8 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
         entity.setLevel(entity.getLevel() + 1);
         player.updateEvent(PlayerEvent.LEVEL_UP, entity.getLevel());
         if (entity.getLevel() % 5 == 0) {
-            player.addItem(new SimpleItem(10, 100));
-            player.addItem(new SimpleItem(1, 1000));
+            player.addItem(10, 100);
+            player.addItem(1, 1000);
         }
     }
 
@@ -64,11 +64,10 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
     }
 
     @Override
-    public void add(Item item) {
-        int id = item.id();
-        switch (id) {
-            case ItemIdConstant.COIN -> entity.setCoin(entity.getCoin() + item.num());
-            default -> throw new IllegalArgumentException("Invalid item id: " + id);
+    public void add(int itemId, long num) {
+        switch (itemId) {
+            case ItemIdConstant.COIN -> entity.setCoin(entity.getCoin() + num);
+            default -> throw new IllegalArgumentException("Invalid item id: " + itemId);
         }
     }
 

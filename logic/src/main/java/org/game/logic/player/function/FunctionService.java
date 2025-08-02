@@ -109,11 +109,13 @@ public class FunctionService extends AbstractGameService<FunctionInfo, FunctionR
                     cycleFunction.setResetDate(dailyResetDate);
                 } else {
                     cycleFunctions.remove(cfgCyclicFunction.getId());
+                    player.dbExecute(() -> cycleFunctionRepository.delete(cycleFunction));
                 }
             } else {// 在同一周期
                 if (!isOpen) {// 关闭
                     close(cfgCyclicFunction, isSend);
                     cycleFunctions.remove(cfgCyclicFunction.getId());
+                    player.dbExecute(() -> cycleFunctionRepository.delete(cycleFunction));
                 }
             }
         }

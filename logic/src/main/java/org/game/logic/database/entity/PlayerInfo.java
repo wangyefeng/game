@@ -1,12 +1,14 @@
 package org.game.logic.database.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
-@jakarta.persistence.Entity
+@Entity
 @Table
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PlayerInfo extends BaseInfo {
@@ -15,7 +17,7 @@ public class PlayerInfo extends BaseInfo {
 
     private int level;
 
-    private int coin;
+    private long coin;
 
     private LocalDate dailyResetDate;
 
@@ -51,11 +53,11 @@ public class PlayerInfo extends BaseInfo {
         this.level = level;
     }
 
-    public int getCoin() {
+    public long getCoin() {
         return coin;
     }
 
-    public void setCoin(int coin) {
+    public void setCoin(long coin) {
         if (coin < 0) {
             throw new IllegalArgumentException("金币不能为负数。");
         }

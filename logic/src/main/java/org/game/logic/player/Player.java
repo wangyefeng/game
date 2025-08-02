@@ -11,6 +11,7 @@ import org.game.config.Configs;
 import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
+import org.game.config.entity.SimpleItem;
 import org.game.config.service.CfgItemService;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
@@ -187,15 +188,19 @@ public class Player {
         }
     }
 
-    public void addItem(Item item) {
+    public void addItem(int itemId, long num) {
         CfgItemService cfgItemService = Configs.of(CfgItemService.class);
-        CfgItem cfg = cfgItemService.getCfg(item.id());
+        CfgItem cfg = cfgItemService.getCfg(itemId);
         ItemType type = ItemType.getType(cfg.getType());
         Addable addable = addableService.get(type);
         if (addable == null) {
             throw new IllegalArgumentException("addable item type not found: " + type);
         }
-        addable.add(item);
+        addable.add(itemId, num);
+    }
+
+    public void addItem(Item item) {
+        addItem(item.id(), item.num());
     }
 
     public boolean itemsEnough(Item... items) {
@@ -280,5 +285,9 @@ public class Player {
 
     public boolean isOnline() {
         return channel != null;
+    }
+
+    public void dbExecute(PlayerAction action) {
+        ThreadPool.getPlayerDBExecutor(id).execute(action);
     }
 }

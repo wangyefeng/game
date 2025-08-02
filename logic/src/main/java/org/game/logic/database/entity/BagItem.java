@@ -21,7 +21,7 @@ public class BagItem implements Cloneable, Item {
     @Column(name = "item_id", columnDefinition = "INT COMMENT '物品id'")
     private int itemId;
 
-    private int num;
+    private long num;
 
     private BagItem() {
         // for JPA
@@ -31,7 +31,7 @@ public class BagItem implements Cloneable, Item {
         this(playerId, item.id(), item.num());
     }
 
-    public BagItem(int playerId, int itemId, int num) {
+    public BagItem(int playerId, int itemId, long num) {
         if (num < 0) {
             throw new IllegalArgumentException("num must be non-negative");
         }
@@ -44,25 +44,25 @@ public class BagItem implements Cloneable, Item {
         return itemId;
     }
 
-    public int getNum() {
+    public long getNum() {
         return num;
     }
 
-    public void setNum(int num) {
+    public void setNum(long num) {
         if (num < 0) {
             throw new IllegalArgumentException("num must be non-negative");
         }
         this.num = num;
     }
 
-    public void addNum(int num) {
+    public void addNum(long num) {
         if (num < 0) {
             throw new IllegalArgumentException("num must be non-negative");
         }
         this.num += num;
     }
 
-    public void delNum(int num) {
+    public void delNum(long num) {
         if (num < 0) {
             throw new IllegalArgumentException("num must be non-negative");
         }
@@ -80,7 +80,7 @@ public class BagItem implements Cloneable, Item {
     }
 
     @Override
-    public int num() {
+    public long num() {
         return num;
     }
 

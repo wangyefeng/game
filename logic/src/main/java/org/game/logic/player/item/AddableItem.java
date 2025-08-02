@@ -6,9 +6,9 @@ public class AddableItem implements Item {
 
     private final int id;
 
-    private int num;
+    private long num;
 
-    public AddableItem(int id, int num) {
+    public AddableItem(int id, long num) {
         this.id = id;
         this.num = num;
     }
@@ -19,11 +19,11 @@ public class AddableItem implements Item {
     }
 
     @Override
-    public int num() {
+    public long num() {
         return num;
     }
 
-    public void add(int num) {
+    public void add(long num) {
         this.num += num;
     }
 }

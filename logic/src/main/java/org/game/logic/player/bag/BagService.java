@@ -1,6 +1,7 @@
 package org.game.logic.player.bag;
 
 import org.game.config.entity.Item;
+import org.game.config.entity.SimpleItem;
 import org.game.logic.database.entity.BagInfo;
 import org.game.logic.database.entity.BagItem;
 import org.game.logic.database.repository.BagItemRepository;
@@ -67,13 +68,13 @@ public class BagService extends AbstractGameService<BagInfo, BagRepository> impl
     }
 
     @Override
-    public void add(Item item) {
+    public void add(int itemId, long num) {
         Map<Integer, BagItem> items = entity.getItems();
-        BagItem it = items.get(item.id());
+        BagItem it = items.get(itemId);
         if (it != null) {
-            it.addNum(item.num());
+            it.addNum(num);
         } else {
-            items.put(item.id(), new BagItem(player.getId(), item));
+            items.put(itemId, new BagItem(player.getId(), new SimpleItem(itemId, num)));
         }
     }
 

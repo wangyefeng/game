@@ -4,7 +4,7 @@ import org.game.config.entity.Item;
 
 public interface Addable {
 
-    void add(Item item);
+    void add(int itemId, long num);
 
     ItemType getType();
 }
