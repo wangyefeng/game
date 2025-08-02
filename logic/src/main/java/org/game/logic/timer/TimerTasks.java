@@ -10,27 +10,35 @@ import org.springframework.stereotype.Component;
 
 /**
  * 定时器集中管理
- * 
- * @author 王叶峰
  *
+ * @author 王叶峰
  */
 @Component
 public class TimerTasks {
 
-	private static final Logger log = LoggerFactory.getLogger(TimerTasks.class);
+    private static final Logger log = LoggerFactory.getLogger(TimerTasks.class);
 
-	/**
-	 * 0点重置玩家数据
-	 */
-	@Async
-	@Scheduled(cron = "0 0 0 * * ?")
-	public void playerResetData() {
-		log.info("0点重置数据");
-		synchronized (Players.getPlayers()) {
-			for (Player player : Players.getPlayers().values()) {
-				player.execute(() -> player.dailyReset(true));
-			}
-		}
-	}
+    /**
+     * 0点重置玩家数据
+     */
+    @Async
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void playerResetData() {
+        log.info("0点重置数据");
+        synchronized (Players.getPlayers()) {
+            for (Player player : Players.getPlayers().values()) {
+                player.execute(() -> player.dailyReset(true));
+            }
+        }
+    }
+
+    /**
+     * 输出日志
+     */
+    @Async
+    @Scheduled(cron = "*/10 * * * * ?")
+    public void log() {
+        log.info("在线玩家数量{}", Players.getPlayers().size());
+    }
 
 }

@@ -11,7 +11,6 @@ import org.game.config.Configs;
 import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
-import org.game.config.entity.SimpleItem;
 import org.game.config.service.CfgItemService;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
@@ -27,8 +26,8 @@ import org.game.proto.struct.Login;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Player {
@@ -74,7 +73,7 @@ public class Player {
         this.channel = channel;
         initService(gameServices);
         this.actor = actor;
-        ThreadPoolExecutor[] playerDBExecutors = ThreadPool.getPlayerDBExecutors();
+        ExecutorService[] playerDBExecutors = ThreadPool.getPlayerDBExecutors();
         this.dbExecutor = playerDBExecutors[id % playerDBExecutors.length];
     }
 
