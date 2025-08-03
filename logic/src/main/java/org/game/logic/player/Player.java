@@ -110,7 +110,7 @@ public class Player {
     }
 
     public void writeToClient(LogicToClientProtocol protocol) {
-        writeToClient(protocol, null);
+        channel.writeAndFlush(MessagePlayer.of(getId(), protocol));
     }
 
     public void writeToGate(LogicToGateProtocol protocol, Message message) {
@@ -118,7 +118,7 @@ public class Player {
     }
 
     public void writeToGate(LogicToGateProtocol protocol) {
-        writeToGate(protocol, null);
+        channel.writeAndFlush(MessagePlayer.of(getId(), protocol));
     }
 
     public void asyncSave(boolean cacheEvict) {
