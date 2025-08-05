@@ -237,7 +237,7 @@ public class ExcelToMysql implements InitializingBean {
                                 if (cellType == CellType.FORMULA) {
                                     sql.append(((XSSFCell) cell).getCTCell().getV());
                                 } else if (Strings.isBlank(cell.toString())) {
-                                    sql.append("0, ");
+                                    sql.append(0);
                                 } else {
                                     sql.append(Math.round(Double.parseDouble(cell.toString())));
                                 }
