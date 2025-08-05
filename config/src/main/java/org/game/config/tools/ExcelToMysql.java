@@ -1,5 +1,6 @@
 package org.game.config.tools;
 
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.slf4j.Logger;
@@ -235,6 +236,8 @@ public class ExcelToMysql implements InitializingBean {
                             if (TYPE_INT.equals(type) || TYPE_LONG.equals(type) || TYPE_BOOL.equals(type)) {
                                 if (cellType == CellType.FORMULA) {
                                     sql.append(((XSSFCell) cell).getCTCell().getV());
+                                } else if (Strings.isBlank(cell.toString())) {
+                                    sql.append("0, ");
                                 } else {
                                     sql.append(Math.round(Double.parseDouble(cell.toString())));
                                 }
