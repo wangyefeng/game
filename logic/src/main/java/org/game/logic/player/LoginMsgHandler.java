@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.PlayerActorService;
+import org.game.logic.actor.ShutdownAction;
 import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.logic.net.ChannelKeys;
 import org.game.proto.protocol.ClientToLogicProtocol;
@@ -36,7 +37,7 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
         log.info("玩家{}登录游戏", playerId);
         Player p = Players.getPlayer(playerId);
         if (p != null) {
-            p.execute(() -> login(channel, data, p));
+            p.execute(() -> login(channel, data, p, true));
         } else {
             ActorRef<Action> playerActor = playerActorService.createActor(playerId);
             playerActor.tell((PlayerAction) () -> {
@@ -44,16 +45,17 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
                 PlayerService playerService = player.getService(PlayerService.class);
                 if (!playerService.playerExists()) {
                     log.warn("玩家登录失败，玩家 {}不存在", playerId);
+                    playerActor.tell(ShutdownAction.INSTANCE);
                     return;
                 }
                 Players.addPlayer(player);
-                login(channel, data, player);
+                login(channel, data, player, false);
             });
         }
     }
 
-    private void login(Channel channel, PbLoginReq data, Player player) {
-        player.login(data, channel);
+    private void login(Channel channel, PbLoginReq data, Player player, boolean isReconnect) {
+        player.login(data, channel, isReconnect);
         channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
         Builder resp = PbLoginResp.newBuilder();
         resp.setIsNew(false);

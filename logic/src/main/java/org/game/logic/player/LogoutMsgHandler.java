@@ -14,12 +14,9 @@ public class LogoutMsgHandler extends PlayerHandler<Empty> {
 
     @Override
     protected void handle(Player player, Empty message) {
-        log.info("玩家{}退出游戏", player.getId());
-        if (player.isOnline()) {
+        if (!player.isOnline()) {
             return;
         }
-        Players.removePlayer(player.getId());
-        player.getChannel().attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) player.getId());
         player.logout();
     }
 

@@ -17,6 +17,7 @@ import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.ShutdownAction;
 import org.game.logic.database.entity.PlayerInfo;
+import org.game.logic.net.ChannelKeys;
 import org.game.logic.player.item.*;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
@@ -57,6 +58,11 @@ public class Player {
      * 定时保存数据
      */
     private ScheduledFuture<?> saveFuture;
+
+    /**
+     * 离线时间
+     */
+    private long logoutTime = 0;
 
     /**
      * 监听器管理者
@@ -155,11 +161,15 @@ public class Player {
         map.values().forEach(service -> service.loginResp(loginResp));
     }
 
-    public void login(Login.PbLoginReq loginMsg, Channel channel) {
+    public void login(Login.PbLoginReq loginMsg, Channel channel, boolean isReconnect) {
         this.channel = channel;
-        map.values().forEach(GameService::load);
-        init();
-        dailyReset(false);
+        if (!isReconnect) {
+            map.values().forEach(GameService::load);
+            init();
+            dailyReset(false);
+        }
+        logoutTime = 0;
+        log.info("玩家{}登录游戏成功", getId());
     }
 
     private void init() {
@@ -170,15 +180,35 @@ public class Player {
 
     public void logout() {
         log.info("玩家{}退出游戏", getId());
+        logoutTime = System.currentTimeMillis();
+        channel.attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) getId());
         channel = null;
-        ThreadPool.getScheduledExecutor().schedule(() -> execute(this::destroy), DESTROY_TIME, TimeUnit.SECONDS);
+        ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
     }
 
     private void destroy() {
         log.info("玩家{}销毁", getId());
         saveFuture.cancel(true);
         asyncSave(true);
+        Players.removePlayer(getId());
         actor.tell(ShutdownAction.INSTANCE);
+    }
+
+    public class DestroyTask implements Runnable {
+
+        @Override
+        public void run() {
+            execute(() -> {
+                if (logoutTime == 0) {
+                    return;
+                }
+                if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
+                    ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
+                } else {
+                    Player.this.destroy();
+                }
+            });
+        }
     }
 
     public ScheduledFuture<?> scheduleAtFixedRate(PlayerAction action, long initialDelay, long period, TimeUnit unit) {

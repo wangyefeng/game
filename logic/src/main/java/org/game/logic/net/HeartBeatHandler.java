@@ -74,8 +74,6 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
             player.execute(() -> {
                 if (player.isOnline()) {
                     player.logout();
-                    Players.removePlayer(playerId);
-                    log.info("玩家{}退出游戏", playerId);
                 }
             });
         }
