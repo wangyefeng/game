@@ -34,27 +34,31 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
     @Override
     public void handle0(Channel channel, int playerId, Login.PbLoginReq data) {
         log.info("玩家{}登录游戏", playerId);
-        ActorRef<Action> playerActor = playerActorService.createActor(playerId);
-        playerActor.tell((PlayerAction) () -> {
-            Player player = Players.getPlayer(playerId);
-            if (player == null) {
-                player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
+        Player p = Players.getPlayer(playerId);
+        if (p != null) {
+            p.execute(() -> login(channel, data, p));
+        } else {
+            ActorRef<Action> playerActor = playerActorService.createActor(playerId);
+            playerActor.tell((PlayerAction) () -> {
+                Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
                 PlayerService playerService = player.getService(PlayerService.class);
                 if (!playerService.playerExists()) {
                     log.warn("玩家登录失败，玩家 {}不存在", playerId);
                     return;
                 }
-                player.login(data);
                 Players.addPlayer(player);
-                channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
-            } else {
-                player.setChannel(channel);
-            }
-            Builder resp = PbLoginResp.newBuilder();
-            resp.setIsNew(false);
-            player.loginResp(resp);
-            player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
-        });
+                login(channel, data, player);
+            });
+        }
+    }
+
+    private void login(Channel channel, PbLoginReq data, Player player) {
+        player.login(data, channel);
+        channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
+        Builder resp = PbLoginResp.newBuilder();
+        resp.setIsNew(false);
+        player.loginResp(resp);
+        player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
     }
 
     @Override

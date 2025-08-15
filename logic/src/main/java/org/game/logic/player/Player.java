@@ -3,6 +3,7 @@ package org.game.logic.player;
 import akka.actor.typed.ActorRef;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
+import org.apache.poi.ss.formula.functions.T;
 import org.game.common.event.Listener;
 import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
@@ -22,6 +23,8 @@ import org.game.proto.MessagePlayer;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.protocol.LogicToGateProtocol;
 import org.game.proto.struct.Login;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -32,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Player {
 
+    private static final Logger log = LoggerFactory.getLogger(Player.class);
     // 玩家id
     private final int id;
 
@@ -68,6 +72,16 @@ public class Player {
      */
     private final Executor dbExecutor;
 
+    /**
+     * 离线卸载数据时间 单位：秒
+     */
+    private static final long DESTROY_TIME = 10;
+
+    /**
+     * 保存间隔 单位：秒
+     */
+    private static final long SAVE_INTERVAL = 20;
+
     public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<Action> actor) {
         this.id = id;
         this.channel = channel;
@@ -95,10 +109,6 @@ public class Player {
 
     public Channel getChannel() {
         return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public int getId() {
@@ -138,14 +148,15 @@ public class Player {
     }
 
     private void startSaveTimer() {
-        saveFuture = scheduleAtFixedRate(() -> asyncSave(false), 0, 20, TimeUnit.SECONDS);
+        saveFuture = scheduleAtFixedRate(() -> asyncSave(false), 0, SAVE_INTERVAL, TimeUnit.SECONDS);
     }
 
     public void loginResp(Login.PbLoginResp.Builder loginResp) {
         map.values().forEach(service -> service.loginResp(loginResp));
     }
 
-    public void login(Login.PbLoginReq loginMsg) {
+    public void login(Login.PbLoginReq loginMsg, Channel channel) {
+        this.channel = channel;
         map.values().forEach(GameService::load);
         init();
         dailyReset(false);
@@ -158,9 +169,15 @@ public class Player {
     }
 
     public void logout() {
+        log.info("玩家{}退出游戏", getId());
+        channel = null;
+        ThreadPool.getScheduledExecutor().schedule(() -> execute(this::destroy), DESTROY_TIME, TimeUnit.SECONDS);
+    }
+
+    private void destroy() {
+        log.info("玩家{}销毁", getId());
         saveFuture.cancel(true);
         asyncSave(true);
-        channel = null;
         actor.tell(ShutdownAction.INSTANCE);
     }
 
