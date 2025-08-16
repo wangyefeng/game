@@ -3,7 +3,6 @@ package org.game.logic.player;
 import akka.actor.typed.ActorRef;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
-import org.apache.poi.ss.formula.functions.T;
 import org.game.common.event.Listener;
 import org.game.common.event.PublishManager;
 import org.game.common.event.Publisher;
@@ -29,10 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Player {
 
@@ -72,6 +68,8 @@ public class Player {
     private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
     private final ActorRef<Action> actor;
+
+    private Future<?> logoutFuture;
 
     /**
      * 数据库异步执行器
@@ -183,7 +181,9 @@ public class Player {
         logoutTime = System.currentTimeMillis();
         channel.attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) getId());
         channel = null;
-        ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
+        if (logoutFuture == null) {
+            logoutFuture = ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
+        }
     }
 
     private void destroy() {
@@ -192,6 +192,7 @@ public class Player {
         asyncSave(true);
         Players.removePlayer(getId());
         actor.tell(ShutdownAction.INSTANCE);
+        logoutFuture = null;
     }
 
     public class DestroyTask implements Runnable {
