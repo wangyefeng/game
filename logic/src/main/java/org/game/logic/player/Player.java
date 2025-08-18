@@ -200,7 +200,7 @@ public class Player {
         @Override
         public void run() {
             execute(() -> {
-                if (logoutTime == 0) {
+                if (isOnline()) {
                     logoutFuture = null;
                     return;
                 }
@@ -341,7 +341,11 @@ public class Player {
     }
 
     public boolean isOnline() {
-        return channel != null;
+        return logoutTime == 0;
+    }
+
+    public boolean isOffline() {
+        return !isOnline();
     }
 
     public void dbExecute(PlayerAction action) {

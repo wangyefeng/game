@@ -14,7 +14,7 @@ public class LogoutMsgHandler extends PlayerHandler<Empty> {
 
     @Override
     protected void handle(Player player, Empty message) {
-        if (!player.isOnline()) {
+        if (player.isOffline()) {
             return;
         }
         player.logout();
