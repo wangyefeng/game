@@ -157,7 +157,7 @@ public class ExcelToMysql implements InitializingBean {
                     case TYPE_JSON -> sql.append("JSON NULL");
                     case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
                     case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
-                    case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
+                    case TYPE_DATETIME -> sql.append("DATETIME NULL");
                     case TYPE_DATE -> sql.append("DATE NOT NULL");
                     default -> log.info("未知类型：{}", s);
                 }
