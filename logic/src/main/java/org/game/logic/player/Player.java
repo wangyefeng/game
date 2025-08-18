@@ -201,6 +201,7 @@ public class Player {
         public void run() {
             execute(() -> {
                 if (logoutTime == 0) {
+                    logoutFuture = null;
                     return;
                 }
                 if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
