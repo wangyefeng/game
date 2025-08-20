@@ -1,0 +1,134 @@
+package org.game.gate.net;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import io.netty.buffer.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.handler.codec.http.websocketx.*;
+import org.game.gate.player.Player;
+import org.game.proto.DecoderType;
+import org.game.proto.MessageCode;
+import org.game.proto.MsgHandlerFactory;
+import org.game.proto.Topic;
+import org.game.proto.protocol.Protocol;
+import org.game.proto.protocol.Protocols;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+/**
+ * websocket编解码器
+ *
+ */
+public class WebsocketCodec extends MessageToMessageCodec<WebSocketFrame, MessageCode<?>> {
+
+    private static final Logger log = LoggerFactory.getLogger(WebsocketCodec.class);
+
+    private final LeakyBucket leakyBucket = new LeakyBucket(20, 10);
+
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    public static final PongWebSocketFrame PONG_WEBSOCKET_FRAME = new PongWebSocketFrame();
+
+    public WebsocketCodec(MsgHandlerFactory msgHandlerFactory) {
+        this.msgHandlerFactory = msgHandlerFactory;
+    }
+
+    /**
+     * 编码
+     */
+    @Override
+    protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, List<Object> out) throws Exception {
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
+        byteBuf.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        byteBuf.writeByte(msg.getProtocol().from().getCode());
+        byteBuf.writeShort(msg.getProtocol().getCode());
+        ByteBufOutputStream outputStream = new ByteBufOutputStream(byteBuf);
+        msg.getData().writeTo(outputStream);
+        out.add(new BinaryWebSocketFrame(byteBuf));
+    }
+
+    /**
+     * 解码
+     */
+    @Override
+    protected void decode(ChannelHandlerContext ctx, WebSocketFrame webSocketFrame, List<Object> out) throws Exception {
+        if (!leakyBucket.addRequest()) {
+            log.warn("触发限流，channel: {}", ctx.channel());
+            ctx.close();
+            return;
+        }
+        switch (webSocketFrame) {
+            case BinaryWebSocketFrame binaryWebSocketFrame -> binaryFrameHandler(ctx, out, binaryWebSocketFrame);
+            case PingWebSocketFrame _ -> {
+                log.debug("receive ping frame, channel: {}", ctx.channel());
+                ctx.writeAndFlush(PONG_WEBSOCKET_FRAME);
+            }
+            case TextWebSocketFrame textWebSocketFrame -> {
+                log.info("receive text frame, channel: {} text: {}", ctx.channel().id().asShortText(), textWebSocketFrame.text());
+                ctx.writeAndFlush(textWebSocketFrame.retain());
+            }
+            default -> {
+                // 其他类型的frame不处理
+                log.warn("receive unknown frame, channel: {}, frame: {}", ctx.channel(), webSocketFrame.getClass().getSimpleName());
+                ctx.close();
+            }
+        }
+    }
+
+    private void binaryFrameHandler(ChannelHandlerContext ctx, List<Object> out, BinaryWebSocketFrame binaryWebSocketFrame) throws InvalidProtocolBufferException {
+        ByteBuf in = binaryWebSocketFrame.content();
+        byte from = Topic.CLIENT.getCode();
+        byte type = in.readByte();
+        if (type == DecoderType.MESSAGE_CODE.getCode()) {
+            byte to = in.readByte();
+            short code = in.readShort();
+            Protocol protocol = Protocols.getProtocol(from, to, code);
+            if (protocol == null) {
+                log.error("decode error, protocol not found, from: {}, to: {}, code: {}", from, to, code);
+                in.skipBytes(in.readableBytes());
+                return;
+            }
+            if (to == Topic.GATE.getCode()) { // gate
+                ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                Message message = msgHandlerFactory.getHandler(protocol).parseFrom(inputStream);
+                out.add(MessageCode.of(protocol, message));
+            } else if (to == Topic.LOGIC.getCode()) {// logic
+                Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
+                if (player != null && player.getLogicClient().isRunning()) {
+                    int readableBytes = in.readableBytes();
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(12, 12);
+                    try {
+                        buffer.writeInt(readableBytes + 8);
+                        buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
+                        buffer.writeByte(from);
+                        buffer.writeInt(player.getId());
+                        buffer.writeShort(code);
+                    } catch (Exception e) {
+                        buffer.release();
+                        throw e;
+                    }
+                    ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, in.retainedDuplicate());
+                    player.getLogicClient().getChannel().writeAndFlush(byteBuf);
+                    in.skipBytes(in.readableBytes());
+                } else {
+                    if (player == null) {
+                        log.error("handle message error, player not found, code: {}", code);
+                    } else {
+                        log.error("handle message error, logic not running, code: {}", code);
+                    }
+                    in.skipBytes(in.readableBytes());
+                }
+            } else {
+                log.warn("decode error, illegal to topic: {}, code: {}", to, code);
+                ctx.close();
+            }
+        } else {
+            log.error("decode error, illegal decoder type: {}", type);
+            ctx.close();
+        }
+    }
+
+}

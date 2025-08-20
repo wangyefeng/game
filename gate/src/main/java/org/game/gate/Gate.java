@@ -8,6 +8,7 @@ import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.gate.net.TcpServer;
+import org.game.gate.net.WebsocketServer;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
 import org.game.gate.thread.ThreadPool;
@@ -35,6 +36,9 @@ public class Gate extends Server {
 
     @Autowired
     private TcpServer tcpServer;
+
+    @Autowired
+    private WebsocketServer webSocketServer;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -104,8 +108,10 @@ public class Gate extends Server {
 
     @Override
     protected void afterStart() {
-        // 最后启动tcp服务
+        // 启动tcp服务
         tcpServer.start();
+        // 启动ws服务
+        webSocketServer.start();
     }
 
     public void stop() throws Exception {
