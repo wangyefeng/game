@@ -1,7 +1,8 @@
 FROM openjdk:24-jdk-slim
 
 # 安装curl
-RUN apt-get update && apt-get install -y curl
+# RUN apt-get update && apt-get install -y curl
+RUN mkdir -p /app/config
 
 # 将本地的 hotfix.sh 文件复制到容器中的工作目录
 COPY login/hotfix.sh /app/hotfix.sh
@@ -10,7 +11,7 @@ COPY arthas-bin/ /app/arthas-bin/
 # 将本地的 JAR 文件复制到容器中的工作目录
 COPY login/target/login-1.0.0-SNAPSHOT.jar /app/login.jar
 
-EXPOSE 80
+EXPOSE 10000
 
 # 设置工作目录
 WORKDIR /app

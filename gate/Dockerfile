@@ -6,6 +6,8 @@ COPY gate/target/gate-1.0.0-SNAPSHOT.jar /app/gate.jar
 # 将arthas-bin目录复制到容器的/app/arthas-bin目录下
 COPY arthas-bin/ /app/arthas-bin/
 
+EXPOSE 12000 12001
+
 # 设置工作目录
 WORKDIR /app
 

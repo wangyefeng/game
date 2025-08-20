@@ -52,8 +52,8 @@ public class Client implements CommandLineRunner {
     private MsgHandlerFactory msgHandlerFactory;
 
     public Client() {
-        this.host = "localhost";
-        this.ports = new int[]{8888};
+        this.host = "192.168.101.208";
+        this.ports = new int[]{12000};
     }
 
     public Client(String host, int[] ports) {
@@ -115,7 +115,7 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
-        WebClient client = WebClient.builder().baseUrl("http://127.0.0.1/auth").build();
+        WebClient client = WebClient.builder().baseUrl("http://192.168.101.208:10000/auth").build();
         int num = 1;
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;
