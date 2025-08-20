@@ -31,7 +31,7 @@ public class WebsocketServer {
 
     private boolean isRunning = false;
 
-    @Value("${server.ws-port:8889}")
+    @Value("${server.websocket-port:8889}")
     private int port;
 
     @Autowired
