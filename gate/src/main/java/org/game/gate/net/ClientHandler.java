@@ -37,7 +37,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelActive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        log.info("客户端连接TCP成功，channel:{}", ctx.channel());
+        log.info("客户端连接成功，channel:{}", ctx.channel());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel c = ctx.channel();
-        log.info("客户端TCP连接断开, 地址: {} channel: {}", c.remoteAddress(), c.id());
+        log.info("客户端连接断开, 地址: {} channel: {}", c.remoteAddress(), c.id());
         Player player = c.attr(AttributeKeys.PLAYER).get();
         if (player != null) {
             player.getExecutor().submit(() -> {
