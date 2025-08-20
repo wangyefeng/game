@@ -116,6 +116,7 @@ public class Gate extends Server {
 
     public void stop() throws Exception {
         tcpServer.close();
+        webSocketServer.close();
         clientGroup.close();
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
