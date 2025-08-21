@@ -58,3 +58,14 @@ server:
     threads:
       min-spare: 16
       max: 100
+management:
+  endpoints:
+    web:
+      base-path: /metrics
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
