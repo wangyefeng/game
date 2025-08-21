@@ -1,33 +1,31 @@
 package org.game.gate.net.client;
 
-import org.game.common.random.RandomUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * 客户端组
- *
- * @author 王叶峰
  */
 @Component
 public class ClientGroup<C extends Client> {
 
-    private final Map<String, C> clients = new HashMap<>();
+    // accessOrder = true 表示按访问顺序排列，实现轮询算法
+    private final LinkedHashMap<String, C> clients = new LinkedHashMap<>(16, 0.75f, true);
 
     public ClientGroup() {
     }
 
-    public C remove(String id) {
+    public synchronized C remove(String id) {
         return clients.remove(id);
     }
 
-    public void add(C client) {
+    public synchronized void add(C client) {
         clients.put(client.getId(), client);
     }
 
-    public void close() {
+    public synchronized void close() {
         for (Client client : clients.values()) {
             try {
                 client.close();
@@ -37,19 +35,25 @@ public class ClientGroup<C extends Client> {
         }
     }
 
-    public C get(String id) {
+    public synchronized C get(String id) {
         return clients.get(id);
     }
 
-    public C next() {
-        return RandomUtil.random(clients.values());
+    /**
+     * 轮询客户端
+     *
+     * @return 客户端
+     */
+    public synchronized C next() {
+        return clients.get(clients.firstEntry().getKey());
     }
 
-    public boolean contains(String id) {
+    public synchronized boolean contains(String id) {
         return clients.containsKey(id);
     }
 
     public Map<String, C> getClients() {
         return clients;
     }
+
 }
