@@ -9,6 +9,8 @@ import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
 import org.game.logic.actor.PlayerActorService;
 import org.game.logic.net.TcpServer;
+import org.game.logic.player.Player;
+import org.game.logic.player.Players;
 import org.game.logic.player.function.TimeIntervalManager;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.Protocols;
@@ -122,6 +124,11 @@ public class Logic extends Server {
 
     protected void stop() throws Exception {
         tcpServer.close();
+        synchronized (Players.class) {
+            for (Player player : Players.getPlayers().values()) {
+                player.execute(player::destroy);
+            }
+        }
         grpcServer.shutdown();
         playerActorService.close();
         ThreadPool.shutdown();

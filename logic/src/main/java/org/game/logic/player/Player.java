@@ -186,7 +186,7 @@ public class Player {
         }
     }
 
-    private void destroy() {
+    public void destroy() {
         log.info("玩家{}销毁", getId());
         saveFuture.cancel(true);
         asyncSave(true);

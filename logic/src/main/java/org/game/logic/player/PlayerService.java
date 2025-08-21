@@ -3,7 +3,6 @@ package org.game.logic.player;
 import org.game.common.RedisKeys;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
-import org.game.logic.Logic;
 import org.game.logic.database.entity.PlayerInfo;
 import org.game.logic.database.repository.PlayerRepository;
 import org.game.logic.player.item.Consumable;
@@ -23,9 +22,6 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
     private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
     @Autowired
     private StringRedisTemplate redisTemplate;
-
-    @Autowired
-    private Logic logic;
 
     @Override
     public void register(Login.PbRegisterReq registerMsg) {

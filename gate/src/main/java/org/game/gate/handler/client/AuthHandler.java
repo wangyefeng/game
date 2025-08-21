@@ -23,7 +23,6 @@ import org.game.proto.struct.Login.PbAuthReq;
 import org.game.proto.struct.PlayerExistServiceGrpc;
 import org.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
 import org.game.proto.struct.Rpc.PbPlayerExistReq;
-import org.game.proto.struct.Rpc.PbPlayerExistResp;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -106,6 +105,8 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
             log.info("玩家{}认证成功 channel:{}", playerId, channel);
             Player player;
             boolean containsPlayer = Players.containsPlayer(playerId);
+            Login.PbAuthResp.Builder resp = Login.PbAuthResp.newBuilder();
+            resp.setPlayerId(playerId);
             if (containsPlayer) {// 顶号
                 player = Players.getPlayer(playerId);
                 player.writeToClient(GateToClientProtocol.KICK_OUT);
@@ -114,29 +115,33 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
             } else {
                 if (clientGroup.getClients().isEmpty()) {
                     log.error("当前没有可用的logic服务器，请检查logic服务器是否正常启动！！！");
-                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.KICK_OUT));
-                    channel.close();
+                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, resp.setSuccess(false).build()));
                     return;
-                }
-                // 检测redis中该玩家是否还在某个服务器缓存中
-                String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
-                if (serverId != null) {
-                    player = new Player(playerId, channel, playerExecutor, clientGroup.get(springConfig.getServicePath() + "/" + serverId));
                 } else {
-                    player = new Player(playerId, channel, playerExecutor, clientGroup.next());
+                    // 检测redis中该玩家是否还在某个服务器缓存中
+                    String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+                    if (serverId != null) {
+                        player = new Player(playerId, channel, playerExecutor, clientGroup.get(springConfig.getServicePath() + "/" + serverId));
+                    } else {
+                        player = new Player(playerId, channel, playerExecutor, clientGroup.next());
+                    }
+                    Players.addPlayer(player);
                 }
-                Players.addPlayer(player);
             }
+            resp.setSuccess(true).setIsRegistered(playerExist(player));
             channel.attr(AttributeKeys.PLAYER).set(player);
             player.getLogicClient().getChannel().attr(LogicHandler.PLAYERS_KEY).get().add(player.getId());
-            // 创建阻塞式存根
-            PlayerExistServiceBlockingStub blockingStub = PlayerExistServiceGrpc.newBlockingStub(player.getLogicClient().getGrpcChannel());
-            // 创建请求对象
-            PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(playerId).build();
-            // 调用服务端方法并获取响应
-            PbPlayerExistResp response = blockingStub.exists(request);
-            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(true).setPlayerId(playerId).setIsRegistered(response.getExist()).build()));
+            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, resp.build()));
         }).get();
+    }
+
+    private static boolean playerExist(Player player) {
+        // 创建阻塞式存根
+        PlayerExistServiceBlockingStub blockingStub = PlayerExistServiceGrpc.newBlockingStub(player.getLogicClient().getGrpcChannel());
+        // 创建请求对象
+        PbPlayerExistReq request = PbPlayerExistReq.newBuilder().setId(player.getId()).build();
+        // 调用服务端方法并获取响应
+        return blockingStub.exists(request).getExist();
     }
 
     @Override

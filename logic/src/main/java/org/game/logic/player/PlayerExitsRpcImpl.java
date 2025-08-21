@@ -17,8 +17,9 @@ public class PlayerExitsRpcImpl extends PlayerExistServiceGrpc.PlayerExistServic
 
     @Override
     public void exists(PbPlayerExistReq req, StreamObserver<PbPlayerExistResp> responseObserver) {
+        int playerId = req.getId();
         Builder reply = PbPlayerExistResp.newBuilder();
-        reply.setExist(playerRepository.existsById(req.getId()));
+        reply.setExist(Players.containsPlayer(playerId) || playerRepository.existsById(playerId));
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
