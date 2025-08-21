@@ -1,20 +1,31 @@
 package org.game.logic.player;
 
+import org.game.common.RedisKeys;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
-import org.game.config.entity.SimpleItem;
+import org.game.logic.Logic;
 import org.game.logic.database.entity.PlayerInfo;
+import org.game.logic.database.repository.PlayerRepository;
 import org.game.logic.player.item.Consumable;
 import org.game.logic.player.item.ItemIdConstant;
 import org.game.logic.player.item.ItemType;
-import org.game.logic.database.repository.PlayerRepository;
 import org.game.proto.struct.Login;
 import org.game.proto.struct.Login.PbLoginResp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> implements Consumable {
 
+    private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private Logic logic;
 
     @Override
     public void register(Login.PbRegisterReq registerMsg) {
@@ -74,5 +85,13 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
     @Override
     public ItemType getType() {
         return ItemType.CURRENCY;
+    }
+
+    public void destroy() {
+        int playerId = getEntity().getPlayerId();
+        Long delete = redisTemplate.opsForHash().delete(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+        if (delete == 0) {
+            log.error("删除玩家信息失败！ redis中没有该玩家服务器信息, playerId:{}", playerId);
+        }
     }
 }

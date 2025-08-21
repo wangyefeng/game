@@ -2,6 +2,8 @@ package org.game.logic.player;
 
 import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
+import org.game.common.RedisKeys;
+import org.game.logic.SpringConfig;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.PlayerActorService;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,6 +35,12 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
     @Autowired
     private PlayerActorService playerActorService;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private SpringConfig springConfig;
+
     @Override
     public void handle0(Channel channel, int playerId, Login.PbLoginReq data) {
         log.info("玩家{}登录游戏", playerId);
@@ -39,6 +48,11 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
         if (p != null) {
             p.execute(() -> login(channel, data, p, true));
         } else {
+            Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
+            if (!success) {
+                log.warn("玩家{}在其他服务器上登录，拒绝登录", playerId);
+                return;
+            }
             ActorRef<Action> playerActor = playerActorService.createActor(playerId);
             playerActor.tell((PlayerAction) () -> {
                 Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);

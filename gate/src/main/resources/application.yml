@@ -34,7 +34,7 @@ spring:
         codec: !<org.redisson.codec.Kryo5Codec> {}
         transportMode: "NIO"
 zookeeper:
-  address: 192.168.101.208:2181
+  address: wangyefeng.top:2181
   session-timeout: 10000
   connection-timeout: 5000
-  root-path: /logic
+  root-path: logic

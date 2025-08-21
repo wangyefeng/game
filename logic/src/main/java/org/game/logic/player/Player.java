@@ -191,6 +191,8 @@ public class Player {
         saveFuture.cancel(true);
         asyncSave(true);
         Players.removePlayer(getId());
+        PlayerService playerService = getService(PlayerService.class);
+        playerService.destroy();
         actor.tell(ShutdownAction.INSTANCE);
         logoutFuture = null;
     }

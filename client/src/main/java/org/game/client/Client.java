@@ -34,8 +34,9 @@ import java.io.File;
 public class Client implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
-    private final String host;
     private final int[] ports;
+
+    private static final String HOST = "localhost";
 
     @Value("${server.ssl.trust-certificate}")
     private String trustCertificate;
@@ -52,12 +53,10 @@ public class Client implements CommandLineRunner {
     private MsgHandlerFactory msgHandlerFactory;
 
     public Client() {
-        this.host = "192.168.101.208";
         this.ports = new int[]{12000};
     }
 
     public Client(String host, int[] ports) {
-        this.host = host;
         this.ports = ports;
     }
 
@@ -93,8 +92,8 @@ public class Client implements CommandLineRunner {
                     });
 
             // 连接到服务器
-            ChannelFuture future = bootstrap.connect(host, RandomUtil.random(ports)).sync();
-            log.info("Connected to server {}:{}", host, ports);
+            ChannelFuture future = bootstrap.connect(HOST, RandomUtil.random(ports)).sync();
+            log.info("Connected to server {}:{}", HOST, ports);
 
             // 等待连接关闭
             future.channel().closeFuture().addListener(_ -> {
@@ -115,7 +114,7 @@ public class Client implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Protocols.init();
-        WebClient client = WebClient.builder().baseUrl("http://192.168.101.208:10000/auth").build();
+        WebClient client = WebClient.builder().baseUrl("http://"  + HOST + ":10000/auth").build();
         int num = 1;
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;

@@ -6,6 +6,7 @@ import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.common.RedisKeys.Locks;
 import org.game.common.util.TokenUtil;
+import org.game.gate.SpringConfig;
 import org.game.gate.net.AttributeKeys;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
@@ -47,6 +48,9 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private SpringConfig springConfig;
 
     /**
      * token有效期
@@ -114,7 +118,13 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
                     channel.close();
                     return;
                 }
-                player = new Player(playerId, channel, playerExecutor, clientGroup.next());
+                // 检测redis中该玩家是否还在某个服务器缓存中
+                String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+                if (serverId != null) {
+                    player = new Player(playerId, channel, playerExecutor, clientGroup.get(springConfig.getServicePath() + "/" + serverId));
+                } else {
+                    player = new Player(playerId, channel, playerExecutor, clientGroup.next());
+                }
                 Players.addPlayer(player);
             }
             channel.attr(AttributeKeys.PLAYER).set(player);

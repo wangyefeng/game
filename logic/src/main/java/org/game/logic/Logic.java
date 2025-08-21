@@ -15,7 +15,6 @@ import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -40,15 +39,6 @@ public class Logic extends Server {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Value("${zookeeper.root-path}")
-    private String rootPath;
-
-    @Value("${logic.server-id}")
-    private int id;
-
-    @Value("${logic.host}")
-    private String host;
-
     @Autowired
     private io.grpc.Server grpcServer;
 
@@ -57,6 +47,9 @@ public class Logic extends Server {
 
     @Autowired
     private PlayerActorService playerActorService;
+
+    @Autowired
+    private SpringConfig springConfig;
 
     static {
         // 设置netty的资源泄露检测
@@ -93,12 +86,13 @@ public class Logic extends Server {
     }
 
     private void registerZkService() throws Exception {
+        String rootPath = springConfig.getRootPath();
         if (zkClient.checkExists().forPath(rootPath) == null) {
             zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
-        String servicePath = rootPath + "/" + id;
+        String servicePath = rootPath + "/" + springConfig.getLogicId();
         if (zkClient.checkExists().forPath(servicePath) == null) {
-            zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(host, tcpServer.getPort(), grpcServer.getPort()))).getBytes());
+            zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(springConfig.getHost(), tcpServer.getPort(), grpcServer.getPort()))).getBytes());
             log.info("zookeeper registry service success, path: {}", servicePath);
         }
     }

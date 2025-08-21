@@ -1,6 +1,31 @@
 spring:
   main:
     banner-mode: off
+  data:
+    redis:
+      repositories:
+        enabled: false
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://192.168.101.208:6379"
+          idleConnectionTimeout: 10000
+          connectTimeout: 10000
+          timeout: 3000
+          retryAttempts: 3
+          retryInterval: 1500
+          clientName: null
+          subscriptionsPerConnection: 5
+          subscriptionConnectionMinimumIdleSize: 1
+          subscriptionConnectionPoolSize: 5
+          connectionMinimumIdleSize: 5
+          connectionPoolSize: 10
+          database: 0
+        threads: 16
+        nettyThreads: 32
+        codec: !<org.redisson.codec.Kryo5Codec> {}
+        transportMode: "NIO"
   datasource:
     config:
       jdbc-url: jdbc:mysql://192.168.101.208:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
@@ -37,10 +62,14 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        cache:
+          use_second_level_cache: true
+          use_query_cache: false
         javax:
           cache:
             uri: ehcache.xml
             missing_cache_strategy: fail
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
         enable_lazy_load_no_trans: true
         transaction:
           jta:

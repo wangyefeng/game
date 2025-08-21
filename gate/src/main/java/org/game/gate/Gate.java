@@ -18,7 +18,6 @@ import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,11 +48,11 @@ public class Gate extends Server {
     @Autowired
     private CuratorFramework zkClient;
 
-    @Value("${zookeeper.root-path}")
-    private String servicePath;
-
     @Autowired
     private MsgHandlerFactory msgHandlerFactory;
+
+    @Autowired
+    private SpringConfig springConfig;
 
     static {
         // 设置netty的资源泄露检测
@@ -71,6 +70,7 @@ public class Gate extends Server {
      * 启动zookeeper服务发现监听器
      */
     private void startZkServiceListener() {
+        String servicePath = springConfig.getServicePath();
         // 创建缓存
         CuratorCache cache = CuratorCache.build(zkClient, servicePath);
         // 添加监听器

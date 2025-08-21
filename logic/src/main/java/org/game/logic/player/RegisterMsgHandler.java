@@ -2,7 +2,8 @@ package org.game.logic.player;
 
 import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
-import org.game.config.entity.SimpleItem;
+import org.game.common.RedisKeys;
+import org.game.logic.SpringConfig;
 import org.game.logic.actor.Action;
 import org.game.logic.actor.PlayerAction;
 import org.game.logic.actor.PlayerActorService;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,9 +33,20 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
     @Autowired
     private PlayerActorService playerActorService;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private SpringConfig springConfig;
+
     @Override
     public void handle0(Channel channel, int playerId, Login.PbRegisterReq data) {
         log.info("玩家{}注册 信息: {}", playerId, data);
+        Boolean playerExists = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
+        if (playerExists) {
+            log.warn("玩家{}在其他服务器上注册，拒绝注册", playerId);
+            return;
+        }
         ActorRef<Action> playerActor = playerActorService.createActor(playerId);
         playerActor.tell((PlayerAction) (() -> {
             Player player = Players.getPlayer(playerId);
