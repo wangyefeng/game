@@ -85,7 +85,7 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
 
     public void destroy() {
         int playerId = getEntity().getPlayerId();
-        Long delete = redisTemplate.opsForHash().delete(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+        Long delete = redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
         if (delete == 0) {
             log.error("删除玩家信息失败！ redis中没有该玩家服务器信息, playerId:{}", playerId);
         }

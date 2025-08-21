@@ -119,7 +119,7 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
                     return;
                 } else {
                     // 检测redis中该玩家是否还在某个服务器缓存中
-                    String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+                    String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
                     if (serverId != null) {
                         player = new Player(playerId, channel, playerExecutor, clientGroup.get(springConfig.getServicePath() + "/" + serverId));
                     } else {

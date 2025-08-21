@@ -45,19 +45,19 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
     @Override
     public void handle0(Channel channel, int playerId, Login.PbRegisterReq data) {
         log.info("玩家{}注册 信息: {}", playerId, data);
-        Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
+        Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_INFO, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
         if (!success) {
             log.warn("玩家{}在其他服务器上注册，拒绝注册", playerId);
             return;
         }
         if (Players.containsPlayer(playerId)) {
             log.info("玩家{}已经在内存中，不能重复注册", playerId);
-            redisTemplate.opsForHash().delete(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+            redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
             return;
         }
         if (playerService.playerExists()) {
             log.info("玩家{}已经存在数据库中，不能重复注册", playerId);
-            redisTemplate.opsForHash().delete(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId));
+            redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
             return;
         }
         ActorRef<Action> playerActor = playerActorService.createActor(playerId);

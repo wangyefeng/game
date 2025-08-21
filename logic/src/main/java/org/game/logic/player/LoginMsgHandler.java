@@ -48,7 +48,7 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
         if (p != null) {
             p.execute(() -> login(channel, data, p, true));
         } else {
-            Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_LOGIC, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
+            Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_INFO, String.valueOf(playerId), String.valueOf(springConfig.getLogicId()));
             if (!success) {
                 log.warn("玩家{}在其他服务器上登录，拒绝登录", playerId);
                 return;

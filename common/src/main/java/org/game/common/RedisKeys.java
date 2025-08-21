@@ -4,7 +4,7 @@ public abstract class RedisKeys {
 
     public static final String PLAYER_TOKEN_PREFIX = "player_token:";
 
-    public static final String PLAYER_LOGIC = "player_logic";
+    public static final String PLAYER_INFO = "player_info";
 
     public static abstract class Locks {
 
