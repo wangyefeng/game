@@ -84,19 +84,30 @@ public class Logic extends Server {
 
     private void initZkService() throws Exception {
         addZkListener();
-        registerZkService();
+        registerZkService(false);
     }
 
-    private void registerZkService() throws Exception {
+    /**
+     * 注册zookeeper服务
+     * @param isReconnect 是否是重连
+     * @throws Exception 异常
+     */
+    private void registerZkService(boolean isReconnect) throws Exception {
         String rootPath = springConfig.getRootPath();
         if (zkClient.checkExists().forPath(rootPath) == null) {
             zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
         String servicePath = rootPath + "/" + springConfig.getLogicId();
-        if (zkClient.checkExists().forPath(servicePath) == null) {
-            zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, (JsonUtil.toJson(new ServerInfo(springConfig.getHost(), tcpServer.getPort(), grpcServer.getPort()))).getBytes());
-            log.info("zookeeper registry service success, path: {}", servicePath);
+        if (isReconnect) {
+            try {
+                zkClient.delete().forPath(servicePath);
+            } catch (Exception e) {
+                // ignore
+            }
         }
+        byte[] data = (JsonUtil.toJson(new ServerInfo(springConfig.getHost(), tcpServer.getPort(), grpcServer.getPort()))).getBytes();
+        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, data);
+        log.info("zookeeper registry service success, path: {}", servicePath);
     }
 
     private void addZkListener() {
@@ -105,13 +116,13 @@ public class Logic extends Server {
                 case RECONNECTED:
                     log.info("zookeeper 断线重连成功，开始恢复业务...");
                     try {
-                        registerZkService();
+                        registerZkService(true);
                     } catch (Exception e) {
                         log.error("zookeeper 注册服务失败", e);
                     }
                     break;
                 case SUSPENDED:
-                    log.info("zookeeper 连接断开，等待重连...");
+                    log.warn("zookeeper 连接断开，等待重连...");
                     break;
                 default:
                     break;
