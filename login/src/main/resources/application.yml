@@ -61,9 +61,9 @@ server:
 management:
   endpoints:
     web:
-      base-path: /metrics
+      base-path: /actuator
       exposure:
-        include: "*"
+        include: health,info,prometheus
   endpoint:
     prometheus:
       enabled: true

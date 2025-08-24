@@ -29,7 +29,7 @@
         <java.version>24</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <protobuf.version>4.29.3</protobuf.version>
-        <curator.version>5.7.1</curator.version>
+        <curator.version>5.9.0</curator.version>
     </properties>
 
     <dependencyManagement>

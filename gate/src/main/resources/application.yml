@@ -16,7 +16,7 @@ spring:
     redisson:
       config: |
         singleServerConfig:
-          address: "redis://192.168.101.208:6379"
+          address: "redis://localhost:6379"
           idleConnectionTimeout: 10000
           connectTimeout: 10000
           timeout: 3000
@@ -34,7 +34,7 @@ spring:
         codec: !<org.redisson.codec.Kryo5Codec> {}
         transportMode: "NIO"
 zookeeper:
-  address: wangyefeng.top:2181
+  address: localhost:2181
   session-timeout: 10000
   connection-timeout: 5000
-  root-path: logic
+  root-path: /logic

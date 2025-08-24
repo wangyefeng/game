@@ -30,6 +30,8 @@ services:
     ports:
       - "2181:2181"
     restart: always
+    networks:
+      - my-net
 #  nacos:
 #    image: nacos/nacos-server:v3.0.2
 #    container_name: nacos

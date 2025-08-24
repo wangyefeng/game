@@ -9,7 +9,7 @@ spring:
     redisson:
       config: |
         singleServerConfig:
-          address: "redis://192.168.101.208:6379"
+          address: "redis://localhost:6379"
           idleConnectionTimeout: 10000
           connectTimeout: 10000
           timeout: 3000
@@ -28,7 +28,7 @@ spring:
         transportMode: "NIO"
   datasource:
     config:
-      jdbc-url: jdbc:mysql://192.168.101.208:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:mysql://localhost:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123456
       type: com.zaxxer.hikari.HikariDataSource
@@ -42,7 +42,7 @@ spring:
         connection-timeout: 30000
         connection-test-query: SELECT 1
     game:
-      jdbc-url: jdbc:mysql://192.168.101.208:3306/game?useSSL=false&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:mysql://localhost:3306/game?useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123456
       type: com.zaxxer.hikari.HikariDataSource
@@ -75,7 +75,7 @@ spring:
           jta:
             platform: org.springframework.orm.jpa.JpaTransactionManager
 zookeeper:
-  address: 192.168.101.208:2181
+  address: localhost:2181
   session-timeout: 10000
   connection-timeout: 5000
   root-path: /logic
@@ -83,7 +83,7 @@ config:
   check: true
 logic:
   server-id: 1
-  host: 192.168.101.208
+  host: localhost
   tcp-port: 11001
   rpc-port: 11002
 server:
