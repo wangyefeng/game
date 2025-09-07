@@ -62,14 +62,14 @@ public class ExcelToMysql implements InitializingBean {
     private String path;
 
     //数据库的url
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.config.jdbc-url}")
     private String url;
     //数据库的用户名
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.config.username}")
     private String username;
 
     //数据库的密码
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.config.password}")
     private String password;
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
