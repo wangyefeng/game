@@ -1,4 +1,4 @@
-package org.game.logic.database;
+package org.game.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -46,7 +46,7 @@ public class ConfigDataSourceConfig {
     }
 
     @Bean(name = "configEntityManagerFactoryBean")
-    public LocalContainerEntityManagerFactoryBean gameEntityManagerFactoryBean(
+    public LocalContainerEntityManagerFactoryBean configEntityManagerFactoryBean(
             EntityManagerFactoryBuilder builder,
             @Qualifier("dataSourceConfig") DataSource dataSource) {
 
@@ -62,8 +62,9 @@ public class ConfigDataSourceConfig {
     }
 
     @Bean(name = "configTransactionManager")
-    public JpaTransactionManager gameTransactionManager(
+    public JpaTransactionManager configTransactionManager(
             @Qualifier("configEntityManagerFactoryBean") LocalContainerEntityManagerFactoryBean factoryBean) {
+        assert factoryBean.getObject() != null;
         return new JpaTransactionManager(factoryBean.getObject());
     }
 }

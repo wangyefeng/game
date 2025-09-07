@@ -1,12 +1,6 @@
 package org.game.config.tools;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +8,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,27 +21,23 @@ import java.util.Scanner;
 
 /**
  * mysql数据导出到excel工具类
- *
- * @author WangYefeng
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan(useDefaultFilters = false)
-@EntityScan(basePackages = "org.game.config.entity")
-@EnableJpaRepositories({"org.game.config.repository"})
 @Tool
 public class MysqlToExcel implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);
 
     //数据库的url
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.config.jdbc-url}")
     private String url;
     //数据库的用户名
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.config.username}")
     private String username;
 
     //数据库的密码
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.config.password}")
     private String password;
 
     @Value("${config.xlsx-path}")

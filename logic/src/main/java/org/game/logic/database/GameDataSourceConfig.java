@@ -66,6 +66,7 @@ public class GameDataSourceConfig {
     @Bean(name = "gameTransactionManager")
     public JpaTransactionManager gameTransactionManager(
             @Qualifier("gameEntityManagerFactoryBean") LocalContainerEntityManagerFactoryBean factoryBean) {
+        assert factoryBean.getObject() != null;
         return new JpaTransactionManager(factoryBean.getObject());
     }
 }

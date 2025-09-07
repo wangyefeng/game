@@ -37,7 +37,7 @@ spring:
         max-lifetime: 1800000
         minimum-idle: 0
         idle-timeout: 600000
-        maximum-pool-size: 10
+        maximum-pool-size: 1
         auto-commit: true
         connection-timeout: 30000
         connection-test-query: SELECT 1
@@ -49,9 +49,9 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       hikari:
         max-lifetime: 1800000
-        minimum-idle: 0
+        minimum-idle: 10
         idle-timeout: 600000
-        maximum-pool-size: 10
+        maximum-pool-size: 50
         auto-commit: true
         connection-timeout: 30000
         connection-test-query: SELECT 1
