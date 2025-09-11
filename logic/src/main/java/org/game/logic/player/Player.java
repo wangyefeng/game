@@ -192,7 +192,6 @@ public class Player {
         Players.removePlayer(getId());
         PlayerService playerService = getService(PlayerService.class);
         playerService.destroy();
-        executor.close();
         logoutFuture = null;
     }
 
@@ -200,17 +199,26 @@ public class Player {
 
         @Override
         public void run() {
-            execute(() -> {
-                if (isOnline()) {
-                    logoutFuture = null;
-                    return;
-                }
-                if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
-                    ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
-                } else {
+            Boolean b;
+            try {
+                b = submit(() -> {
+                    if (isOnline()) {
+                        logoutFuture = null;
+                        return false;
+                    }
+                    if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
+                        ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
+                        return false;
+                    }
                     Player.this.destroy();
-                }
-            });
+                    return true;
+                }).get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+            if (b) {
+                executor.close();
+            }
         }
     }
 
@@ -339,6 +347,10 @@ public class Player {
 
     public void execute(Runnable action) {
         executor.execute(action);
+    }
+
+    public <T> Future<T> submit(Callable<T> action) {
+        return executor.submit(action);
     }
 
     public boolean isOnline() {
