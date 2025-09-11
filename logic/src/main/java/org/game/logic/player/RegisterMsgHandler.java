@@ -1,13 +1,10 @@
 package org.game.logic.player;
 
-import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.logic.SpringConfig;
-import org.game.logic.actor.Action;
-import org.game.logic.actor.PlayerAction;
-import org.game.logic.actor.PlayerActorService;
 import org.game.logic.net.AbstractPlayerMsgHandler;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -21,6 +18,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutorService;
+
 @Component
 public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> {
 
@@ -29,9 +28,6 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private PlayerActorService playerActorService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -51,25 +47,25 @@ public class RegisterMsgHandler extends AbstractPlayerMsgHandler<PbRegisterReq> 
             return;
         }
         if (Players.containsPlayer(playerId)) {
-            log.info("玩家{}已经在内存中，不能重复注册", playerId);
+            log.warn("玩家{}已经在内存中，不能重复注册", playerId);
             redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
             return;
         }
         if (playerService.playerExists()) {
-            log.info("玩家{}已经存在数据库中，不能重复注册", playerId);
+            log.warn("玩家{}已经存在数据库中，不能重复注册", playerId);
             redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
             return;
         }
-        ActorRef<Action> playerActor = playerActorService.createActor(playerId);
-        playerActor.tell((PlayerAction) (() -> {
-            Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
+        ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
+        Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerExecutor);
+        player.execute(() -> {
             player.register(data);
             Players.addPlayer(player);
             Builder resp = PbLoginResp.newBuilder();
             resp.setIsNew(true);
             player.loginResp(resp);
             player.writeToClient(LogicToClientProtocol.LOGIN, resp.build());
-        }));
+        });
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
 import org.game.config.tools.Tool;
-import org.game.logic.actor.PlayerActorService;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.Player;
 import org.game.logic.player.Players;
@@ -24,6 +23,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.game.config", "org.game.logic"}, excludeFilters = @Filter(type = FilterType.ANNOTATION, value = Tool.class))
@@ -46,9 +47,6 @@ public class Logic extends Server {
 
     @Autowired
     private TimeIntervalManager timeIntervalManager;
-
-    @Autowired
-    private PlayerActorService playerActorService;
 
     @Autowired
     private SpringConfig springConfig;
@@ -141,7 +139,11 @@ public class Logic extends Server {
             }
         }
         grpcServer.shutdown();
-        playerActorService.close();
+        try {
+            grpcServer.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.error("grpc server awaitTermination error", e);
+        }
         ThreadPool.shutdown();
         SpringApplication.exit(applicationContext);
     }

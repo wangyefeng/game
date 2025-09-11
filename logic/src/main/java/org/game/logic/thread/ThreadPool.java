@@ -43,4 +43,8 @@ public abstract class ThreadPool {
     public static ExecutorService[] getPlayerDBExecutors() {
         return playerDBExecutors;
     }
+
+    public static ExecutorService getPlayerExecutor(int playerId) {
+        return Executors.newSingleThreadExecutor(Thread.ofVirtual().name("player-" + playerId).factory());
+    }
 }

@@ -1,15 +1,11 @@
 package org.game.logic.player;
 
-import akka.actor.typed.ActorRef;
 import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.logic.SpringConfig;
-import org.game.logic.actor.Action;
-import org.game.logic.actor.PlayerAction;
-import org.game.logic.actor.PlayerActorService;
-import org.game.logic.actor.ShutdownAction;
 import org.game.logic.net.AbstractPlayerMsgHandler;
 import org.game.logic.net.ChannelKeys;
+import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
 import org.game.proto.struct.Login;
@@ -23,6 +19,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutorService;
+
 @Component
 public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
 
@@ -31,9 +29,6 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private PlayerActorService playerActorService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -53,13 +48,13 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
                 log.warn("玩家{}在其他服务器上登录，拒绝登录", playerId);
                 return;
             }
-            ActorRef<Action> playerActor = playerActorService.createActor(playerId);
-            playerActor.tell((PlayerAction) () -> {
-                Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerActor);
+            ExecutorService playerExecutor = ThreadPool.getPlayerExecutor(playerId);
+            Player player = new Player(playerId, applicationContext.getBeansOfType(GameService.class).values(), channel, playerExecutor);
+            player.execute(() -> {
                 PlayerService playerService = player.getService(PlayerService.class);
                 if (!playerService.playerExists()) {
                     log.warn("玩家登录失败，玩家 {}不存在", playerId);
-                    playerActor.tell(ShutdownAction.INSTANCE);
+                    playerExecutor.close();
                     return;
                 }
                 Players.addPlayer(player);

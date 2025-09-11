@@ -1,6 +1,5 @@
 package org.game.logic.player;
 
-import akka.actor.typed.ActorRef;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import org.game.common.event.Listener;
@@ -12,9 +11,6 @@ import org.game.config.entity.CfgItem;
 import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgItemService;
-import org.game.logic.actor.Action;
-import org.game.logic.actor.PlayerAction;
-import org.game.logic.actor.ShutdownAction;
 import org.game.logic.database.entity.PlayerInfo;
 import org.game.logic.net.ChannelKeys;
 import org.game.logic.player.item.*;
@@ -67,14 +63,17 @@ public class Player {
 
     private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    private final ActorRef<Action> actor;
-
     private Future<?> logoutFuture;
 
     /**
      * 数据库异步执行器
      */
     private final Executor dbExecutor;
+
+    /**
+     * 数据库异步执行器
+     */
+    private final ExecutorService executor;
 
     /**
      * 离线卸载数据时间 单位：秒
@@ -86,11 +85,11 @@ public class Player {
      */
     private static final long SAVE_INTERVAL = 20;
 
-    public Player(int id, Collection<GameService> gameServices, Channel channel, ActorRef<Action> actor) {
+    public Player(int id, Collection<GameService> gameServices, Channel channel, ExecutorService executor) {
         this.id = id;
         this.channel = channel;
         initService(gameServices);
-        this.actor = actor;
+        this.executor = executor;
         ExecutorService[] playerDBExecutors = ThreadPool.getPlayerDBExecutors();
         this.dbExecutor = playerDBExecutors[id % playerDBExecutors.length];
     }
@@ -193,7 +192,7 @@ public class Player {
         Players.removePlayer(getId());
         PlayerService playerService = getService(PlayerService.class);
         playerService.destroy();
-        actor.tell(ShutdownAction.INSTANCE);
+        executor.close();
         logoutFuture = null;
     }
 
@@ -215,7 +214,7 @@ public class Player {
         }
     }
 
-    public ScheduledFuture<?> scheduleAtFixedRate(PlayerAction action, long initialDelay, long period, TimeUnit unit) {
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable action, long initialDelay, long period, TimeUnit unit) {
         return ThreadPool.scheduleAtFixedRate(() -> execute(action), initialDelay, period, unit);
     }
 
@@ -338,8 +337,8 @@ public class Player {
         dailyResetServices.forEach(dailyReset -> dailyReset.reset(dailyResetDate, isSend));
     }
 
-    public void execute(PlayerAction action) {
-        actor.tell(action);
+    public void execute(Runnable action) {
+        executor.execute(action);
     }
 
     public boolean isOnline() {
@@ -350,7 +349,7 @@ public class Player {
         return !isOnline();
     }
 
-    public void dbExecute(PlayerAction action) {
+    public void dbExecute(Runnable action) {
         dbExecutor.execute(action);
     }
 }
