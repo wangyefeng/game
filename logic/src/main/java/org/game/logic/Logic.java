@@ -6,6 +6,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
 import org.game.common.util.JsonUtil;
+import org.game.config.service.ConfigService;
 import org.game.config.tools.Tool;
 import org.game.logic.net.TcpServer;
 import org.game.logic.player.Player;
@@ -51,6 +52,9 @@ public class Logic extends Server {
     @Autowired
     private SpringConfig springConfig;
 
+    @Autowired
+    private ConfigService configService;
+
     static {
         // 设置netty的资源泄露检测
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -66,7 +70,8 @@ public class Logic extends Server {
      * 初始化spring容器后，启动服务器
      */
     @Override
-    protected void start0() {
+    protected void start0() throws Exception {
+        configService.initConfig();
         Protocols.init();
         ThreadPool.start();
         timeIntervalManager.init();

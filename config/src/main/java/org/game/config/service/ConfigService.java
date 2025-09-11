@@ -6,7 +6,6 @@ import org.game.config.ConfigException;
 import org.game.config.Configs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 @Service
-public class ConfigService implements InitializingBean {
+public class ConfigService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigService.class);
 
@@ -46,11 +45,6 @@ public class ConfigService implements InitializingBean {
     public synchronized void reload() throws ConfigException {
         initConfig();
         reloadPublishers.update(null);
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        initConfig();
     }
 
     public void addReloadPublisher(Listener<Object> listener) {

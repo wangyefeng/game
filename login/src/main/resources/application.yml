@@ -14,20 +14,6 @@ spring:
       auto-commit: true
       connection-timeout: 30000
       connection-test-query: SELECT 1
-    config:
-      jdbc-url: jdbc:mysql://localhost:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: 123456
-      type: com.zaxxer.hikari.HikariDataSource
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      hikari:
-        max-lifetime: 1800000
-        minimum-idle: 0
-        idle-timeout: 600000
-        maximum-pool-size: 1
-        auto-commit: true
-        connection-timeout: 30000
-        connection-test-query: SELECT 1
   data:
     redis:
       repositories:
