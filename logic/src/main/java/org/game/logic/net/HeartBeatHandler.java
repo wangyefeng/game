@@ -53,7 +53,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                     ctx.channel().close();
                 }
                 case WRITER_IDLE -> {
-//                    ctx.channel().writeAndFlush(PING.duplicate());
+                    ctx.channel().writeAndFlush(PING.duplicate());
                     log.debug("写空闲，发送心跳包！！！连接: {}", ctx.channel().remoteAddress());
                 }
             }
