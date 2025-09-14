@@ -108,8 +108,7 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128); // 设置接收缓冲区大小
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
-            ChannelFuture channelFuture = bootstrap.bind(port).sync();
-            channelFuture.channel().closeFuture().addListener((ChannelFutureListener) _ -> close());
+            bootstrap.bind(port).sync();
             log.info("tcp server started and listening on port {}", port);
         } catch (Exception e) {
             group.shutdownGracefully();
