@@ -192,6 +192,7 @@ public class Player {
         PlayerService playerService = getService(PlayerService.class);
         playerService.destroy();
         executor.shutdown();
+        logoutFuture.cancel(true);
         logoutFuture = null;
     }
 
@@ -343,10 +344,6 @@ public class Player {
 
     public void execute(Runnable action) {
         executor.execute(action);
-    }
-
-    public <T> Future<T> submit(Callable<T> action) {
-        return executor.submit(action);
     }
 
     public boolean isOnline() {

@@ -2,15 +2,16 @@ package org.game.logic.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.annotation.Nonnull;
+import org.apache.curator.framework.CuratorFramework;
+import org.game.logic.SpringConfig;
+import org.game.logic.zookepper.ZookeeperProperties;
 import org.game.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class TcpServer {
@@ -45,7 +47,7 @@ public class TcpServer {
 
     private final int port;
 
-    private boolean isRunning = false;
+    private volatile AtomicBoolean isRunning = new AtomicBoolean(false);
 
     private NioEventLoopGroup group;
 
@@ -58,12 +60,21 @@ public class TcpServer {
     @Autowired
     private TcpPlayerMsgHandler playerMsgHandler;
 
+    @Autowired
+    private CuratorFramework zkClient;
+
+    @Autowired
+    private ZookeeperProperties zookeeperProperties;
+
+    @Autowired
+    private SpringConfig springConfig;
+
     public TcpServer(@Value("${logic.tcp-port}") int port) {
         this.port = port;
     }
 
     public void start() {
-        if (isRunning) {
+        if (!isRunning.compareAndSet(false, true)) {
             throw new IllegalStateException("Server is already running");
         }
         group = new NioEventLoopGroup();// 默认线程数量 2 * cpu核心数
@@ -97,8 +108,8 @@ public class TcpServer {
             bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128); // 设置接收缓冲区大小
             bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128); // 设置发送缓冲区大小
             // 绑定端口并启动服务器
-            bootstrap.bind(port).sync();
-            isRunning = true;
+            ChannelFuture channelFuture = bootstrap.bind(port).sync();
+            channelFuture.channel().closeFuture().addListener((ChannelFutureListener) _ -> close());
             log.info("tcp server started and listening on port {}", port);
         } catch (Exception e) {
             group.shutdownGracefully();
@@ -110,12 +121,22 @@ public class TcpServer {
         return port;
     }
 
-    public void close() throws InterruptedException {
-        if (!isRunning) {
+    public void close() {
+        if (!isRunning.compareAndSet(true, false)) {
             return;
         }
-        group.shutdownGracefully().sync();
-        isRunning = false;
+        String rootPath = zookeeperProperties.rootPath();
+        String servicePath = rootPath + "/" + springConfig.getLogicId();
+        try {
+            zkClient.delete().forPath(servicePath);
+        } catch (Exception e) {
+            log.error("删除zk节点失败 path:{}", servicePath, e);
+        }
+        group.shutdownGracefully();
         log.info("tcp server closed");
+    }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return group.awaitTermination(timeout, unit);
     }
 }

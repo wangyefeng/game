@@ -25,11 +25,11 @@ public abstract class ThreadPool {
         scheduledExecutor.scheduleAtFixedRate(() -> log.debug("实时在线玩家数量{}", Players.getPlayers().size()), 10, 10, TimeUnit.SECONDS);
     }
 
-    public static void shutdown() {
+    public static void close() {
         for (ExecutorService executor : ThreadPool.playerDBExecutors) {
             executor.close();
         }
-        log.info("player db thread pool shutdown");
+        log.info("player db thread pool close");
     }
 
     public static ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, long delay, long period, TimeUnit unit) {

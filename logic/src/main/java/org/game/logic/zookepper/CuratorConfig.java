@@ -17,7 +17,7 @@ public class CuratorConfig {
     public CuratorFramework curatorFramework(ZookeeperProperties zookeeperProperties) {
         // 使用 ExponentialBackoffRetry 来进行重试
         ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(2000, 10);
-        CuratorFramework client = CuratorFrameworkFactory.newClient(zookeeperProperties.getAddress(), zookeeperProperties.getSessionTimeout(), zookeeperProperties.getConnectionTimeout(), retryPolicy);
+        CuratorFramework client = CuratorFrameworkFactory.newClient(zookeeperProperties.address(), zookeeperProperties.sessionTimeout(), zookeeperProperties.connectionTimeout(), retryPolicy);
         client.start();  // 启动客户端
         try {
             // 等待最多 5 秒连接成功（阻塞）

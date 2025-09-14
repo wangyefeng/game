@@ -12,18 +12,11 @@ public class SpringConfig {
     @Value("${logic.server-id}")
     private int logicId;
 
-    @Value("${zookeeper.root-path}")
-    private String rootPath;
-
     public String getHost() {
         return host;
     }
 
     public int getLogicId() {
         return logicId;
-    }
-
-    public String getRootPath() {
-        return rootPath;
     }
 }

@@ -13,6 +13,7 @@ import org.game.logic.player.Player;
 import org.game.logic.player.Players;
 import org.game.logic.player.function.TimeIntervalManager;
 import org.game.logic.thread.ThreadPool;
+import org.game.logic.zookepper.ZookeeperProperties;
 import org.game.proto.protocol.Protocols;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,9 @@ public class Logic extends Server {
 
     @Autowired
     private SpringConfig springConfig;
+
+    @Autowired
+    private ZookeeperProperties zookeeperProperties;
 
     @Autowired
     private ConfigService configService;
@@ -97,7 +101,7 @@ public class Logic extends Server {
      * @throws Exception 异常
      */
     private void registerZkService(boolean isReconnect) throws Exception {
-        String rootPath = springConfig.getRootPath();
+        String rootPath = zookeeperProperties.rootPath();
         if (zkClient.checkExists().forPath(rootPath) == null) {
             zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
         }
@@ -139,6 +143,9 @@ public class Logic extends Server {
 
     protected void stop() throws Exception {
         tcpServer.close();
+        if (!tcpServer.awaitTermination(2, TimeUnit.MINUTES)) {
+            log.error("tcp server close timeout");
+        }
         synchronized (Players.class) {
             for (Player player : Players.getPlayers().values()) {
                 try {
@@ -151,11 +158,11 @@ public class Logic extends Server {
         }
         grpcServer.shutdown();
         try {
-            grpcServer.awaitTermination(10, TimeUnit.SECONDS);
+            grpcServer.awaitTermination(2, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("grpc server awaitTermination error", e);
         }
-        ThreadPool.shutdown();
+        ThreadPool.close();
         SpringApplication.exit(applicationContext);
     }
 }
