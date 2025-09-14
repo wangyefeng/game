@@ -92,6 +92,7 @@ public class Logic extends Server {
 
     /**
      * 注册zookeeper服务
+     *
      * @param isReconnect 是否是重连
      * @throws Exception 异常
      */
@@ -140,7 +141,12 @@ public class Logic extends Server {
         tcpServer.close();
         synchronized (Players.class) {
             for (Player player : Players.getPlayers().values()) {
-                player.execute(player::destroy);
+                try {
+                    player.execute(player::destroy);
+                    player.awaitAllTaskComplete(10, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    log.error("player destroy error", e);
+                }
             }
         }
         grpcServer.shutdown();

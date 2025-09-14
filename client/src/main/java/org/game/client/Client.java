@@ -115,7 +115,7 @@ public class Client implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Protocols.init();
         WebClient client = WebClient.builder().baseUrl("http://"  + HOST + ":10000/auth").build();
-        int num = 1;
+        int num = 100;
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";

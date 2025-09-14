@@ -11,12 +11,13 @@ public abstract class ThreadPool {
 
     private static final Logger log = LoggerFactory.getLogger(ThreadPool.class);
 
-    public static final int EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors() * 2 + 1;
 
-    public static final ThreadPoolExecutor[] executor = new ThreadPoolExecutor[EXECUTOR_SIZE];
+    public static final ThreadPoolExecutor[] executor;
 
-    public static void start() {
-        for (int i = 0; i < EXECUTOR_SIZE; i++) {
+    static {
+        int s = Runtime.getRuntime().availableProcessors() * 2 + 1;
+        executor = new ThreadPoolExecutor[s];
+        for (int i = 0; i < s; i++) {
             int finalI = i;
             executor[i] = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "player-thread-" + finalI));
         }
@@ -24,10 +25,10 @@ public abstract class ThreadPool {
     }
 
     public static ThreadPoolExecutor getPlayerExecutor(int playerId) {
-        return executor[playerId % EXECUTOR_SIZE];
+        return executor[playerId % executor.length];
     }
 
-    public static void shutdown() {
+    public static void close() {
         for (ThreadPoolExecutor executor : executor) {
             executor.close();
         }

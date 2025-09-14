@@ -189,36 +189,32 @@ public class Player {
         log.info("玩家{}销毁", getId());
         saveFuture.cancel(true);
         asyncSave(true);
-        Players.removePlayer(getId());
         PlayerService playerService = getService(PlayerService.class);
         playerService.destroy();
+        executor.shutdown();
         logoutFuture = null;
+    }
+
+    public boolean awaitAllTaskComplete(long timeout, TimeUnit unit) throws InterruptedException {
+        return executor.awaitTermination(timeout, unit);
     }
 
     public class DestroyTask implements Runnable {
 
         @Override
         public void run() {
-            Boolean b;
-            try {
-                b = submit(() -> {
-                    if (isOnline()) {
-                        logoutFuture = null;
-                        return false;
-                    }
-                    if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
-                        ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
-                        return false;
-                    }
-                    Player.this.destroy();
-                    return true;
-                }).get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            if (b) {
-                executor.close();
-            }
+            execute(() -> {
+                if (isOnline()) {
+                    logoutFuture = null;
+                    return;
+                }
+                if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
+                    ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
+                    return;
+                }
+                Player.this.destroy();
+                Players.removePlayer(getId());
+            });
         }
     }
 

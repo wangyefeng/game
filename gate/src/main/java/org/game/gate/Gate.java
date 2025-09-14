@@ -61,7 +61,6 @@ public class Gate extends Server {
 
     @Override
     protected void start0() {
-        ThreadPool.start();
         Protocols.init();
         startZkServiceListener();
     }
@@ -118,7 +117,7 @@ public class Gate extends Server {
         tcpServer.close();
         webSocketServer.close();
         clientGroup.close();
-        ThreadPool.shutdown();
+        ThreadPool.close();
         SpringApplication.exit(applicationContext);
     }
 
