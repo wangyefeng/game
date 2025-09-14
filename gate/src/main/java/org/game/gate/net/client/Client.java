@@ -2,15 +2,19 @@ package org.game.gate.net.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class Client {
 
     private static final Logger log = LoggerFactory.getLogger(Client.class);
+
+    private static final int RECONNECT_TIME = 5;
 
     private final String id;
 
@@ -58,31 +62,28 @@ public abstract class Client {
     }
 
     public void connect() {
-        while (!isClose()) {
-            try {
-                ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-                channel = channelFuture.channel();
-                log.info("服务器连接成功！连接到服务器 {}", this);
-                return;
-            } catch (InterruptedException e) {
-                log.info("重连线程被中断！{} 停止重连......", this);
-                return;
-            } catch (Exception e) {
-                log.error("连接服务器失败，正在重试...", e);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    log.info("重连线程被中断！{} 停止重连...", this);
-                    return;
-                }
-            }
+        if (isClose()) {
+            log.info("客户端连接中断，尝试重新连接！");
+            return;
         }
-        channel.isActive();
+        bootstrap.connect(host, port).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                log.info("客户端连接成功！连接到服务器 {}", this);
+                channel = future.channel();
+                channel.closeFuture().addListener((ChannelFutureListener) _ -> reconnect());
+            } else {
+                reconnect();
+            }
+        });
     }
 
     public void start() {
         init();
         connect();
+    }
+
+    public void reconnect() {
+        eventLoopGroup.schedule(this::connect, RECONNECT_TIME, TimeUnit.SECONDS);
     }
 
     @Override
