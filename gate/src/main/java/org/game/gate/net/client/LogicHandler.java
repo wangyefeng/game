@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import jakarta.annotation.Nonnull;
-import org.game.common.Server;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.gate.thread.ThreadPool;
@@ -24,14 +23,11 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
-    private final LogicClient logicClient;
-
     private final MsgHandlerFactory msgHandlerFactory;
 
     public static final AttributeKey<List<Integer>> PLAYERS_KEY = AttributeKey.newInstance("players");
 
-    public LogicHandler(LogicClient logicClient, MsgHandlerFactory msgHandlerFactory) {
-        this.logicClient = logicClient;
+    public LogicHandler(MsgHandlerFactory msgHandlerFactory) {
         this.msgHandlerFactory = msgHandlerFactory;
     }
 
@@ -59,7 +55,6 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     public void channelInactive(@Nonnull ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         log.info("与逻辑服务器连接断开！{}", ctx.channel().remoteAddress());
-        logicClient.setRunning(false);
         List<Integer> players = ctx.channel().attr(PLAYERS_KEY).get();
         for (Integer playerId : players) {
             ThreadPool.getPlayerExecutor(playerId).execute(() -> {
@@ -68,10 +63,6 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
                     player.getChannel().close();
                 }
             });
-        }
-        if (!Server.isStopping() && !logicClient.isClose()) {
-            log.info("尝试重新连接逻辑服务器{}...", ctx.channel().remoteAddress());
-            logicClient.reconnect();
         }
     }
 

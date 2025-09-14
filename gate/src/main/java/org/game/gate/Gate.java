@@ -84,18 +84,6 @@ public class Gate extends Server {
                         clientGroup.add(logicClient);
                     }
                 })
-                .forDeletes(childData -> {
-                    if (!servicePath.equals(childData.getPath())) {// 过滤掉非服务节点
-                        // 删除节点
-                        log.info("删除logic服务器节点：{}", childData.getPath());
-                        LogicClient client = clientGroup.remove(childData.getPath());
-                        try {
-                            client.close();
-                        } catch (InterruptedException e) {
-                            log.error("关闭LogicClient异常", e);
-                        }
-                    }
-                })
                 .build();
         cache.listenable().addListener(listener);
         // 启动缓存监听

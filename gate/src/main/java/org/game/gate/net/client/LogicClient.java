@@ -10,12 +10,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.game.gate.player.Player;
 import org.game.proto.MsgHandlerFactory;
 import org.game.proto.protocol.Protocol;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,8 +43,6 @@ public class LogicClient extends Client {
      */
     private static final int LENGTH_LIMIT = 1024 * 1024;
 
-    private final Set<Player> players = new HashSet<>();
-
     private final ManagedChannel grpcChannel;
 
     private final MsgHandlerFactory msgHandlerFactory;
@@ -60,7 +55,7 @@ public class LogicClient extends Client {
 
     @Override
     public void init() {
-        ChannelHandler handler = new LogicHandler(this, msgHandlerFactory);
+        ChannelHandler handler = new LogicHandler(msgHandlerFactory);
         eventLoopGroup = new NioEventLoopGroup(1);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
@@ -89,18 +84,6 @@ public class LogicClient extends Client {
     @Override
     public int getPort() {
         return super.getPort();
-    }
-
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
-
-    public Set<Player> getPlayers() {
-        return players;
-    }
-
-    public void removePlayer(Player player) {
-        players.remove(player);
     }
 
     public ManagedChannel getGrpcChannel() {

@@ -97,7 +97,7 @@ public class WebsocketCodec extends MessageToMessageCodec<WebSocketFrame, Messag
                 out.add(MessageCode.of(protocol, message));
             } else if (to == Topic.LOGIC.getCode()) {// logic
                 Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
-                if (player != null && player.getLogicClient().isRunning()) {
+                if (player != null && !player.getLogicClient().isClose()) {
                     int readableBytes = in.readableBytes();
                     ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(12, 12);
                     try {

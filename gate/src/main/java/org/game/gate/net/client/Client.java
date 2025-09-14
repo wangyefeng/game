@@ -22,13 +22,9 @@ public abstract class Client {
 
     protected Bootstrap bootstrap = new Bootstrap();
 
-    protected boolean running;
-
     protected String name;
 
     protected EventLoopGroup eventLoopGroup;
-
-    private Thread reconnectThread;
 
     public Client(String id, String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
@@ -55,9 +51,6 @@ public abstract class Client {
 
     public void close() throws InterruptedException {
         log.info("关闭客户端连接： {}", this);
-        if (reconnectThread != null) {
-            reconnectThread.interrupt();
-        }
         if (channel.isOpen()) {
             channel.close().sync();
         }
@@ -67,22 +60,13 @@ public abstract class Client {
         }
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
     public void connect() {
-        while (!Thread.currentThread().isInterrupted() && !eventLoopGroup.isShutdown()) {
+        int retryCount = 3;
+        for (int i = 0; i < retryCount; i++) {
             try {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channel = channelFuture.channel();
-                running = true;
                 log.info("服务器连接成功！连接到服务器 {}", this);
-                reconnectThread = null;
                 break;
             } catch (InterruptedException e) {
                 log.info("重连线程被中断！{} 停止重连......", this);
@@ -102,11 +86,6 @@ public abstract class Client {
     public void start() {
         init();
         connect();
-    }
-
-    public void reconnect() {
-        reconnectThread = new Thread(this::connect, "reconnect");
-        reconnectThread.start();
     }
 
     @Override
