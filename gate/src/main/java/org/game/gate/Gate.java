@@ -82,6 +82,7 @@ public class Gate extends Server {
                         LogicClient logicClient = new LogicClient(childData.getPath(), serverInfo.host, serverInfo.tcpPort, serverInfo.rpcPort, msgHandlerFactory);
                         logicClient.start();
                         clientGroup.add(logicClient);
+                        logicClient.addListener((id, _) -> clientGroup.remove(id));
                     }
                 })
                 .build();

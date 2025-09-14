@@ -52,7 +52,7 @@ public class ClientGroup<C extends Client> {
         return clients.containsKey(id);
     }
 
-    public Map<String, C> getClients() {
+    public synchronized Map<String, C> getClients() {
         return clients;
     }
 

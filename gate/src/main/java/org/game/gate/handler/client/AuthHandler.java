@@ -116,6 +116,7 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
                 if (clientGroup.getClients().isEmpty()) {
                     log.error("当前没有可用的logic服务器，请检查logic服务器是否正常启动！！！");
                     channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, resp.setSuccess(false).build()));
+                    channel.close();
                     return;
                 } else {
                     // 检测redis中该玩家是否还在某个服务器缓存中

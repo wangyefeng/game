@@ -4,6 +4,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
+import org.game.common.event.Listener;
+import org.game.common.event.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -25,6 +27,8 @@ public abstract class Client {
     protected String name;
 
     protected EventLoopGroup eventLoopGroup;
+
+    protected Publisher<String> closePublisher = new Publisher<>();
 
     public Client(String id, String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
@@ -51,13 +55,11 @@ public abstract class Client {
 
     public void close() throws InterruptedException {
         log.info("关闭客户端连接： {}", this);
-        if (channel.isOpen()) {
-            channel.close().sync();
-        }
         if (!eventLoopGroup.isShutdown()) {
-            eventLoopGroup.shutdownGracefully().sync();
+            eventLoopGroup.shutdownGracefully();
             log.info("关闭客户端连接完成！");
         }
+        closePublisher.update(getId());
     }
 
     public void connect() {
@@ -103,5 +105,9 @@ public abstract class Client {
 
     public boolean isClose() {
         return eventLoopGroup.isShutdown();
+    }
+
+    public void addListener(Listener<String> listener) {
+        closePublisher.addListener(listener);
     }
 }

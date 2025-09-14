@@ -23,12 +23,15 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
 
-    private final MsgHandlerFactory msgHandlerFactory;
-
     public static final AttributeKey<List<Integer>> PLAYERS_KEY = AttributeKey.newInstance("players");
 
-    public LogicHandler(MsgHandlerFactory msgHandlerFactory) {
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    private final LogicClient logicClient;
+
+    public LogicHandler(LogicClient logicClient, MsgHandlerFactory msgHandlerFactory) {
         this.msgHandlerFactory = msgHandlerFactory;
+        this.logicClient = logicClient;
     }
 
     @Override
@@ -64,6 +67,7 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
                 }
             });
         }
+        logicClient.close();
     }
 
     @Override

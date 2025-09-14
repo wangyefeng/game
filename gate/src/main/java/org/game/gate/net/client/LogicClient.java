@@ -55,7 +55,7 @@ public class LogicClient extends Client {
 
     @Override
     public void init() {
-        ChannelHandler handler = new LogicHandler(msgHandlerFactory);
+        ChannelHandler handler = new LogicHandler(this, msgHandlerFactory);
         eventLoopGroup = new NioEventLoopGroup(1);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class);
         HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
