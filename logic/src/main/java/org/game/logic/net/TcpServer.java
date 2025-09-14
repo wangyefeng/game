@@ -2,16 +2,15 @@ package org.game.logic.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.annotation.Nonnull;
-import org.apache.curator.framework.CuratorFramework;
-import org.game.logic.SpringConfig;
-import org.game.logic.zookepper.ZookeeperProperties;
 import org.game.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class TcpServer {
 
     private final int port;
 
-    private volatile AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     private NioEventLoopGroup group;
 
@@ -59,15 +58,6 @@ public class TcpServer {
 
     @Autowired
     private TcpPlayerMsgHandler playerMsgHandler;
-
-    @Autowired
-    private CuratorFramework zkClient;
-
-    @Autowired
-    private ZookeeperProperties zookeeperProperties;
-
-    @Autowired
-    private SpringConfig springConfig;
 
     public TcpServer(@Value("${logic.tcp-port}") int port) {
         this.port = port;
@@ -123,13 +113,6 @@ public class TcpServer {
     public void close() {
         if (!isRunning.compareAndSet(true, false)) {
             return;
-        }
-        String rootPath = zookeeperProperties.rootPath();
-        String servicePath = rootPath + "/" + springConfig.getLogicId();
-        try {
-            zkClient.delete().forPath(servicePath);
-        } catch (Exception e) {
-            log.error("删除zk节点失败 path:{}", servicePath, e);
         }
         group.shutdownGracefully();
         log.info("tcp server closed");

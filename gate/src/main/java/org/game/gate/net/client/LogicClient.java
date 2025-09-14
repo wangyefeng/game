@@ -91,7 +91,7 @@ public class LogicClient extends Client {
     }
 
     @Override
-    public void close() throws InterruptedException {
+    public void close() {
         super.close();
         grpcChannel.shutdown();
     }

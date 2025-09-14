@@ -67,7 +67,6 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
                 }
             });
         }
-        logicClient.close();
     }
 
     @Override

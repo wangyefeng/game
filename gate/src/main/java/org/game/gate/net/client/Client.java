@@ -4,8 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
-import org.game.common.event.Listener;
-import org.game.common.event.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -27,8 +25,6 @@ public abstract class Client {
     protected String name;
 
     protected EventLoopGroup eventLoopGroup;
-
-    protected Publisher<String> closePublisher = new Publisher<>();
 
     public Client(String id, String host, int port, String name) {
         Assert.hasLength(host, "host不能为空!");
@@ -53,36 +49,35 @@ public abstract class Client {
         return port;
     }
 
-    public void close() throws InterruptedException {
+    public void close() {
         log.info("关闭客户端连接： {}", this);
         if (!eventLoopGroup.isShutdown()) {
             eventLoopGroup.shutdownGracefully();
             log.info("关闭客户端连接完成！");
         }
-        closePublisher.update(getId());
     }
 
     public void connect() {
-        int retryCount = 3;
-        for (int i = 0; i < retryCount; i++) {
+        while (!isClose()) {
             try {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channel = channelFuture.channel();
                 log.info("服务器连接成功！连接到服务器 {}", this);
-                break;
+                return;
             } catch (InterruptedException e) {
                 log.info("重连线程被中断！{} 停止重连......", this);
-                break;
+                return;
             } catch (Exception e) {
                 log.error("连接服务器失败，正在重试...", e);
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e1) {
                     log.info("重连线程被中断！{} 停止重连...", this);
-                    break;
+                    return;
                 }
             }
         }
+        channel.isActive();
     }
 
     public void start() {
@@ -105,9 +100,5 @@ public abstract class Client {
 
     public boolean isClose() {
         return eventLoopGroup.isShutdown();
-    }
-
-    public void addListener(Listener<String> listener) {
-        closePublisher.addListener(listener);
     }
 }
