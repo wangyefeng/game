@@ -13,12 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -80,14 +75,14 @@ public class ExcelToMysql implements InitializingBean {
             return;
         }
         for (String table : tables) {
-            readExcel(path, new File(path + File.separatorChar + table), charset, config);
+            readExcel(path, new FileInputStream(path + File.separatorChar + table), charset, config);
         }
         log.info("解析所有Excel完毕");
     }
 
     // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
-    public static void readExcel(String path, File file, Charset charset, RandomAccessFile config) throws Exception {
-        Workbook book = WorkbookFactory.create(file);
+    public static void readExcel(String path, FileInputStream fileInputStream, Charset charset, RandomAccessFile config) throws Exception {
+        Workbook book = WorkbookFactory.create(fileInputStream);
         Iterator<Sheet> it = book.sheetIterator();
         int k = -1;
         while (it.hasNext()) {
@@ -278,9 +273,7 @@ public class ExcelToMysql implements InitializingBean {
         File file = new File(fileName);
         try {
             if (!file.exists()) {
-                if (file.createNewFile()) {
-                    throw new RuntimeException("创建文件失败：" + fileName);
-                }
+                file.createNewFile();
             }
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("");
