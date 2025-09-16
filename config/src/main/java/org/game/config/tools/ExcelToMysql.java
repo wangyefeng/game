@@ -10,13 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -26,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.game.config",  // 扫描该包及其子包
-        excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class))
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = MysqlToExcel.class))
 @Tool
 public class ExcelToMysql implements InitializingBean {
 
@@ -238,7 +236,11 @@ public class ExcelToMysql implements InitializingBean {
                                 }
                             } else if (TYPE_STRING.equals(type)) {
                                 sql.append('\'');
-                                sql.append(cell.getStringCellValue());
+                                try {
+                                    sql.append(cell.getStringCellValue());
+                                } catch (Exception e) {
+                                    sql.append(cell.getNumericCellValue());
+                                }
                                 sql.append('\'');
                             } else if (TYPE_FLOAT.equals(type) || TYPE_DOUBLE.equals(type)) {
                                 sql.append(cell.getNumericCellValue());
@@ -295,21 +297,21 @@ public class ExcelToMysql implements InitializingBean {
         clearInfoForFile(configPath);
         RandomAccessFile config = new RandomAccessFile(configPath, "rw");
         ExcelToMysql.common(path, charset, config);
-        Connection conn = null;
-        try {
-            log.info("开始执行SQL脚本...");
-            long start = System.currentTimeMillis();
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(url, username, password);
-            executeSQLFile(conn, configPath);
-            log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                conn.close();
-            }
-        }
+//        Connection conn = null;
+//        try {
+//            log.info("开始执行SQL脚本...");
+//            long start = System.currentTimeMillis();
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            conn = DriverManager.getConnection(url, username, password);
+//            executeSQLFile(conn, configPath);
+//            log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        } finally {
+//            if (conn != null) {
+//                conn.close();
+//            }
+//        }
     }
 
     public void executeSQLFile(Connection conn, String sqlFilePath) throws IOException {
