@@ -32,31 +32,6 @@ services:
     restart: always
     networks:
       - my-net
-#  nacos:
-#    image: nacos/nacos-server:v3.0.2
-#    container_name: nacos
-#    depends_on:
-#      - mysql
-#    environment:
-#      - MODE=standalone
-#      - SPRING_DATASOURCE_PLATFORM=mysql
-#      - MYSQL_SERVICE_HOST=mysql
-#      - MYSQL_SERVICE_DB_NAME=nacos
-#      - MYSQL_SERVICE_USER=root
-#      - MYSQL_SERVICE_PASSWORD=123456
-#      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
-#      - PREFER_HOST_MODE=hostname
-#      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
-#      - NACOS_AUTH_IDENTITY_VALUE=security
-#      - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
-#    ports:
-#      - "8080:8080"
-#      - "8848:8848"
-#      - "9848:9848"
-#    restart: always
-#    networks:
-#      - my-net
-
 networks:
   my-net:
     driver: bridge
