@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.logic.SpringConfig;
 import org.game.logic.net.AbstractPlayerMsgHandler;
-import org.game.logic.net.ChannelKeys;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.protocol.ClientToLogicProtocol;
 import org.game.proto.protocol.LogicToClientProtocol;
@@ -65,7 +64,6 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
 
     private void login(Channel channel, PbLoginReq data, Player player, boolean isReconnect) {
         player.login(data, channel, isReconnect);
-        channel.attr(ChannelKeys.PLAYERS_KEY).get().add(player.getId());
         Builder resp = PbLoginResp.newBuilder();
         resp.setIsNew(false);
         player.loginResp(resp);

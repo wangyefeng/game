@@ -72,10 +72,12 @@ public class TcpServer {
             ServerBootstrap bootstrap = new ServerBootstrap();
             PlayerMsgEncode playerMsgEncode = new PlayerMsgEncode();
             HeartBeatHandler heartBeatHandler = new HeartBeatHandler();
+            LoggerHandler loggerHandler = new LoggerHandler();
             bootstrap.group(group).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(@Nonnull SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
+                    pipeline.addLast(loggerHandler);
                     pipeline.addLast(new IdleStateHandler(READER_IDLE_TIME, WRITER_IDLE_TIME, 0, TimeUnit.SECONDS));// 设置读超时时间为20秒
                     pipeline.addLast(heartBeatHandler);
                     pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, 0, FRAME_LENGTH, 0, FRAME_LENGTH));

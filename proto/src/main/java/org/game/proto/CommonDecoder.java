@@ -16,7 +16,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
 
     private final byte to;
 
-    private Map<Byte, Decoder> decoders = new HashMap<>();
+    private final Map<Byte, Decoder> decoders = new HashMap<>();
 
     public CommonDecoder(byte to) {
         this.to = to;

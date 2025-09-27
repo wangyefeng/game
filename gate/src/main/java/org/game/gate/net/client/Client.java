@@ -63,12 +63,12 @@ public abstract class Client {
 
     public void connect() {
         if (isClose()) {
-            log.info("客户端连接中断，尝试重新连接！");
+            log.info("连接中断，尝试重新连接！");
             return;
         }
         bootstrap.connect(host, port).addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
-                log.info("客户端连接成功！连接到服务器 {}", this);
+                log.info("连接成功！连接到服务器 {}", this);
                 channel = future.channel();
                 channel.closeFuture().addListener((ChannelFutureListener) _ -> reconnect());
             } else {

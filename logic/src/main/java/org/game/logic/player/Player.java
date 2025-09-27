@@ -12,7 +12,6 @@ import org.game.config.entity.Item;
 import org.game.config.entity.PlayerEvent;
 import org.game.config.service.CfgItemService;
 import org.game.logic.database.entity.PlayerInfo;
-import org.game.logic.net.ChannelKeys;
 import org.game.logic.player.item.*;
 import org.game.logic.thread.ThreadPool;
 import org.game.proto.MessagePlayer;
@@ -178,7 +177,6 @@ public class Player {
     public void logout() {
         log.info("玩家{}退出游戏", getId());
         logoutTime = System.currentTimeMillis();
-        channel.attr(ChannelKeys.PLAYERS_KEY).get().remove((Integer) getId());
         channel = null;
         if (logoutFuture == null) {
             logoutFuture = ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
