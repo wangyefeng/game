@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public abstract class JsonUtil {
 
+    private JsonUtil() {
+        // private constructor to prevent instantiation
+    }
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     static {

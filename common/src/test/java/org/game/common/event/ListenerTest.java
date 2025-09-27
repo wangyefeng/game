@@ -19,27 +19,27 @@ public class ListenerTest {
             player.levelUp();
         }
         Assertions.assertTrue(listener1.isFinished);
-        Assertions.assertTrue(listener1.progress == 10);
+        Assertions.assertEquals(10, listener1.progress);
         Assertions.assertFalse(listener2.isFinished);
-        Assertions.assertTrue(listener2.progress == 11);
-        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize() == 1);
+        Assertions.assertEquals(11, listener2.progress);
+        Assertions.assertEquals(1, player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize());
         player.levelUp();
         Assertions.assertTrue(listener2.isFinished);
-        Assertions.assertTrue(listener2.progress == 12);
-        Assertions.assertTrue(player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize() == 0);
+        Assertions.assertEquals(12, listener2.progress);
+        Assertions.assertEquals(0, player.getEventListeners(PlayerEventType.LEVEL_UP).listenersSize());
 
         player.rename("John");
         Assertions.assertTrue(listener3.isFinished);
-        Assertions.assertTrue(listener3.progress == 1);
+        Assertions.assertEquals(1, listener3.progress);
     }
 
-    private class TaskListener implements Listener<Integer> {
+    private static class TaskListener implements Listener<Integer> {
 
-        private PlayerEventType type;
+        private final PlayerEventType type;
 
         private int progress;
 
-        private int target;
+        private final int target;
 
         private boolean isFinished;
 
@@ -60,13 +60,13 @@ public class ListenerTest {
         }
     }
 
-    private class Player {
+    private static class Player {
 
         private int level;
 
         private String name;
 
-        private PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
+        private final PublishManager<PlayerEventType> publishManager = new PublishManager<>(PlayerEventType.values());
 
         public Player(int level) {
             this.level = level;
