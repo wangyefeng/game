@@ -1,6 +1,5 @@
 package org.game.common;
 
-import org.apache.logging.log4j.core.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -17,8 +16,6 @@ public abstract class Server {
     static {
         // 设置默认的异常处理器, 打印日志
         Thread.setDefaultUncaughtExceptionHandler((_, e) -> log.error("未捕获异常！", e));
-        // 设置全局异步日志处理器
-        System.setProperty(Constants.LOG4J_CONTEXT_SELECTOR, "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     }
 
     @EventListener(ApplicationStartedEvent.class)

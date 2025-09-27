@@ -1,7 +1,6 @@
 spring:
   main:
     banner-mode: off
-    web-application-type: none
   datasource:
     config:
       url: jdbc:mysql://localhost:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
