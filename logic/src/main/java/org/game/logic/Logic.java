@@ -1,7 +1,6 @@
 package org.game.logic;
 
 import io.netty.util.ResourceLeakDetector;
-import io.netty.util.internal.EmptyArrays;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.game.common.Server;
@@ -91,49 +90,42 @@ public class Logic extends Server {
 
     private void initZkService() throws Exception {
         addZkListener();
-        registerZkService(false);
+        registerZkService();
     }
 
     /**
      * 注册zookeeper服务
      *
-     * @param isReconnect 是否是重连
      * @throws Exception 异常
      */
-    private void registerZkService(boolean isReconnect) throws Exception {
-        String rootPath = zookeeperProperties.rootPath();
-        if (zkClient.checkExists().forPath(rootPath) == null) {
-            zkClient.create().forPath(rootPath, EmptyArrays.EMPTY_BYTES);
-        }
-        String servicePath = rootPath + "/" + springConfig.getLogicId();
-        if (isReconnect) {
-            try {
-                zkClient.delete().forPath(servicePath);
-            } catch (Exception e) {
-                // ignore
-            }
+    private void registerZkService() throws Exception {
+        String servicePath = zookeeperProperties.rootPath() + "/" + springConfig.getLogicId();
+        try {
+            zkClient.delete().forPath(servicePath);
+        } catch (Exception e) {
+            // ignore
         }
         byte[] data = (JsonUtil.toJson(new ServerInfo(springConfig.getHost(), tcpServer.getPort(), grpcServer.getPort()))).getBytes();
-        zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(servicePath, data);
+        zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath, data);
         log.info("zookeeper registry service success, path: {}", servicePath);
     }
 
     private void addZkListener() {
         zkClient.getConnectionStateListenable().addListener((_, state) -> {
             switch (state) {
-                case RECONNECTED:
+                case SUSPENDED -> log.warn("zookeeper 连接断开，等待重连...");
+                case RECONNECTED -> {
                     log.info("zookeeper 断线重连成功，开始恢复业务...");
                     try {
-                        registerZkService(true);
+                        registerZkService();
                     } catch (Exception e) {
                         log.error("zookeeper 注册服务失败", e);
                     }
-                    break;
-                case SUSPENDED:
-                    log.warn("zookeeper 连接断开，等待重连...");
-                    break;
-                default:
-                    break;
+                }
+                case LOST -> {
+                    log.error("zookeeper 连接丢失，请检查网络连接...");
+                    System.exit(ExitStatus.ZOOKEEPER_CONNECTION_LOST.getCode());
+                }
             }
         });
     }

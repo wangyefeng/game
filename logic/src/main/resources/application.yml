@@ -57,8 +57,8 @@ spring:
         connection-test-query: SELECT 1
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: none
+    show-sql: false
     open-in-view: false
     properties:
       hibernate:
@@ -76,7 +76,7 @@ spring:
             platform: org.springframework.orm.jpa.JpaTransactionManager
 zookeeper:
   address: localhost:2181
-  session-timeout: 10000
+  session-timeout: 30000
   connection-timeout: 5000
   root-path: /logic
 config:

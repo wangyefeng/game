@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class PingHandler extends AbstractCodeMsgHandler<Empty> {
+public final class ClientPingHandler extends AbstractCodeMsgHandler<Empty> {
 
-    private static final Logger log = LoggerFactory.getLogger(PingHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientPingHandler.class);
 
     private static final ByteBuf PONG = Unpooled.unreleasableBuffer(Unpooled.directBuffer(8, 8));
 

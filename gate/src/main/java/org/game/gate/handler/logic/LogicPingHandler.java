@@ -9,13 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PongHandler extends AbstractCodeMsgHandler<Empty> {
+public class LogicPingHandler extends AbstractCodeMsgHandler<Empty> {
 
-    private static final Logger log = LoggerFactory.getLogger(PongHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LogicPingHandler.class);
 
     @Override
     public void handle(Channel channel, Empty message) {
-        log.debug("Received a pong message from logic.");
+        log.debug("Received a ping message from logic.");
     }
 
 

@@ -1,8 +1,9 @@
 package org.game.logic.zookepper;
 
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.retry.RetryUntilElapsed;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,13 +16,12 @@ public class CuratorConfig {
 
     @Bean
     public CuratorFramework curatorFramework(ZookeeperProperties zookeeperProperties) {
-        // 使用 ExponentialBackoffRetry 来进行重试
-        ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(2000, 10);
+        RetryPolicy retryPolicy = new RetryUntilElapsed(zookeeperProperties.sessionTimeout(), 2000);
         CuratorFramework client = CuratorFrameworkFactory.newClient(zookeeperProperties.address(), zookeeperProperties.sessionTimeout(), zookeeperProperties.connectionTimeout(), retryPolicy);
         client.start();  // 启动客户端
         try {
-            // 等待最多 5 秒连接成功（阻塞）
-            if (!client.blockUntilConnected(5, TimeUnit.SECONDS)) {
+            // 等待连接成功
+            if (!client.blockUntilConnected(zookeeperProperties.connectionTimeout(), TimeUnit.MINUTES)) {
                 throw new IllegalStateException("连接 Zookeeper 超时");
             }
         } catch (InterruptedException e) {

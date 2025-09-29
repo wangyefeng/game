@@ -6,7 +6,6 @@ import io.netty.channel.Channel;
 import org.game.common.RedisKeys;
 import org.game.common.RedisKeys.Locks;
 import org.game.common.util.TokenUtil;
-import org.game.gate.SpringConfig;
 import org.game.gate.net.AttributeKeys;
 import org.game.gate.net.client.ClientGroup;
 import org.game.gate.net.client.LogicClient;
@@ -14,6 +13,7 @@ import org.game.gate.net.client.LogicHandler;
 import org.game.gate.player.Player;
 import org.game.gate.player.Players;
 import org.game.gate.thread.ThreadPool;
+import org.game.gate.zookepper.ZookeeperProperties;
 import org.game.proto.AbstractCodeMsgHandler;
 import org.game.proto.MessageCode;
 import org.game.proto.protocol.ClientToGateProtocol;
@@ -49,7 +49,7 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
     private RedissonClient redissonClient;
 
     @Autowired
-    private SpringConfig springConfig;
+    private ZookeeperProperties zookeeperProperties;
 
     /**
      * token有效期
@@ -123,7 +123,7 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
                     LogicClient logicClient;
                     String serverId = (String) redisTemplate.opsForHash().get(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
                     if (serverId != null) {
-                        logicClient = clientGroup.get(springConfig.getServicePath() + "/" + serverId);
+                        logicClient = clientGroup.get(zookeeperProperties.rootPath() + "/" + serverId);
                         if (logicClient == null) {
                             redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
                             logicClient = clientGroup.next();

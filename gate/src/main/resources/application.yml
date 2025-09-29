@@ -1,10 +1,5 @@
 server:
   tcp-port: 12000
-  websocket-port: 12001
-  ssl:
-    enabled: false
-    certificate: classpath:ssl/fullchain.pem
-    certificate-private-key: classpath:ssl/privkey.pem
 spring:
   main:
     banner-mode: off
@@ -35,6 +30,6 @@ spring:
         transportMode: "NIO"
 zookeeper:
   address: localhost:2181
-  session-timeout: 10000
+  session-timeout: 30000
   connection-timeout: 5000
   root-path: /logic
