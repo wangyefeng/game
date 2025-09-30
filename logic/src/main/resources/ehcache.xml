@@ -21,11 +21,11 @@
         <heap>500000</heap>
     </cache-template>
 
-    <cache alias="org.game.logic.database.entity.PlayerInfo" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.BagInfo" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.BagItem" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.FunctionInfo" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.CycleFunction" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.TaskInfo" uses-template="entity"/>
-    <cache alias="org.game.logic.database.entity.DbTask" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.PlayerInfo" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.BagInfo" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.BagItem" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.FunctionInfo" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.CycleFunction" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.TaskInfo" uses-template="entity"/>
+    <cache alias="org.wyf.game.logic.database.entity.DbTask" uses-template="entity"/>
 </config>

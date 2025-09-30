@@ -1,0 +1,99 @@
+package org.wyf.game.gate.net;
+
+import com.google.protobuf.Message;
+import io.netty.buffer.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
+import org.wyf.game.gate.player.Player;
+import org.wyf.game.proto.DecoderType;
+import org.wyf.game.proto.MessageCode;
+import org.wyf.game.proto.MsgHandlerFactory;
+import org.wyf.game.proto.Topic;
+import org.wyf.game.proto.protocol.Protocol;
+import org.wyf.game.proto.protocol.Protocols;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+public class TcpCodec extends ByteToMessageCodec<MessageCode<?>> {
+
+    private static final Logger log = LoggerFactory.getLogger(TcpCodec.class);
+
+    private final LeakyBucket leakyBucket = new LeakyBucket(20, 10);
+
+    private final MsgHandlerFactory msgHandlerFactory;
+
+    public TcpCodec(MsgHandlerFactory msgHandlerFactory) {
+        this.msgHandlerFactory = msgHandlerFactory;
+    }
+
+    @Override
+    protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, ByteBuf out) throws Exception {
+        out.writeInt(0);
+        out.writeByte(DecoderType.MESSAGE_CODE.getCode());
+        out.writeByte(msg.getProtocol().from().getCode());
+        out.writeShort(msg.getProtocol().getCode());
+        ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
+        msg.getData().writeTo(outputStream);
+        out.setInt(0, out.readableBytes() - 4);
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        if (!leakyBucket.addRequest()) {
+            log.warn("触发限流，channel: {}", ctx.channel());
+            ctx.close();
+            return;
+        }
+        byte from = Topic.CLIENT.getCode();
+        byte type = in.readByte();
+        if (type == DecoderType.MESSAGE_CODE.getCode()) {
+            byte to = in.readByte();
+            short code = in.readShort();
+            Protocol protocol = Protocols.getProtocol(from, to, code);
+            if (protocol == null) {
+                log.error("decode error, protocol not found, from: {}, to: {}, code: {}", from, to, code);
+                in.skipBytes(in.readableBytes());
+                return;
+            }
+            if (to == Topic.GATE.getCode()) { // gate
+                ByteBufInputStream inputStream = new ByteBufInputStream(in);
+                Message message = msgHandlerFactory.getHandler(protocol).parseFrom(inputStream);
+                out.add(MessageCode.of(protocol, message));
+            } else if (to == Topic.LOGIC.getCode()) {// logic
+                Player player = ctx.channel().attr(AttributeKeys.PLAYER).get();
+                if (player != null && !player.getLogicClient().isClose()) {
+                    int readableBytes = in.readableBytes();
+                    ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(12, 12);
+                    try {
+                        buffer.writeInt(readableBytes + 8);
+                        buffer.writeByte(DecoderType.MESSAGE_PLAYER.getCode());
+                        buffer.writeByte(from);
+                        buffer.writeInt(player.getId());
+                        buffer.writeShort(code);
+                    } catch (Exception e) {
+                        buffer.release();
+                        throw e;
+                    }
+                    ByteBuf byteBuf = new CompositeByteBuf(PooledByteBufAllocator.DEFAULT, true, 2, buffer, in.retainedDuplicate());
+                    player.getLogicClient().getChannel().writeAndFlush(byteBuf);
+                    in.skipBytes(in.readableBytes());
+                } else {
+                    if (player == null) {
+                        log.error("handle message error, player not found, code: {}", code);
+                    } else {
+                        log.error("handle message error, logic not running, code: {}", code);
+                    }
+                    in.skipBytes(in.readableBytes());
+                }
+            } else {
+                log.warn("decode error, illegal to topic: {}, code: {}", to, code);
+                ctx.close();
+            }
+        } else {
+            log.error("decode error, illegal decoder type: {}", type);
+            ctx.close();
+        }
+    }
+}

@@ -1,7 +1,7 @@
 // 通用协议结构
 syntax = "proto3";
 
-package org.game.proto.struct;
+option java_package = "org.wyf.game.proto.struct";
 
 message PbTask {
   int32 id = 1;

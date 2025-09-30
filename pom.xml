@@ -8,8 +8,8 @@
         <version>3.5.5</version>
     </parent>
 
-    <groupId>org.wangyefeng.game</groupId>
-    <artifactId>game-parent</artifactId>
+    <groupId>org.wyf.game</groupId>
+    <artifactId>parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -20,8 +20,8 @@
         <module>config</module>
         <module>gate</module>
         <module>logic</module>
-        <module>client</module>
         <module>login</module>
+        <module>tools</module>
     </modules>
 
     <properties>

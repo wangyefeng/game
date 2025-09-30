@@ -27,34 +27,19 @@ spring:
         codec: !<org.redisson.codec.Kryo5Codec> {}
         transportMode: "NIO"
   datasource:
-    config:
-      jdbc-url: jdbc:mysql://localhost:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: 123456
-      type: com.zaxxer.hikari.HikariDataSource
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      hikari:
-        max-lifetime: 1800000
-        minimum-idle: 0
-        idle-timeout: 600000
-        maximum-pool-size: 1
-        auto-commit: true
-        connection-timeout: 30000
-        connection-test-query: SELECT 1
-    game:
-      jdbc-url: jdbc:mysql://localhost:3306/game?useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: 123456
-      type: com.zaxxer.hikari.HikariDataSource
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      hikari:
-        max-lifetime: 1800000
-        minimum-idle: 10
-        idle-timeout: 600000
-        maximum-pool-size: 50
-        auto-commit: true
-        connection-timeout: 30000
-        connection-test-query: SELECT 1
+    jdbc-url: jdbc:mysql://localhost:3306/game?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      max-lifetime: 1800000
+      minimum-idle: 10
+      idle-timeout: 600000
+      maximum-pool-size: 50
+      auto-commit: true
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
   jpa:
     hibernate:
       ddl-auto: none
@@ -79,8 +64,6 @@ zookeeper:
   session-timeout: 30000
   connection-timeout: 5000
   root-path: /logic
-config:
-  check: true
 logic:
   server-id: 1
   host: localhost
@@ -88,3 +71,19 @@ logic:
   rpc-port: 11002
 server:
   port: 11000
+
+config:
+  datasource:
+    jdbc-url: jdbc:mysql://localhost:3306/game_config?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      max-lifetime: 1800000
+      minimum-idle: 0
+      idle-timeout: 600000
+      maximum-pool-size: 1
+      auto-commit: true
+      connection-timeout: 30000
+      connection-test-query: SELECT 1

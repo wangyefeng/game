@@ -1,7 +1,7 @@
 // 通用协议结构
 syntax = "proto3";
 
-package org.game.proto.struct;
+option java_package = "org.wyf.game.proto.struct";
 
 import "task.proto";
 
@@ -26,8 +26,8 @@ message PbRegisterReq {
 message PbLoginReq {
 }
 
-// 登录返回
-message PbLoginResp {
+// 登录或者注册返回
+message PbLoginOrRegisterResp {
   bool isNew = 1;// 是否是新注册的用户
   string name = 2;
   int32 level = 3;
