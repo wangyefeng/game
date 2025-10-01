@@ -17,13 +17,11 @@
         <dependency>
             <groupId>org.wyf.game</groupId>
             <artifactId>proto</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.wyf.game</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
