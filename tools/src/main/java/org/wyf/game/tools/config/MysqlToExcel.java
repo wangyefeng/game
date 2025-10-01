@@ -4,13 +4,14 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.EventListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,9 +27,9 @@ import java.util.Scanner;
  * @author WangYefeng
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "com.wyf.game.config")
+@ComponentScan(basePackages = "org.wyf.game.config")
 @EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
-public class MysqlToExcel implements InitializingBean {
+public class MysqlToExcel {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);
 
@@ -38,7 +39,8 @@ public class MysqlToExcel implements InitializingBean {
     @Autowired
     private DatasourceConfig datasourceConfig;
 
-    public void getConnectionCentenForm() {
+    @EventListener(ApplicationStartedEvent.class)
+    public void start() {
         //创建文件夹
         File fileMdr = new File(springConfig.getXlsxPath());
         if (!fileMdr.exists()) {
@@ -92,7 +94,7 @@ public class MysqlToExcel implements InitializingBean {
                     StringBuilder sql = new StringBuilder("SELECT COLUMN_NAME,column_comment ,data_type FROM INFORMATION_SCHEMA.Columns WHERE table_name= " + "'" + tableName + "'" + "  AND table_schema= " + "'" + name + "'");
                     rs = st.executeQuery(sql.toString());
 
-                    ResultSet pkResultSet = dmd.getPrimaryKeys(null, null, tableName);
+                    ResultSet pkResultSet = dmd.getPrimaryKeys(conn.getCatalog(), conn.getSchema(), tableName);
                     String pkColumnName;
                     if (pkResultSet.next()) {
                         pkColumnName = pkResultSet.getString("COLUMN_NAME");
@@ -210,10 +212,5 @@ public class MysqlToExcel implements InitializingBean {
         SpringApplication app = new SpringApplication(MysqlToExcel.class);
         app.setWebApplicationType(WebApplicationType.NONE);
         app.run(args);
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        getConnectionCentenForm();
     }
 }

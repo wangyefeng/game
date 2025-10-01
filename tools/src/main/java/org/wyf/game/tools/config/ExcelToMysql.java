@@ -4,14 +4,14 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.EventListener;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = "com.wyf.game.config")
+@SpringBootApplication
+@ComponentScan(basePackages = "org.wyf.game.config")
 @EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
-public class ExcelToMysql implements InitializingBean {
+public class ExcelToMysql {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
     private static final String TYPE_INT = "int";
@@ -282,8 +282,8 @@ public class ExcelToMysql implements InitializingBean {
         app.run(args);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @EventListener(ApplicationStartedEvent.class)
+    public void start() throws Exception {
         Charset charset = Charset.forName("UTF-8");
         String configPath = springConfig.getXlsxPath() + "/config.sql";
         clearInfoForFile(configPath);

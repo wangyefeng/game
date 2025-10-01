@@ -29,12 +29,12 @@ import java.util.Map;
         entityManagerFactoryRef = "configEntityManagerFactoryBean",
         transactionManagerRef = "configTransactionManager"
 )
-public class ConfigDataSourceConfig {
+public class JpaConfig {
 
     private final JpaProperties jpaProperties;
     private final HibernateProperties hibernateProperties;
 
-    public ConfigDataSourceConfig(JpaProperties jpaProperties, HibernateProperties hibernateProperties) {
+    public JpaConfig(JpaProperties jpaProperties, HibernateProperties hibernateProperties) {
         this.jpaProperties = jpaProperties;
         this.hibernateProperties = hibernateProperties;
     }
