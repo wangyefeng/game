@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `cfg_item`;CREATE TABLE `cfg_item`  (`id` INT(0) NOT NULL COMMENT '唯一id',`name` VARCHAR(1000) NULL COMMENT '',`type` INT(0) NOT NULL COMMENT '物品类型');

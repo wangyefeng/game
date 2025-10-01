@@ -33,17 +33,17 @@ public class TcpCodeMsgHandler extends SimpleChannelInboundHandler<MessageCode<?
     @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) throws OperationNotSupportedException {
-        MsgHandler<? extends Message> handler = msgHandlerFactory.getHandler(message.getProtocol());
+        MsgHandler<? extends Message> handler = msgHandlerFactory.getHandler(message.protocol());
         if (handler == null) {
-            log.error("协议未定义处理器：{}", Protocol.toString(message.getProtocol()));
+            log.error("协议未定义处理器：{}", Protocol.toString(message.protocol()));
             return;
         }
         if (!(handler instanceof CodeMsgHandler codeMsgHandler)) {
-            log.error("协议处理器类型不匹配：{}", Protocol.toString(message.getProtocol()));
+            log.error("协议处理器类型不匹配：{}", Protocol.toString(message.protocol()));
             return;
         }
         try {
-            codeMsgHandler.handle(ctx.channel(), message.getData());
+            codeMsgHandler.handle(ctx.channel(), message.data());
         } catch (Exception e) {
             log.error("协议处理失败 message：{}", message, e);
         }

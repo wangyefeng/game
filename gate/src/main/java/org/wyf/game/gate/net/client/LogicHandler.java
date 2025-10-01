@@ -42,13 +42,13 @@ public class LogicHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode message) throws Exception {
-        MsgHandler handler = msgHandlerFactory.getHandler(message.getProtocol());
+        MsgHandler handler = msgHandlerFactory.getHandler(message.protocol());
         if (handler == null) {
             log.warn("illegal message : {}", message);
             return;
         }
         if (handler instanceof CodeMsgHandler codeMsgHandler) {
-            codeMsgHandler.handle(ctx.channel(), message.getData());
+            codeMsgHandler.handle(ctx.channel(), message.data());
         } else {
             log.error("illegal handler : {}", handler.getClass().getSimpleName());
         }

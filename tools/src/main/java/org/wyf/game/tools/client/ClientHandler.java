@@ -41,8 +41,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) {
         log.info("player: {}, Received message: {}", playerId, message);
-        Message data = message.getData();
-        if (message.getProtocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
+        Message data = message.data();
+        if (message.protocol().equals(GateToClientProtocol.PLAYER_TOKEN_VALIDATE)) {
             Login.PbAuthResp loginResponse = (Login.PbAuthResp) data;
             if (loginResponse.getSuccess()) {
                 if (loginResponse.getIsRegistered()) {

@@ -20,10 +20,10 @@ public class CodeMsgEncode extends MessageToByteEncoder<MessageCode<?>> {
     protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, ByteBuf out) throws Exception {
         out.writeInt(0);// 协议长度，占位
         out.writeByte(DecoderType.MESSAGE_CODE.getCode());// 协议类型
-        out.writeByte(msg.getProtocol().to().getCode());
+        out.writeByte(msg.protocol().to().getCode());
         out.writeShort(msg.getCode());// 协议号
         ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
-        msg.getData().writeTo(outputStream);// protobuf
+        msg.data().writeTo(outputStream);// protobuf
         out.setInt(0, out.readableBytes() - Protocol.FRAME_LENGTH);// 协议长度，写入包体头部
     }
 }

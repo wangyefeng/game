@@ -32,10 +32,10 @@ public class TcpCodec extends ByteToMessageCodec<MessageCode<?>> {
     protected void encode(ChannelHandlerContext ctx, MessageCode<?> msg, ByteBuf out) throws Exception {
         out.writeInt(0);
         out.writeByte(DecoderType.MESSAGE_CODE.getCode());
-        out.writeByte(msg.getProtocol().from().getCode());
-        out.writeShort(msg.getProtocol().getCode());
+        out.writeByte(msg.protocol().from().getCode());
+        out.writeShort(msg.protocol().getCode());
         ByteBufOutputStream outputStream = new ByteBufOutputStream(out);
-        msg.getData().writeTo(outputStream);
+        msg.data().writeTo(outputStream);
         out.setInt(0, out.readableBytes() - 4);
     }
 

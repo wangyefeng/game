@@ -43,7 +43,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
     @Override
     @SuppressWarnings("unchecked")
     protected void channelRead0(ChannelHandlerContext ctx, MessageCode<?> message) throws Exception {
-        MsgHandler<?> handler = msgHandlerFactory.getHandler(message.getProtocol());
+        MsgHandler<?> handler = msgHandlerFactory.getHandler(message.protocol());
         if (handler == null) {
             log.error("illegal message code: {}", message.getCode());
             return;
@@ -52,7 +52,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageCode<?>> {
             log.error("illegal message code: {}", message.getCode());
             return;
         }
-        codeMsgHandler.handle(ctx.channel(), message.getData());
+        codeMsgHandler.handle(ctx.channel(), message.data());
     }
 
     @Override

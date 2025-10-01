@@ -8,13 +8,9 @@ import org.wyf.game.proto.util.ProtobufJsonUtil;
 
 import java.util.Objects;
 
-public final class MessageCode<T extends Message> {
+public record MessageCode<T extends Message>(Protocol protocol, T data) {
 
-    private final Protocol protocol;
-
-    private final T data;
-
-    private MessageCode(Protocol protocol, T data) {
+    public MessageCode(Protocol protocol, T data) {
         this.protocol = Objects.requireNonNull(protocol);
         this.data = Objects.requireNonNull(data);
     }
@@ -27,11 +23,13 @@ public final class MessageCode<T extends Message> {
         return new MessageCode<>(protocol, Empty.getDefaultInstance());
     }
 
-    public @Nonnull T getData() {
+    @Override
+    public @Nonnull T data() {
         return data;
     }
 
-    public @Nonnull Protocol getProtocol() {
+    @Override
+    public @Nonnull Protocol protocol() {
         return protocol;
     }
 

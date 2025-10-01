@@ -5,10 +5,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.io.File;
@@ -21,34 +22,27 @@ import java.util.Scanner;
 
 /**
  * mysql数据导出到excel工具类
+ *
+ * @author WangYefeng
  */
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(useDefaultFilters = false)
+@SpringBootApplication
+@ComponentScan(basePackages = "com.wyf.game.config")
+@EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
 public class MysqlToExcel implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);
 
-    //数据库的url
-    @Value("${spring.datasource.config.jdbc-url}")
-    private String url;
-    //数据库的用户名
-    @Value("${spring.datasource.config.username}")
-    private String username;
+    @Autowired
+    private SpringConfig springConfig;
 
-    //数据库的密码
-    @Value("${spring.datasource.config.password}")
-    private String password;
-
-    @Value("${config.xlsx-path}")
-    private String path;
+    @Autowired
+    private DatasourceConfig datasourceConfig;
 
     public void getConnectionCentenForm() {
         //创建文件夹
-        File fileMdr = new File(path);
+        File fileMdr = new File(springConfig.getXlsxPath());
         if (!fileMdr.exists()) {
-            if (!fileMdr.mkdirs()) {
-                throw new RuntimeException("创建文件失败：" + path);
-            }
+            fileMdr.mkdirs();
         }
         //验证数据的正确性
         List<String> tables = new ArrayList<>();
@@ -67,7 +61,7 @@ public class MysqlToExcel implements InitializingBean {
         Connection conn;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(url, username, password);
+            conn = DriverManager.getConnection(datasourceConfig.jdbcUrl(), datasourceConfig.username(), datasourceConfig.password());
             Statement st = conn.createStatement();
             DatabaseMetaData dmd = conn.getMetaData();
             String name = conn.getCatalog();
@@ -85,7 +79,7 @@ public class MysqlToExcel implements InitializingBean {
 
             for (String tableName : table) {
                 try (Workbook book = new XSSFWorkbook();
-                     FileOutputStream fos = new FileOutputStream(path + "/" + tableName + ".xlsx")) {
+                     FileOutputStream fos = new FileOutputStream(springConfig.getXlsxPath() + "/" + tableName + ".xlsx")) {
                     CellStyle textStyle = book.createCellStyle();
                     // 获取一个数据格式对象
                     DataFormat dataFormat = book.createDataFormat();
@@ -202,7 +196,7 @@ public class MysqlToExcel implements InitializingBean {
                     }
                     book.write(fos);
                 }
-                log.info("生成表:{}.xlsx成功！ 路径：{}", tableName, path + "\\" + tableName + ".xlsx");
+                log.info("生成表:{}.xlsx成功！ 路径：{}", tableName, springConfig.getXlsxPath() + "\\" + tableName + ".xlsx");
             }
             conn.close();
         } catch (Exception e) {
@@ -212,9 +206,10 @@ public class MysqlToExcel implements InitializingBean {
         }
     }
 
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(MysqlToExcel.class);
-        application.run(args);
+    static void main(String[] args) {
+        SpringApplication app = new SpringApplication(MysqlToExcel.class);
+        app.setWebApplicationType(WebApplicationType.NONE);
+        app.run(args);
     }
 
     @Override

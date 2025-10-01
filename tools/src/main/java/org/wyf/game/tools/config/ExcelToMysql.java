@@ -1,28 +1,31 @@
 package org.wyf.game.tools.config;
 
-import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@SpringBootApplication
-@ComponentScan(basePackages = "org.game.config")
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@ComponentScan(basePackages = "com.wyf.game.config")
+@EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
 public class ExcelToMysql implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
@@ -48,19 +51,11 @@ public class ExcelToMysql implements InitializingBean {
 
     private static final String TYPE_SERVER = "server";
 
-    @Value("${config.xlsx-path}")
-    private String path;
+    @Autowired
+    private SpringConfig springConfig;
 
-    //数据库的url
-    @Value("${spring.datasource.config.jdbc-url}")
-    private String url;
-    //数据库的用户名
-    @Value("${spring.datasource.config.username}")
-    private String username;
-
-    //数据库的密码
-    @Value("${spring.datasource.config.password}")
-    private String password;
+    @Autowired
+    private DatasourceConfig datasourceConfig;
 
     public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
         File file = new File(path);
@@ -76,8 +71,8 @@ public class ExcelToMysql implements InitializingBean {
     }
 
     // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
-    public static void readExcel(String path, FileInputStream fileInputStream, Charset charset, RandomAccessFile config) throws Exception {
-        Workbook book = WorkbookFactory.create(fileInputStream);
+    public static void readExcel(String path, FileInputStream file, Charset charset, RandomAccessFile config) throws Exception {
+        Workbook book = WorkbookFactory.create(file);
         Iterator<Sheet> it = book.sheetIterator();
         int k = -1;
         while (it.hasNext()) {
@@ -86,14 +81,15 @@ public class ExcelToMysql implements InitializingBean {
             if (book.isSheetHidden(k)) {
                 continue;
             }
-            if (!sheet.getSheetName().startsWith("sys")) {
+            if (!sheet.getSheetName().startsWith("cfg_")) {
                 continue;
             }
-            Row row1 = sheet.getRow(0);// 字段名称
-            Row row2 = sheet.getRow(1);// 字段类型
-            Row row0 = sheet.getRow(2);// 字段注释
-            int lastRowIndex = 3;// 最大行数
-            for (int i = lastRowIndex; i <= sheet.getLastRowNum(); i++) {
+            Row row0 = sheet.getRow(0);// 字段名
+            Row row1 = sheet.getRow(1);// 字段名
+            Row row2 = sheet.getRow(2);// 字段类型
+            Row row3 = sheet.getRow(3);// 字段是否是服务器用的
+            int lastRowIndex = 4;// 最大行数
+            for (int i = 4; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null || row.getCell(0) == null || row.getCell(0).toString().isEmpty()) {
                     break;
@@ -108,27 +104,35 @@ public class ExcelToMysql implements InitializingBean {
             for (int j = firstCellIndex1; j < lastCellIndex1; j++) {
                 Cell cell = row2.getCell(j);
                 String cellinfo = cell.getStringCellValue();
-                String s;
-                if (cellinfo.contains("!")) {
-                    s = cellinfo.replace("!", "");
-                    idCellNum = j;
-                } else {
-                    s = cellinfo;
+                String t = row3.getCell(j).getStringCellValue();
+                if (TYPE_COMMON.equals(t) || TYPE_SERVER.equals(t)) {
+                    String s;
+                    if (cellinfo.contains("!")) {
+                        s = cellinfo.replace("!", "");
+                        idCellNum = j;
+                    } else {
+                        s = cellinfo;
+                    }
+                    map.put(j, s);
                 }
-                map.put(j, s);
             }
             if (map.isEmpty()) {
                 continue;
             }
+            if (sheet.getSheetName().equals("cfg_sensitive_words")) {
+                continue;
+            }
             log.info("开始解析配置表：{}", sheet.getSheetName());
+            if (!new File(path + "/sql/").exists()) {
+                new File(path + "/sql/").mkdirs();
+            }
             RandomAccessFile sqlFile = new RandomAccessFile(path + "/sql/" + sheet.getSheetName() + ".sql", "rw");
             clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
-            int firstRowIndex = sheet.getFirstRowNum() + 3;
+            int firstRowIndex = sheet.getFirstRowNum() + 4;
             StringBuilder sql = new StringBuilder();
             sql.append("DROP TABLE IF EXISTS `").append(sheet.getSheetName()).append("`;\r");
             sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
             int finalIdCellNum = idCellNum;
-            AtomicInteger attrNum = new AtomicInteger();
             map.forEach((cellNum, s) -> {
                 Cell cell = row1.getCell(cellNum);
                 sql.append('`');
@@ -147,15 +151,12 @@ public class ExcelToMysql implements InitializingBean {
                     case TYPE_JSON -> sql.append("JSON NULL");
                     case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
                     case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
-                    case TYPE_DATETIME -> sql.append("DATETIME NULL");
+                    case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
                     case TYPE_DATE -> sql.append("DATE NOT NULL");
                     default -> log.info("未知类型：{}", s);
                 }
                 sql.append(" COMMENT '");
-                if (row0 != null && row0.getCell(cellNum) != null) {
-                    sql.append(row0.getCell(cellNum).getStringCellValue());
-                    attrNum.getAndIncrement();
-                }
+                sql.append(row0.getCell(cellNum).getStringCellValue());
                 sql.append("',\r");
             });
             if (idCellNum >= 0) {
@@ -165,19 +166,20 @@ public class ExcelToMysql implements InitializingBean {
                 sql.delete(sql.length() - 2, sql.length() - 1);
             }
             sql.append(")");
-            if (lastRowIndex != 2 || sheet.getRow(3) != null || sheet.getRow(3).getCell(0) != null) {
+            if (lastRowIndex != 3 || sheet.getRow(4) != null || sheet.getRow(4).getCell(0) != null) {
                 String start;
                 StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
                 int lastCellIndex;
                 {
-                    lastCellIndex = row1.getLastCellNum();
-                    int firstCellIndex = row1.getFirstCellNum();
+                    Row row = sheet.getRow(1);
+                    lastCellIndex = row.getLastCellNum();
+                    int firstCellIndex = row.getFirstCellNum();
                     for (int j = firstCellIndex; j < lastCellIndex; j++) {
                         String type = map.get(j);
                         if (type == null) {
                             continue;
                         }
-                        Cell cell = row1.getCell(j);
+                        Cell cell = row.getCell(j);
                         if (cell == null || cell.toString().isBlank()) {
                             lastCellIndex = j;
                             startBuilder.delete(startBuilder.length() - 2, startBuilder.length());
@@ -216,35 +218,27 @@ public class ExcelToMysql implements InitializingBean {
                         }
                         Cell cell = row.getCell(j);
                         if (cell == null) {
-                            if (type.equals(TYPE_STRING) || type.equals(TYPE_JSON) || TYPE_DATETIME.equals(type) || TYPE_DATE.equals(type)) {
-                                sql.append("NULL, ");
-                            } else {
-                                sql.append("0, ");
-                            }
+                            break;
+                        }
+                        String c = cell.toString();
+                        if (c.isBlank()) {
+                            sql.append("null, ");
                         } else {
                             CellType cellType = cell.getCellType();
-                            if (TYPE_INT.equals(type) || TYPE_LONG.equals(type) || TYPE_BOOL.equals(type)) {
-                                if (cellType == CellType.FORMULA) {
-                                    sql.append(((XSSFCell) cell).getCTCell().getV());
-                                } else if (Strings.isBlank(cell.toString())) {
-                                    sql.append(0);
-                                } else {
-                                    sql.append(Math.round(Double.parseDouble(cell.toString())));
+                            switch (type) {
+                                case TYPE_INT, TYPE_LONG, TYPE_BOOL -> {
+                                    if (cellType == CellType.FORMULA) {
+                                        sql.append(((XSSFCell) cell).getCTCell().getV());
+                                    } else {
+                                        sql.append(Math.round(Double.parseDouble(c)));
+                                    }
                                 }
-                            } else if (TYPE_STRING.equals(type)) {
-                                sql.append('\'');
-                                try {
+                                case TYPE_STRING, TYPE_JSON, TYPE_DATETIME, TYPE_DATE -> {
+                                    sql.append('\'');
                                     sql.append(cell.getStringCellValue());
-                                } catch (Exception e) {
-                                    sql.append(cell.getNumericCellValue());
+                                    sql.append('\'');
                                 }
-                                sql.append('\'');
-                            } else if (TYPE_FLOAT.equals(type) || TYPE_DOUBLE.equals(type)) {
-                                sql.append(cell.getNumericCellValue());
-                            } else if (TYPE_JSON.equals(type) || TYPE_DATETIME.equals(type) || TYPE_DATE.equals(type)) {
-                                sql.append('\'');
-                                sql.append(cell.getStringCellValue());
-                                sql.append('\'');
+                                case TYPE_FLOAT, TYPE_DOUBLE -> sql.append(cell.getNumericCellValue());
                             }
                             sql.append(", ");
                         }
@@ -265,12 +259,11 @@ public class ExcelToMysql implements InitializingBean {
 
     /**
      * 清空文件内容
-     *
-     * @param fileName
      */
     public static void clearInfoForFile(String fileName) {
         File file = new File(fileName);
         try {
+            log.info("fileName：{}", fileName);
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -283,36 +276,39 @@ public class ExcelToMysql implements InitializingBean {
         }
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(ExcelToMysql.class, args);
+    static void main(String[] args) {
+        SpringApplication app = new SpringApplication(ExcelToMysql.class);
+        app.setWebApplicationType(WebApplicationType.NONE);
+        app.run(args);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         Charset charset = Charset.forName("UTF-8");
-        String configPath = path + "/config.sql";
+        String configPath = springConfig.getXlsxPath() + "/config.sql";
         clearInfoForFile(configPath);
         RandomAccessFile config = new RandomAccessFile(configPath, "rw");
-        ExcelToMysql.common(path, charset, config);
-//        Connection conn = null;
-//        try {
-//            log.info("开始执行SQL脚本...");
-//            long start = System.currentTimeMillis();
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            conn = DriverManager.getConnection(url, username, password);
-//            executeSQLFile(conn, configPath);
-//            log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        } finally {
-//            if (conn != null) {
-//                conn.close();
-//            }
-//        }
+        ExcelToMysql.common(springConfig.getXlsxPath(), charset, config);
+        Connection conn = null;
+        try {
+            log.info("开始执行SQL脚本...");
+            long start = System.currentTimeMillis();
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(datasourceConfig.jdbcUrl(), datasourceConfig.username(), datasourceConfig.password());
+            executeSQLFile(conn, configPath);
+            log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     public void executeSQLFile(Connection conn, String sqlFilePath) throws IOException {
         StringBuilder sqlScript = new StringBuilder();
+        sqlScript.append("SET FOREIGN_KEY_CHECKS = 0;");
 
         // 读取 SQL 文件内容
         try (BufferedReader br = new BufferedReader(new FileReader(sqlFilePath))) {
@@ -325,6 +321,7 @@ public class ExcelToMysql implements InitializingBean {
                 sqlScript.append(line).append(" ");
             }
         }
+        sqlScript.append("SET FOREIGN_KEY_CHECKS = 1;");
 
         // 将 SQL 文件按语句分割
         String[] statements = sqlScript.toString().split(";");

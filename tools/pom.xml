@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>org.wyf.game</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>config</artifactId>
         </dependency>
 
         <dependency>
