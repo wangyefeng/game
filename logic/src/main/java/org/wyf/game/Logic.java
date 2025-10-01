@@ -139,7 +139,9 @@ public class Logic extends Server {
             for (Player player : Players.getPlayers().values()) {
                 try {
                     player.execute(player::destroy);
-                    player.awaitAllTaskComplete(10, TimeUnit.SECONDS);
+                    if (!player.awaitAllTaskComplete(20, TimeUnit.SECONDS)) {
+                        log.error("player destroy timeout");
+                    }
                 } catch (Exception e) {
                     log.error("player destroy error", e);
                 }

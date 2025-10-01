@@ -1,6 +1,10 @@
 package org.wyf.game.logic.player;
 
-import org.wyf.game.common.RedisKeys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 import org.wyf.game.config.entity.Item;
 import org.wyf.game.config.entity.PlayerEvent;
 import org.wyf.game.logic.database.entity.PlayerInfo;
@@ -9,16 +13,12 @@ import org.wyf.game.logic.player.item.Consumable;
 import org.wyf.game.logic.player.item.ItemIdConstant;
 import org.wyf.game.logic.player.item.ItemType;
 import org.wyf.game.proto.struct.Login;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerService extends AbstractGameService<PlayerInfo, PlayerRepository> implements Consumable {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
+
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -78,11 +78,7 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
         return ItemType.CURRENCY;
     }
 
-    public void destroy() {
-        int playerId = getEntity().getPlayerId();
-        Long delete = redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
-        if (delete == 0) {
-            log.error("删除玩家信息失败！ redis中没有该玩家服务器信息, playerId:{}", playerId);
-        }
+    public StringRedisTemplate getRedisTemplate() {
+        return redisTemplate;
     }
 }

@@ -2,6 +2,10 @@ package org.wyf.game.logic.player;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.wyf.game.common.RedisKeys;
 import org.wyf.game.common.event.Listener;
 import org.wyf.game.common.event.PublishManager;
 import org.wyf.game.common.event.Publisher;
@@ -20,8 +24,6 @@ import org.wyf.game.proto.protocol.LogicToClientProtocol;
 import org.wyf.game.proto.protocol.LogicToGateProtocol;
 import org.wyf.game.proto.protocol.Protocol;
 import org.wyf.game.proto.struct.Login;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wyf.game.proto.util.ProtobufJsonUtil;
 
 import java.time.LocalDate;
@@ -31,6 +33,17 @@ import java.util.concurrent.*;
 public class Player {
 
     private static final Logger log = LoggerFactory.getLogger(Player.class);
+
+    /**
+     * 离线卸载数据时间 单位：秒
+     */
+    private static final long DESTROY_TIME = 10;
+
+    /**
+     * 保存间隔 单位：秒
+     */
+    private static final long SAVE_INTERVAL = 20;
+
     // 玩家id
     private final int id;
 
@@ -65,27 +78,17 @@ public class Player {
 
     private final List<DailyReset> dailyResetServices = new ArrayList<>();
 
-    private Future<?> logoutFuture;
+    private Future<?> destroyFuture;
 
     /**
-     * 数据库异步执行器
+     * 数据库线程执行器
      */
     private final Executor dbExecutor;
 
     /**
-     * 数据库异步执行器
+     * 逻辑线程执行器
      */
     private final ExecutorService executor;
-
-    /**
-     * 离线卸载数据时间 单位：秒
-     */
-    private static final long DESTROY_TIME = 10;
-
-    /**
-     * 保存间隔 单位：秒
-     */
-    private static final long SAVE_INTERVAL = 20;
 
     public Player(int id, Collection<GameService> gameServices, Channel channel) {
         this.id = id;
@@ -183,8 +186,8 @@ public class Player {
         log.info("玩家{}退出游戏", getId());
         logoutTime = System.currentTimeMillis();
         channel = null;
-        if (logoutFuture == null) {
-            logoutFuture = ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
+        if (destroyFuture == null) {
+            destroyFuture = ThreadPool.getScheduledExecutor().schedule(new DestroyTask(), DESTROY_TIME, TimeUnit.SECONDS);
         }
     }
 
@@ -192,11 +195,19 @@ public class Player {
         log.info("玩家{}销毁", getId());
         saveFuture.cancel(true);
         asyncSave(true);
-        PlayerService playerService = getService(PlayerService.class);
-        playerService.destroy();
+        dbExecutor.execute(() -> {
+            Long delete = getRedisTemplate().opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(getId()));
+            if (delete == 0) {
+                log.error("删除玩家信息失败！ redis中没有该玩家服务器信息, playerId:{}", getId());
+            }
+        });
         executor.shutdown();
-        logoutFuture.cancel(true);
-        logoutFuture = null;
+        destroyFuture.cancel(true);
+        destroyFuture = null;
+    }
+
+    private StringRedisTemplate getRedisTemplate() {
+        return getService(PlayerService.class).getRedisTemplate();
     }
 
     public boolean awaitAllTaskComplete(long timeout, TimeUnit unit) throws InterruptedException {
@@ -209,11 +220,11 @@ public class Player {
         public void run() {
             execute(() -> {
                 if (isOnline()) {
-                    logoutFuture = null;
+                    destroyFuture = null;
                     return;
                 }
                 if (System.currentTimeMillis() - logoutTime < DESTROY_TIME * 1000) {
-                    ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
+                    destroyFuture = ThreadPool.getScheduledExecutor().schedule(this, System.currentTimeMillis() - logoutTime, TimeUnit.MILLISECONDS);
                     return;
                 }
                 Player.this.destroy();
@@ -339,6 +350,10 @@ public class Player {
         PlayerInfo playerInfo = playerService.getEntity();
         LocalDate dailyResetDate = playerInfo.getDailyResetDate();
         if (now.isEqual(dailyResetDate)) {
+            return;
+        }
+        if (dailyResetDate.isAfter(now)) {
+            log.warn("重置每日数据失败，当前日期早于重置日期, 重置日期:{}, 当前日期:{}, 请检查是否存在时钟回拨", dailyResetDate, now);
             return;
         }
         playerInfo.setDailyResetDate(now);
