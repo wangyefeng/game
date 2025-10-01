@@ -1,5 +1,6 @@
 package org.wyf.game.logic.player;
 
+import com.google.protobuf.Int32Value;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,10 @@ import org.wyf.game.logic.LogicConfig;
 import org.wyf.game.logic.database.repository.PlayerRepository;
 import org.wyf.game.logic.net.AbstractPlayerMsgHandler;
 import org.wyf.game.logic.thread.ThreadPool;
+import org.wyf.game.proto.MessageCode;
 import org.wyf.game.proto.protocol.ClientToLogicProtocol;
 import org.wyf.game.proto.protocol.LogicToClientProtocol;
+import org.wyf.game.proto.protocol.LogicToGateProtocol;
 import org.wyf.game.proto.struct.Login;
 import org.wyf.game.proto.struct.Login.PbLoginReq;
 
@@ -42,6 +45,10 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
         log.info("玩家{}登录游戏", playerId);
         Player p = Players.getPlayer(playerId);
         if (p != null) {
+            if (p.getChannel() != null && p.getChannel() != channel) {// 顶号
+                log.info("玩家{}已在其他地方登录，踢下线 新连接={} 旧连接={}", playerId, channel, p.getChannel());
+                p.getChannel().writeAndFlush(MessageCode.of(LogicToGateProtocol.KICK_OUT, Int32Value.of(playerId)));
+            }
             p.execute(() -> login(channel, data, p, true), getProtocol(), data);
         } else {
             ExecutorService playerDBExecutor = ThreadPool.getPlayerDBExecutor(playerId);

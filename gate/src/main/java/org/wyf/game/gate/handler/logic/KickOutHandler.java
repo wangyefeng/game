@@ -21,6 +21,7 @@ public class KickOutHandler extends AbstractCodeMsgHandler<Int32Value> {
         int playerId = msg.getValue();
         Player player = Players.getPlayer(playerId);
         if (player != null) {
+            log.info("踢完家下线, player: {}", playerId);
             player.writeToClient(GateToClientProtocol.KICK_OUT);
             player.getChannel().close();
         }

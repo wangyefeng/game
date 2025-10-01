@@ -18,7 +18,7 @@ public class CfgSimpleTaskService extends CfgService<CfgSimpleTask, CfgSimpleTas
     private final Map<Integer, List<CfgSimpleTask>> funcMap = new HashMap<>();
 
     @Override
-    public void init() {
+    public void init() throws ConfigException {
         super.init();
         for (CfgSimpleTask cfgTask : getAllCfg()) {
             funcMap.computeIfAbsent(cfgTask.getFunctionId(), _ -> new ArrayList<>());

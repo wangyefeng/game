@@ -41,7 +41,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
 
     protected String tableName;
 
-    public void init() {
+    public void init() throws ConfigException {
         tableName = getCfgName();
         Scope scope = getClass().getAnnotation(Scope.class);
         if (scope != null && !ConfigurableBeanFactory.SCOPE_PROTOTYPE.equals(scope.value())) {
