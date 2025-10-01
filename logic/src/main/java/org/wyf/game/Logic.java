@@ -3,7 +3,7 @@ package org.wyf.game;
 import io.netty.util.ResourceLeakDetector;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
-import org.wyf.game.proto.protocol.Protocols;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import org.wyf.game.logic.player.Players;
 import org.wyf.game.logic.player.function.TimeIntervalManager;
 import org.wyf.game.logic.thread.ThreadPool;
 import org.wyf.game.logic.zookepper.ZookeeperProperties;
+import org.wyf.game.proto.protocol.Protocols;
 
 import java.util.concurrent.TimeUnit;
 
@@ -97,30 +98,32 @@ public class Logic extends Server {
      */
     private void registerZkService() throws Exception {
         String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.serverId();
-        try {
-            zkClient.delete().forPath(servicePath);
-        } catch (Exception e) {
-            // ignore
-        }
-        byte[] data = (JsonUtil.toJson(new ServerInfo(logicConfig.host(), tcpServer.getPort(), grpcServer.getPort()))).getBytes();
-        zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath, data);
+        String serverJson = JsonUtil.toJson(new ServerInfo(logicConfig.host(), tcpServer.getPort(), grpcServer.getPort()));
+        zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath, serverJson.getBytes());
         log.info("zookeeper registry service success, path: {}", servicePath);
     }
 
     private void addZkListener() {
         zkClient.getConnectionStateListenable().addListener((_, state) -> {
             switch (state) {
-                case SUSPENDED -> log.warn("zookeeper 连接断开，等待重连...");
+                case SUSPENDED -> log.warn("zookeeper连接断开，正在重试...");
                 case RECONNECTED -> {
-                    log.info("zookeeper 断线重连成功，开始恢复业务...");
+                    String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.serverId();
                     try {
-                        registerZkService();
+                        Stat stat = zkClient.checkExists().forPath(servicePath);
+                        if (stat == null || stat.getEphemeralOwner() != zkClient.getZookeeperClient().getZooKeeper().getSessionId()) {
+                            System.exit(ExitStatus.ZOOKEEPER_CONNECTION_LOST.getCode());
+                            return;
+                        }
                     } catch (Exception e) {
-                        log.error("zookeeper 注册服务失败", e);
+                        log.error("zookeeper registry service error, path: {}, error: {}", servicePath, e.getMessage());
+                        System.exit(ExitStatus.ZOOKEEPER_CONNECTION_LOST.getCode());
+                        return;
                     }
+                    log.info("zookeeper 连接恢复");
                 }
                 case LOST -> {
-                    log.error("zookeeper 连接丢失，请检查网络连接...");
+                    log.error("zookeeper 连接丢失，请检查网络连接!!");
                     System.exit(ExitStatus.ZOOKEEPER_CONNECTION_LOST.getCode());
                 }
             }
