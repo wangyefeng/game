@@ -87,10 +87,10 @@ public class ExcelToMysql {
                 if (!sheet.getSheetName().startsWith(globalConfig.getPrefix())) {
                     continue;
                 }
-                Row row0 = sheet.getRow(0);// 字段名
-                Row row1 = sheet.getRow(1);// 字段名
+                Row row0 = sheet.getRow(0);// 字段注释
+                Row row1 = sheet.getRow(1);// 字段使用者
                 Row row2 = sheet.getRow(2);// 字段类型
-                Row row3 = sheet.getRow(3);// 字段是否是服务器用的
+                Row row3 = sheet.getRow(3);// 字段名
                 int lastRowIndex = 4;// 最大行数
                 for (int i = 4; i <= sheet.getLastRowNum(); i++) {
                     Row row = sheet.getRow(i);
@@ -107,7 +107,7 @@ public class ExcelToMysql {
                 for (int j = firstCellIndex1; j < lastCellIndex1; j++) {
                     Cell cell = row2.getCell(j);
                     String cellinfo = cell.getStringCellValue();
-                    String t = row3.getCell(j).getStringCellValue();
+                    String t = row1.getCell(j).getStringCellValue();
                     if (TYPE_COMMON.equals(t) || TYPE_SERVER.equals(t)) {
                         String s;
                         if (cellinfo.contains("!")) {
@@ -134,7 +134,7 @@ public class ExcelToMysql {
                 sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
                 int finalIdCellNum = idCellNum;
                 map.forEach((cellNum, s) -> {
-                    Cell cell = row1.getCell(cellNum);
+                    Cell cell = row3.getCell(cellNum);
                     sql.append('`');
                     sql.append(cell.getStringCellValue());
                     sql.append("` ");
@@ -160,7 +160,7 @@ public class ExcelToMysql {
                     sql.append("',\r");
                 });
                 if (idCellNum >= 0) {
-                    Cell idCell = row1.getCell(idCellNum);
+                    Cell idCell = row3.getCell(idCellNum);
                     sql.append("PRIMARY KEY (`").append(idCell.getStringCellValue()).append("`) USING BTREE\r");
                 } else {
                     sql.delete(sql.length() - 2, sql.length() - 1);
@@ -171,15 +171,14 @@ public class ExcelToMysql {
                     StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
                     int lastCellIndex;
                     {
-                        Row row = sheet.getRow(1);
-                        lastCellIndex = row.getLastCellNum();
-                        int firstCellIndex = row.getFirstCellNum();
+                        lastCellIndex = row3.getLastCellNum();
+                        int firstCellIndex = row3.getFirstCellNum();
                         for (int j = firstCellIndex; j < lastCellIndex; j++) {
                             String type = map.get(j);
                             if (type == null) {
                                 continue;
                             }
-                            Cell cell = row.getCell(j);
+                            Cell cell = row3.getCell(j);
                             if (cell == null || cell.toString().isBlank()) {
                                 lastCellIndex = j;
                                 startBuilder.delete(startBuilder.length() - 2, startBuilder.length());

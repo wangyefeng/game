@@ -37,8 +37,8 @@ public class PlayerService extends AbstractGameService<PlayerInfo, PlayerReposit
         entity.setLevel(entity.getLevel() + 1);
         player.updateEvent(PlayerEvent.LEVEL_UP, entity.getLevel());
         if (entity.getLevel() % 5 == 0) {
-            player.addItem(10, 100);
             player.addItem(1, 1000);
+            player.addItem(10, 100);
         }
     }
 
