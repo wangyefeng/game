@@ -28,21 +28,23 @@ import java.util.Scanner;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = "org.wyf.game.config")
-@EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
+@EnableConfigurationProperties({GlobalConfig.class, DatasourceConfig.class})
 public class MysqlToExcel {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlToExcel.class);
 
     @Autowired
-    private SpringConfig springConfig;
+    private GlobalConfig globalConfig;
 
     @Autowired
     private DatasourceConfig datasourceConfig;
 
+    private final static String DEFAULT_COLUMN_TYPE = "common";
+
     @EventListener(ApplicationStartedEvent.class)
     public void start() {
         //创建文件夹
-        File fileMdr = new File(springConfig.getXlsxPath());
+        File fileMdr = new File(globalConfig.getXlsxPath());
         if (!fileMdr.exists()) {
             fileMdr.mkdirs();
         }
@@ -62,7 +64,6 @@ public class MysqlToExcel {
 
         Connection conn;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(datasourceConfig.jdbcUrl(), datasourceConfig.username(), datasourceConfig.password());
             Statement st = conn.createStatement();
             DatabaseMetaData dmd = conn.getMetaData();
@@ -81,7 +82,7 @@ public class MysqlToExcel {
 
             for (String tableName : table) {
                 try (Workbook book = new XSSFWorkbook();
-                     FileOutputStream fos = new FileOutputStream(springConfig.getXlsxPath() + "/" + tableName + ".xlsx")) {
+                     FileOutputStream fos = new FileOutputStream(globalConfig.getXlsxPath() + "/" + tableName + ".xlsx")) {
                     CellStyle textStyle = book.createCellStyle();
                     // 获取一个数据格式对象
                     DataFormat dataFormat = book.createDataFormat();
@@ -137,8 +138,13 @@ public class MysqlToExcel {
                             cell2.setCellValue(type);
                             cell2.setCellStyle(textStyle);
                             Cell cell3 = row3.createCell(0);
-                            cell3.setCellValue("server");
-                            cell3.setCellStyle(textStyle);
+                            cell3.setCellValue(DEFAULT_COLUMN_TYPE);
+                            CellStyle textBoldStyle = book.createCellStyle();
+                            // 设置单元格的格式为文本
+                            textBoldStyle.setDataFormat(book.createDataFormat().getFormat("@"));
+                            textBoldStyle.setAlignment(HorizontalAlignment.CENTER);
+                            textBoldStyle.setBorderBottom(BorderStyle.MEDIUM);
+                            cell3.setCellStyle(textBoldStyle);
                         } else {
                             index++;
                             sheet.setColumnWidth(index, 1024 * 6);
@@ -160,8 +166,13 @@ public class MysqlToExcel {
                             cell2.setCellValue(type);
                             cell2.setCellStyle(textStyle);
                             Cell cell3 = row3.createCell(index);
-                            cell3.setCellValue("server");
-                            cell3.setCellStyle(textStyle);
+                            cell3.setCellValue(DEFAULT_COLUMN_TYPE);
+                            CellStyle textBoldStyle = book.createCellStyle();
+                            // 设置单元格的格式为文本
+                            textBoldStyle.setDataFormat(book.createDataFormat().getFormat("@"));
+                            textBoldStyle.setAlignment(HorizontalAlignment.CENTER);
+                            textBoldStyle.setBorderBottom(BorderStyle.MEDIUM);
+                            cell3.setCellStyle(textBoldStyle);
                         }
                     }
                     sql = new StringBuilder("select ");
@@ -198,7 +209,7 @@ public class MysqlToExcel {
                     }
                     book.write(fos);
                 }
-                log.info("生成表:{}.xlsx成功！ 路径：{}", tableName, springConfig.getXlsxPath() + "\\" + tableName + ".xlsx");
+                log.info("生成表:{}.xlsx成功！ 路径：{}", tableName, globalConfig.getXlsxPath() + "\\" + tableName + ".xlsx");
             }
             conn.close();
         } catch (Exception e) {

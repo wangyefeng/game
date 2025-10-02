@@ -1,7 +1,6 @@
 package org.wyf.game.tools.config;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.wyf.game.config")
-@EnableConfigurationProperties({SpringConfig.class, DatasourceConfig.class})
+@EnableConfigurationProperties({GlobalConfig.class, DatasourceConfig.class})
 public class ExcelToMysql {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
@@ -51,13 +50,16 @@ public class ExcelToMysql {
 
     private static final String TYPE_SERVER = "server";
 
+    private static final String TYPE_CLIENT = "client";
+
     @Autowired
-    private SpringConfig springConfig;
+    private GlobalConfig globalConfig;
 
     @Autowired
     private DatasourceConfig datasourceConfig;
 
-    public static void common(String path, Charset charset, RandomAccessFile config) throws Exception {
+    public void common(Charset charset, RandomAccessFile config) throws Exception {
+        String path = globalConfig.getXlsxPath();
         File file = new File(path);
         String[] tables = file.list((_, name) -> (name.endsWith(".xlsx") || name.endsWith(".xls")));
         if (tables == null || tables.length == 0) {
@@ -71,188 +73,198 @@ public class ExcelToMysql {
     }
 
     // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
-    public static void readExcel(String path, FileInputStream file, Charset charset, RandomAccessFile config) throws Exception {
+    public void readExcel(String path, FileInputStream file, Charset charset, RandomAccessFile config) throws Exception {
         Workbook book = WorkbookFactory.create(file);
         Iterator<Sheet> it = book.sheetIterator();
         int k = -1;
         while (it.hasNext()) {
             Sheet sheet = it.next();
-            k++;
-            if (book.isSheetHidden(k)) {
-                continue;
-            }
-            if (!sheet.getSheetName().startsWith("cfg_")) {
-                continue;
-            }
-            Row row0 = sheet.getRow(0);// 字段名
-            Row row1 = sheet.getRow(1);// 字段名
-            Row row2 = sheet.getRow(2);// 字段类型
-            Row row3 = sheet.getRow(3);// 字段是否是服务器用的
-            int lastRowIndex = 4;// 最大行数
-            for (int i = 4; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row == null || row.getCell(0) == null || row.getCell(0).toString().isEmpty()) {
-                    break;
+            try {
+                k++;
+                if (book.isSheetHidden(k)) {
+                    continue;
                 }
-                lastRowIndex = i;
-            }
-
-            Map<Integer, String> map = new HashMap<>();
-            int firstCellIndex1 = row2.getFirstCellNum();
-            int lastCellIndex1 = row2.getLastCellNum();
-            int idCellNum = -1;
-            for (int j = firstCellIndex1; j < lastCellIndex1; j++) {
-                Cell cell = row2.getCell(j);
-                String cellinfo = cell.getStringCellValue();
-                String t = row3.getCell(j).getStringCellValue();
-                if (TYPE_COMMON.equals(t) || TYPE_SERVER.equals(t)) {
-                    String s;
-                    if (cellinfo.contains("!")) {
-                        s = cellinfo.replace("!", "");
-                        idCellNum = j;
-                    } else {
-                        s = cellinfo;
-                    }
-                    map.put(j, s);
+                if (!sheet.getSheetName().startsWith(globalConfig.getPrefix())) {
+                    continue;
                 }
-            }
-            if (map.isEmpty()) {
-                continue;
-            }
-            if (sheet.getSheetName().equals("cfg_sensitive_words")) {
-                continue;
-            }
-            log.info("开始解析配置表：{}", sheet.getSheetName());
-            if (!new File(path + "/sql/").exists()) {
-                new File(path + "/sql/").mkdirs();
-            }
-            RandomAccessFile sqlFile = new RandomAccessFile(path + "/sql/" + sheet.getSheetName() + ".sql", "rw");
-            clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
-            int firstRowIndex = sheet.getFirstRowNum() + 4;
-            StringBuilder sql = new StringBuilder();
-            sql.append("DROP TABLE IF EXISTS `").append(sheet.getSheetName()).append("`;\r");
-            sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
-            int finalIdCellNum = idCellNum;
-            map.forEach((cellNum, s) -> {
-                Cell cell = row1.getCell(cellNum);
-                sql.append('`');
-                sql.append(cell.getStringCellValue());
-                sql.append("` ");
-                switch (s) {
-                    case TYPE_INT -> sql.append("INT(0) NOT NULL");
-                    case TYPE_LONG -> sql.append("BIGINT(0) NOT NULL");
-                    case TYPE_STRING -> {
-                        if (finalIdCellNum == cellNum) {
-                            sql.append("VARCHAR(255) NOT NULL");
-                        } else {
-                            sql.append("VARCHAR(1000) NULL");
-                        }
-                    }
-                    case TYPE_JSON -> sql.append("JSON NULL");
-                    case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
-                    case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
-                    case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
-                    case TYPE_DATE -> sql.append("DATE NOT NULL");
-                    default -> log.info("未知类型：{}", s);
-                }
-                sql.append(" COMMENT '");
-                sql.append(row0.getCell(cellNum).getStringCellValue());
-                sql.append("',\r");
-            });
-            if (idCellNum >= 0) {
-                Cell idCell = row1.getCell(idCellNum);
-                sql.append("PRIMARY KEY (`").append(idCell.getStringCellValue()).append("`) USING BTREE\r");
-            } else {
-                sql.delete(sql.length() - 2, sql.length() - 1);
-            }
-            sql.append(")");
-            if (lastRowIndex != 3 || sheet.getRow(4) != null || sheet.getRow(4).getCell(0) != null) {
-                String start;
-                StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
-                int lastCellIndex;
-                {
-                    Row row = sheet.getRow(1);
-                    lastCellIndex = row.getLastCellNum();
-                    int firstCellIndex = row.getFirstCellNum();
-                    for (int j = firstCellIndex; j < lastCellIndex; j++) {
-                        String type = map.get(j);
-                        if (type == null) {
-                            continue;
-                        }
-                        Cell cell = row.getCell(j);
-                        if (cell == null || cell.toString().isBlank()) {
-                            lastCellIndex = j;
-                            startBuilder.delete(startBuilder.length() - 2, startBuilder.length());
-                            startBuilder.append(") VALUES (");
-                            break;
-                        }
-                        String cellinfo = cell.getStringCellValue();
-                        startBuilder.append("`");
-                        startBuilder.append(cellinfo);
-                        startBuilder.append("`, ");
-                    }
-                    startBuilder.replace(startBuilder.length() - 3, startBuilder.length(), "");
-                    startBuilder.append("`) VALUES ");
-                    start = startBuilder.toString();
-                }
-                boolean b = true;
-                for (int i = firstRowIndex; i <= lastRowIndex; i++) {
+                Row row0 = sheet.getRow(0);// 字段名
+                Row row1 = sheet.getRow(1);// 字段名
+                Row row2 = sheet.getRow(2);// 字段类型
+                Row row3 = sheet.getRow(3);// 字段是否是服务器用的
+                int lastRowIndex = 4;// 最大行数
+                for (int i = 4; i <= sheet.getLastRowNum(); i++) {
                     Row row = sheet.getRow(i);
-                    // sheet.getColumns()返回该页的总列数
-                    if (row == null) {
+                    if (row == null || row.getCell(0) == null || row.getCell(0).toString().isEmpty()) {
                         break;
                     }
-                    int firstCellIndex = row.getFirstCellNum();
-                    if (b) {
-                        sql.append(";\r");
-                        sql.append(start);
-                    } else {
-                        sql.append(",");
-                    }
-                    sql.append("(");
-                    b = false;
-                    for (int j = firstCellIndex; j < lastCellIndex; j++) {
-                        String type = map.get(j);
-                        if (type == null) {
-                            continue;
+                    lastRowIndex = i;
+                }
+
+                Map<Integer, String> map = new HashMap<>();
+                int firstCellIndex1 = row2.getFirstCellNum();
+                int lastCellIndex1 = row2.getLastCellNum();
+                int idCellNum = -1;
+                for (int j = firstCellIndex1; j < lastCellIndex1; j++) {
+                    Cell cell = row2.getCell(j);
+                    String cellinfo = cell.getStringCellValue();
+                    String t = row3.getCell(j).getStringCellValue();
+                    if (TYPE_COMMON.equals(t) || TYPE_SERVER.equals(t)) {
+                        String s;
+                        if (cellinfo.contains("!")) {
+                            s = cellinfo.replace("!", "");
+                            idCellNum = j;
+                        } else {
+                            s = cellinfo;
                         }
-                        Cell cell = row.getCell(j);
-                        if (cell == null) {
+                        map.put(j, s);
+                    }
+                }
+                if (map.isEmpty()) {
+                    continue;
+                }
+                log.info("开始解析配置表：{}", sheet.getSheetName());
+                if (!new File(path + "/sql/").exists()) {
+                    new File(path + "/sql/").mkdirs();
+                }
+                RandomAccessFile sqlFile = new RandomAccessFile(path + "/sql/" + sheet.getSheetName() + ".sql", "rw");
+                clearInfoForFile(path + "/sql/" + sheet.getSheetName() + ".sql");
+                int firstRowIndex = sheet.getFirstRowNum() + 4;
+                StringBuilder sql = new StringBuilder();
+                sql.append("DROP TABLE IF EXISTS `").append(sheet.getSheetName()).append("`;\r");
+                sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
+                int finalIdCellNum = idCellNum;
+                map.forEach((cellNum, s) -> {
+                    Cell cell = row1.getCell(cellNum);
+                    sql.append('`');
+                    sql.append(cell.getStringCellValue());
+                    sql.append("` ");
+                    switch (s) {
+                        case TYPE_INT -> sql.append("INT(0) NOT NULL");
+                        case TYPE_LONG -> sql.append("BIGINT(0) NOT NULL");
+                        case TYPE_STRING -> {
+                            if (finalIdCellNum == cellNum) {
+                                sql.append("VARCHAR(255) NOT NULL");
+                            } else {
+                                sql.append("VARCHAR(1000) NULL");
+                            }
+                        }
+                        case TYPE_JSON -> sql.append("JSON NULL");
+                        case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
+                        case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
+                        case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
+                        case TYPE_DATE -> sql.append("DATE NOT NULL");
+                        default -> log.info("未知类型：{}", s);
+                    }
+                    sql.append(" COMMENT '");
+                    sql.append(row0.getCell(cellNum).getStringCellValue());
+                    sql.append("',\r");
+                });
+                if (idCellNum >= 0) {
+                    Cell idCell = row1.getCell(idCellNum);
+                    sql.append("PRIMARY KEY (`").append(idCell.getStringCellValue()).append("`) USING BTREE\r");
+                } else {
+                    sql.delete(sql.length() - 2, sql.length() - 1);
+                }
+                sql.append(")");
+                if (lastRowIndex != 3 || sheet.getRow(4) != null || sheet.getRow(4).getCell(0) != null) {
+                    String start;
+                    StringBuilder startBuilder = new StringBuilder("INSERT INTO `" + sheet.getSheetName() + "` (");
+                    int lastCellIndex;
+                    {
+                        Row row = sheet.getRow(1);
+                        lastCellIndex = row.getLastCellNum();
+                        int firstCellIndex = row.getFirstCellNum();
+                        for (int j = firstCellIndex; j < lastCellIndex; j++) {
+                            String type = map.get(j);
+                            if (type == null) {
+                                continue;
+                            }
+                            Cell cell = row.getCell(j);
+                            if (cell == null || cell.toString().isBlank()) {
+                                lastCellIndex = j;
+                                startBuilder.delete(startBuilder.length() - 2, startBuilder.length());
+                                startBuilder.append(") VALUES (");
+                                break;
+                            }
+                            String cellinfo = cell.getStringCellValue();
+                            startBuilder.append("`");
+                            startBuilder.append(cellinfo);
+                            startBuilder.append("`, ");
+                        }
+                        startBuilder.replace(startBuilder.length() - 3, startBuilder.length(), "");
+                        startBuilder.append("`) VALUES ");
+                        start = startBuilder.toString();
+                    }
+                    boolean b = true;
+                    for (int i = firstRowIndex; i <= lastRowIndex; i++) {
+                        Row row = sheet.getRow(i);
+                        // sheet.getColumns()返回该页的总列数
+                        if (row == null) {
                             break;
                         }
-                        String c = cell.toString();
-                        if (c.isBlank()) {
-                            sql.append("null, ");
+                        int firstCellIndex = row.getFirstCellNum();
+                        if (b) {
+                            sql.append(";\r");
+                            sql.append(start);
                         } else {
-                            CellType cellType = cell.getCellType();
-                            switch (type) {
-                                case TYPE_INT, TYPE_LONG, TYPE_BOOL -> {
-                                    if (cellType == CellType.FORMULA) {
-                                        sql.append(((XSSFCell) cell).getCTCell().getV());
-                                    } else {
-                                        sql.append(Math.round(Double.parseDouble(c)));
-                                    }
-                                }
-                                case TYPE_STRING, TYPE_JSON, TYPE_DATETIME, TYPE_DATE -> {
-                                    sql.append('\'');
-                                    sql.append(cell.getStringCellValue());
-                                    sql.append('\'');
-                                }
-                                case TYPE_FLOAT, TYPE_DOUBLE -> sql.append(cell.getNumericCellValue());
-                            }
-                            sql.append(", ");
+                            sql.append(",");
                         }
+                        sql.append("(");
+                        b = false;
+                        for (int j = firstCellIndex; j < lastCellIndex; j++) {
+                            String type = map.get(j);
+                            if (type == null) {
+                                continue;
+                            }
+                            Cell cell = row.getCell(j);
+                            if (cell == null) {
+                                break;
+                            }
+                            String c = cell.getStringCellValue();
+                            if (c.isBlank()) {
+                                sql.append("null, ");
+                            } else {
+                                switch (type) {
+                                    case TYPE_INT -> {
+                                        Integer.parseInt(c);
+                                        sql.append(c);
+                                    }
+                                    case TYPE_LONG -> {
+                                        Long.parseLong(c);
+                                        sql.append(c);
+                                    }
+                                    case TYPE_BOOL -> {
+                                        if ("false".equalsIgnoreCase(c) || "0".equals(c)) {
+                                            sql.append(0);
+                                        } else if ("true".equalsIgnoreCase(c) || "1".equals(c)) {
+                                            sql.append(1);
+                                        } else {
+                                            throw new IllegalArgumentException("非法布尔类型值错误：" + c);
+                                        }
+                                    }
+                                    case TYPE_STRING, TYPE_JSON, TYPE_DATETIME, TYPE_DATE -> {
+                                        sql.append('\'');
+                                        sql.append(c);
+                                        sql.append('\'');
+                                    }
+                                    case TYPE_FLOAT, TYPE_DOUBLE -> sql.append(cell.getNumericCellValue());
+                                }
+                                sql.append(", ");
+                            }
+                        }
+                        sql.replace(sql.length() - 2, sql.length(), "");
+                        sql.append(")");
                     }
-                    sql.replace(sql.length() - 2, sql.length(), "");
-                    sql.append(")");
                 }
+                byte[] bs = sql.toString().getBytes(charset);
+                sqlFile.write(bs);
+                config.write(bs);
+                config.write(";\r".getBytes(charset));
+                sqlFile.close();
+                log.info("解析配置表完毕：{}", sheet.getSheetName());
+            } catch (Exception e) {
+                log.error("解析配置表失败：{}", sheet.getSheetName(), e);
             }
-            byte[] bs = sql.toString().getBytes(charset);
-            sqlFile.write(bs);
-            config.write(bs);
-            config.write(";\r".getBytes(charset));
-            sqlFile.close();
-            log.info("解析配置表完毕：{}", sheet.getSheetName());
         }
         book.close();
     }
@@ -285,15 +297,14 @@ public class ExcelToMysql {
     @EventListener(ApplicationStartedEvent.class)
     public void start() throws Exception {
         Charset charset = Charset.forName("UTF-8");
-        String configPath = springConfig.getXlsxPath() + "/config.sql";
+        String configPath = globalConfig.getXlsxPath() + "/config.sql";
         clearInfoForFile(configPath);
         RandomAccessFile config = new RandomAccessFile(configPath, "rw");
-        ExcelToMysql.common(springConfig.getXlsxPath(), charset, config);
+        common(charset, config);
         Connection conn = null;
         try {
             log.info("开始执行SQL脚本...");
             long start = System.currentTimeMillis();
-            Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(datasourceConfig.jdbcUrl(), datasourceConfig.username(), datasourceConfig.password());
             executeSQLFile(conn, configPath);
             log.info("执行SQL脚本完毕 耗时：{}ms", System.currentTimeMillis() - start);
