@@ -13,7 +13,7 @@
     <name>proto</name>
 
     <properties>
-        <grpc.version>1.73.0</grpc.version>
+        <grpc.version>1.75.0</grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -49,10 +49,6 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
         </dependency>
     </dependencies>
 

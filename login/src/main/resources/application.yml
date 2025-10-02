@@ -53,6 +53,8 @@ spring:
       enabled: true
 server:
   port: 10000
+  servlet:
+    context-path: /login
   tomcat:
     accept-count: 10000
     threads:

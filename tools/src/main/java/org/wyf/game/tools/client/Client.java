@@ -1,16 +1,15 @@
 package org.wyf.game.tools.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
-import io.netty.handler.codec.http.websocketx.WebSocketCloseStatus;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +20,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.wyf.game.common.http.HttpResp;
+import org.wyf.game.proto.*;
+import org.wyf.game.proto.protocol.Protocol;
 import org.wyf.game.proto.protocol.Protocols;
-
-import java.net.URI;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class Client implements CommandLineRunner {
@@ -42,44 +41,33 @@ public class Client implements CommandLineRunner {
     public Client() {
     }
 
-    public void run(String token) throws Exception {
+    public void run(int playerId, String token) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
+            ClientHandler handler = new ClientHandler(playerId, token);
+            MessageToByteEncoder<MessageCode<?>> encode = new CodeMsgEncode();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<>() {
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(Channel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new HttpClientCodec());
-                            pipeline.addLast(new HttpObjectAggregator(65536));
-                            pipeline.addLast(new WebSocketClientProtocolHandler(
-                                    URI.create("ws://" + host + ":" + gatePort + "/gate"),
-                                    WebSocketVersion.V13,
-                                    null,
-                                    false,
-                                    new DefaultHttpHeaders(),
-                                    65536
-                            ));
-                            pipeline.addLast(new BinaryWebSocketFrameHandle(token));
+                            pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, Protocol.FRAME_LENGTH, 0, Protocol.FRAME_LENGTH));
+                            pipeline.addLast(encode);
+                            pipeline.addLast(handler);
                         }
                     });
 
             // 连接到服务器
             ChannelFuture future = bootstrap.connect(host, gatePort).sync();
             log.info("Connected to server {}:{}", host, gatePort);
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    log.info("JVM 正在关闭，请等待...");
-                    future.channel().writeAndFlush(new CloseWebSocketFrame(WebSocketCloseStatus.NORMAL_CLOSURE));
-                    group.shutdownGracefully();
-                } catch (Exception e) {
-                    log.error("关闭服务器异常！", e);
-                } finally {
-                    log.info("JVM 已关闭！");
-                }
-            }, "shutdown-hook"));
+
+            // 等待连接关闭
+            future.channel().closeFuture().addListener(_ -> {
+                // 关闭 EventLoopGroup，释放所有资源
+                group.shutdownGracefully();
+            });
             // 等待连接关闭
             future.channel().closeFuture().addListener(_ -> {
                 // 关闭 EventLoopGroup，释放所有资源
@@ -100,7 +88,7 @@ public class Client implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Protocols.init();
         WebClient client = WebClient.builder().baseUrl("http://" + host + ":" + loginPort + "/login/auth").build();
-        int num = 3;
+        int num = 1;
         for (int i = 1; i <= num; i++) {
             String username = "user" + i;
             String password = "123456";
@@ -117,7 +105,7 @@ public class Client implements CommandLineRunner {
             }
             String token = loginResponse.data().token();
             log.info("登录成功，token：{}", token);
-            run(token);
+            run(loginResponse.data().userId(), token);
         }
     }
 
@@ -131,6 +119,6 @@ public class Client implements CommandLineRunner {
         }).block();
     }
 
-    public record LoginResponse(String token) {
+    public record LoginResponse(int userId, String token) {
     }
 }

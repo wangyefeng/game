@@ -125,7 +125,6 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
                     if (serverId != null) {
                         logicClient = clientGroup.get(zookeeperProperties.rootPath() + "/" + serverId);
                         if (logicClient == null) {
-                            redisTemplate.opsForHash().delete(RedisKeys.PLAYER_INFO, String.valueOf(playerId));
                             logicClient = clientGroup.next();
                         }
                     } else {

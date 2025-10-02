@@ -4,40 +4,37 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.73.0)",
-    comments = "Source: rpc.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class PlayerExistServiceGrpc {
 
   private PlayerExistServiceGrpc() {}
 
-  public static final java.lang.String SERVICE_NAME = "org.game.proto.struct.PlayerExistService";
+  public static final java.lang.String SERVICE_NAME = "PlayerExistService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<Rpc.PbPlayerExistReq,
-      Rpc.PbPlayerExistResp> getExistsMethod;
+  private static volatile io.grpc.MethodDescriptor<org.wyf.game.proto.struct.Rpc.PbPlayerExistReq,
+      org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> getExistsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "exists",
-      requestType = Rpc.PbPlayerExistReq.class,
-      responseType = Rpc.PbPlayerExistResp.class,
+      requestType = org.wyf.game.proto.struct.Rpc.PbPlayerExistReq.class,
+      responseType = org.wyf.game.proto.struct.Rpc.PbPlayerExistResp.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<Rpc.PbPlayerExistReq,
-      Rpc.PbPlayerExistResp> getExistsMethod() {
-    io.grpc.MethodDescriptor<Rpc.PbPlayerExistReq, Rpc.PbPlayerExistResp> getExistsMethod;
+  public static io.grpc.MethodDescriptor<org.wyf.game.proto.struct.Rpc.PbPlayerExistReq,
+      org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> getExistsMethod() {
+    io.grpc.MethodDescriptor<org.wyf.game.proto.struct.Rpc.PbPlayerExistReq, org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> getExistsMethod;
     if ((getExistsMethod = PlayerExistServiceGrpc.getExistsMethod) == null) {
       synchronized (PlayerExistServiceGrpc.class) {
         if ((getExistsMethod = PlayerExistServiceGrpc.getExistsMethod) == null) {
           PlayerExistServiceGrpc.getExistsMethod = getExistsMethod =
-              io.grpc.MethodDescriptor.<Rpc.PbPlayerExistReq, Rpc.PbPlayerExistResp>newBuilder()
+              io.grpc.MethodDescriptor.<org.wyf.game.proto.struct.Rpc.PbPlayerExistReq, org.wyf.game.proto.struct.Rpc.PbPlayerExistResp>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "exists"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  Rpc.PbPlayerExistReq.getDefaultInstance()))
+                  org.wyf.game.proto.struct.Rpc.PbPlayerExistReq.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  Rpc.PbPlayerExistResp.getDefaultInstance()))
+                  org.wyf.game.proto.struct.Rpc.PbPlayerExistResp.getDefaultInstance()))
               .setSchemaDescriptor(new PlayerExistServiceMethodDescriptorSupplier("exists"))
               .build();
         }
@@ -111,8 +108,8 @@ public final class PlayerExistServiceGrpc {
 
     /**
      */
-    default void exists(Rpc.PbPlayerExistReq request,
-                        io.grpc.stub.StreamObserver<Rpc.PbPlayerExistResp> responseObserver) {
+    default void exists(org.wyf.game.proto.struct.Rpc.PbPlayerExistReq request,
+        io.grpc.stub.StreamObserver<org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getExistsMethod(), responseObserver);
     }
   }
@@ -146,8 +143,8 @@ public final class PlayerExistServiceGrpc {
 
     /**
      */
-    public void exists(Rpc.PbPlayerExistReq request,
-                       io.grpc.stub.StreamObserver<Rpc.PbPlayerExistResp> responseObserver) {
+    public void exists(org.wyf.game.proto.struct.Rpc.PbPlayerExistReq request,
+        io.grpc.stub.StreamObserver<org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getExistsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -171,8 +168,8 @@ public final class PlayerExistServiceGrpc {
 
     /**
      */
-    public Rpc.PbPlayerExistResp exists(Rpc.PbPlayerExistReq request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public org.wyf.game.proto.struct.Rpc.PbPlayerExistResp exists(org.wyf.game.proto.struct.Rpc.PbPlayerExistReq request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getExistsMethod(), getCallOptions(), request);
     }
   }
@@ -195,7 +192,7 @@ public final class PlayerExistServiceGrpc {
 
     /**
      */
-    public Rpc.PbPlayerExistResp exists(Rpc.PbPlayerExistReq request) {
+    public org.wyf.game.proto.struct.Rpc.PbPlayerExistResp exists(org.wyf.game.proto.struct.Rpc.PbPlayerExistReq request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getExistsMethod(), getCallOptions(), request);
     }
@@ -219,8 +216,8 @@ public final class PlayerExistServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<Rpc.PbPlayerExistResp> exists(
-        Rpc.PbPlayerExistReq request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.wyf.game.proto.struct.Rpc.PbPlayerExistResp> exists(
+        org.wyf.game.proto.struct.Rpc.PbPlayerExistReq request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getExistsMethod(), getCallOptions()), request);
     }
@@ -246,8 +243,8 @@ public final class PlayerExistServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_EXISTS:
-          serviceImpl.exists((Rpc.PbPlayerExistReq) request,
-              (io.grpc.stub.StreamObserver<Rpc.PbPlayerExistResp>) responseObserver);
+          serviceImpl.exists((org.wyf.game.proto.struct.Rpc.PbPlayerExistReq) request,
+              (io.grpc.stub.StreamObserver<org.wyf.game.proto.struct.Rpc.PbPlayerExistResp>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -271,8 +268,8 @@ public final class PlayerExistServiceGrpc {
           getExistsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              Rpc.PbPlayerExistReq,
-              Rpc.PbPlayerExistResp>(
+              org.wyf.game.proto.struct.Rpc.PbPlayerExistReq,
+              org.wyf.game.proto.struct.Rpc.PbPlayerExistResp>(
                 service, METHODID_EXISTS)))
         .build();
   }
@@ -283,7 +280,7 @@ public final class PlayerExistServiceGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return Rpc.getDescriptor();
+      return org.wyf.game.proto.struct.Rpc.getDescriptor();
     }
 
     @java.lang.Override
