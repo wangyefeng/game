@@ -98,15 +98,8 @@ public class MysqlToExcel {
                                     String dbName, String tableName) throws Exception {
         try (Workbook book = new XSSFWorkbook();
              FileOutputStream fos = new FileOutputStream(globalConfig.getXlsxPath() + "/" + tableName + ".xlsx")) {
-
+            Map<String, CellStyle> styles = createStyles(book);
             log.info("正在生成表: {}.xlsx", tableName);
-
-            // 样式：普通文本
-            CellStyle textStyle = book.createCellStyle();
-            DataFormat dataFormat = book.createDataFormat();
-            textStyle.setDataFormat(dataFormat.getFormat("@"));
-            textStyle.setAlignment(HorizontalAlignment.CENTER);
-
             // Sheet
             Sheet sheet = book.createSheet(tableName);
 
@@ -141,27 +134,28 @@ public class MysqlToExcel {
 
             List<String> columnNames = new ArrayList<>();
             int index = 0;
-
+            List<String> columnTypes = new ArrayList<>();
             // 遍历字段
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
                 String columnComment = rs.getString("column_comment");
                 String type = rs.getString("DATA_TYPE");
-
                 if (columnName.equals(pkColumnName)) {
                     // 主键列放第一列
-                    createCell(sheet, createStyles(book), row0, row1, row2, row3,
+                    createCell(sheet, styles, row0, row1, row2, row3,
                             0, columnName, columnComment, type, true);
                     columnNames.addFirst(columnName);
+                    columnTypes.addFirst(type);
                 } else {
                     index++;
-                    createCell(sheet, createStyles(book), row0, row1, row2, row3,
+                    columnTypes.add(type);
+                    createCell(sheet, styles, row0, row1, row2, row3,
                             index, columnName, columnComment, type, false);
                     columnNames.add(columnName);
                 }
             }
             // 设置自动筛选
-            sheet.setAutoFilter(new CellRangeAddress(3,3,0,columnNames.size() - 1));
+            sheet.setAutoFilter(new CellRangeAddress(3, 3, 0, columnNames.size() - 1));
 
             // 查询表数据
             StringBuilder dataSql = new StringBuilder("SELECT ");
@@ -181,12 +175,11 @@ public class MysqlToExcel {
             while (rs.next()) {
                 index++;
                 Row row = sheet.createRow(index);
-
                 for (int m = 0; m < cols; m++) {
                     String val = rs.getString(m + 1);
                     Cell cel = row.createCell(m);
                     cel.setCellValue(val);
-                    cel.setCellStyle(textStyle);
+                    cel.setCellStyle(styles.get(mapTypeStyle(columnTypes.get(m))));
                 }
             }
 
@@ -209,6 +202,20 @@ public class MysqlToExcel {
     }
 
     /**
+     * 类型映射
+     */
+    private String mapTypeStyle(String dbType) {
+        String type = switch (dbType) {
+            case "bit", "int", "integer", "smallint", "tinyint", "bigint" -> "dataNumber";
+            case "decimal", "float", "double" -> "dataDouble";
+            case "date"  -> "dataDate";
+            case "datetime" -> "dataDateTime";
+            default -> "dataText";
+        };
+        return type;
+    }
+
+    /**
      * 创建各种样式
      */
     private Map<String, CellStyle> createStyles(Workbook book) {
@@ -218,7 +225,6 @@ public class MysqlToExcel {
         CellStyle base = book.createCellStyle();
         base.setAlignment(HorizontalAlignment.CENTER);
         base.setVerticalAlignment(VerticalAlignment.CENTER);
-        base.setWrapText(true);
         base.setBorderBottom(BorderStyle.THIN);
         base.setBorderTop(BorderStyle.THIN);
         base.setBorderLeft(BorderStyle.THIN);
@@ -235,11 +241,35 @@ public class MysqlToExcel {
         header.setFont(headerFont);
         styles.put("header", header);
 
-        // 数据行
-        CellStyle data = book.createCellStyle();
-        data.cloneStyleFrom(base);
-        styles.put("data", data);
+        // 数据行 text 类型
+        CellStyle dataText = book.createCellStyle();
+        dataText.cloneStyleFrom(base);
+        dataText.setDataFormat(book.createDataFormat().getFormat("@")); // 文本
+        styles.put("dataText", dataText);
 
+        // 数据行 数字类型
+        CellStyle dataNumber = book.createCellStyle();
+        dataNumber.cloneStyleFrom(base);
+        dataNumber.setDataFormat(book.createDataFormat().getFormat("0")); // 纯整数
+        styles.put("dataNumber", dataNumber);
+
+        // 数据行 数字类型
+        CellStyle dataDouble = book.createCellStyle();
+        dataDouble.cloneStyleFrom(base);
+        dataDouble.setDataFormat(book.createDataFormat().getFormat("0.00")); // 小数
+        styles.put("dataDouble", dataDouble);
+
+        // 数据行 日期类型
+        CellStyle dataDate = book.createCellStyle();
+        dataDate.cloneStyleFrom(base);
+        dataDate.setDataFormat(book.createDataFormat().getFormat("yyyy-MM-dd")); // 日期
+        styles.put("dataDate", dataDate);
+
+        // 数据行 时间类型
+        CellStyle dataDateTime = book.createCellStyle();
+        dataDateTime.cloneStyleFrom(base);
+        dataDateTime.setDataFormat(book.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss")); // 时间类型
+        styles.put("dataDateTime", dataDateTime);
         return styles;
     }
 
@@ -272,7 +302,7 @@ public class MysqlToExcel {
         cell3.setCellValue(columnName);
         cell3.setCellStyle(styles.get("header"));
 
-        sheet.setColumnWidth(colIndex,  isPk ? 10 * 256 : 20 * 256);
+        sheet.setColumnWidth(colIndex, isPk ? 10 * 256 : 20 * 256);
         sheet.createFreezePane(1, 4);
     }
 
