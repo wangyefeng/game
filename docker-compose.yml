@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.0.30
+    image: mysql:9.4.0
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: 123456
@@ -18,7 +18,7 @@ services:
       - "6379:6379"
     restart: always
   zookeeper:
-    image: zookeeper:3.9.3
+    image: zookeeper:3.9.4
     container_name: zookeeper
     ports:
       - "2181:2181"
