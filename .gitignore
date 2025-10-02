@@ -2,3 +2,5 @@ target/
 logs/
 .idea/
 */src/main/resources/config/application.yml
+/share/config/sql/
+/share/config/config.sql
