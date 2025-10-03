@@ -28,29 +28,34 @@ import java.util.Map;
 public class ExcelToMysql {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelToMysql.class);
-    private static final String TYPE_INT = "int";
 
-    private static final String TYPE_STRING = "string";
 
-    private static final String TYPE_FLOAT = "float";
+    public static final String TYPE_INT = "int";
 
-    private static final String TYPE_DOUBLE = "double";
+    public static final String TYPE_STRING = "string";
 
-    private static final String TYPE_LONG = "long";
+    public static final String TYPE_FLOAT = "float";
 
-    private static final String TYPE_BOOL = "bool";
+    public static final String TYPE_DOUBLE = "double";
 
-    private static final String TYPE_JSON = "json";
+    public static final String TYPE_LONG = "long";
 
-    private static final String TYPE_DATETIME = "datetime";
+    public static final String TYPE_BOOL = "bool";
 
-    private static final String TYPE_DATE = "date";
+    public static final String TYPE_JSON = "json";
 
-    private static final String TYPE_COMMON = "common";
+    public static final String TYPE_DATETIME = "datetime";
 
-    private static final String TYPE_SERVER = "server";
+    public static final String TYPE_DATE = "date";
 
-    private static final String TYPE_CLIENT = "client";
+
+
+
+    public static final String TYPE_COMMON = "common";
+
+    public static final String TYPE_SERVER = "server";
+
+    public static final String TYPE_CLIENT = "client";
 
     @Autowired
     private GlobalConfig globalConfig;

@@ -2,6 +2,7 @@ package org.wyf.game.tools.config;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,7 @@ import java.util.*;
 /**
  * MySQL 数据导出到 Excel 工具类
  *
- * @author
- *     WangYefeng
+ * @author WangYefeng
  */
 @SpringBootApplication
 @ComponentScan(basePackages = "org.wyf.game.config")
@@ -38,7 +38,13 @@ public class MysqlToExcel {
     @Autowired
     private DatasourceConfig datasourceConfig;
 
-    private static final String DEFAULT_COLUMN_TYPE = "common";
+    private static final String DEFAULT_COLUMN_TYPE = ExcelToMysql.TYPE_COMMON;
+
+    String[] choices = {ExcelToMysql.TYPE_COMMON, ExcelToMysql.TYPE_SERVER, ExcelToMysql.TYPE_CLIENT};
+
+    String[] choices2 = {ExcelToMysql.TYPE_INT, ExcelToMysql.TYPE_STRING, ExcelToMysql.TYPE_FLOAT,
+            ExcelToMysql.TYPE_DOUBLE, ExcelToMysql.TYPE_LONG, ExcelToMysql.TYPE_BOOL, ExcelToMysql.TYPE_JSON,
+            ExcelToMysql.TYPE_DATETIME, ExcelToMysql.TYPE_DATE, ExcelToMysql.TYPE_INT + "!"};
 
     @EventListener(ApplicationStartedEvent.class)
     public void start() {
@@ -102,7 +108,6 @@ public class MysqlToExcel {
             log.info("正在生成表: {}.xlsx", tableName);
             // Sheet
             Sheet sheet = book.createSheet(tableName);
-
             // SQL 查询字段
             String sql = String.format(
                     "SELECT COLUMN_NAME, column_comment, data_type " +
@@ -154,7 +159,21 @@ public class MysqlToExcel {
                     columnNames.add(columnName);
                 }
             }
-            // 设置自动筛选
+            // 设置类型列的下拉框
+            CellRangeAddressList addressList = new CellRangeAddressList(1, 1, 0, columnNames.size() - 1);
+            DataValidationHelper helper = sheet.getDataValidationHelper();
+            DataValidationConstraint constraint = helper.createExplicitListConstraint(choices);
+            DataValidation validation = helper.createValidation(constraint, addressList);
+            validation.setShowErrorBox(true);
+            sheet.addValidationData(validation);
+            // 设置字段类型列的下拉框
+            CellRangeAddressList addressList2 = new CellRangeAddressList(2, 2, 0, columnNames.size() - 1);
+            DataValidationHelper helper2 = sheet.getDataValidationHelper();
+            DataValidationConstraint constraint2 = helper.createExplicitListConstraint(choices2);
+            DataValidation validation2 = helper2.createValidation(constraint2, addressList2);
+            validation2.setShowErrorBox(true);
+            sheet.addValidationData(validation2);
+            // 设置字段自动筛选
             sheet.setAutoFilter(new CellRangeAddress(3, 3, 0, columnNames.size() - 1));
 
             // 查询表数据
@@ -208,7 +227,7 @@ public class MysqlToExcel {
         String type = switch (dbType) {
             case "bit", "int", "integer", "smallint", "tinyint", "bigint" -> "dataNumber";
             case "decimal", "float", "double" -> "dataDouble";
-            case "date"  -> "dataDate";
+            case "date" -> "dataDate";
             case "datetime" -> "dataDateTime";
             default -> "dataText";
         };

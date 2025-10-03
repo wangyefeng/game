@@ -34,6 +34,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.wyf.game</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wyf.game</groupId>
                 <artifactId>config</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -119,11 +124,9 @@
 
 
     <dependencies>
-        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <!-- 去掉spring-boot默认logging依赖配置 -->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -148,11 +151,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wyf.game</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
