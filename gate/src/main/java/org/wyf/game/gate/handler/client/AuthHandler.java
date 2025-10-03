@@ -3,6 +3,7 @@ package org.wyf.game.gate.handler.client;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.netty.channel.Channel;
@@ -73,7 +74,14 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
         }
 
         String token = msg.getToken();
-        DecodedJWT d1 = playerTokenVerifier.verify(token);
+        DecodedJWT d1;
+        try {
+            d1 = playerTokenVerifier.verify(token);
+        } catch (JWTVerificationException e) {
+            log.warn("token{}认证失败！msg：{}", token, e.getMessage());
+            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+            return;
+        }
         if (d1.getIssuedAt() == null) {
             log.warn("token{}认证失败，token中不包含创建时间信息！", token);
             channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));

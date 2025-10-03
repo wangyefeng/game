@@ -16,7 +16,6 @@ import org.wyf.game.login.entity.User;
 import org.wyf.game.login.repository.AccountRepository;
 import org.wyf.game.login.response.LoginResponse;
 
-import javax.management.timer.Timer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,7 +89,7 @@ public class AccountService {
             return JWT.create()
                     .withHeader(jwtHeader)
                     .withIssuedAt(new Date(t))
-                    .withExpiresAt(new Date(t + Timer.ONE_DAY * GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME))
+                    .withExpiresAt(new Date(t + GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME))
                     .sign(playerTokenSecret);
         } catch (Exception e) {
             throw new RuntimeException(e);
