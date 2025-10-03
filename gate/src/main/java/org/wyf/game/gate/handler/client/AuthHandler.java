@@ -1,11 +1,21 @@
 package org.wyf.game.gate.handler.client;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.netty.channel.Channel;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
+import org.wyf.game.common.GlobalConstant;
 import org.wyf.game.common.RedisKeys;
 import org.wyf.game.common.RedisKeys.Locks;
-import org.wyf.game.common.util.TokenUtil;
 import org.wyf.game.gate.net.AttributeKeys;
 import org.wyf.game.gate.net.client.ClientGroup;
 import org.wyf.game.gate.net.client.LogicClient;
@@ -23,16 +33,10 @@ import org.wyf.game.proto.struct.Login.PbAuthReq;
 import org.wyf.game.proto.struct.PlayerExistServiceGrpc;
 import org.wyf.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
 import org.wyf.game.proto.struct.Rpc.PbPlayerExistReq;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
-import java.time.Duration;
+import javax.management.timer.Timer;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
@@ -52,9 +56,14 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
     private ZookeeperProperties zookeeperProperties;
 
     /**
-     * token有效期
+     * token验证器
      */
-    private static final Duration TOKEN_TIMEOUT = Duration.ofDays(30);
+    public final JWTVerifier playerTokenVerifier = JWT.require(Algorithm.HMAC256(GlobalConstant.PLAYER_TOKEN_SECRET_KEY)).build();
+
+    /**
+     * 替换token的过期时间
+     */
+    private final static long REPLACE_TOKEN_EXPIRE_TIME = 5 * Timer.ONE_MINUTE;
 
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
@@ -64,8 +73,8 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
         }
 
         String token = msg.getToken();
-        DecodedJWT d1 = TokenUtil.verify(token, TokenUtil.PLAYER_TOKEN_SECRET);
-        if (d1.getIssuedAtAsInstant() == null) {
+        DecodedJWT d1 = playerTokenVerifier.verify(token);
+        if (d1.getIssuedAt() == null) {
             log.warn("token{}认证失败，token中不包含创建时间信息！", token);
             channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
@@ -84,17 +93,24 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
         try {
             rLock.lock();
             String tokenInRedis = redisTemplate.opsForValue().get(key);
-            if (tokenInRedis == null) {
-                redisTemplate.opsForValue().set(key, token, TOKEN_TIMEOUT);
-            } else if (!token.equals(tokenInRedis)) {
-                DecodedJWT d2 = TokenUtil.verify(tokenInRedis, TokenUtil.PLAYER_TOKEN_SECRET);
-                if (d1.getIssuedAt().after(d2.getIssuedAt())) {// 新生成的token，替换原token
-                    redisTemplate.opsForValue().set(key, token, TOKEN_TIMEOUT);
+            boolean success = true;
+            if (!token.equals(tokenInRedis)) {
+                if (tokenInRedis == null || d1.getIssuedAt().after(JWT.decode(tokenInRedis).getIssuedAt())) {// 新生成的token，替换原token
+                    long time = d1.getExpiresAt().getTime();
+                    // 需要替换token 需要判断token是否在5分钟之内生成的
+                    if (time - System.currentTimeMillis() < REPLACE_TOKEN_EXPIRE_TIME) {
+                        redisTemplate.opsForValue().set(key, token, GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
+                    } else {
+                        success = false;
+                    }
                 } else {
-                    log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
-                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
-                    return;
+                    success = false;
                 }
+            }
+            if (!success) {
+                log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
+                channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+                return;
             }
         } finally {
             rLock.unlock();

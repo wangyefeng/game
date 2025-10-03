@@ -1,21 +1,25 @@
 package org.wyf.game.login.service;
 
-import org.wyf.game.common.RedisKeys.Locks;
-import org.wyf.game.common.http.HttpResp;
-import org.wyf.game.common.util.TokenUtil;
-import org.wyf.game.login.AccountType;
-import org.wyf.game.login.entity.Account;
-import org.wyf.game.login.entity.User;
-import org.wyf.game.login.repository.AccountRepository;
-import org.wyf.game.login.response.LoginResponse;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.wyf.game.common.GlobalConstant;
+import org.wyf.game.common.RedisKeys.Locks;
+import org.wyf.game.common.http.HttpResp;
+import org.wyf.game.login.AccountType;
+import org.wyf.game.login.entity.Account;
+import org.wyf.game.login.entity.User;
+import org.wyf.game.login.repository.AccountRepository;
+import org.wyf.game.login.response.LoginResponse;
 
 import javax.management.timer.Timer;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,6 +33,18 @@ public class AccountService {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    private final Algorithm playerTokenSecret;
+
+    private final Map<String, Object> jwtHeader;
+
+    public AccountService() {
+        // 设置JWT加密密钥
+        playerTokenSecret = Algorithm.HMAC256(GlobalConstant.PLAYER_TOKEN_SECRET_KEY);
+        jwtHeader = new HashMap<>();
+        jwtHeader.put("typ", "JWT");
+        jwtHeader.put("alg", "HS256");
+    }
 
     public void save(Account account) {
         accountRepository.save(account);
@@ -63,7 +79,21 @@ public class AccountService {
             return HttpResp.fail(2, "密码错误");
         }
         int id = account.getUser().getId();
-        String playerToken = TokenUtil.token(id, TokenUtil.PLAYER_TOKEN_SECRET, new Date(System.currentTimeMillis() + Timer.ONE_DAY * 30));
+        String playerToken = token(id);
         return HttpResp.success(new LoginResponse(id, playerToken));
+    }
+
+    private String token(int playerId) {
+        try {
+            JWT.create().withClaim("playerId", playerId);
+            long t = System.currentTimeMillis();
+            return JWT.create()
+                    .withHeader(jwtHeader)
+                    .withIssuedAt(new Date(t))
+                    .withExpiresAt(new Date(t + Timer.ONE_DAY * GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME))
+                    .sign(playerTokenSecret);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
