@@ -11,7 +11,7 @@
     <artifactId>logic</artifactId>
 
     <properties>
-        <start-class>org.wyf.game.Logic</start-class>
+        <start-class>org.wyf.game.LogicApplication</start-class>
     </properties>
 
     <dependencies>

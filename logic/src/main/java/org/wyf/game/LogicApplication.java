@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableScheduling
-public class Logic extends Server {
+public class LogicApplication extends Server {
 
-    private static final Logger log = LoggerFactory.getLogger(Logic.class);
+    private static final Logger log = LoggerFactory.getLogger(LogicApplication.class);
 
     @Autowired
     private TcpServer tcpServer;
@@ -62,7 +62,7 @@ public class Logic extends Server {
     }
 
     static void main(String[] args) {
-        SpringApplication application = new SpringApplication(Logic.class);
+        SpringApplication application = new SpringApplication(LogicApplication.class);
         application.setRegisterShutdownHook(false);// 关闭Spring-boot停服处理策略
         application.run(args);
     }
