@@ -1,4 +1,4 @@
-package org.wyf.game.gate;
+package org.wyf.game;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetector.Level;
@@ -25,9 +25,9 @@ import org.springframework.context.ApplicationContext;
  * 网关服务器
  */
 @SpringBootApplication
-public class Gate extends Server {
+public class GateApplication extends Server {
 
-    private static final Logger log = LoggerFactory.getLogger(Gate.class);
+    private static final Logger log = LoggerFactory.getLogger(GateApplication.class);
 
     @Autowired
     private TcpServer tcpServer;
@@ -109,7 +109,7 @@ public class Gate extends Server {
 
 
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(Gate.class);
+        SpringApplication application = new SpringApplication(GateApplication.class);
         application.setRegisterShutdownHook(false);
         application.run(args);
     }

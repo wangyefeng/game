@@ -13,7 +13,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>game</name>
     <modules>
         <module>common</module>
         <module>proto</module>
@@ -26,9 +25,9 @@
 
     <properties>
         <java.version>25</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <protobuf.version>4.32.1</protobuf.version>
         <curator.version>5.9.0</curator.version>
+        <grpc.version>1.75.0</grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -61,6 +60,11 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
                 <version>${protobuf.version}</version>
             </dependency>
             <dependency>
@@ -114,8 +118,16 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.19.0</version>
             </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <dependencies>
         <!-- Spring Boot -->
@@ -144,26 +156,31 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.1</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <clearOutputDirectory>false</clearOutputDirectory>
+                    <protoSourceRoot>/share/proto</protoSourceRoot>
+                    <outputDirectory>/proto/src/main/java</outputDirectory>
+                    <pluginId>grpc-java</pluginId>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <repositories>
-        <!-- 阿里云公共仓库 -->
         <repository>
             <id>aliyun-public</id>
             <name>阿里云公共仓库</name>
@@ -177,7 +194,6 @@
         </repository>
     </repositories>
 
-    <!-- 插件仓库（可选） -->
     <pluginRepositories>
         <pluginRepository>
             <id>aliyun-plugin</id>
