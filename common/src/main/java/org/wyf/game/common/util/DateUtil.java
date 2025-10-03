@@ -2,6 +2,7 @@ package org.wyf.game.common.util;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * @author: 王叶峰
@@ -47,6 +48,10 @@ public abstract class DateUtil {
 
     public static String format(LocalTime localTime) {
         return localTime.format(DEFAULT_TIME_FORMAT);
+    }
+
+    public static String format(Date date) {
+        return DEFAULT_DATE_TIME_FORMATTER.format(date.toInstant());
     }
 
     public static long toEpochMilli(LocalDateTime dateTime) {

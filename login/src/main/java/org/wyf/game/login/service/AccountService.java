@@ -1,6 +1,7 @@
 package org.wyf.game.login.service;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -84,9 +85,9 @@ public class AccountService {
 
     private String token(int playerId) {
         try {
-            JWT.create().withClaim("playerId", playerId);
+            JWTCreator.Builder builder = JWT.create().withClaim("playerId", playerId);
             long t = System.currentTimeMillis();
-            return JWT.create()
+            return builder
                     .withHeader(jwtHeader)
                     .withIssuedAt(new Date(t))
                     .withExpiresAt(new Date(t + GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME))

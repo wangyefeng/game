@@ -104,7 +104,7 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
             boolean success = true;
             if (!token.equals(tokenInRedis)) {
                 if (tokenInRedis == null || d1.getIssuedAt().after(JWT.decode(tokenInRedis).getIssuedAt())) {// 新生成的token，替换原token
-                    long time = d1.getExpiresAt().getTime();
+                    long time = d1.getIssuedAt().getTime();
                     // 需要替换token 需要判断token是否在5分钟之内生成的
                     if (time - System.currentTimeMillis() < REPLACE_TOKEN_EXPIRE_TIME) {
                         redisTemplate.opsForValue().set(key, token, GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
