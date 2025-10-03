@@ -3,7 +3,6 @@ package org.wyf.game.gate.handler.client;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.netty.channel.Channel;
@@ -35,7 +34,6 @@ import org.wyf.game.proto.struct.PlayerExistServiceGrpc;
 import org.wyf.game.proto.struct.PlayerExistServiceGrpc.PlayerExistServiceBlockingStub;
 import org.wyf.game.proto.struct.Rpc.PbPlayerExistReq;
 
-import javax.management.timer.Timer;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -59,35 +57,22 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
     /**
      * token验证器
      */
-    public final JWTVerifier playerTokenVerifier = JWT.require(Algorithm.HMAC256(GlobalConstant.PLAYER_TOKEN_SECRET_KEY)).build();
+    private final JWTVerifier playerTokenVerifier = JWT.require(Algorithm.HMAC256(GlobalConstant.PLAYER_TOKEN_SECRET_KEY)).build();
 
     /**
-     * 替换token的过期时间
+     * token过期时间
      */
-    private final static long REPLACE_TOKEN_EXPIRE_TIME = 5 * Timer.ONE_MINUTE;
+    private final static long EXPIRE_TIME = TimeUnit.DAYS.toMillis(30);
 
     @Override
     public void handle(Channel channel, Login.PbAuthReq msg) throws Exception {
-        if (channel.hasAttr(AttributeKeys.PLAYER)) {
-            log.warn("player {} has already logged in.", channel.attr(AttributeKeys.PLAYER).get());
-            return;
-        }
-
         String token = msg.getToken();
-        DecodedJWT d1;
-        try {
-            d1 = playerTokenVerifier.verify(token);
-        } catch (JWTVerificationException e) {
-            log.warn("token{}认证失败！msg：{}", token, e.getMessage());
-            channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
-            return;
-        }
+        DecodedJWT d1 = JWT.decode(token);
         if (d1.getIssuedAt() == null) {
             log.warn("token{}认证失败，token中不包含创建时间信息！", token);
             channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
             return;
         }
-
         Claim claim = d1.getClaim("playerId");
         if (claim.isNull()) {
             log.warn("token{}认证失败，token中不包含playerId！", token);
@@ -101,24 +86,15 @@ public final class AuthHandler extends AbstractCodeMsgHandler<PbAuthReq> {
         try {
             rLock.lock();
             String tokenInRedis = redisTemplate.opsForValue().get(key);
-            boolean success = true;
             if (!token.equals(tokenInRedis)) {
-                if (tokenInRedis == null || d1.getIssuedAt().after(JWT.decode(tokenInRedis).getIssuedAt())) {// 新生成的token，替换原token
-                    long time = d1.getIssuedAt().getTime();
-                    // 需要替换token 需要判断token是否在5分钟之内生成的
-                    if (time - System.currentTimeMillis() < REPLACE_TOKEN_EXPIRE_TIME) {
-                        redisTemplate.opsForValue().set(key, token, GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
-                    } else {
-                        success = false;
-                    }
-                } else {
-                    success = false;
+                try {
+                    playerTokenVerifier.verify(token);
+                } catch (Exception e) {
+                    log.warn("玩家{} token{}认证失败，token不合法！", playerId, token);
+                    channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
+                    return;
                 }
-            }
-            if (!success) {
-                log.warn("玩家{}认证失败 token:{} 已失效", playerId, token);
-                channel.writeAndFlush(MessageCode.of(GateToClientProtocol.PLAYER_TOKEN_VALIDATE, Login.PbAuthResp.newBuilder().setSuccess(false).build()));
-                return;
+                redisTemplate.opsForValue().set(key, token, EXPIRE_TIME, TimeUnit.MILLISECONDS);
             }
         } finally {
             rLock.unlock();

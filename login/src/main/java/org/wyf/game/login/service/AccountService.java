@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -37,6 +38,11 @@ public class AccountService {
     private final Algorithm playerTokenSecret;
 
     private final Map<String, Object> jwtHeader;
+
+    /**
+     * token有效期
+     */
+    private final static long TOKEN_EXPIRE_TIME = TimeUnit.SECONDS.toMillis(30);
 
     public AccountService() {
         // 设置JWT加密密钥
@@ -90,7 +96,7 @@ public class AccountService {
             return builder
                     .withHeader(jwtHeader)
                     .withIssuedAt(new Date(t))
-                    .withExpiresAt(new Date(t + GlobalConstant.PLAYER_TOKEN_EXPIRE_TIME))
+                    .withExpiresAt(new Date(t + TOKEN_EXPIRE_TIME))
                     .sign(playerTokenSecret);
         } catch (Exception e) {
             throw new RuntimeException(e);
