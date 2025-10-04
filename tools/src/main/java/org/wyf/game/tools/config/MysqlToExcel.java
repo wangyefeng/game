@@ -42,7 +42,7 @@ public class MysqlToExcel {
 
     String[] choices = {ExcelToMysql.TYPE_COMMON, ExcelToMysql.TYPE_SERVER, ExcelToMysql.TYPE_CLIENT};
 
-    String[] choices2 = {ExcelToMysql.TYPE_INT, ExcelToMysql.TYPE_STRING, ExcelToMysql.TYPE_FLOAT,
+    String[] choices2 = {ExcelToMysql.TYPE_INT, ExcelToMysql.TYPE_STRING,
             ExcelToMysql.TYPE_DOUBLE, ExcelToMysql.TYPE_LONG, ExcelToMysql.TYPE_BOOL, ExcelToMysql.TYPE_JSON,
             ExcelToMysql.TYPE_DATETIME, ExcelToMysql.TYPE_DATE, ExcelToMysql.TYPE_INT + "!"};
 

@@ -34,8 +34,6 @@ public class ExcelToMysql {
 
     public static final String TYPE_STRING = "string";
 
-    public static final String TYPE_FLOAT = "float";
-
     public static final String TYPE_DOUBLE = "double";
 
     public static final String TYPE_LONG = "long";
@@ -47,8 +45,6 @@ public class ExcelToMysql {
     public static final String TYPE_DATETIME = "datetime";
 
     public static final String TYPE_DATE = "date";
-
-
 
 
     public static final String TYPE_COMMON = "common";
@@ -144,18 +140,12 @@ public class ExcelToMysql {
                     sql.append(cell.getStringCellValue());
                     sql.append("` ");
                     switch (s) {
-                        case TYPE_INT -> sql.append("INT(0) NOT NULL");
-                        case TYPE_LONG -> sql.append("BIGINT(0) NOT NULL");
-                        case TYPE_STRING -> {
-                            if (finalIdCellNum == cellNum) {
-                                sql.append("VARCHAR(255) NOT NULL");
-                            } else {
-                                sql.append("VARCHAR(1000) NULL");
-                            }
-                        }
+                        case TYPE_INT -> sql.append("INT NOT NULL");
+                        case TYPE_LONG -> sql.append("BIGINT NOT NULL");
+                        case TYPE_STRING -> sql.append("VARCHAR(1000) NULL");
                         case TYPE_JSON -> sql.append("JSON NULL");
                         case TYPE_BOOL -> sql.append("BIT(1) NOT NULL");
-                        case TYPE_DOUBLE, TYPE_FLOAT -> sql.append("DOUBLE NOT NULL");
+                        case TYPE_DOUBLE -> sql.append("DOUBLE NOT NULL");
                         case TYPE_DATETIME -> sql.append("DATETIME NOT NULL");
                         case TYPE_DATE -> sql.append("DATE NOT NULL");
                         default -> log.info("未知类型：{}", s);
@@ -225,8 +215,8 @@ public class ExcelToMysql {
                                 break;
                             }
                             String c = cell.getStringCellValue();
-                            if (c.isBlank()) {
-                                sql.append("null, ");
+                            if (c == null || c.isBlank()) {
+                                sql.append("null");
                             } else {
                                 switch (type) {
                                     case TYPE_INT -> {
@@ -235,6 +225,10 @@ public class ExcelToMysql {
                                     }
                                     case TYPE_LONG -> {
                                         Long.parseLong(c);
+                                        sql.append(c);
+                                    }
+                                    case TYPE_DOUBLE -> {
+                                        Double.parseDouble(c);
                                         sql.append(c);
                                     }
                                     case TYPE_BOOL -> {
@@ -251,10 +245,9 @@ public class ExcelToMysql {
                                         sql.append(c);
                                         sql.append('\'');
                                     }
-                                    case TYPE_FLOAT, TYPE_DOUBLE -> sql.append(cell.getNumericCellValue());
                                 }
-                                sql.append(", ");
                             }
+                            sql.append(", ");
                         }
                         sql.replace(sql.length() - 2, sql.length(), "");
                         sql.append(")");
