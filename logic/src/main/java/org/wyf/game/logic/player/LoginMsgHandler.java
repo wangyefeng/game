@@ -57,7 +57,7 @@ public class LoginMsgHandler extends AbstractPlayerMsgHandler<PbLoginReq> {
                     log.warn("玩家登录失败，玩家 {}不存在", playerId);
                     return;
                 }
-                Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_INFO, String.valueOf(playerId), String.valueOf(logicConfig.serverId()));
+                Boolean success = redisTemplate.opsForHash().putIfAbsent(RedisKeys.PLAYER_INFO, String.valueOf(playerId), String.valueOf(logicConfig.getServerId()));
                 if (!success) {
                     log.warn("玩家{}在其他服务器上登录，拒绝登录", playerId);
                     return;

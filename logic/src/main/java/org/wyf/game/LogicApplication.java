@@ -24,6 +24,7 @@ import org.wyf.game.logic.thread.ThreadPool;
 import org.wyf.game.logic.zookepper.ZookeeperProperties;
 import org.wyf.game.proto.protocol.Protocols;
 
+import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -97,8 +98,8 @@ public class LogicApplication extends Server {
      * @throws Exception 异常
      */
     private void registerZkService() throws Exception {
-        String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.serverId();
-        String serverJson = JsonUtil.toJson(new ServerInfo(logicConfig.host(), tcpServer.getPort(), grpcServer.getPort()));
+        String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.getServerId();
+        String serverJson = JsonUtil.toJson(new ServerInfo(InetAddress.getLocalHost().getHostAddress(), tcpServer.getPort(), grpcServer.getPort()));
         zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath, serverJson.getBytes());
         log.info("zookeeper registry service success, path: {}", servicePath);
     }
@@ -108,7 +109,7 @@ public class LogicApplication extends Server {
             switch (state) {
                 case SUSPENDED -> log.warn("zookeeper连接断开，正在重试...");
                 case RECONNECTED -> {
-                    String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.serverId();
+                    String servicePath = zookeeperProperties.rootPath() + "/" + logicConfig.getServerId();
                     try {
                         Stat stat = zkClient.checkExists().forPath(servicePath);
                         if (stat == null || stat.getEphemeralOwner() != zkClient.getZookeeperClient().getZooKeeper().getSessionId()) {

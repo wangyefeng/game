@@ -23,12 +23,12 @@ public class SpringBeanConfiguration {
 
     @Bean
     public TcpServer tcpServer() {
-        return new TcpServer(logicConfig.tcpPort());
+        return new TcpServer(logicConfig.getTcpPort());
     }
 
     @Bean
     public Server grpcServer() {
-        ServerBuilder<?> serverBuilder = ServerBuilder.forPort(logicConfig.rpcPort());
+        ServerBuilder<?> serverBuilder = ServerBuilder.forPort(logicConfig.getRpcPort());
         for (BindableService rpcService : rpcServices) {
             serverBuilder.addService(rpcService);
         }

@@ -66,7 +66,6 @@ zookeeper:
   root-path: /logic
 logic:
   server-id: 1
-  host: localhost
   tcp-port: 11001
   rpc-port: 11002
 server:
