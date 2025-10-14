@@ -28,6 +28,7 @@ public class CfgGlobalService extends CfgService<CfgGlobal, CfgGlobalRepository,
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try {
             globalValue = mapper.readValue(json, GlobalValue.class);
         } catch (Exception e) {
