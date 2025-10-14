@@ -1,5 +1,6 @@
 package org.wyf.game.common;
 
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -30,6 +31,7 @@ public abstract class Server {
                     log.info("JVM 正在关闭，请等待...");
                     status = Status.STOPPING;
                     stop();
+                    LogManager.shutdown();
                 } catch (Exception e) {
                     log.error("关闭服务器异常！", e);
                 } finally {
@@ -40,6 +42,7 @@ public abstract class Server {
         } catch (Exception e) {
             log.error("服务器启动失败！", e);
             status = Status.STOPPING;
+            LogManager.shutdown();
             System.exit(-1);
         }
 

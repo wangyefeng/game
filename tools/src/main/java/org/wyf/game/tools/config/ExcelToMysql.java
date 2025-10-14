@@ -133,7 +133,6 @@ public class ExcelToMysql {
                 StringBuilder sql = new StringBuilder();
                 sql.append("DROP TABLE IF EXISTS `").append(sheet.getSheetName()).append("`;\r");
                 sql.append("CREATE TABLE `").append(sheet.getSheetName()).append("`  (\r");
-                int finalIdCellNum = idCellNum;
                 map.forEach((cellNum, s) -> {
                     Cell cell = row3.getCell(cellNum);
                     sql.append('`');
@@ -214,7 +213,7 @@ public class ExcelToMysql {
                             if (cell == null) {
                                 break;
                             }
-                            String c = cell.getStringCellValue();
+                            String c = getCellValueAsString(cell);
                             if (c == null || c.isBlank()) {
                                 sql.append("null");
                             } else {
@@ -264,6 +263,15 @@ public class ExcelToMysql {
             }
         }
         book.close();
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+
+        DataFormatter dataFormatter = new DataFormatter();
+        return dataFormatter.formatCellValue(cell);
     }
 
     /**
