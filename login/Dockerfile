@@ -1,13 +1,7 @@
 FROM openjdk:25-jdk
 
-# 安装curl
-# RUN apt-get update && apt-get install -y curl
-RUN mkdir -p /app/config
-
 # 将本地的 hotfix.sh 文件复制到容器中的工作目录
 COPY login/hotfix.sh /app/hotfix.sh
-# 将arthas-bin目录复制到容器的/app/arthas-bin目录下
-COPY arthas-bin/ /app/arthas-bin/
 # 将本地的 JAR 文件复制到容器中的工作目录
 COPY login/target/login-1.0.0-SNAPSHOT.jar /app/login.jar
 
@@ -17,4 +11,4 @@ EXPOSE 10000
 WORKDIR /app
 
 # 容器启动时执行的命令
-CMD ["java", "-javaagent:arthas-bin/arthas-agent.jar", "-jar", "login.jar"]
+CMD ["java", "-jar", "login.jar"]
