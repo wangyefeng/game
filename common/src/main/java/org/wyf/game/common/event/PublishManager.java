@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class PublishManager<EventType extends Enum<EventType>> {
 
-    private Map<EventType, Publisher<?>> publishers;
+    private final Map<EventType, Publisher<?>> publishers;
 
     public PublishManager(EventType[] eventTypes) {
         publishers = new HashMap<>(eventTypes.length);

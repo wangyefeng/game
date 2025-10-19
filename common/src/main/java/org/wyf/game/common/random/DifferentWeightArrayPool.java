@@ -62,7 +62,7 @@ public class DifferentWeightArrayPool<E> {
      *
      * @return 随机元素
      */
-    public E random() {
+    public synchronized E random() {
         return randomPool[randomIndex()].e;
     }
 
@@ -91,7 +91,7 @@ public class DifferentWeightArrayPool<E> {
      *
      * @return 随机不同的元素列表
      */
-    public E[] randomDifferent(E[] result) {
+    public synchronized E[] randomDifferent(E[] result) {
         int size = result.length;
         Assert.isTrue(size <= randomPool.length, "结果数组长度不能大于随机池长度！");
         if (size == 0) {
@@ -122,7 +122,7 @@ public class DifferentWeightArrayPool<E> {
     /**
      * 随机不同的元素
      */
-    public void randomDifferent(int count, Collection<E> result) {
+    public synchronized void randomDifferent(int count, Collection<E> result) {
         Assert.isTrue(count <= randomPool.length, "结果数组长度不能大于随机池长度！");
         if (count == 0) {
             return;
