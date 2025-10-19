@@ -25,6 +25,7 @@ public abstract class CfgTask implements Cfg<Integer> {
     private PlayerEvent event;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json COMMENT '任务参数'")
     private String[] args;
 
     @Column(columnDefinition = "BIGINT COMMENT '任务目标'")
