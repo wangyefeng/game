@@ -1,5 +1,5 @@
 FROM openjdk:25-jdk
-
+ENV TZ 'Asia/Shanghai'
 RUN microdnf install -y nc
 # 将本地的 hotfix.sh 文件复制到容器中的工作目录
 COPY hotfix.sh /app/hotfix.sh
