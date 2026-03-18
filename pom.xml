@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>4.0.3</version>
     </parent>
 
     <groupId>org.wyf.game</groupId>
@@ -50,7 +50,7 @@
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>3.52.0</version>
+                <version>4.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.mysql</groupId>
@@ -126,7 +126,7 @@
             <dependency>
                 <groupId>com.taobao.arthas</groupId>
                 <artifactId>arthas-spring-boot-starter</artifactId>
-                <version>4.1.0</version>
+                <version>4.1.8</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

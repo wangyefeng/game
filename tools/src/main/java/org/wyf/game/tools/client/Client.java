@@ -16,11 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.wyf.game.common.http.HttpResp;
-import org.wyf.game.proto.*;
+import org.wyf.game.proto.CodeMsgEncode;
+import org.wyf.game.proto.MessageCode;
 import org.wyf.game.proto.protocol.Protocol;
 import org.wyf.game.proto.protocol.Protocols;
 

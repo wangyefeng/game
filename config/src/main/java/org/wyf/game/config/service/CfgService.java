@@ -1,19 +1,16 @@
 package org.wyf.game.config.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.wyf.game.config.ConfigException;
-import org.wyf.game.config.Configs;
-import org.wyf.game.config.entity.Cfg;
-import org.hibernate.metamodel.model.domain.internal.MappingMetamodelImpl;
-import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.CrudRepository;
+import org.wyf.game.config.ConfigException;
+import org.wyf.game.config.Configs;
+import org.wyf.game.config.entity.Cfg;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -66,7 +63,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         for (Entity entity : map.values()) {
             // 执行验证
             for (ConstraintViolation<Entity> violation : validator.validate(entity)) {
-                throw new ConfigException(tableName, entity.getId(), getColumnName(entity, violation.getPropertyPath().toString()), violation.getMessage());
+                throw new ConfigException(tableName, entity.getId(), violation.getPropertyPath().toString(), violation.getMessage());
             }
             try {
                 entity.validate();
@@ -85,20 +82,6 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         }
     }
 
-    private String getCfgName(String entityName) {
-        EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-        MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entityName);
-        return persist.getSubclassTableName(0);
-    }
-
-    private String getColumnName(Entity entity, String field) {
-        EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-        MappingMetamodelImpl metaData = (MappingMetamodelImpl) entityManagerFactory.getMetamodel();
-        AbstractEntityPersister persist = (AbstractEntityPersister) metaData.entityPersister(entity.getClass());
-        return persist.toColumns(field)[0];
-    }
-
     /**
      * 子类可重写此方法，实现自定义验证逻辑
      *
@@ -113,7 +96,7 @@ public abstract class CfgService<Entity extends Cfg<ID>, Repository extends Crud
         Type genericSuperclass = getClass().getGenericSuperclass();
         if (genericSuperclass.getTypeName().startsWith(CfgService.class.getName())) {
             Type[] actualTypes = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
-            return getCfgName(actualTypes[0].getTypeName());
+            return actualTypes[0].getTypeName();
         }
         throw new IllegalArgumentException("未找到父类泛型参数");
     }
