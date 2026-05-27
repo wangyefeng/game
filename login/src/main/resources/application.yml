@@ -2,11 +2,11 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: jdbc:mysql://172.16.1.108:3306/account?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/account?useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
-    hikari:
+    Hikari:
       max-lifetime: 1800000
       minimum-idle: 16
       idle-timeout: 600000
@@ -22,12 +22,11 @@ spring:
     redisson:
       config: |
         singleServerConfig:
-          address: "redis://172.16.1.108:6379"
+          address: "redis://localhost:6379"
           idleConnectionTimeout: 10000
           connectTimeout: 10000
           timeout: 3000
           retryAttempts: 3
-          retryInterval: 1500
           clientName: null
           subscriptionsPerConnection: 5
           subscriptionConnectionMinimumIdleSize: 1

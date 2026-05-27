@@ -16,7 +16,6 @@ spring:
           connectTimeout: 10000
           timeout: 3000
           retryAttempts: 3
-          retryInterval: 1500
           clientName: null
           subscriptionsPerConnection: 5
           subscriptionConnectionMinimumIdleSize: 1
